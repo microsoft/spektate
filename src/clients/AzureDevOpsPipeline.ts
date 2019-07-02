@@ -1,7 +1,7 @@
 class AzureDevOpsPipeline {
-    org: string;
-    project: string;
-    id: number;
+    public org: string;
+    public project: string;
+    public id: number;
 
     constructor(org: string, project: string, id: number) {
         this.org = org;
@@ -9,7 +9,7 @@ class AzureDevOpsPipeline {
         this.id = id;
     }
 
-    getBuildLogs() {
+    public getBuildLogs() {
         // TODO
     }
 }

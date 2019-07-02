@@ -1,13 +1,13 @@
 class GitHub {
-    username: string;
-    reponame: string;
+    public username: string;
+    public reponame: string;
 
     constructor(username: string, reponame: string) {
         this.reponame = reponame;
         this.username = username;
     }
 
-    getCommits() {
+    public getCommits() {
         // TODO
     }
 }

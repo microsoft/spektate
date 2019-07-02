@@ -1,7 +1,7 @@
 class AzureDevOpsRepo {
-    org: string;
-    project: string;
-    repo: string;
+    public org: string;
+    public project: string;
+    public repo: string;
 
     constructor(org: string, project: string, repo: string) {
         this.org = org;
@@ -9,7 +9,7 @@ class AzureDevOpsRepo {
         this.repo = repo;
     }
 
-    getCommits() {
+    public getCommits() {
         // TODO
     }
 }
