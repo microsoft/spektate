@@ -22,36 +22,3 @@ body {
 .App-intro {
   font-size: large;
 }
-
-.git-commits {
-  margin: 5px 10px 5px 10px;
-  font-size: 15px;
-  text-align: left;
-  line-height: 2;
-}
-.git-commits div {
-  text-overflow: ellipsis;
-  overflow: hidden;
-  white-space: nowrap;
-}
-.git-commits div img {
-  width: 20px;
-  margin-right: 5px;
-}
-
-.commits {
-  white-space: nowrap;
-  display: inline-block;
-  width: 100%;
-}
-
-.commits > div {
-  float: left;
-  width: 45%;
-  padding: 20px;
-}
-.commits:nth-child(1) {
-  float: right;
-  width: 45%;
-  padding: 20px;
-}
