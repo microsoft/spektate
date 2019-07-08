@@ -1,5 +1,5 @@
 import * as React from 'react';
-import AzureDevOpsPipeline from "./clients/AzureDevOpsPipeline";
+import AzureDevOpsPipeline from "./clients/pipeline/AzureDevOpsPipeline";
 import './css/dashboard.css';
 
 class Dashboard extends React.Component {
