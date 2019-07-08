@@ -4,8 +4,12 @@ import './css/dashboard.css';
 
 class Dashboard extends React.Component {
   public render() {
-    const pipeline = new AzureDevOpsPipeline("epicstuff", "bedrock", 4676);
-    pipeline.getBuildLogs();
+    const srcPipeline = new AzureDevOpsPipeline("epicstuff", "bedrock", 74);
+    srcPipeline.getListOfBuilds();
+    const hldPipeline = new AzureDevOpsPipeline("epicstuff", "bedrock", 76);
+    hldPipeline.getListOfBuilds();
+    const clusterPipeline = new AzureDevOpsPipeline("epicstuff", "bedrock", 90);
+    clusterPipeline.getListOfBuilds();
     return (
       <div className="App">
         <header className="App-header">

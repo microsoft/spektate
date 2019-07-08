@@ -1,23 +1,23 @@
 import { HttpHelper } from "./HttpHelper";
 
-const baseUrl = "https://dev.azure.com/{organization}/{project}/_apis/build/builds/{buildId}?api-version=5.0";
+const baseUrl = "https://dev.azure.com/{organization}/{project}/_apis/build/builds?definitions={definitionId}&api-version=5.0&queryOrder=startTimeDescending";
   
 class AzureDevOpsPipeline {
     public org: string;
     public project: string;
-    public id: number;
+    public definitionId: number;
     
-    constructor(org: string, project: string, id: number) {
+    constructor(org: string, project: string, definitionId: number) {
         this.org = org;
         this.project = project;
-        this.id = id;
+        this.definitionId = definitionId;
     }
     
-    public getBuildLogs() {
-        HttpHelper.httpGet(this.getUrl());
+    public getListOfBuilds() {
+        return HttpHelper.httpGet(this.getUrl());
     }
     private getUrl() {
-        return baseUrl.replace("{organization}", this.org).replace("{project}", this.project).replace("{buildId}", this.id + '');
+        return baseUrl.replace("{organization}", this.org).replace("{project}", this.project).replace("{definitionId}", this.definitionId + '');
     }
 }
 
