@@ -5,7 +5,9 @@ export class Build {
     public id: string;
     public author: string;
     public queueTime: string;
+    public result: string;
     public status: string;
     public sourceBranch: string;
     public startTime: string;
+    public URL: string
 }

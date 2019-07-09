@@ -1,14 +1,16 @@
 import { HttpHelper } from "../HttpHelper";
 import { Build } from "./Build";
 import Pipeline from "./Pipeline";
+import { Release } from "./Release";
 
-const baseUrl = "https://dev.azure.com/{organization}/{project}/_apis/build/builds?definitions={definitionId}&api-version=5.0&queryOrder=startTimeDescending";
-  
+const baseBuildUrl = "https://dev.azure.com/{organization}/{project}/_apis/build/builds?definitions={definitionId}&api-version=5.0&queryOrder=startTimeDescending";
+// const baseReleaseUrl = "https://vsrm.dev.azure.com/{organization}/{project}/_apis/release/deployments?api-version=5.0&definitionId={definitionId}&queryOrder=startTimeDescending";
 class AzureDevOpsPipeline extends Pipeline {
     // User defined fields
     public org: string;
     public project: string;
     public definitionId: number;
+    // public isRelease: boolean;
 
     
     constructor(org: string, project: string, definitionId: number) {
@@ -17,13 +19,9 @@ class AzureDevOpsPipeline extends Pipeline {
         this.project = project;
         this.definitionId = definitionId;
     }
-    
-    public getRawListOfBuilds() {
-        return HttpHelper.httpGet(this.getUrl());
-    }
 
     public getListOfBuilds(): Build[] {
-        const listOfBuilds = this.getRawListOfBuilds();
+        const listOfBuilds = HttpHelper.httpGet(this.getBuildUrl());
 
         const json = JSON.parse(listOfBuilds);
         const builds: Build[] = [];
@@ -36,15 +34,24 @@ class AzureDevOpsPipeline extends Pipeline {
             build.sourceBranch = row.sourceBranch;
             build.status = row.status;
             build.startTime = row.startTime;
+            build.URL = row._links.web.href;
+            build.result = row.result;
             // tslint:disable-next-line:no-console
             console.log(build);
             builds.push(build);
         }
         return builds;
     }
-    private getUrl() {
-        return baseUrl.replace("{organization}", this.org).replace("{project}", this.project).replace("{definitionId}", this.definitionId + '');
+
+    public getListOfReleases(): Release[] {
+        return [];
     }
+    private getBuildUrl() {
+        return baseBuildUrl.replace("{organization}", this.org).replace("{project}", this.project).replace("{definitionId}", this.definitionId + '');
+    }
+    // private getReleaseUrl() {
+    //     return baseReleaseUrl.replace("{organization}", this.org).replace("{project}", this.project).replace("{definitionId}", this.definitionId + '');
+    // }
 }
 
 export default AzureDevOpsPipeline;
