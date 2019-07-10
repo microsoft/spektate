@@ -1,6 +1,5 @@
 export class Build {
 
-    // Fields set by the children
     public buildNumber: string;
     public id: string;
     public author: string;
@@ -8,6 +7,8 @@ export class Build {
     public result: string;
     public status: string;
     public sourceBranch: string;
+    public sourceVersion: string;
+    public sourceVersionURL: string;
     public startTime: string;
     public URL: string
 }
