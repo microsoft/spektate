@@ -27,21 +27,24 @@ class Dashboard extends React.Component<{}, IDashboardState> {
 
   public renderPrototypeTable() {
     const rows = [] as any[];
+    let counter = 0;
     this.state.deployments.forEach((deployment) => {
-      rows.push(<tr>
+      rows.push(<tr key={counter}>
                   <td>{deployment.commitId}</td>
-                  <td>{deployment.srcPipeline.id}</td>
-                  <td>{deployment.srcPipeline.startTime}</td>
-                  <td>{deployment.srcPipeline.sourceBranch}</td>
+                  <td>{deployment.srcToDockerBuild.id}</td>
+                  <td>{deployment.srcToDockerBuild.startTime.toLocaleString()}</td>
+                  <td>{deployment.srcToDockerBuild.sourceBranch.replace("refs/heads/", "")}</td>
                   <td>{deployment.imageTag}</td>
-                  <td>{deployment.srcPipeline.result}</td>
-                  <td>{deployment.acrPipeline ? deployment.acrPipeline!.id : ""}</td>
+                  <td>{deployment.srcToDockerBuild.result}</td>
+                  <td>{deployment.dockerToHldRelease ? deployment.dockerToHldRelease!.id : ""}</td>
                   <td>{deployment.hldCommitId}</td>
-                  <td>{deployment.acrPipeline ? deployment.acrPipeline!.status : ""}</td>
-                  <td>{deployment.hldPipeline ? deployment.hldPipeline!.id : ""}</td>
-                  <td>{deployment.hldPipeline ? deployment.hldPipeline!.finishTime : ""}</td>
-                  <td>{deployment.hldPipeline ? deployment.hldPipeline!.result : ""}</td>
+                  <td>{deployment.dockerToHldRelease ? deployment.dockerToHldRelease!.status : ""}</td>
+                  <td>{deployment.hldToManifestBuild ? deployment.hldToManifestBuild!.id : ""}</td>
+                  <td>{deployment.hldToManifestBuild ? deployment.hldToManifestBuild!.finishTime.toLocaleString() : ""}</td>
+                  <td>{deployment.hldToManifestBuild ? deployment.hldToManifestBuild!.result : ""}</td>
+                  <td>{(deployment.hldToManifestBuild ? Number((deployment.hldToManifestBuild!.finishTime.valueOf() - deployment.srcToDockerBuild.startTime.valueOf())/60000).toFixed(2) + " minutes" : "-")}</td>
                 </tr>);
+        counter++;
     });
     return (<table>
           <thead>
@@ -58,6 +61,7 @@ class Dashboard extends React.Component<{}, IDashboardState> {
               <th>HLD to Manifest</th>
               <th>End Time</th>
               <th>Status</th>
+              <th>Duration</th>
             </tr>
           </thead>
           <tbody>

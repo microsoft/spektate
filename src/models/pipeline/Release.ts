@@ -4,9 +4,9 @@ export class Release {
     public imageVersion: string;
     public registryURL: string;
     public registryResourceGroup: string;
-    public queueTime: string;
+    public queueTime: Date;
     public status: string;
-    public startTime: string;
-    public finishTime: string;
+    public startTime: Date;
+    public finishTime: Date;
     public URL: string
 }
