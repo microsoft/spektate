@@ -71,12 +71,9 @@ class Dashboard extends React.Component<{}, IDashboardState> {
     const srcPipeline = new AzureDevOpsPipeline("epicstuff", "hellobedrock", 101);
     const hldPipeline = new AzureDevOpsPipeline("epicstuff", "hellobedrock", 1, true);
     const clusterPipeline = new AzureDevOpsPipeline("epicstuff", "hellobedrock", 102);
-    Deployment.getDeployments(srcPipeline, hldPipeline, clusterPipeline, (deployments: Deployment[]) => {
+    Deployment.getDeployments("hello-bedrock", srcPipeline, hldPipeline, clusterPipeline, (deployments: Deployment[]) => {
       this.setState({deployments});
     });
-
-    // tslint:disable-next-line
-    console.log("Got deployments");
     return <div />;
   }
 
