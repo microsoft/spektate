@@ -10,5 +10,6 @@ export class Build {
     public sourceVersion: string;
     public sourceVersionURL: string;
     public startTime: string;
+    public finishTime: string;
     public URL: string
 }
