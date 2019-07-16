@@ -5,10 +5,8 @@ export class Release {
     public registryURL: string;
     public registryResourceGroup: string;
     public queueTime: string;
-    // public result: string;
     public status: string;
-    // public sourceBranch: string;
     public startTime: string;
-    public completeTime: string;
+    public finishTime: string;
     public URL: string
 }
