@@ -36,15 +36,15 @@ class AzureDevOpsPipeline extends Pipeline {
             build.author = row.requestedFor.displayName;
             build.buildNumber = row.buildNumber;
             build.id = row.id;
-            build.queueTime = row.queueTime;
+            build.queueTime = new Date(row.queueTime);
             build.sourceBranch = row.sourceBranch;
             build.status = row.status;
-            build.startTime = row.startTime;
+            build.startTime = new Date(row.startTime);
             build.URL = row._links.web.href;
             build.result = row.result;
             build.sourceVersion = row.sourceVersion;
             build.sourceVersionURL = row._links.sourceVersionDisplayUri.href;
-            build.finishTime = row.finishTime;
+            build.finishTime = new Date(row.finishTime);
             builds.push(build);
             this.builds[build.id] = build;
         }
@@ -57,9 +57,9 @@ class AzureDevOpsPipeline extends Pipeline {
         for (const row of json.value) {
             const release = new Release();
             release.id = row.id;
-            release.queueTime = row.queuedOn;
-            release.startTime = row.startedOn;
-            release.finishTime = row.completedOn;
+            release.queueTime = new Date(row.queuedOn);
+            release.startTime = new Date(row.startedOn);
+            release.finishTime = new Date(row.completedOn);
             release.status = row.deploymentStatus;
             release.URL = row.release._links.web.href;
             if (row.release.artifacts.length > 0) {

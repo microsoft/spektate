@@ -43,25 +43,37 @@ export default class Deployment {
                         deployments.push(deployment);
                     }
                     if (callback) {
+                        deployments.sort(Deployment.compare);
                         callback(deployments);
                     }
                 }
         });
     }
+
+    public static compare(a: Deployment, b: Deployment) {
+        const aInt = Number(a.srcToDockerBuild.id) + (a.dockerToHldRelease ? Number(a.dockerToHldRelease.id) : 0) + (a.hldToManifestBuild ? Number(a.hldToManifestBuild.id) : 0);
+        const bInt = Number(b.srcToDockerBuild.id) + (b.dockerToHldRelease ? Number(b.dockerToHldRelease.id) : 0) + (b.hldToManifestBuild ? Number(b.hldToManifestBuild.id) : 0);
+        if (aInt < bInt) {
+            return 1;
+        } else if (aInt > bInt) {
+            return -1;
+        }
+        return 0;
+    }
     public deploymentId: string;
-    public srcPipeline: Build;
-    public acrPipeline?: Release;
-    public hldPipeline?: Build;
+    public srcToDockerBuild: Build;
+    public dockerToHldRelease?: Release;
+    public hldToManifestBuild?: Build;
     public commitId: string;
     public hldCommitId?: string;
     public imageTag: string;
     public timeStamp: string;
 
-    constructor(deploymentId: string, srcPipeline: Build, commitId: string, hldCommitId: string, imageTag: string, timeStamp: string, acrPipeline?: Release, hldPipeline?: Build) {
-        this.srcPipeline = srcPipeline;
-        this.hldPipeline = hldPipeline;
+    constructor(deploymentId: string, srcToDockerBuild: Build, commitId: string, hldCommitId: string, imageTag: string, timeStamp: string, dockerToHldRelease?: Release, hldToManifestBuild?: Build) {
+        this.srcToDockerBuild = srcToDockerBuild;
+        this.hldToManifestBuild = hldToManifestBuild;
         this.deploymentId = deploymentId;
-        this.acrPipeline = acrPipeline;
+        this.dockerToHldRelease = dockerToHldRelease;
         this.commitId = commitId;
         this.hldCommitId = hldCommitId;
         this.imageTag = imageTag;
