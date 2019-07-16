@@ -7,7 +7,7 @@ import { Release } from './pipeline/Release';
 
 export default class Deployment {
 
-    public static async getDeployments(srcPipeline: Pipeline, hldPipeline: Pipeline, manifestPipeline: Pipeline, callback?: (deployments: Deployment[]) => void) {
+    public static async getDeployments(partitionKey: string, srcPipeline: Pipeline, hldPipeline: Pipeline, manifestPipeline: Pipeline, callback?: (deployments: Deployment[]) => void) {
         
         const tableService = azure.createTableService(config.STORAGE_ACCOUNT_NAME, config.STORAGE_ACCOUNT_KEY);
         // Disabling ts-lint on line below, to get around issue https://github.com/Azure/azure-storage-node/issues/545
@@ -17,7 +17,7 @@ export default class Deployment {
 
         // TODO: Look into cleaning up the parsing code below (avoid parsing underscores).
         tableService.queryEntities(config.STORAGE_TABLE_NAME, 
-            new azure.TableQuery().where("PartitionKey eq 'hello-bedrock'"),
+            new azure.TableQuery().where("PartitionKey eq '" +  partitionKey + "'"),
             nextContinuationToken,
                 (error: any, result: any) => {
                 if (!error) {
