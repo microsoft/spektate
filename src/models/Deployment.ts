@@ -79,4 +79,16 @@ export default class Deployment {
         this.imageTag = imageTag;
         this.timeStamp = timeStamp;
     }
+
+    public duration(): string {
+        let duration = this.srcToDockerBuild.finishTime.valueOf() - this.srcToDockerBuild.queueTime.valueOf();
+        if (this.dockerToHldRelease != null) {
+            duration += this.dockerToHldRelease.finishTime.valueOf() - this.dockerToHldRelease.queueTime.valueOf();
+        }
+        if (this.hldToManifestBuild != null) {
+            duration += this.hldToManifestBuild.finishTime.valueOf() - this.hldToManifestBuild.queueTime.valueOf();
+        }
+        
+        return Number(duration/60000).toFixed(2);
+    }
 }

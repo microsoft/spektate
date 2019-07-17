@@ -30,19 +30,20 @@ class Dashboard extends React.Component<{}, IDashboardState> {
     let counter = 0;
     this.state.deployments.forEach((deployment) => {
       rows.push(<tr key={counter}>
-                  <td>{deployment.commitId}</td>
-                  <td>{deployment.srcToDockerBuild.id}</td>
+                  <td><a href={deployment.srcToDockerBuild.sourceVersionURL}>{deployment.commitId}</a></td>
+                  <td><a href={deployment.srcToDockerBuild.URL}>{deployment.srcToDockerBuild.id}</a></td>
                   <td>{deployment.srcToDockerBuild.startTime.toLocaleString()}</td>
                   <td>{deployment.srcToDockerBuild.sourceBranch.replace("refs/heads/", "")}</td>
                   <td>{deployment.imageTag}</td>
                   <td>{deployment.srcToDockerBuild.result}</td>
-                  <td>{deployment.dockerToHldRelease ? deployment.dockerToHldRelease!.id : ""}</td>
-                  <td>{deployment.hldCommitId}</td>
+                  <td>{deployment.dockerToHldRelease ? <a href={deployment.dockerToHldRelease.URL}>{deployment.dockerToHldRelease!.id}</a> : ""}</td>
+                  <td>{deployment.hldToManifestBuild ? <a href={deployment.hldToManifestBuild.sourceVersionURL}>{deployment.hldCommitId}</a> : ""}</td>
                   <td>{deployment.dockerToHldRelease ? deployment.dockerToHldRelease!.status : ""}</td>
-                  <td>{deployment.hldToManifestBuild ? deployment.hldToManifestBuild!.id : ""}</td>
+                  <td>{deployment.hldToManifestBuild ? <a href={deployment.hldToManifestBuild.URL}>{deployment.hldToManifestBuild!.id}</a> : ""}</td>
                   <td>{deployment.hldToManifestBuild ? deployment.hldToManifestBuild!.finishTime.toLocaleString() : ""}</td>
                   <td>{deployment.hldToManifestBuild ? deployment.hldToManifestBuild!.result : ""}</td>
-                  <td>{(deployment.hldToManifestBuild ? Number((deployment.hldToManifestBuild!.finishTime.valueOf() - deployment.srcToDockerBuild.startTime.valueOf())/60000).toFixed(2) + " minutes" : "-")}</td>
+                  {/* <td>{(deployment.hldToManifestBuild ? Number((deployment.hldToManifestBuild!.finishTime.valueOf() - deployment.srcToDockerBuild.startTime.valueOf())/60000).toFixed(2) + " minutes" : "-")}</td> */}
+                  <td>{deployment.duration()} minutes</td>
                 </tr>);
         counter++;
     });
