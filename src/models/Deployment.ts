@@ -51,13 +51,33 @@ export default class Deployment {
     }
 
     public static compare(a: Deployment, b: Deployment) {
-        const aInt = Number(a.srcToDockerBuild.id) + (a.dockerToHldRelease ? Number(a.dockerToHldRelease.id) : 0) + (a.hldToManifestBuild ? Number(a.hldToManifestBuild.id) : 0);
-        const bInt = Number(b.srcToDockerBuild.id) + (b.dockerToHldRelease ? Number(b.dockerToHldRelease.id) : 0) + (b.hldToManifestBuild ? Number(b.hldToManifestBuild.id) : 0);
+        let aInt = Number(a.srcToDockerBuild.id);
+        let bInt = Number(b.srcToDockerBuild.id);
         if (aInt < bInt) {
             return 1;
         } else if (aInt > bInt) {
             return -1;
         }
+        if (a.dockerToHldRelease != null && b.dockerToHldRelease != null) {
+            aInt = Number(a.dockerToHldRelease.id);
+            bInt = Number(b.dockerToHldRelease.id);
+            if (aInt < bInt) {
+                return 1;
+            } else if (aInt > bInt) {
+                return -1;
+            }
+        }
+
+        if (a.hldToManifestBuild != null && b.hldToManifestBuild != null) {
+            aInt = Number(a.hldToManifestBuild.id);
+            bInt = Number(b.hldToManifestBuild.id);
+            if (aInt < bInt) {
+                return 1;
+            } else if (aInt > bInt) {
+                return -1;
+            }
+        }
+
         return 0;
     }
     public deploymentId: string;
@@ -90,5 +110,12 @@ export default class Deployment {
         }
         
         return Number(duration/60000).toFixed(2);
+    }
+
+    public status(): string {
+        if (this.srcToDockerBuild.status === "completed" && (this.hldToManifestBuild ? this.hldToManifestBuild.status === "completed" : false) && (this.dockerToHldRelease ? this.dockerToHldRelease.status === "succeeded" || this.dockerToHldRelease.status === "failed" : false)) {
+            return "Complete";
+        }
+        return "In Progress";
     }
 }
