@@ -5,6 +5,7 @@
   "dependencies": {
     "@kubernetes/client-node": "^0.8.2",
     "kubernetes-client": "^6.11.1",
+    "office-ui-fabric-react": "^7.10.0",
     "react": "^16.8.5",
     "react-dom": "^16.8.5",
     "react-http-request": "^2.0.0",
