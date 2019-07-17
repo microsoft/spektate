@@ -46,7 +46,8 @@ def add_pipeline(account_name, account_key, table_name, partition_name, filter_n
     new_entry["PartitionKey"] = partition_name
     new_entry[filter_name] = filter_value
     new_entry[name1] = value1
-    new_entry[name2] = value2
+    if name2 != None and value2 != None:
+        new_entry[name2] = value2
     print(new_entry)
     table_service = TableService(account_name=account_name, account_key=account_key)
     table_service.insert_entity(table_name, new_entry)
