@@ -30,7 +30,7 @@ If you have already followed the steps [here](https://github.com/microsoft/bedro
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-        tag_name="hello-bedrock-$(Build.SourceBranchName)-$(Build.BuildId)"
+        tag_name="$(PARTITION_KEY)-$(Build.SourceBranchName)-$(Build.BuildId)"
         commitId=$(Build.SourceVersion)
         commitId=$(echo "${commitId:0:7}")
         echo "python update_pipeline.py $(ACCOUNT_NAME) $(ACCOUNT_KEY) $(TABLE_NAME) $(PARTITION_KEY) p1 $(Build.BuildId) imageTag $tag_name commitId $commitId"
