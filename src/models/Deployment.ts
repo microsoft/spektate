@@ -41,13 +41,13 @@ export default class Deployment {
                         let hldCommitId = "";
                         if (entry.p2 != null) {
                             p2 = hldPipeline.releases[entry.p2._];
-                            if (entry.hldCommitId != null) {
-                                hldCommitId = entry.hldCommitId._;
-                            }
                         }
                         let p3;
                         if (entry.p3 != null) {
                             p3 = manifestPipeline.builds[entry.p3._];
+                        }
+                        if (entry.hldCommitId != null) {
+                            hldCommitId = entry.hldCommitId._;
                         }
 
                         const deployment = new Deployment(entry.RowKey._, commitId,hldCommitId, imageTag, entry.Timestamp._, p1, p2, p3);

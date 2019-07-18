@@ -44,7 +44,7 @@ class Dashboard extends React.Component<{}, IDashboardState> {
                   <td>{deployment.imageTag}</td>
                   <td>{deployment.dockerToHldRelease ? <a href={deployment.dockerToHldRelease.URL}>{deployment.dockerToHldRelease!.id}</a> : "-"}</td>
                   <td>{deployment.dockerToHldRelease ? this.getIcon(deployment.dockerToHldRelease!.status) : "-"}</td>
-                  <td>{deployment.hldToManifestBuild ? <a href={deployment.hldToManifestBuild.sourceVersionURL}>{deployment.hldCommitId}</a> : "-"}</td>
+                  <td>{deployment.hldToManifestBuild ? <a href={deployment.hldToManifestBuild.sourceVersionURL}>{deployment.hldCommitId}</a> : deployment.hldCommitId}</td>
                   <td>{deployment.hldToManifestBuild ? <a href={deployment.hldToManifestBuild.URL}>{deployment.hldToManifestBuild!.id}</a> : "-"}</td>
                   <td>{deployment.hldToManifestBuild ? this.getIcon(deployment.hldToManifestBuild!.result) : "-"}</td>
                   <td>{deployment.hldToManifestBuild ? (Number.isNaN(deployment.hldToManifestBuild!.finishTime.valueOf()) ? "-" : deployment.hldToManifestBuild!.finishTime.toLocaleString()) : "-"}</td>
@@ -93,7 +93,7 @@ class Dashboard extends React.Component<{}, IDashboardState> {
     if(status === "succeeded") {
       return <Icon style={{color: "green"}} iconName="CompletedSolid" />;
     } else if (status === undefined || status === "inProgress") {
-      return <Icon style={{color: "blue"}} iconName="CirclePauseSolid" />;
+      return <Icon style={{color: "blue"}} iconName="SkypeCircleClock" />; // SyncStatusSolid
     }
     return <Icon style={{color: "#c80000"}} iconName="StatusErrorFull" />;
   }
