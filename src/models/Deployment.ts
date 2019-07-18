@@ -24,7 +24,18 @@ export default class Deployment {
                     // tslint:disable-next-line:no-console
                     console.log(result.entries);
                     for(const entry of result.entries) {
-                        const p1: Build = srcPipeline.builds[entry.p1._];
+                        let p1;
+                        let imageTag = "";
+                        let commitId = "";
+                        if (entry.p1 != null) {
+                            p1 = srcPipeline.builds[entry.p1._];
+                            if (entry.commitId != null) {
+                                commitId = entry.commitId._;
+                            }
+                            if (entry.imageTag != null) {
+                                imageTag = entry.imageTag._;
+                            }
+                        }
 
                         let p2;
                         let hldCommitId = "";
@@ -39,7 +50,7 @@ export default class Deployment {
                             p3 = manifestPipeline.builds[entry.p3._];
                         }
 
-                        const deployment = new Deployment(entry.RowKey._, p1, entry.commitId._,hldCommitId, entry.imageTag._, entry.Timestamp._, p2, p3);
+                        const deployment = new Deployment(entry.RowKey._, commitId,hldCommitId, imageTag, entry.Timestamp._, p1, p2, p3);
                         deployments.push(deployment);
                     }
                     if (callback) {
@@ -51,12 +62,16 @@ export default class Deployment {
     }
 
     public static compare(a: Deployment, b: Deployment) {
-        let aInt = Number(a.srcToDockerBuild.id);
-        let bInt = Number(b.srcToDockerBuild.id);
-        if (aInt < bInt) {
-            return 1;
-        } else if (aInt > bInt) {
-            return -1;
+        let aInt = 0;
+        let bInt = 0;
+        if (a.srcToDockerBuild != null && b.srcToDockerBuild != null) {
+            aInt = Number(a.srcToDockerBuild.id);
+            bInt = Number(b.srcToDockerBuild.id);
+            if (aInt < bInt) {
+                return 1;
+            } else if (aInt > bInt) {
+                return -1;
+            }
         }
         if (a.dockerToHldRelease != null && b.dockerToHldRelease != null) {
             aInt = Number(a.dockerToHldRelease.id);
@@ -81,7 +96,7 @@ export default class Deployment {
         return 0;
     }
     public deploymentId: string;
-    public srcToDockerBuild: Build;
+    public srcToDockerBuild?: Build;
     public dockerToHldRelease?: Release;
     public hldToManifestBuild?: Build;
     public commitId: string;
@@ -89,7 +104,7 @@ export default class Deployment {
     public imageTag: string;
     public timeStamp: string;
 
-    constructor(deploymentId: string, srcToDockerBuild: Build, commitId: string, hldCommitId: string, imageTag: string, timeStamp: string, dockerToHldRelease?: Release, hldToManifestBuild?: Build) {
+    constructor(deploymentId: string, commitId: string, hldCommitId: string, imageTag: string, timeStamp: string, srcToDockerBuild?: Build, dockerToHldRelease?: Release, hldToManifestBuild?: Build) {
         this.srcToDockerBuild = srcToDockerBuild;
         this.hldToManifestBuild = hldToManifestBuild;
         this.deploymentId = deploymentId;
@@ -101,19 +116,22 @@ export default class Deployment {
     }
 
     public duration(): string {
-        let duration = this.srcToDockerBuild.finishTime.valueOf() - this.srcToDockerBuild.queueTime.valueOf();
+        let duration = 0;
+        if (this.srcToDockerBuild != null) {
+            duration = (Number.isNaN(this.srcToDockerBuild.finishTime.valueOf()) ? Date.now().valueOf() : this.srcToDockerBuild.finishTime.valueOf()) - this.srcToDockerBuild.queueTime.valueOf();
+        }
         if (this.dockerToHldRelease != null) {
-            duration += this.dockerToHldRelease.finishTime.valueOf() - this.dockerToHldRelease.queueTime.valueOf();
+            duration += (Number.isNaN(this.dockerToHldRelease.finishTime.valueOf()) ? Date.now().valueOf() : this.dockerToHldRelease.finishTime.valueOf()) - this.dockerToHldRelease.queueTime.valueOf();
         }
         if (this.hldToManifestBuild != null) {
-            duration += this.hldToManifestBuild.finishTime.valueOf() - this.hldToManifestBuild.queueTime.valueOf();
+            duration += (Number.isNaN(this.hldToManifestBuild.finishTime.valueOf()) ? Date.now().valueOf() : this.hldToManifestBuild.finishTime.valueOf()) - this.hldToManifestBuild.queueTime.valueOf();
         }
         
         return Number(duration/60000).toFixed(2);
     }
 
     public status(): string {
-        if (this.srcToDockerBuild.status === "completed" && (this.hldToManifestBuild ? this.hldToManifestBuild.status === "completed" : false) && (this.dockerToHldRelease ? this.dockerToHldRelease.status === "succeeded" || this.dockerToHldRelease.status === "failed" : false)) {
+        if ((this.srcToDockerBuild ? this.srcToDockerBuild.status === "completed" : false) && (this.hldToManifestBuild ? this.hldToManifestBuild.status === "completed" : false) && (this.dockerToHldRelease ? this.dockerToHldRelease.status === "succeeded" || this.dockerToHldRelease.status === "failed" : false)) {
             return "Complete";
         }
         return "In Progress";
