@@ -2,18 +2,23 @@
 import { Icon } from 'office-ui-fabric-react/lib/Icon';
 import { Spinner, SpinnerSize } from 'office-ui-fabric-react/lib/Spinner';
 import * as React from 'react';
+import { config } from "./config";
 import './css/dashboard.css';
 import Deployment from "./models/Deployment";
 import AzureDevOpsPipeline from "./models/pipeline/AzureDevOpsPipeline";
+import { GitHub } from './models/repository/GitHub';
+import { Repository } from './models/repository/Repository';
 
 export interface IDashboardState{
-  deployments: Deployment[]
+  deployments: Deployment[],
+  manifestSync: string
 }
 class Dashboard extends React.Component<{}, IDashboardState> {
   constructor(props:{}) {
     super(props);
     this.state = {
-      deployments: []
+      deployments: [],
+      manifestSync: ""
     };
     this.getDeployments();
   }
@@ -21,19 +26,20 @@ class Dashboard extends React.Component<{}, IDashboardState> {
     return (
       <div className="App">
         <header className="App-header">
-          <h1 className="App-title">Bedrock Visualization Dashboard Prototype</h1>
+          <h1 className="App-title">Container Journey Prototype</h1>
         </header>
         {this.renderPrototypeTable()}
       </div>
     );
   }
 
-  public renderPrototypeTable() {
+  public renderPrototypeTable = () => {
     if (this.state.deployments.length === 0) {
       return <Spinner size={SpinnerSize.large} />;
     }
     const rows = [] as any[];
     let counter = 0;
+    const manifestSyncCommit = this.state.manifestSync;
     this.state.deployments.forEach((deployment) => {
       rows.push(<tr key={counter}>
                   <td>{deployment.srcToDockerBuild ? <a href={deployment.srcToDockerBuild.sourceVersionURL}>{deployment.commitId}</a> : "-" }</td>
@@ -50,6 +56,7 @@ class Dashboard extends React.Component<{}, IDashboardState> {
                   <td>{deployment.hldToManifestBuild ? (Number.isNaN(deployment.hldToManifestBuild!.finishTime.valueOf()) ? "-" : deployment.hldToManifestBuild!.finishTime.toLocaleString()) : "-"}</td>
                   <td>{deployment.duration()} minutes</td>
                   <td>{deployment.status()}</td>
+                  <td>{deployment.manifestCommitId === manifestSyncCommit ? "Synced" : ""}</td>
                 </tr>);
         counter++;
     });
@@ -70,6 +77,7 @@ class Dashboard extends React.Component<{}, IDashboardState> {
               <th>End Time</th>
               <th>Duration</th>
               <th>Status</th>
+              <th>Cluster Sync</th>
             </tr>
           </thead>
           <tbody>
@@ -83,8 +91,10 @@ class Dashboard extends React.Component<{}, IDashboardState> {
     const srcPipeline = new AzureDevOpsPipeline("epicstuff", "hellobedrock", 101);
     const hldPipeline = new AzureDevOpsPipeline("epicstuff", "hellobedrock", 1, true);
     const clusterPipeline = new AzureDevOpsPipeline("epicstuff", "hellobedrock", 102);
+    const manifestRepo: Repository = new GitHub(config.GITHUB_USERNAME, config.GITHUB_MANIFEST);
     Deployment.getDeployments("hello-bedrock", srcPipeline, hldPipeline, clusterPipeline, (deployments: Deployment[]) => {
-      this.setState({deployments});
+      this.setState({deployments,
+                     manifestSync: manifestRepo.manifestSync});
     });
     return <div />;
   }

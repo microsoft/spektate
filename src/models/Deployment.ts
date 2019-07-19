@@ -39,6 +39,7 @@ export default class Deployment {
 
                         let p2;
                         let hldCommitId = "";
+                        let manifestCommitId = "";
                         if (entry.p2 != null) {
                             p2 = hldPipeline.releases[entry.p2._];
                         }
@@ -49,8 +50,11 @@ export default class Deployment {
                         if (entry.hldCommitId != null) {
                             hldCommitId = entry.hldCommitId._;
                         }
+                        if (entry.manifestCommitId != null) {
+                            manifestCommitId = entry.manifestCommitId._;
+                        }
 
-                        const deployment = new Deployment(entry.RowKey._, commitId,hldCommitId, imageTag, entry.Timestamp._, p1, p2, p3);
+                        const deployment = new Deployment(entry.RowKey._, commitId,hldCommitId, imageTag, entry.Timestamp._, manifestCommitId, p1, p2, p3);
                         deployments.push(deployment);
                     }
                     if (callback) {
@@ -103,8 +107,9 @@ export default class Deployment {
     public hldCommitId?: string;
     public imageTag: string;
     public timeStamp: string;
+    public manifestCommitId?: string;
 
-    constructor(deploymentId: string, commitId: string, hldCommitId: string, imageTag: string, timeStamp: string, srcToDockerBuild?: Build, dockerToHldRelease?: Release, hldToManifestBuild?: Build) {
+    constructor(deploymentId: string, commitId: string, hldCommitId: string, imageTag: string, timeStamp: string, manifestCommitId?: string, srcToDockerBuild?: Build, dockerToHldRelease?: Release, hldToManifestBuild?: Build) {
         this.srcToDockerBuild = srcToDockerBuild;
         this.hldToManifestBuild = hldToManifestBuild;
         this.deploymentId = deploymentId;
@@ -113,6 +118,7 @@ export default class Deployment {
         this.hldCommitId = hldCommitId;
         this.imageTag = imageTag;
         this.timeStamp = timeStamp;
+        this.manifestCommitId = manifestCommitId;
     }
 
     public duration(): string {
