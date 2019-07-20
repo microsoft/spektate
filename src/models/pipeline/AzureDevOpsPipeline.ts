@@ -1,4 +1,5 @@
 import { HttpHelper } from "../HttpHelper";
+import { GitHub } from '../repository/GitHub';
 import { Build } from "./Build";
 import Pipeline from "./Pipeline";
 import { Release } from "./Release";
@@ -45,6 +46,9 @@ class AzureDevOpsPipeline extends Pipeline {
             build.sourceVersion = row.sourceVersion;
             build.sourceVersionURL = row._links.sourceVersionDisplayUri.href;
             build.finishTime = new Date(row.finishTime);
+            if (row.repository.type === "GitHub") {
+                build.repository = new GitHub(row.repository.id.split('/')[0], row.repository.id.split('/')[1]);
+            }
             builds.push(build);
             this.builds[build.id] = build;
         }
