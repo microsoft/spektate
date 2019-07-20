@@ -1,7 +1,9 @@
 import { HttpHelper } from "../HttpHelper";
+import { Author } from "./Author";
 import { Repository } from './Repository';
 
 const manifestSyncTagURL = "https://api.github.com/repos/<owner>/<repo>/git/refs/tags/flux-sync";
+const authorInfoURL = "//api.github.com/repos/<owner>/<repo>/commits/<commitId>";
 export class GitHub extends Repository {
     public username: string;
     public reponame: string;
@@ -11,7 +13,6 @@ export class GitHub extends Repository {
         super();
         this.reponame = reponame;
         this.username = username;
-        this.getManifestSyncState();
     }
 
     public getManifestSyncState() {
@@ -22,5 +23,17 @@ export class GitHub extends Repository {
                 this.manifestSync = syncStatus.object.sha.substring(0, 7);
             }
         }
+    }
+
+    public getAuthor(commitId: string): Author | undefined {
+        // tslint:disable-next-line:no-console
+        console.log("Being called for " + commitId);
+        const authorInfo = JSON.parse(HttpHelper.httpGet(authorInfoURL.replace("<owner>", this.username).replace("<repo>", this.reponame).replace("<commitId>", commitId)));
+        if (authorInfo != null) {
+            const author = new Author(authorInfo.author.html_url, authorInfo.commit.author.name, authorInfo.committer.login);
+            return author;
+        }
+
+        return undefined;
     }
 }

@@ -9,7 +9,5 @@ class AzureDevOpsRepo {
         this.repo = repo;
     }
 
-    public getCommits() {
-        // TODO
-    }
+    // TODO
 }

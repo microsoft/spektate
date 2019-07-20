@@ -4,6 +4,7 @@ import {config} from "../config";
 import { Build } from "./pipeline/Build";
 import Pipeline from './pipeline/Pipeline';
 import { Release } from './pipeline/Release';
+import { Author } from './repository/Author';
 
 export default class Deployment {
 
@@ -141,5 +142,14 @@ export default class Deployment {
             return "Complete";
         }
         return "In Progress";
+    }
+
+    public author(): Author | undefined {
+        if (this.srcToDockerBuild && this.srcToDockerBuild.repository) {
+            const repository = this.srcToDockerBuild.repository.getAuthor(this.srcToDockerBuild.sourceVersion);
+            return repository;
+        }
+
+        return undefined;
     }
 }

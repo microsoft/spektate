@@ -1,3 +1,5 @@
+import { Repository } from '../repository/Repository';
+
 export class Build {
 
     public buildNumber: string;
@@ -12,4 +14,5 @@ export class Build {
     public startTime: Date;
     public finishTime: Date;
     public URL: string
+    public repository?: Repository;
 }
