@@ -16,17 +16,17 @@ export interface IAuthors {
 export interface IDashboardState{
   deployments: Deployment[],
   manifestSync: string,
+  authors: IAuthors
 }
 class Dashboard extends React.Component<{}, IDashboardState> {
-  private authors: IAuthors;
   constructor(props:{}) {
     super(props);
     this.state = {
+      authors: {},
       deployments: [],
       manifestSync: ""
     };
     this.getDeployments();
-    this.authors = {};
   }
   public render() {
     return (
@@ -49,44 +49,44 @@ class Dashboard extends React.Component<{}, IDashboardState> {
     this.state.deployments.forEach((deployment) => {
       const author = this.getAuthor(deployment);
       rows.push(<tr key={counter}>
-                  <td>{deployment.srcToDockerBuild ? <a href={deployment.srcToDockerBuild.sourceVersionURL}>{deployment.commitId}</a> : "-" }</td>
-                  <td>{deployment.srcToDockerBuild ? <a href={deployment.srcToDockerBuild.URL}>{deployment.srcToDockerBuild.id}</a> : "-"}</td>
-                  <td>{deployment.srcToDockerBuild ? this.getIcon(deployment.srcToDockerBuild.result) : "-"}</td>
                   <td>{deployment.srcToDockerBuild ? deployment.srcToDockerBuild.startTime.toLocaleString() : "-"}</td>
                   <td>{deployment.srcToDockerBuild ? deployment.srcToDockerBuild.sourceBranch.replace("refs/heads/", "") : "-"}</td>
                   <td>{deployment.imageTag}</td>
+                  <td>{deployment.srcToDockerBuild ? <a href={deployment.srcToDockerBuild.sourceVersionURL}>{deployment.commitId}</a> : "-" }</td>
+                  <td>{deployment.srcToDockerBuild ? <a href={deployment.srcToDockerBuild.URL}>{deployment.srcToDockerBuild.id}</a> : "-"}</td>
+                  <td>{deployment.srcToDockerBuild ? this.getIcon(deployment.srcToDockerBuild.result) : "-"}</td>
                   <td>{deployment.dockerToHldRelease ? <a href={deployment.dockerToHldRelease.URL}>{deployment.dockerToHldRelease!.id}</a> : "-"}</td>
                   <td>{deployment.dockerToHldRelease ? this.getIcon(deployment.dockerToHldRelease!.status) : "-"}</td>
                   <td>{deployment.hldToManifestBuild ? <a href={deployment.hldToManifestBuild.sourceVersionURL}>{deployment.hldCommitId}</a> : deployment.hldCommitId}</td>
                   <td>{deployment.hldToManifestBuild ? <a href={deployment.hldToManifestBuild.URL}>{deployment.hldToManifestBuild!.id}</a> : "-"}</td>
                   <td>{deployment.hldToManifestBuild ? this.getIcon(deployment.hldToManifestBuild!.result) : "-"}</td>
-                  <td>{deployment.hldToManifestBuild ? (Number.isNaN(deployment.hldToManifestBuild!.finishTime.valueOf()) ? "-" : deployment.hldToManifestBuild!.finishTime.toLocaleString()) : "-"}</td>
                   <td>{deployment.duration()} minutes</td>
                   <td>{deployment.status()}</td>
                   <td>{author !== undefined ? <a href={author.URL}>{author.name}</a> : ""}</td>
                   <td>{deployment.manifestCommitId === state.manifestSync ? "Synced" : ""}</td>
+                  <td>{deployment.hldToManifestBuild ? (Number.isNaN(deployment.hldToManifestBuild!.finishTime.valueOf()) ? "-" : deployment.hldToManifestBuild!.finishTime.toLocaleString()) : "-"}</td>
                 </tr>);
         counter++;
     });
     return (<table>
           <thead>
             <tr>
-              <th>Commit</th>
-              <th>SRC to ACR</th>
-              <th>Result</th>
               <th>Start Time</th>
               <th>Source Branch</th>
               <th>Image Version</th>
+              <th>Commit</th>
+              <th>SRC to ACR</th>
+              <th>Result</th>
               <th>ACR to HLD</th>
               <th>Result</th>
               <th>Commit</th>
               <th>HLD to Manifest</th>
               <th>Result</th>
-              <th>End Time</th>
               <th>Duration</th>
               <th>Status</th>
               <th>Author</th>
               <th>Cluster Sync</th>
+              <th>End Time</th>
             </tr>
           </thead>
           <tbody>
@@ -97,31 +97,46 @@ class Dashboard extends React.Component<{}, IDashboardState> {
   }
 
   public getDeployments = () => {
-    const srcPipeline = new AzureDevOpsPipeline("epicstuff", "hellobedrock", 101);
-    const hldPipeline = new AzureDevOpsPipeline("epicstuff", "hellobedrock", 1, true);
-    const clusterPipeline = new AzureDevOpsPipeline("epicstuff", "hellobedrock", 102);
-    const manifestRepo: Repository = new GitHub(config.GITHUB_MANIFEST_USERNAME, config.GITHUB_MANIFEST);
-    manifestRepo.getManifestSyncState();
-    Deployment.getDeployments("hello-bedrock", srcPipeline, hldPipeline, clusterPipeline, (deployments: Deployment[]) => {
-      this.setState({deployments,
-                     manifestSync: manifestRepo.manifestSync});
+    const srcPipeline = new AzureDevOpsPipeline(config.AZURE_ORG, config.AZURE_PROJECT, config.SRC_PIPELINE_ID);
+    const hldPipeline = new AzureDevOpsPipeline(config.AZURE_ORG, config.AZURE_PROJECT, config.DOCKER_PIPELINE_ID, true);
+    const clusterPipeline = new AzureDevOpsPipeline(config.AZURE_ORG, config.AZURE_PROJECT, config.HLD_PIPELINE_ID);
+
+    srcPipeline.getListOfBuilds((srcBuilds) => {
+      hldPipeline.getListOfReleases((hldReleases) => {
+        clusterPipeline.getListOfBuilds((clusterBuilds) => {
+          const manifestRepo: Repository = new GitHub(config.GITHUB_MANIFEST_USERNAME, config.GITHUB_MANIFEST);
+          manifestRepo.getManifestSyncState((syncCommit) => {
+            this.setState({manifestSync: syncCommit});
+          });
+          Deployment.getDeployments(config.STORAGE_PARTITION_KEY, srcPipeline, hldPipeline, clusterPipeline, (deployments: Deployment[]) => {
+            this.setState({deployments});
+            this.getAuthors();
+          });
+        });
+      });
     });
     return <div />;
   }
 
-  private getAuthor = (deployment: Deployment): Author | undefined => {
-    let author;
-    if (deployment.srcToDockerBuild && this.authors[deployment.srcToDockerBuild.sourceVersion]) {
-      author = this.authors[deployment.srcToDockerBuild.sourceVersion];
-      return author;
-    } else if (deployment.srcToDockerBuild) {
-      author = deployment.author();
-      if (author) {
-        this.authors[deployment.srcToDockerBuild.sourceVersion] = author;
-        return author;
+  private getAuthors = () => {
+    const state = this.state;
+    this.state.deployments.forEach((deployment) => {
+      if (deployment.srcToDockerBuild && !(deployment.srcToDockerBuild.sourceVersion in state.authors)) {
+        deployment.fetchAuthor((author: Author) => {
+          if (author && deployment.srcToDockerBuild) {
+            const copy = state.authors;
+            copy[deployment.srcToDockerBuild.sourceVersion] = author;
+            this.setState({authors: copy});
+          }
+        });
       }
-    }
+    });
+  }
 
+  private getAuthor = (deployment: Deployment): Author | undefined => {
+    if (deployment.srcToDockerBuild && deployment.srcToDockerBuild.sourceVersion in this.state.authors) {
+      return this.state.authors[deployment.srcToDockerBuild.sourceVersion];
+    }
     return undefined;
   }
 

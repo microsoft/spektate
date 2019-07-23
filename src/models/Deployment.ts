@@ -6,7 +6,7 @@ import Pipeline from './pipeline/Pipeline';
 import { Release } from './pipeline/Release';
 import { Author } from './repository/Author';
 
-export default class Deployment {
+class Deployment {
 
     public static async getDeployments(partitionKey: string, srcPipeline: Pipeline, hldPipeline: Pipeline, manifestPipeline: Pipeline, callback?: (deployments: Deployment[]) => void) {
         
@@ -109,6 +109,7 @@ export default class Deployment {
     public imageTag: string;
     public timeStamp: string;
     public manifestCommitId?: string;
+    public author?: Author;
 
     constructor(deploymentId: string, commitId: string, hldCommitId: string, imageTag: string, timeStamp: string, manifestCommitId?: string, srcToDockerBuild?: Build, dockerToHldRelease?: Release, hldToManifestBuild?: Build) {
         this.srcToDockerBuild = srcToDockerBuild;
@@ -144,12 +145,11 @@ export default class Deployment {
         return "In Progress";
     }
 
-    public author(): Author | undefined {
+    public fetchAuthor(callback: (author: Author) => void) {
         if (this.srcToDockerBuild && this.srcToDockerBuild.repository) {
-            const repository = this.srcToDockerBuild.repository.getAuthor(this.srcToDockerBuild.sourceVersion);
-            return repository;
+            this.srcToDockerBuild.repository.getAuthor(this.srcToDockerBuild.sourceVersion, callback);
         }
-
-        return undefined;
     }
 }
+
+export default Deployment;

@@ -1,10 +1,16 @@
-export class HttpHelper {
+import axios from 'axios';
 
-    public static httpGet(theUrl: string)
+export class HttpHelper {
+    public static httpGet(theUrl: string, callback: (data: any) => void)
     {
-        const xmlHttp = new XMLHttpRequest();
-        xmlHttp.open( "GET", theUrl, false ); // false for synchronous request
-        xmlHttp.send( null );
-        return xmlHttp.responseText;
+        axios.get(theUrl).then((response) => {
+            // handle success
+            callback(response);
+          })
+          .catch((error) => {
+            // handle error
+            // tslint:disable-next-line: no-console
+            console.log(error);
+          });
     }
 }
