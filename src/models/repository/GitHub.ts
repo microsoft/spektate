@@ -15,25 +15,30 @@ export class GitHub extends Repository {
         this.username = username;
     }
 
-    public getManifestSyncState() {
-        const tag = JSON.parse(HttpHelper.httpGet(manifestSyncTagURL.replace("<owner>", this.username).replace("<repo>", this.reponame)));
-        if (tag != null) {
-            const syncStatus = JSON.parse(HttpHelper.httpGet(tag.object.url));
-            if (syncStatus != null) {
-                this.manifestSync = syncStatus.object.sha.substring(0, 7);
+    public getManifestSyncState(callback: (syncCommit: string) => void) {
+        let tag;
+        HttpHelper.httpGet(manifestSyncTagURL.replace("<owner>", this.username).replace("<repo>", this.reponame), (data) => {
+            tag = data.data;
+            if (tag != null) {
+                HttpHelper.httpGet(tag.object.url, (syncStatus) => {
+                    if (syncStatus != null) {
+                        this.manifestSync = syncStatus.data.object.sha.substring(0, 7);
+                        callback(this.manifestSync);
+                    }
+                });
             }
-        }
+        });
     }
 
-    public getAuthor(commitId: string): Author | undefined {
-        // tslint:disable-next-line:no-console
-        console.log("Being called for " + commitId);
-        const authorInfo = JSON.parse(HttpHelper.httpGet(authorInfoURL.replace("<owner>", this.username).replace("<repo>", this.reponame).replace("<commitId>", commitId)));
-        if (authorInfo != null) {
-            const author = new Author(authorInfo.author.html_url, authorInfo.commit.author.name, authorInfo.committer.login);
-            return author;
-        }
-
-        return undefined;
+    public getAuthor(commitId: string, callback?: (author: Author) => void): void {
+        HttpHelper.httpGet(authorInfoURL.replace("<owner>", this.username).replace("<repo>", this.reponame).replace("<commitId>", commitId), (data) => {
+            const authorInfo = data.data;
+            if (authorInfo != null) {
+                const author = new Author(authorInfo.author.html_url, authorInfo.commit.author.name, authorInfo.committer.login);
+                if (callback) {
+                    callback(author);
+                }
+            }
+        });
     }
 }
