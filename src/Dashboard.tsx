@@ -56,11 +56,12 @@ class Dashboard extends React.Component<{}, IDashboardState> {
                   <td>{deployment.srcToDockerBuild ? <a href={deployment.srcToDockerBuild.URL}>{deployment.srcToDockerBuild.id}</a> : "-"}</td>
                   <td>{deployment.srcToDockerBuild ? this.getIcon(deployment.srcToDockerBuild.result) : "-"}</td>
                   <td>{deployment.dockerToHldRelease ? <a href={deployment.dockerToHldRelease.URL}>{deployment.dockerToHldRelease!.id}</a> : "-"}</td>
+                  <td>{deployment.environment}</td>
                   <td>{deployment.dockerToHldRelease ? this.getIcon(deployment.dockerToHldRelease!.status) : "-"}</td>
                   <td>{deployment.hldToManifestBuild ? <a href={deployment.hldToManifestBuild.sourceVersionURL}>{deployment.hldCommitId}</a> : deployment.hldCommitId}</td>
                   <td>{deployment.hldToManifestBuild ? <a href={deployment.hldToManifestBuild.URL}>{deployment.hldToManifestBuild!.id}</a> : "-"}</td>
                   <td>{deployment.hldToManifestBuild ? this.getIcon(deployment.hldToManifestBuild!.result) : "-"}</td>
-                  <td>{deployment.duration()} minutes</td>
+                  <td>{deployment.duration()} mins</td>
                   <td>{deployment.status()}</td>
                   <td>{author !== undefined ? <a href={author.URL}>{author.name}</a> : ""}</td>
                   <td>{deployment.manifestCommitId === state.manifestSync ? "Synced" : ""}</td>
@@ -78,6 +79,7 @@ class Dashboard extends React.Component<{}, IDashboardState> {
               <th>SRC to ACR</th>
               <th>Result</th>
               <th>ACR to HLD</th>
+              <th>Environment</th>
               <th>Result</th>
               <th>Commit</th>
               <th>HLD to Manifest</th>
