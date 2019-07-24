@@ -41,6 +41,7 @@ class Deployment {
                         let p2;
                         let hldCommitId = "";
                         let manifestCommitId = "";
+                        let env = "";
                         if (entry.p2 != null) {
                             p2 = hldPipeline.releases[entry.p2._];
                         }
@@ -55,7 +56,10 @@ class Deployment {
                             manifestCommitId = entry.manifestCommitId._;
                         }
 
-                        const deployment = new Deployment(entry.RowKey._, commitId,hldCommitId, imageTag, entry.Timestamp._, manifestCommitId, p1, p2, p3);
+                        if (entry.env != null) {
+                            env = entry.env._;
+                        }
+                        const deployment = new Deployment(entry.RowKey._, commitId,hldCommitId, imageTag, entry.Timestamp._, env, manifestCommitId, p1, p2, p3);
                         deployments.push(deployment);
                     }
                     if (callback) {
@@ -110,8 +114,9 @@ class Deployment {
     public timeStamp: string;
     public manifestCommitId?: string;
     public author?: Author;
+    public environment: string;
 
-    constructor(deploymentId: string, commitId: string, hldCommitId: string, imageTag: string, timeStamp: string, manifestCommitId?: string, srcToDockerBuild?: Build, dockerToHldRelease?: Release, hldToManifestBuild?: Build) {
+    constructor(deploymentId: string, commitId: string, hldCommitId: string, imageTag: string, timeStamp: string, environment: string, manifestCommitId?: string, srcToDockerBuild?: Build, dockerToHldRelease?: Release, hldToManifestBuild?: Build) {
         this.srcToDockerBuild = srcToDockerBuild;
         this.hldToManifestBuild = hldToManifestBuild;
         this.deploymentId = deploymentId;
@@ -121,6 +126,7 @@ class Deployment {
         this.imageTag = imageTag;
         this.timeStamp = timeStamp;
         this.manifestCommitId = manifestCommitId;
+        this.environment = environment;
     }
 
     public duration(): string {
