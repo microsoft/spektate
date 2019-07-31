@@ -8,7 +8,25 @@ import { Author } from './repository/Author';
 
 class Deployment {
 
-    public static async getDeployments(partitionKey: string, srcPipeline: Pipeline, hldPipeline: Pipeline, manifestPipeline: Pipeline, callback?: (deployments: Deployment[]) => void) {
+    public static async getDeploymentsBasedOnFilters(partitionKey: string, srcPipeline: Pipeline, hldPipeline: Pipeline, manifestPipeline: Pipeline, environment?: string, imageTag?: string, p1Id?: string, commitId?: string, callback?: (deployments: Deployment[]) => void) {
+        const query = new azure.TableQuery().where("PartitionKey eq '" +  partitionKey + "'");
+        if (environment && environment !== "") {
+            query.and("env eq '" + environment + "'");
+        }
+        if (imageTag && imageTag !== "") {
+            query.and("imageTag eq '" + imageTag + "'");
+        }
+        if (p1Id && p1Id !== "") {
+            query.and("p1 eq '" + p1Id + "'");
+        }
+        if (commitId && commitId !== "") {
+            query.and("commitId eq '" + commitId + "'");
+        }
+
+        await this.getDeployments(partitionKey, srcPipeline, hldPipeline, manifestPipeline, callback, query);
+    }
+
+    public static async getDeployments(partitionKey: string, srcPipeline: Pipeline, hldPipeline: Pipeline, manifestPipeline: Pipeline, callback?: (deployments: Deployment[]) => void, query?: azure.TableQuery) {
         
         const tableService = azure.createTableService(config.STORAGE_ACCOUNT_NAME, config.STORAGE_ACCOUNT_KEY);
         // Disabling ts-lint on line below, to get around issue https://github.com/Azure/azure-storage-node/issues/545
@@ -16,51 +34,20 @@ class Deployment {
         let nextContinuationToken: azure.TableService.TableContinuationToken = <any>null;
         const deployments: Deployment[] = [];
 
+        if (!query) {
+            query = new azure.TableQuery().where("PartitionKey eq '" +  partitionKey + "'");
+        }
+
         // TODO: Look into cleaning up the parsing code below (avoid parsing underscores).
         tableService.queryEntities(config.STORAGE_TABLE_NAME, 
-            new azure.TableQuery().where("PartitionKey eq '" +  partitionKey + "'"),
+            query,
             nextContinuationToken,
                 (error: any, result: any) => {
                 if (!error) {
                     // tslint:disable-next-line:no-console
-                    console.log(result.entries);
+                    // console.log(result.entries);
                     for(const entry of result.entries) {
-                        let p1;
-                        let imageTag = "";
-                        let commitId = "";
-                        if (entry.p1 != null) {
-                            p1 = srcPipeline.builds[entry.p1._];
-                            if (entry.commitId != null) {
-                                commitId = entry.commitId._;
-                            }
-                            if (entry.imageTag != null) {
-                                imageTag = entry.imageTag._;
-                            }
-                        }
-
-                        let p2;
-                        let hldCommitId = "";
-                        let manifestCommitId = "";
-                        let env = "";
-                        if (entry.p2 != null) {
-                            p2 = hldPipeline.releases[entry.p2._];
-                        }
-                        let p3;
-                        if (entry.p3 != null) {
-                            p3 = manifestPipeline.builds[entry.p3._];
-                        }
-                        if (entry.hldCommitId != null) {
-                            hldCommitId = entry.hldCommitId._;
-                        }
-                        if (entry.manifestCommitId != null) {
-                            manifestCommitId = entry.manifestCommitId._;
-                        }
-
-                        if (entry.env != null) {
-                            env = entry.env._;
-                        }
-                        const deployment = new Deployment(entry.RowKey._, commitId,hldCommitId, imageTag, entry.Timestamp._, env, manifestCommitId, p1, p2, p3);
-                        deployments.push(deployment);
+                        deployments.push(Deployment.getDeploymentFromDBEntry(entry, srcPipeline, hldPipeline, manifestPipeline));
                     }
                     if (callback) {
                         deployments.sort(Deployment.compare);
@@ -104,6 +91,48 @@ class Deployment {
 
         return 0;
     }
+
+    private static getDeploymentFromDBEntry = (entry: any, srcPipeline: Pipeline, hldPipeline: Pipeline, manifestPipeline: Pipeline) => {
+        let p1;
+        let imageTag = "";
+        let commitId = "";
+        if (entry.p1 != null) {
+            p1 = srcPipeline.builds[entry.p1._];
+            if (entry.commitId != null) {
+                commitId = entry.commitId._;
+            }
+            if (entry.imageTag != null) {
+                imageTag = entry.imageTag._;
+            }
+        }
+
+        let p2;
+        let hldCommitId = "";
+        let manifestCommitId = "";
+        let env = "";
+        if (entry.p2 != null) {
+            p2 = hldPipeline.releases[entry.p2._];
+        }
+        let p3;
+        if (entry.p3 != null) {
+            p3 = manifestPipeline.builds[entry.p3._];
+        }
+        if (entry.hldCommitId != null) {
+            hldCommitId = entry.hldCommitId._;
+        }
+        if (entry.manifestCommitId != null) {
+            manifestCommitId = entry.manifestCommitId._;
+        }
+
+        if (entry.env != null) {
+            env = entry.env._;
+        }
+
+        const deployment = new Deployment(entry.RowKey._, commitId,hldCommitId, imageTag, entry.Timestamp._, env, manifestCommitId, p1, p2, p3);
+        return deployment;
+    }
+
+    
     public deploymentId: string;
     public srcToDockerBuild?: Build;
     public dockerToHldRelease?: Release;

@@ -4,6 +4,7 @@ import { Build } from "./Build";
 import Pipeline from "./Pipeline";
 import { Release } from "./Release";
 
+const buildFilterUrl = "https://dev.azure.com/{organization}/{project}/_apis/build/builds?definitions={definitionId}&buildIds={buildIds}&api-version=5.0&queryOrder=startTimeDescending";
 const baseBuildUrl = "https://dev.azure.com/{organization}/{project}/_apis/build/builds?definitions={definitionId}&api-version=5.0&queryOrder=startTimeDescending";
 const baseReleaseUrl = "https://vsrm.dev.azure.com/{organization}/{project}/_apis/release/deployments?api-version=5.0&definitionId={definitionId}&queryOrder=startTimeDescending";
 
@@ -22,8 +23,11 @@ class AzureDevOpsPipeline extends Pipeline {
         this.isRelease = isRelease;
     }
 
-    public getListOfBuilds(callback: (data: any) => void) {
-        HttpHelper.httpGet(this.getBuildUrl(), (json) => {
+    public getListOfBuilds(callback: (data: any) => void, buildIds?: Set<string>) {
+        const buildUrl = this.getBuildUrl(buildIds);
+        // tslint:disable-next-line: no-console
+        console.log("Making call to " + buildUrl);
+        HttpHelper.httpGet(buildUrl, (json) => {
             const builds: Build[] = [];
             for (const row of json.data.value) {
                 const build = new Build();
@@ -73,7 +77,16 @@ class AzureDevOpsPipeline extends Pipeline {
             callback(this.releases);
         });
     }
-    private getBuildUrl() {
+
+    private getBuildUrl(buildIds?: Set<string>) {
+        if (buildIds) {
+            let strBuildIds = "";
+            buildIds.forEach((buildId) => {
+                strBuildIds += buildId + ",";
+            });
+            return buildFilterUrl.replace("{buildIds}", strBuildIds);
+        }
+
         return baseBuildUrl.replace("{organization}", this.org).replace("{project}", this.project).replace("{definitionId}", this.definitionId + '');
     }
     private getReleaseUrl() {

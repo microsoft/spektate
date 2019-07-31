@@ -5,7 +5,9 @@
   "dependencies": {
     "@kubernetes/client-node": "^0.8.2",
     "axios": "^0.19.0",
-    "chalk": "^2.4.2",
+    "cli-progress": "^2.1.1",
+    "cli-table": "^0.3.1",
+    "commander": "^2.20.0",
     "kubernetes-client": "^6.11.1",
     "office-ui-fabric-react": "^7.10.0",
     "react": "^16.8.5",
@@ -20,10 +22,12 @@
     "eject": "react-scripts-ts eject",
     "start-cli": "nodemon --watch 'src/cli/**/*.ts' --exec 'ts-node' src/cli/cli.ts",
     "create-cli": "npm run build-cli",
-    "build-cli": "tsc -p ."
+    "build-cli": "tsc -p .",
+    "refresh": "rm -rf ./node_modules ./package-lock.json && npm install"
   },
   "devDependencies": {
-    "@types/chalk": "^2.2.0",
+    "@types/cli-progress": "^1.8.1",
+    "@types/cli-table": "^0.3.0",
     "@types/jest": "^24.0.11",
     "@types/node": "^12.6.8",
     "@types/react": "^16.8.10",
