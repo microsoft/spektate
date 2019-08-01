@@ -38,21 +38,29 @@ class Deployment {
             query = new azure.TableQuery().where("PartitionKey eq '" +  partitionKey + "'");
         }
 
-        // TODO: Look into cleaning up the parsing code below (avoid parsing underscores).
+        const p1 = srcPipeline.getListOfBuilds();
+        const p2 = hldPipeline.getListOfReleases();
+        const p3 = manifestPipeline.getListOfBuilds();
+        
         tableService.queryEntities(config.STORAGE_TABLE_NAME, 
             query,
             nextContinuationToken,
                 (error: any, result: any) => {
                 if (!error) {
-                    // tslint:disable-next-line:no-console
-                    // console.log(result.entries);
-                    for(const entry of result.entries) {
-                        deployments.push(Deployment.getDeploymentFromDBEntry(entry, srcPipeline, hldPipeline, manifestPipeline));
-                    }
-                    if (callback) {
-                        deployments.sort(Deployment.compare);
-                        callback(deployments);
-                    }
+
+                    // Wait for all three pipelines to load their respective builds before we instantiate deployments
+                    Promise.all([p1, p2, p3]).then(() => {
+                        // tslint:disable-next-line:no-console
+                        // console.log(result.entries);
+                        for(const entry of result.entries) {
+                            deployments.push(Deployment.getDeploymentFromDBEntry(entry, srcPipeline, hldPipeline, manifestPipeline));
+                        }
+                        if (callback) {
+                            deployments.sort(Deployment.compare);
+                            callback(deployments);
+                        }
+                    });
+                    
                 }
         });
     }
@@ -92,6 +100,7 @@ class Deployment {
         return 0;
     }
 
+    // TODO: Look into cleaning up the parsing code below (avoid parsing underscores).
     private static getDeploymentFromDBEntry = (entry: any, srcPipeline: Pipeline, hldPipeline: Pipeline, manifestPipeline: Pipeline) => {
         let p1;
         let imageTag = "";
@@ -132,7 +141,7 @@ class Deployment {
         return deployment;
     }
 
-    
+
     public deploymentId: string;
     public srcToDockerBuild?: Build;
     public dockerToHldRelease?: Release;

@@ -103,19 +103,13 @@ class Dashboard extends React.Component<{}, IDashboardState> {
     const hldPipeline = new AzureDevOpsPipeline(config.AZURE_ORG, config.AZURE_PROJECT, config.DOCKER_PIPELINE_ID, true);
     const clusterPipeline = new AzureDevOpsPipeline(config.AZURE_ORG, config.AZURE_PROJECT, config.HLD_PIPELINE_ID);
 
-    srcPipeline.getListOfBuilds((srcBuilds) => {
-      hldPipeline.getListOfReleases((hldReleases) => {
-        clusterPipeline.getListOfBuilds((clusterBuilds) => {
-          const manifestRepo: Repository = new GitHub(config.GITHUB_MANIFEST_USERNAME, config.GITHUB_MANIFEST);
-          manifestRepo.getManifestSyncState((syncCommit) => {
-            this.setState({manifestSync: syncCommit});
-          });
-          Deployment.getDeployments(config.STORAGE_PARTITION_KEY, srcPipeline, hldPipeline, clusterPipeline, (deployments: Deployment[]) => {
-            this.setState({deployments});
-            this.getAuthors();
-          });
-        });
-      });
+    const manifestRepo: Repository = new GitHub(config.GITHUB_MANIFEST_USERNAME, config.GITHUB_MANIFEST);
+    manifestRepo.getManifestSyncState((syncCommit) => {
+      this.setState({manifestSync: syncCommit});
+    });
+    Deployment.getDeployments(config.STORAGE_PARTITION_KEY, srcPipeline, hldPipeline, clusterPipeline, (deployments: Deployment[]) => {
+      this.setState({deployments});
+      this.getAuthors();
     });
     return <div />;
   }

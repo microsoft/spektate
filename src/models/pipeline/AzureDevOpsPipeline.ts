@@ -23,58 +23,67 @@ class AzureDevOpsPipeline extends Pipeline {
         this.isRelease = isRelease;
     }
 
-    public getListOfBuilds(callback: (data: any) => void, buildIds?: Set<string>) {
+    public async getListOfBuilds(callback?: (data: any) => void, buildIds?: Set<string>): Promise<void> {
         const buildUrl = this.getBuildUrl(buildIds);
         // tslint:disable-next-line: no-console
-        console.log("Making call to " + buildUrl);
-        HttpHelper.httpGet(buildUrl, (json) => {
-            const builds: Build[] = [];
-            for (const row of json.data.value) {
-                const build = new Build();
-                build.author = row.requestedFor.displayName;
-                build.buildNumber = row.buildNumber;
-                build.id = row.id;
-                build.queueTime = new Date(row.queueTime);
-                build.sourceBranch = row.sourceBranch;
-                build.status = row.status;
-                build.startTime = new Date(row.startTime);
-                build.URL = row._links.web.href;
-                build.result = row.result;
-                build.sourceVersion = row.sourceVersion;
-                build.sourceVersionURL = row._links.sourceVersionDisplayUri.href;
-                build.finishTime = new Date(row.finishTime);
-                if (row.repository.type === "GitHub") {
-                    build.repository = new GitHub(row.repository.id.split('/')[0], row.repository.id.split('/')[1]);
+        // console.log("Making call to " + buildUrl);
+        return new Promise((resolve, reject) => {
+            HttpHelper.httpGet(buildUrl, (json) => {
+                const builds: Build[] = [];
+                for (const row of json.data.value) {
+                    const build = new Build();
+                    build.author = row.requestedFor.displayName;
+                    build.buildNumber = row.buildNumber;
+                    build.id = row.id;
+                    build.queueTime = new Date(row.queueTime);
+                    build.sourceBranch = row.sourceBranch;
+                    build.status = row.status;
+                    build.startTime = new Date(row.startTime);
+                    build.URL = row._links.web.href;
+                    build.result = row.result;
+                    build.sourceVersion = row.sourceVersion;
+                    build.sourceVersionURL = row._links.sourceVersionDisplayUri.href;
+                    build.finishTime = new Date(row.finishTime);
+                    if (row.repository.type === "GitHub") {
+                        build.repository = new GitHub(row.repository.id.split('/')[0], row.repository.id.split('/')[1]);
+                    }
+                    builds.push(build);
+                    this.builds[build.id] = build;
                 }
-                builds.push(build);
-                this.builds[build.id] = build;
-            }
-
-            callback(this.builds);
+                resolve();
+                if (callback) {
+                    callback(this.builds);
+                }
+            });
         });
     }
 
-    public getListOfReleases(callback: (data: any) => void) {
-        HttpHelper.httpGet(this.getReleaseUrl(), (json) => {
-            const releases: Release[] = [];
-            for (const row of json.data.value) {
-                const release = new Release();
-                release.id = row.id;
-                release.queueTime = new Date(row.queuedOn);
-                release.startTime = new Date(row.startedOn);
-                release.finishTime = new Date(row.completedOn);
-                release.status = row.deploymentStatus;
-                release.URL = row.release._links.web.href;
-                if (row.release.artifacts.length > 0) {
-                    release.imageVersion = row.release.artifacts[0].definitionReference.version.id;
-                    release.registryURL = row.release.artifacts[0].definitionReference.registryurl.id;
-                    release.registryResourceGroup = row.release.artifacts[0].definitionReference.resourcegroup.id;
+    public async getListOfReleases(callback?: (data: any) => void, releaseIds?: Set<string>): Promise<void> {
+        return new Promise((resolve, reject) => {
+            HttpHelper.httpGet(this.getReleaseUrl(), (json) => {
+                const releases: Release[] = [];
+                for (const row of json.data.value) {
+                    const release = new Release();
+                    release.id = row.id;
+                    release.queueTime = new Date(row.queuedOn);
+                    release.startTime = new Date(row.startedOn);
+                    release.finishTime = new Date(row.completedOn);
+                    release.status = row.deploymentStatus;
+                    release.URL = row.release._links.web.href;
+                    if (row.release.artifacts.length > 0) {
+                        release.imageVersion = row.release.artifacts[0].definitionReference.version.id;
+                        release.registryURL = row.release.artifacts[0].definitionReference.registryurl.id;
+                        release.registryResourceGroup = row.release.artifacts[0].definitionReference.resourcegroup.id;
+                    }
+                    releases.push(release);
+                    this.releases[release.id] = release;
                 }
-                releases.push(release);
-                this.releases[release.id] = release;
-            }
 
-            callback(this.releases);
+                resolve();
+                if (callback) {
+                    callback(this.releases);
+                }
+            });
         });
     }
 
@@ -89,7 +98,15 @@ class AzureDevOpsPipeline extends Pipeline {
 
         return baseBuildUrl.replace("{organization}", this.org).replace("{project}", this.project).replace("{definitionId}", this.definitionId + '');
     }
-    private getReleaseUrl() {
+    private getReleaseUrl(releaseIds?: Set<string>) {
+        if (releaseIds) {
+            let strBuildIds = "";
+            releaseIds.forEach((releaseId) => {
+                strBuildIds += releaseId + ",";
+            });
+            return buildFilterUrl.replace("{buildIds}", strBuildIds);
+        }
+
         return baseReleaseUrl.replace("{organization}", this.org).replace("{project}", this.project).replace("{definitionId}", this.definitionId + '');
     }
 }

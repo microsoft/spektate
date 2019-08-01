@@ -11,8 +11,8 @@ abstract class Pipeline {
 
     public builds: IBuilds = {};
     public releases: IReleases = {};
-    public abstract getListOfBuilds(callback: (data: any) => void): void;
-    public abstract getListOfReleases(callback: (data: any) => void): void;
+    public abstract getListOfBuilds(callback?: (data: any) => void, buildIds?: Set<string>): Promise<void>;
+    public abstract getListOfReleases(callback?: (data: any) => void, releaseIds?: Set<string>): Promise<void>;
 }
 
 export default Pipeline;
