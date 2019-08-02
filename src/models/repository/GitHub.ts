@@ -15,18 +15,21 @@ export class GitHub extends Repository {
         this.username = username;
     }
 
-    public getManifestSyncState(callback: (syncCommit: string) => void) {
+    public getManifestSyncState(callback: (syncCommit: string) => void): Promise<void> {
         let tag;
-        HttpHelper.httpGet(manifestSyncTagURL.replace("<owner>", this.username).replace("<repo>", this.reponame), (data) => {
-            tag = data.data;
-            if (tag != null) {
-                HttpHelper.httpGet(tag.object.url, (syncStatus) => {
-                    if (syncStatus != null) {
-                        this.manifestSync = syncStatus.data.object.sha.substring(0, 7);
-                        callback(this.manifestSync);
-                    }
-                });
-            }
+        return new Promise((resolve, reject) => {
+            HttpHelper.httpGet(manifestSyncTagURL.replace("<owner>", this.username).replace("<repo>", this.reponame), (data) => {
+                tag = data.data;
+                if (tag != null) {
+                    HttpHelper.httpGet(tag.object.url, (syncStatus) => {
+                        resolve();
+                        if (syncStatus != null) {
+                            this.manifestSync = syncStatus.data.object.sha.substring(0, 7);
+                            callback(this.manifestSync);
+                        }
+                    });
+                }
+            });
         });
     }
 

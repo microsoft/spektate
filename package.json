@@ -18,7 +18,7 @@
   "scripts": {
     "start": "react-scripts-ts start",
     "build": "react-scripts-ts build",
-    "test": "react-scripts-ts test --env=jsdom",
+    "test": "mocha -r ts-node/register src/tests/*.ts",
     "eject": "react-scripts-ts eject",
     "start-cli": "nodemon --watch 'src/cli/**/*.ts' --exec 'ts-node' src/cli/cli.ts",
     "create-cli": "npm run build-cli",
@@ -26,13 +26,16 @@
     "refresh": "rm -rf ./node_modules ./package-lock.json && npm install"
   },
   "devDependencies": {
+    "@types/chai": "^4.1.7",
     "@types/cli-progress": "^1.8.1",
     "@types/cli-table": "^0.3.0",
-    "@types/jest": "^24.0.11",
+    "@types/mocha": "^5.2.7",
     "@types/node": "^12.6.8",
     "@types/react": "^16.8.10",
     "@types/react-dom": "^16.8.3",
     "azure-storage": "^2.10.3",
+    "chai": "^4.2.0",
+    "mocha": "^6.2.0",
     "nodemon": "^1.19.1",
     "ts-node": "^8.3.0",
     "typescript": "^3.5.3"
