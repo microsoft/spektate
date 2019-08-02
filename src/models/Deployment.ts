@@ -38,15 +38,25 @@ class Deployment {
             query = new azure.TableQuery().where("PartitionKey eq '" +  partitionKey + "'");
         }
 
-        const p1 = srcPipeline.getListOfBuilds();
-        const p2 = hldPipeline.getListOfReleases();
-        const p3 = manifestPipeline.getListOfBuilds();
-        
         tableService.queryEntities(config.STORAGE_TABLE_NAME, 
             query,
             nextContinuationToken,
                 (error: any, result: any) => {
                 if (!error) {
+                    const srcBuildIds: Set<string> = new Set<string>();
+                    const manifestBuildIds: Set<string> = new Set<string>();
+                    for (const entry of result.entries) {
+                        if (entry.p1) {
+                            srcBuildIds.add(entry.p1._);
+                        }
+                        if (entry.p3) {
+                            manifestBuildIds.add(entry.p3._);
+                        }
+                    }
+
+                    const p1 = srcPipeline.getListOfBuilds(undefined, srcBuildIds);
+                    const p2 = hldPipeline.getListOfReleases();
+                    const p3 = manifestPipeline.getListOfBuilds(undefined, manifestBuildIds);
 
                     // Wait for all three pipelines to load their respective builds before we instantiate deployments
                     Promise.all([p1, p2, p3]).then(() => {
