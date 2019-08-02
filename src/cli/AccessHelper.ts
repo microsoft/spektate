@@ -20,41 +20,35 @@ export class AccessHelper {
         });
     }
 
+    // TODO: Once the bug with release API is fixed (regarding returning only top 50 rows),
+    // improve the below and move it into models
     public static getLogs = (buildId: string, releaseId: string) => {
         if (buildId !== undefined && buildId !== "") {
             const p1 = srcPipeline.getListOfBuilds();
             const p2 = clusterPipeline.getListOfBuilds();
             Promise.all([p1, p2]).then(() => {
                 if (buildId in srcPipeline.builds) {
-                    // tslint:disable-next-line: no-console
                     console.log("Navigate to: " + srcPipeline.builds[buildId].URL);
                 } else if (buildId in clusterPipeline.builds) {
-                    // tslint:disable-next-line: no-console
                     console.log("Navigate to: " + clusterPipeline.builds[buildId].URL);
                 } else {
-                    // tslint:disable-next-line: no-console
                     console.log("Unable to find build for " + buildId);
                 }
             });
         } else if (releaseId !== undefined && releaseId !== "") {
             hldPipeline.getListOfReleases().then(() => {
                 if (releaseId in hldPipeline.releases) {
-                    // tslint:disable-next-line: no-console
                     console.log("Navigate to: " + hldPipeline.releases[releaseId].URL);
                 } else {
-                    // tslint:disable-next-line: no-console
                     console.log("Unable to find release for " + releaseId);
                 }
             });
         } else {
-            // tslint:disable-next-line: no-console
             console.log("One of build-id or release-id need to be specified.");
         }
     }
 
     public static getDeployments = (environment?: string, imageTag?: string, p1Id?: string, commitId?: string) => {
-        // const progressBar = new Progress.Bar({}, Progress.Presets.shades_classic);
-
         Deployment.getDeploymentsBasedOnFilters(config.STORAGE_PARTITION_KEY, srcPipeline, hldPipeline, clusterPipeline, environment, imageTag, p1Id, commitId, (deployments: Deployment[]) => {
 
             if (deployments.length > 0) {
@@ -91,13 +85,10 @@ export class AccessHelper {
                     table.push(row);
                 });
 
-                // tslint:disable-next-line: no-console
                 console.log(table.toString());
             } else {
-                // tslint:disable-next-line: no-console
                 console.log("No deployments found for specified filters.");
             }
-            // });
         });
     }
 

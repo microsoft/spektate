@@ -55,6 +55,7 @@ class Deployment {
                     }
 
                     const p1 = srcPipeline.getListOfBuilds(undefined, srcBuildIds);
+                    // TODO: send releaseIds to below after bug in release API is fixed
                     const p2 = hldPipeline.getListOfReleases();
                     const p3 = manifestPipeline.getListOfBuilds(undefined, manifestBuildIds);
 
