@@ -21,21 +21,12 @@ program
     AccessHelper.getDeployments(env.env, env.imageTag, env.buildId, env.commitId);
   })
   .on('--help', () => {
-    // tslint:disable-next-line: no-console
     console.log('');
-    // tslint:disable-next-line: no-console
     console.log('Examples:');
-    // tslint:disable-next-line: no-console
     console.log('');
-    // tslint:disable-next-line: no-console
-    // console.log('  $ deployments --author samiya');
-    // tslint:disable-next-line: no-console
     console.log('  $ deployments --id 4c3c2417ee78');
-    // tslint:disable-next-line: no-console
     console.log('  $ deployments --image-tag hello-bedrock-master-5429');
-    // tslint:disable-next-line: no-console
     console.log('  $ deployments --env Dev');
-    // tslint:disable-next-line: no-console
     console.log('  $ deployments --commit-id e3d6504');
   });;
 
@@ -44,17 +35,12 @@ program
   .description('Get commit Id to which the cluster is synced at')
   .action((env, options) => {
     AccessHelper.getClusterSync((syncCommit) => {
-        // tslint:disable-next-line: no-console
         console.log(syncCommit);
     });
   }).on('--help', () => {
-    // tslint:disable-next-line: no-console
     console.log('');
-    // tslint:disable-next-line: no-console
     console.log('Examples:');
-    // tslint:disable-next-line: no-console
     console.log('');
-    // tslint:disable-next-line: no-console
     console.log('  $ cluster-sync');
   });
 
@@ -66,13 +52,9 @@ program
   .action((env: any, options: any) => {
     AccessHelper.getLogs(env.buildId, env.releaseId)
   }).on("--help", () => {
-    // tslint:disable-next-line: no-console
     console.log('');
-    // tslint:disable-next-line: no-console
     console.log('Examples:');
-    // tslint:disable-next-line: no-console
     console.log('');
-    // tslint:disable-next-line: no-console
     console.log('  $ logs 5477');
   });
 

@@ -25,8 +25,6 @@ class AzureDevOpsPipeline extends Pipeline {
 
     public async getListOfBuilds(callback?: (data: any) => void, buildIds?: Set<string>): Promise<void> {
         const buildUrl = this.getBuildUrl(buildIds);
-        // tslint:disable-next-line: no-console
-        // console.log("Making call to " + buildUrl);
         return new Promise((resolve, reject) => {
             HttpHelper.httpGet(buildUrl, (json) => {
                 const builds: Build[] = [];
@@ -58,6 +56,8 @@ class AzureDevOpsPipeline extends Pipeline {
         });
     }
 
+    // TODO: Once the bug with release API is fixed (regarding returning only top 50 rows),
+    // improve the code below, and use the variable releaseIds
     public async getListOfReleases(callback?: (data: any) => void, releaseIds?: Set<string>): Promise<void> {
         return new Promise((resolve, reject) => {
             HttpHelper.httpGet(this.getReleaseUrl(), (json) => {
