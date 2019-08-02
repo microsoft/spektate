@@ -4,7 +4,7 @@ import { Build } from "./Build";
 import Pipeline from "./Pipeline";
 import { Release } from "./Release";
 
-const buildFilterUrl = "https://dev.azure.com/{organization}/{project}/_apis/build/builds?definitions={definitionId}&buildIds={buildIds}&api-version=5.0&queryOrder=startTimeDescending";
+const buildFilterUrl = "https://dev.azure.com/{organization}/{project}/_apis/build/builds?buildIds={buildIds}&api-version=5.0";
 const baseBuildUrl = "https://dev.azure.com/{organization}/{project}/_apis/build/builds?definitions={definitionId}&api-version=5.0&queryOrder=startTimeDescending";
 const baseReleaseUrl = "https://vsrm.dev.azure.com/{organization}/{project}/_apis/release/deployments?api-version=5.0&definitionId={definitionId}&queryOrder=startTimeDescending";
 
@@ -64,7 +64,7 @@ class AzureDevOpsPipeline extends Pipeline {
                 const releases: Release[] = [];
                 for (const row of json.data.value) {
                     const release = new Release();
-                    release.id = row.id;
+                    release.id = row.release.id;
                     release.queueTime = new Date(row.queuedOn);
                     release.startTime = new Date(row.startedOn);
                     release.finishTime = new Date(row.completedOn);
@@ -93,7 +93,7 @@ class AzureDevOpsPipeline extends Pipeline {
             buildIds.forEach((buildId) => {
                 strBuildIds += buildId + ",";
             });
-            return buildFilterUrl.replace("{buildIds}", strBuildIds);
+            return buildFilterUrl.replace("{buildIds}", strBuildIds).replace("{organization}", this.org).replace("{project}", this.project);
         }
 
         return baseBuildUrl.replace("{organization}", this.org).replace("{project}", this.project).replace("{definitionId}", this.definitionId + '');
@@ -104,7 +104,7 @@ class AzureDevOpsPipeline extends Pipeline {
             releaseIds.forEach((releaseId) => {
                 strBuildIds += releaseId + ",";
             });
-            return buildFilterUrl.replace("{buildIds}", strBuildIds);
+            return buildFilterUrl.replace("{buildIds}", strBuildIds).replace("{organization}", this.org).replace("{project}", this.project).replace("{definitionId}", this.definitionId + '');
         }
 
         return baseReleaseUrl.replace("{organization}", this.org).replace("{project}", this.project).replace("{definitionId}", this.definitionId + '');
