@@ -1,17 +1,8 @@
 #!/usr/bin/env ts-node
 
-// import Progress = require('cli-progress');
-import Table = require('cli-table');
 import program = require('commander');
 import { config } from '../config';
-import Deployment from '../models/Deployment';
-import AzureDevOpsPipeline from '../models/pipeline/AzureDevOpsPipeline';
-import { GitHub } from '../models/repository/GitHub';
-import { Repository } from '../models/repository/Repository';
-
-const srcPipeline = new AzureDevOpsPipeline(config.AZURE_ORG, config.AZURE_PROJECT, config.SRC_PIPELINE_ID);
-const hldPipeline = new AzureDevOpsPipeline(config.AZURE_ORG, config.AZURE_PROJECT, config.DOCKER_PIPELINE_ID, true);
-const clusterPipeline = new AzureDevOpsPipeline(config.AZURE_ORG, config.AZURE_PROJECT, config.HLD_PIPELINE_ID);
+import { AccessHelper } from './AccessHelper';
 
 program
   .version('0.1.0')
@@ -27,7 +18,7 @@ program
   .option("-i, --image-tag <image-tag>", "Get deployments for a particular image tag")
   .option("-e, --env <environment>", "Get deployments for a particular environment")
   .action((env, options) => {
-    getDeployments(env.env, env.imageTag, env.buildId, env.commitId);
+    AccessHelper.getDeployments(env.env, env.imageTag, env.buildId, env.commitId);
   })
   .on('--help', () => {
     // tslint:disable-next-line: no-console
@@ -52,7 +43,10 @@ program
   .command('cluster-sync')
   .description('Get commit Id to which the cluster is synced at')
   .action((env, options) => {
-    getClusterSync();
+    AccessHelper.getClusterSync((syncCommit) => {
+        // tslint:disable-next-line: no-console
+        console.log(syncCommit);
+    });
   }).on('--help', () => {
     // tslint:disable-next-line: no-console
     console.log('');
@@ -70,7 +64,7 @@ program
   .option("-b, --build-id <build-id>", "Get logs for a build Id")
   .option("-r, --release-id <release-id>", "Get logs for a release Id")
   .action((env: any, options: any) => {
-    getLogs(env.buildId, env.releaseId)
+    AccessHelper.getLogs(env.buildId, env.releaseId)
   }).on("--help", () => {
     // tslint:disable-next-line: no-console
     console.log('');
@@ -82,107 +76,4 @@ program
     console.log('  $ logs 5477');
   });
 
-program
-  .command('*')
-  .action((env) => {
-    // tslint:disable-next-line: no-console
-    console.log('You asked for "%s"', env);
-  });
-
 program.parse(process.argv);
-
-function getClusterSync() {
-    const manifestRepo: Repository = new GitHub(config.GITHUB_MANIFEST_USERNAME, config.GITHUB_MANIFEST);
-    manifestRepo.getManifestSyncState((syncCommit) => {
-        // tslint:disable-next-line: no-console
-        console.log(syncCommit);
-    });
-}
-
-function getLogs(buildId: string, releaseId: string) {
-    if (buildId !== undefined && buildId !== "") {
-        const p1 = srcPipeline.getListOfBuilds();
-        const p2 = clusterPipeline.getListOfBuilds();
-        Promise.all([p1, p2]).then(() => {
-            if (buildId in srcPipeline.builds) {
-                // tslint:disable-next-line: no-console
-                console.log("Navigate to: " + srcPipeline.builds[buildId].URL);
-            } else if (buildId in clusterPipeline.builds) {
-                // tslint:disable-next-line: no-console
-                console.log("Navigate to: " + clusterPipeline.builds[buildId].URL);
-            } else {
-                // tslint:disable-next-line: no-console
-                console.log("Unable to find build for " + buildId);
-            }
-        });
-    } else if (releaseId !== undefined && releaseId !== "") {
-        hldPipeline.getListOfReleases().then(() => {
-            if (releaseId in hldPipeline.releases) {
-                // tslint:disable-next-line: no-console
-                console.log("Navigate to: " + hldPipeline.releases[releaseId].URL);
-            } else {
-                // tslint:disable-next-line: no-console
-                console.log("Unable to find release for " + releaseId);
-            }
-        });
-    } else {
-        // tslint:disable-next-line: no-console
-        console.log("One of build-id or release-id need to be specified.");
-    }
-}
-
-function getDeployments(environment?: string, imageTag?: string, p1Id?: string, commitId?: string) {
-    // const progressBar = new Progress.Bar({}, Progress.Presets.shades_classic);
-
-    Deployment.getDeploymentsBasedOnFilters(config.STORAGE_PARTITION_KEY, srcPipeline, hldPipeline, clusterPipeline, environment, imageTag, p1Id, commitId, (deployments: Deployment[]) => {
-
-        if (deployments.length > 0) {
-            let row = [];
-            row.push("Start Time");
-            row.push("P1");
-            row.push("Result");
-            row.push("Commit");
-            row.push("P2");
-            row.push("Result");
-            row.push("Hld Commit");
-            row.push("Env");
-            row.push("Image Tag");
-            row.push("P3");
-            row.push("Result");
-            row.push("Manifest Commit");
-            row.push("End Time");
-            const table = new Table({head: row});
-            deployments.forEach((deployment) => {
-                row = [];
-                row.push(deployment.srcToDockerBuild ? deployment.srcToDockerBuild.startTime.toLocaleString() : "");
-                row.push(deployment.srcToDockerBuild ? deployment.srcToDockerBuild.id : "");
-                row.push(deployment.srcToDockerBuild ? getStatus(deployment.srcToDockerBuild.result) : "");
-                row.push(deployment.commitId);
-                row.push(deployment.dockerToHldRelease ? deployment.dockerToHldRelease.id : "");
-                row.push(deployment.dockerToHldRelease ? getStatus(deployment.dockerToHldRelease.status) : "");
-                row.push(deployment.hldCommitId);
-                row.push(deployment.environment);
-                row.push(deployment.imageTag);
-                row.push(deployment.hldToManifestBuild ? deployment.hldToManifestBuild.id : "");
-                row.push(deployment.hldToManifestBuild ? getStatus(deployment.hldToManifestBuild.result) : "");
-                row.push(deployment.manifestCommitId);
-                row.push(deployment.hldToManifestBuild ? deployment.hldToManifestBuild.finishTime.toLocaleString() : "");
-                table.push(row);
-            });
-
-            // tslint:disable-next-line: no-console
-            console.log(table.toString());
-        } else {
-            // tslint:disable-next-line: no-console
-            console.log("No deployments found for specified filters.");
-        }
-        // });
-    });
-}
-
-function getStatus( status: string) {
-    if (status === "succeeded") {
-        return '\u2713';
-    }
-    return '\u0445';
-}
