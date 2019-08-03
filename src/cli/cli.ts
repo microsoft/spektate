@@ -36,8 +36,6 @@ program
         config.STORAGE_PARTITION_KEY = env.storagePartitionKey;
         config.STORAGE_TABLE_NAME = env.storageTableName;
         AccessHelper.writeConfigToFile(config);
-
-        // init --azure-org epicstuff --azure-project hellobedrock --docker-pipeline-id 1 --github-manifest hello-bedrock-manifest --github-manifest-username samiyaakhtar --hld-pipeline-id 102 --src-pipeline-id 101 --storage-account-key "kH7RtRfP6roJRzYqctsVExOtji/ZC7LzsWCLSDfY92u3kD+EJzcvYnshi4Lpf9OcX4YVLGFH3gtf07IvspibcA==" --storage-account-name saakhtacjteststorage --storage-partition-key hello-bedrock --storage-table-name deployments
     } else {
         console.log("You need to specify each of the config settings in order to run any command.");
     }
