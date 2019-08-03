@@ -14,28 +14,30 @@ const srcPipeline = new AzureDevOpsPipeline(config.AZURE_ORG, config.AZURE_PROJE
 const fileLocation = os.homedir() + "/.ContainerJourney";
 
 export class AccessHelper {
-    public static verifyAppConfiguration = () => {
+    public static verifyAppConfiguration = (callback?: () => void) => {
         if (config.STORAGE_TABLE_NAME === "" || config.STORAGE_PARTITION_KEY === "" || config.STORAGE_ACCOUNT_NAME === "" || config.STORAGE_ACCOUNT_KEY === "" || config.SRC_PIPELINE_ID === 0 || config.HLD_PIPELINE_ID === 0 || config.GITHUB_MANIFEST_USERNAME === "" || config.GITHUB_MANIFEST === "" || config.DOCKER_PIPELINE_ID === undefined || config.AZURE_PROJECT === "" || config.AZURE_ORG === "") {
-            AccessHelper.configureAppFromFile();
+            AccessHelper.configureAppFromFile(callback);
             return false;
         }
 
         return true;
     }
 
-    public static configureAppFromFile = () => {
+    public static configureAppFromFile = (callback?: () => void) => {
         fs.readFile(fileLocation, (error, data) => {
             if (error) {
                 console.log(error);
             }
-            console.log(data.toString());
             const array = data.toString().split('\n');
-            console.log(array);
             array.forEach((row: string) => {
                 const key = row.split(/=(.+)/)[0];
                 const value = row.split(/=(.+)/)[1];
                 config[key] = value;
             });
+            console.log(config);
+            if (callback) {
+                callback();
+            }
         });
     }
 

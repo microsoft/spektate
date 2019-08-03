@@ -8,8 +8,9 @@ import AzureDevOpsPipeline from '../models/pipeline/AzureDevOpsPipeline';
 
 describe('config validation', () => {
     it('should be configured', () => {
-        AccessHelper.verifyAppConfiguration();
-        expect(config.SRC_PIPELINE_ID).to.not.equal(0);
+        AccessHelper.verifyAppConfiguration(() => {
+            expect(config.SRC_PIPELINE_ID).to.not.equal(0);
+        });
     });
 });
 
