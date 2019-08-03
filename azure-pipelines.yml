@@ -11,6 +11,12 @@ steps:
   displayName: 'Install Node.js'
 
 - script: |
+    chmod +x ./container-journey/src/cli/cli.ts
+    echo "./src/cli/cli/ts init --azure-org $AZURE_ORG --azure-project $AZURE_PROJECT --docker-pipeline-id $DOCKER_PIPELINE_ID --github-manifest $GITHUB_MANIFEST --github-manifest-username $GITHUB_MANIFEST_USERNAME --hld-pipeline-id $HLD_PIPELINE_ID --src-pipeline-id $SRC_PIPELINE_ID --storage-account-key $STORAGE_ACCOUNT_KEY --storage-account-name $STORAGE_ACCOUNT_NAME --storage-partition-key $STORAGE_PARTITION_KEY --storage-table-name $STORAGE_TABLE_NAME"
+    ./src/cli/cli/ts init --azure-org $AZURE_ORG --azure-project $AZURE_PROJECT --docker-pipeline-id $DOCKER_PIPELINE_ID --github-manifest $GITHUB_MANIFEST --github-manifest-username $GITHUB_MANIFEST_USERNAME --hld-pipeline-id $HLD_PIPELINE_ID --src-pipeline-id $SRC_PIPELINE_ID --storage-account-key $STORAGE_ACCOUNT_KEY --storage-account-name $STORAGE_ACCOUNT_NAME --storage-partition-key $STORAGE_PARTITION_KEY --storage-table-name $STORAGE_TABLE_NAME
+  displayName: "Set config"
+
+- script: |
     npm install
   workingDirectory: "./"
   displayName: "npm install"
