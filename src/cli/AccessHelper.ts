@@ -34,7 +34,6 @@ export class AccessHelper {
                 const value = row.split(/=(.+)/)[1];
                 config[key] = value;
             });
-            console.log(config);
             if (callback) {
                 callback();
             }
