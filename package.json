@@ -8,8 +8,10 @@
     "cli-progress": "^2.1.1",
     "cli-table": "^0.3.1",
     "commander": "^2.20.0",
+    "fs": "0.0.1-security",
     "kubernetes-client": "^6.11.1",
     "office-ui-fabric-react": "^7.10.0",
+    "os": "^0.1.1",
     "react": "^16.8.5",
     "react-dom": "^16.8.5",
     "react-http-request": "^2.0.0",
@@ -23,6 +25,7 @@
     "start-cli": "nodemon --watch 'src/cli/**/*.ts' --exec 'ts-node' src/cli/cli.ts",
     "create-cli": "npm run build-cli",
     "build-cli": "tsc -p .",
+    "lint": "tslint -p tsconfig.json -c tslint.json src/**/*.ts",
     "refresh": "rm -rf ./node_modules ./package-lock.json && npm install"
   },
   "devDependencies": {

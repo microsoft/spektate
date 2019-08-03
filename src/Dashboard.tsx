@@ -26,7 +26,7 @@ class Dashboard extends React.Component<{}, IDashboardState> {
       deployments: [],
       manifestSync: ""
     };
-    this.getDeployments();
+      this.getDeployments();
   }
   public render() {
     return (

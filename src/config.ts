@@ -1,5 +1,4 @@
-export const config = {
-    AZURE_MANIFEST: "",
+export let config = {
     AZURE_ORG: "",
     AZURE_PROJECT: "",
     DOCKER_PIPELINE_ID: 0,
@@ -11,5 +10,4 @@ export const config = {
     STORAGE_ACCOUNT_NAME: "",
     STORAGE_PARTITION_KEY: "",
     STORAGE_TABLE_NAME: ""
-
 }
