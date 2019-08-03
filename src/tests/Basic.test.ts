@@ -10,6 +10,16 @@ describe('config validation', () => {
     it('should be configured', () => {
         AccessHelper.verifyAppConfiguration(() => {
             expect(config.SRC_PIPELINE_ID).to.not.equal(0);
+            expect(config.HLD_PIPELINE_ID).to.not.equal(0);
+            expect(config.DOCKER_PIPELINE_ID).to.not.equal(0);
+            expect(config.AZURE_ORG.length).to.not.equal(0);
+            expect(config.AZURE_PROJECT.length).to.not.equal(0);
+            expect(config.GITHUB_MANIFEST.length).to.not.equal(0);
+            expect(config.GITHUB_MANIFEST_USERNAME.length).to.not.equal(0);
+            expect(config.STORAGE_ACCOUNT_KEY.length).to.not.equal(0);
+            expect(config.STORAGE_ACCOUNT_NAME.length).to.not.equal(0);
+            expect(config.STORAGE_PARTITION_KEY.length).to.not.equal(0);
+            expect(config.STORAGE_TABLE_NAME.length).to.not.equal(0);
         });
     });
 });
