@@ -5,6 +5,7 @@ import * as os from 'os';
 import { config } from '../config';
 import Deployment from '../models/Deployment';
 import AzureDevOpsPipeline from '../models/pipeline/AzureDevOpsPipeline';
+import { Author } from '../models/repository/Author';
 import { GitHub } from '../models/repository/GitHub';
 import { Repository } from '../models/repository/Repository';
 
@@ -14,6 +15,15 @@ const srcPipeline = new AzureDevOpsPipeline(config.AZURE_ORG, config.AZURE_PROJE
 const fileLocation = os.homedir() + "/.ContainerJourney";
 
 export class AccessHelper {
+    public static getAuthorForCommitOrBuild(commitId?: string, buildId?: string, callback?: ((author?: Author) => void)) {
+        Deployment.getDeploymentsBasedOnFilters(config.STORAGE_PARTITION_KEY, srcPipeline, hldPipeline, clusterPipeline, undefined, undefined, buildId, commitId, (deployments: Deployment[]) => {
+            if (deployments.length > 0 && callback) {
+                deployments[0].fetchAuthor(callback);
+            } else if(callback) {
+                callback(undefined);
+            }
+        });
+    }
     public static verifyAppConfiguration = (callback?: () => void) => {
         if (config.STORAGE_TABLE_NAME === "" || config.STORAGE_PARTITION_KEY === "" || config.STORAGE_ACCOUNT_NAME === "" || config.STORAGE_ACCOUNT_KEY === "" || config.SRC_PIPELINE_ID === 0 || config.HLD_PIPELINE_ID === 0 || config.GITHUB_MANIFEST_USERNAME === "" || config.GITHUB_MANIFEST === "" || config.DOCKER_PIPELINE_ID === undefined || config.AZURE_PROJECT === "" || config.AZURE_ORG === "") {
             AccessHelper.configureAppFromFile(callback);
