@@ -1,5 +1,7 @@
 
 import Table = require('cli-table');
+import * as fs from 'fs';
+import * as os from 'os';
 import { config } from '../config';
 import Deployment from '../models/Deployment';
 import AzureDevOpsPipeline from '../models/pipeline/AzureDevOpsPipeline';
@@ -9,8 +11,46 @@ import { Repository } from '../models/repository/Repository';
 const hldPipeline = new AzureDevOpsPipeline(config.AZURE_ORG, config.AZURE_PROJECT, config.DOCKER_PIPELINE_ID, true);
 const clusterPipeline = new AzureDevOpsPipeline(config.AZURE_ORG, config.AZURE_PROJECT, config.HLD_PIPELINE_ID);
 const srcPipeline = new AzureDevOpsPipeline(config.AZURE_ORG, config.AZURE_PROJECT, config.SRC_PIPELINE_ID);
+const fileLocation = os.homedir() + "/.ContainerJourney";
 
 export class AccessHelper {
+    public static verifyAppConfiguration = () => {
+        if (config.STORAGE_TABLE_NAME === "" || config.STORAGE_PARTITION_KEY === "" || config.STORAGE_ACCOUNT_NAME === "" || config.STORAGE_ACCOUNT_KEY === "" || config.SRC_PIPELINE_ID === 0 || config.HLD_PIPELINE_ID === 0 || config.GITHUB_MANIFEST_USERNAME === "" || config.GITHUB_MANIFEST === "" || config.DOCKER_PIPELINE_ID === undefined || config.AZURE_PROJECT === "" || config.AZURE_ORG === "") {
+            AccessHelper.configureAppFromFile();
+            return false;
+        }
+
+        return true;
+    }
+
+    public static configureAppFromFile = () => {
+        fs.readFile(fileLocation, (error, data) => {
+            if (error) {
+                console.log(error);
+            }
+            console.log(data.toString());
+            const array = data.toString().split('\n');
+            console.log(array);
+            array.forEach((row: string) => {
+                const key = row.split(/=(.+)/)[0];
+                const value = row.split(/=(.+)/)[1];
+                config[key] = value;
+            });
+        });
+    }
+
+    public static writeConfigToFile = (configMap: any) => {
+        let data = "";
+        Object.keys(configMap).forEach((key) => {
+            data += "\n" + key + "=" + configMap[key];
+        })
+        fs.writeFile(fileLocation, data, (error: any) => {
+            if (error) {
+                console.log(error);
+            }
+        });
+    }
+
     public static getClusterSync = (callback?: (syncCommit: string) => void): void => {
         const manifestRepo: Repository = new GitHub(config.GITHUB_MANIFEST_USERNAME, config.GITHUB_MANIFEST);
         manifestRepo.getManifestSyncState((commit) => {
