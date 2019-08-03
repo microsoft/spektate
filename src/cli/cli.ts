@@ -1,6 +1,7 @@
 #!/usr/bin/env ts-node
 
 import program = require('commander');
+import { Author } from 'src/models/repository/Author';
 import { config } from '../config';
 import { AccessHelper } from './AccessHelper';
 
@@ -42,6 +43,32 @@ program
   });
 
 program
+  .command('author')
+  .description('Get author for a commit id or deployment')
+  .option('-c, --commit-id <commit-id>', 'Get author for a particular commit id')
+  .option('-b, --build-id <build-id>', 'Get author for a particular build id')
+  .action((env, options) => {
+    if (env.commitId || env.buildId) {
+        AccessHelper.getAuthorForCommitOrBuild(env.commitId, env.buildId, (author: Author) => {
+            if (author) {
+                console.log("Username: " + author.username);
+                console.log("Name: " + author.name);
+                console.log("URL: " + author.URL);
+            } else {
+                console.log("No author found");
+            }
+        });
+    }
+  })
+  .on('--help', () => {
+    console.log('');
+    console.log('Examples:');
+    console.log('');
+    console.log('  $ author --commit-id e3d6504');
+    console.log('  $ author --build-id 5439');
+  });
+
+program
   .command('deployments')
   .description('Get deployments')
   .option("-b, --build-id <build-id>", "Get deployments for a particular build Id from source repository")
@@ -56,7 +83,7 @@ program
     console.log('');
     console.log('Examples:');
     console.log('');
-    console.log('  $ deployments --id 4c3c2417ee78');
+    console.log('  $ deployments --build-id 5477');
     console.log('  $ deployments --image-tag hello-bedrock-master-5429');
     console.log('  $ deployments --env Dev');
     console.log('  $ deployments --commit-id e3d6504');

@@ -33,6 +33,14 @@ describe('cluster-sync', () => {
     });
 });
 
+describe('author', () => {
+    it('should return the right author', () => {
+        AccessHelper.getAuthorForCommitOrBuild('e3d6504', undefined, (author: Author) => {
+            expect(author.username).equal("samiyaakhtar");
+        });
+    });
+});
+
 describe('deployment', () => {
     it('should return a correct deployment on filter', () => {
         const srcPipeline = new AzureDevOpsPipeline(config.AZURE_ORG, config.AZURE_PROJECT, config.SRC_PIPELINE_ID);
