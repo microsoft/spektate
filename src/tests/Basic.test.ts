@@ -5,6 +5,7 @@ import { AccessHelper } from '../cli/AccessHelper';
 import { config } from '../config';
 import Deployment from '../models/Deployment';
 import AzureDevOpsPipeline from '../models/pipeline/AzureDevOpsPipeline';
+import { Author } from '../models/repository/Author';
 
 describe('config validation', () => {
     it('should be configured', () => {
@@ -56,6 +57,11 @@ describe('deployment', () => {
                         expect(deployment.manifestCommitId).to.equal("801b241");
                         expect(deployment.hldToManifestBuild.id.toString()).to.equal("5433");
                         expect(deployment.hldToManifestBuild.result).to.equal("succeeded");
+                    }
+                    if (deployment.srcToDockerBuild.repository) {
+                        deployment.srcToDockerBuild.repository.getAuthor(deployment.srcToDockerBuild.sourceVersion, (author: Author) => {
+                            expect(author.username).to.equal("samiyaakhtar");
+                        });
                     }
                 }
             });

@@ -3,7 +3,7 @@ import { Author } from "./Author";
 import { Repository } from './Repository';
 
 const manifestSyncTagURL = "https://api.github.com/repos/<owner>/<repo>/git/refs/tags/flux-sync";
-const authorInfoURL = "//api.github.com/repos/<owner>/<repo>/commits/<commitId>";
+const authorInfoURL = "https://api.github.com/repos/<owner>/<repo>/commits/<commitId>";
 export class GitHub extends Repository {
     public username: string;
     public reponame: string;
@@ -33,15 +33,18 @@ export class GitHub extends Repository {
         });
     }
 
-    public getAuthor(commitId: string, callback?: (author: Author) => void): void {
-        HttpHelper.httpGet(authorInfoURL.replace("<owner>", this.username).replace("<repo>", this.reponame).replace("<commitId>", commitId), (data) => {
-            const authorInfo = data.data;
-            if (authorInfo != null) {
-                const author = new Author(authorInfo.author.html_url, authorInfo.commit.author.name, authorInfo.committer.login);
-                if (callback) {
-                    callback(author);
+    public getAuthor(commitId: string, callback?: (author: Author) => void): Promise<void> {
+        return new Promise((resolve, reject) => {
+            HttpHelper.httpGet(authorInfoURL.replace("<owner>", this.username).replace("<repo>", this.reponame).replace("<commitId>", commitId), (data) => {
+                const authorInfo = data.data;
+                if (authorInfo != null) {
+                    const author = new Author(authorInfo.author.html_url, authorInfo.commit.author.name, authorInfo.committer.login);
+                    resolve();
+                    if (callback) {
+                        callback(author);
+                    }
                 }
-            }
+            });
         });
     }
 }
