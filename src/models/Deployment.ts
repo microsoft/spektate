@@ -200,7 +200,7 @@ class Deployment {
         return "In Progress";
     }
 
-    public fetchAuthor(callback: (author: Author) => void) {
+    public fetchAuthor(callback: (author: Author) => void): void {
         if (this.srcToDockerBuild && this.srcToDockerBuild.repository) {
             this.srcToDockerBuild.repository.getAuthor(this.srcToDockerBuild.sourceVersion, callback);
         }
