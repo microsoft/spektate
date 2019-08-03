@@ -1,3 +1,6 @@
+[![Build Status](https://dev.azure.com/epicstuff/hellobedrock/_apis/build/status/samiyaakhtar.container-journey?branchName=master)](https://dev.azure.com/epicstuff/hellobedrock/_build/latest?definitionId=105&branchName=master)
+
+
 # Container Journey
 
 This is an initiative to visualize [Project Bedrock](https://github.com/microsoft/bedrock). 
