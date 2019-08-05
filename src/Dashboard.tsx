@@ -50,7 +50,6 @@ class Dashboard extends React.Component<{}, IDashboardState> {
       const author = this.getAuthor(deployment);
       rows.push(<tr key={counter}>
                   <td>{deployment.srcToDockerBuild ? deployment.srcToDockerBuild.startTime.toLocaleString() : "-"}</td>
-                  <td>{deployment.srcToDockerBuild ? deployment.srcToDockerBuild.sourceBranch.replace("refs/heads/", "") : "-"}</td>
                   <td>{deployment.imageTag}</td>
                   <td>{deployment.srcToDockerBuild ? <a href={deployment.srcToDockerBuild.sourceVersionURL}>{deployment.commitId}</a> : "-" }</td>
                   <td>{deployment.srcToDockerBuild ? <a href={deployment.srcToDockerBuild.URL}>{deployment.srcToDockerBuild.id}</a> : "-"}</td>
@@ -73,7 +72,6 @@ class Dashboard extends React.Component<{}, IDashboardState> {
           <thead>
             <tr>
               <th>Start Time</th>
-              <th>Source Branch</th>
               <th>Image Version</th>
               <th>Commit</th>
               <th>SRC to ACR</th>
