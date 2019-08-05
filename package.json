@@ -24,7 +24,7 @@
     "eject": "react-scripts-ts eject",
     "start-cli": "nodemon --watch 'src/cli/**/*.ts' --exec 'ts-node' src/cli/cli.ts",
     "create-cli": "npm run build-cli",
-    "build-cli": "tsc -p .",
+    "build-cli": "rm -rf cli-* && tsc -p . && pkg build/dist/cli/cli.js",
     "lint": "tslint -p tsconfig.json -c tslint.json src/**/*.ts",
     "refresh": "rm -rf ./node_modules ./package-lock.json && npm install"
   },
