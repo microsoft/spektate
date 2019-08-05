@@ -76,8 +76,9 @@ program
   .option("-i, --image-tag <image-tag>", "Get deployments for a particular image tag")
   .option("-e, --env <environment>", "Get deployments for a particular environment")
   .action((env, options) => {
-      AccessHelper.verifyAppConfiguration();
-      AccessHelper.getDeployments(env.env, env.imageTag, env.buildId, env.commitId);
+      AccessHelper.verifyAppConfiguration(() => {
+        AccessHelper.getDeployments(env.env, env.imageTag, env.buildId, env.commitId);
+      });
   })
   .on('--help', () => {
     console.log('');
@@ -93,9 +94,10 @@ program
   .command('cluster-sync')
   .description('Get commit Id to which the cluster is synced at')
   .action((env, options) => {
-    AccessHelper.verifyAppConfiguration();
-    AccessHelper.getClusterSync((syncCommit) => {
-        console.log(syncCommit);
+    AccessHelper.verifyAppConfiguration(() => {
+        AccessHelper.getClusterSync((syncCommit) => {
+            console.log(syncCommit);
+        });
     });
   }).on('--help', () => {
     console.log('');
@@ -110,8 +112,9 @@ program
   .option("-b, --build-id <build-id>", "Get logs for a build Id")
   .option("-r, --release-id <release-id>", "Get logs for a release Id")
   .action((env: any, options: any) => {
-    AccessHelper.verifyAppConfiguration();
-    AccessHelper.getLogs(env.buildId, env.releaseId)
+    AccessHelper.verifyAppConfiguration(() => {
+        AccessHelper.getLogs(env.buildId, env.releaseId);
+    });
   }).on("--help", () => {
     console.log('');
     console.log('Examples:');

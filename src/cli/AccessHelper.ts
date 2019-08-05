@@ -5,16 +5,24 @@ import * as os from 'os';
 import { config } from '../config';
 import Deployment from '../models/Deployment';
 import AzureDevOpsPipeline from '../models/pipeline/AzureDevOpsPipeline';
+import Pipeline from '../models/pipeline/Pipeline';
 import { Author } from '../models/repository/Author';
 import { GitHub } from '../models/repository/GitHub';
 import { Repository } from '../models/repository/Repository';
 
-const hldPipeline = new AzureDevOpsPipeline(config.AZURE_ORG, config.AZURE_PROJECT, config.DOCKER_PIPELINE_ID, true);
-const clusterPipeline = new AzureDevOpsPipeline(config.AZURE_ORG, config.AZURE_PROJECT, config.HLD_PIPELINE_ID);
-const srcPipeline = new AzureDevOpsPipeline(config.AZURE_ORG, config.AZURE_PROJECT, config.SRC_PIPELINE_ID);
+let hldPipeline: Pipeline;
+let clusterPipeline: Pipeline;
+let srcPipeline: Pipeline;
 const fileLocation = os.homedir() + "/.ContainerJourney";
 
 export class AccessHelper {
+
+    public static initializePipelines() {
+        hldPipeline = new AzureDevOpsPipeline(config.AZURE_ORG, config.AZURE_PROJECT, config.DOCKER_PIPELINE_ID, true);
+        clusterPipeline = new AzureDevOpsPipeline(config.AZURE_ORG, config.AZURE_PROJECT, config.HLD_PIPELINE_ID);
+        srcPipeline = new AzureDevOpsPipeline(config.AZURE_ORG, config.AZURE_PROJECT, config.SRC_PIPELINE_ID);
+    }
+
     public static getAuthorForCommitOrBuild(commitId?: string, buildId?: string, callback?: ((author?: Author) => void)) {
         Deployment.getDeploymentsBasedOnFilters(config.STORAGE_PARTITION_KEY, srcPipeline, hldPipeline, clusterPipeline, undefined, undefined, buildId, commitId, (deployments: Deployment[]) => {
             if (deployments.length > 0 && callback) {
@@ -27,10 +35,9 @@ export class AccessHelper {
     public static verifyAppConfiguration = (callback?: () => void) => {
         if (config.STORAGE_TABLE_NAME === "" || config.STORAGE_PARTITION_KEY === "" || config.STORAGE_ACCOUNT_NAME === "" || config.STORAGE_ACCOUNT_KEY === "" || config.SRC_PIPELINE_ID === 0 || config.HLD_PIPELINE_ID === 0 || config.GITHUB_MANIFEST_USERNAME === "" || config.GITHUB_MANIFEST === "" || config.DOCKER_PIPELINE_ID === undefined || config.AZURE_PROJECT === "" || config.AZURE_ORG === "") {
             AccessHelper.configureAppFromFile(callback);
-            return false;
+        } else {
+            AccessHelper.initializePipelines();
         }
-
-        return true;
     }
 
     public static configureAppFromFile = (callback?: () => void) => {
@@ -44,6 +51,7 @@ export class AccessHelper {
                 const value = row.split(/=(.+)/)[1];
                 config[key] = value;
             });
+            AccessHelper.initializePipelines();
             if (callback) {
                 callback();
             }
