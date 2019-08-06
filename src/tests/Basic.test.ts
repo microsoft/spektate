@@ -27,54 +27,60 @@ describe('config validation', () => {
 
 describe('cluster-sync', () => {
     it('should return the most recent sync tag', () => {
-        AccessHelper.getClusterSync((syncCommit) => {
-            expect(syncCommit.length).to.equal(7);
+        AccessHelper.verifyAppConfiguration(() => {
+            AccessHelper.getClusterSync((syncCommit) => {
+                expect(syncCommit.length).to.equal(7);
+            });
         });
     });
 });
 
 describe('author', () => {
     it('should return the right author', () => {
-        AccessHelper.getAuthorForCommitOrBuild('e3d6504', undefined, (author: Author) => {
-            expect(author.username).equal("samiyaakhtar");
+        AccessHelper.verifyAppConfiguration(() => {
+            AccessHelper.getAuthorForCommitOrBuild('e3d6504', undefined, (author: Author) => {
+                expect(author.username).equal("samiyaakhtar");
+            });
         });
     });
 });
 
 describe('deployment', () => {
     it('should return a correct deployment on filter', () => {
-        const srcPipeline = new AzureDevOpsPipeline(config.AZURE_ORG, config.AZURE_PROJECT, config.SRC_PIPELINE_ID);
-        const hldPipeline = new AzureDevOpsPipeline(config.AZURE_ORG, config.AZURE_PROJECT, config.DOCKER_PIPELINE_ID, true);
-        const clusterPipeline = new AzureDevOpsPipeline(config.AZURE_ORG, config.AZURE_PROJECT, config.HLD_PIPELINE_ID);
+        AccessHelper.verifyAppConfiguration(() => {
+            const srcPipeline = new AzureDevOpsPipeline(config.AZURE_ORG, config.AZURE_PROJECT, config.SRC_PIPELINE_ID);
+            const hldPipeline = new AzureDevOpsPipeline(config.AZURE_ORG, config.AZURE_PROJECT, config.DOCKER_PIPELINE_ID, true);
+            const clusterPipeline = new AzureDevOpsPipeline(config.AZURE_ORG, config.AZURE_PROJECT, config.HLD_PIPELINE_ID);
 
-        Deployment.getDeploymentsBasedOnFilters(config.STORAGE_PARTITION_KEY, srcPipeline, hldPipeline, clusterPipeline, "Staging", undefined, undefined, undefined, (deployments: Deployment[]) => {
-            let found5432 = false;
-            deployments.forEach((deployment) => {
-                if (deployment.srcToDockerBuild && deployment.srcToDockerBuild.id.toString() === "5432") {
-                    found5432 = true;
-                    expect(deployment.srcToDockerBuild.sourceVersion.substring(0,7)).to.equal("e3d6504");
-                    expect(deployment.srcToDockerBuild.result).to.equal("succeeded");
+            Deployment.getDeploymentsBasedOnFilters(config.STORAGE_PARTITION_KEY, srcPipeline, hldPipeline, clusterPipeline, "Staging", undefined, undefined, undefined, (deployments: Deployment[]) => {
+                let found5432 = false;
+                deployments.forEach((deployment) => {
+                    if (deployment.srcToDockerBuild && deployment.srcToDockerBuild.id.toString() === "5432") {
+                        found5432 = true;
+                        expect(deployment.srcToDockerBuild.sourceVersion.substring(0,7)).to.equal("e3d6504");
+                        expect(deployment.srcToDockerBuild.result).to.equal("succeeded");
 
-                    if (deployment.dockerToHldRelease && deployment.dockerToHldRelease.id.toString() === "137") {
-                        expect(deployment.dockerToHldRelease.imageVersion).to.equal("hello-bedrock-master-5432");
-                        expect(deployment.dockerToHldRelease.id.toString()).to.equal("137");
-                        expect(deployment.dockerToHldRelease.status).to.equal("succeeded");
-                    }
+                        if (deployment.dockerToHldRelease && deployment.dockerToHldRelease.id.toString() === "137") {
+                            expect(deployment.dockerToHldRelease.imageVersion).to.equal("hello-bedrock-master-5432");
+                            expect(deployment.dockerToHldRelease.id.toString()).to.equal("137");
+                            expect(deployment.dockerToHldRelease.status).to.equal("succeeded");
+                        }
 
-                    if (deployment.hldToManifestBuild && deployment.hldToManifestBuild.id.toString() === "5433") {
-                        expect(deployment.manifestCommitId).to.equal("801b241");
-                        expect(deployment.hldToManifestBuild.id.toString()).to.equal("5433");
-                        expect(deployment.hldToManifestBuild.result).to.equal("succeeded");
+                        if (deployment.hldToManifestBuild && deployment.hldToManifestBuild.id.toString() === "5433") {
+                            expect(deployment.manifestCommitId).to.equal("801b241");
+                            expect(deployment.hldToManifestBuild.id.toString()).to.equal("5433");
+                            expect(deployment.hldToManifestBuild.result).to.equal("succeeded");
+                        }
+                        if (deployment.srcToDockerBuild.repository) {
+                            deployment.srcToDockerBuild.repository.getAuthor(deployment.srcToDockerBuild.sourceVersion, (author: Author) => {
+                                expect(author.username).to.equal("samiyaakhtar");
+                            });
+                        }
                     }
-                    if (deployment.srcToDockerBuild.repository) {
-                        deployment.srcToDockerBuild.repository.getAuthor(deployment.srcToDockerBuild.sourceVersion, (author: Author) => {
-                            expect(author.username).to.equal("samiyaakhtar");
-                        });
-                    }
-                }
+                });
+                expect(found5432).to.equal(true);
+                expect(deployments.length).to.greaterThan(0);
             });
-            expect(found5432).to.equal(true);
-            expect(deployments.length).to.greaterThan(0);
         });
     });
 });
