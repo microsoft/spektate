@@ -5,6 +5,11 @@ import { Author } from 'src/models/repository/Author';
 import { config } from '../config';
 import { AccessHelper } from './AccessHelper';
 
+export enum OUTPUT_FORMAT {
+    NORMAL = 0,
+    WIDE = 1,
+    JSON = 2
+}
 
 program
   .version('0.1.0')
@@ -79,9 +84,10 @@ program
   .option("-c, --commit-id <commit-id>", "Get deployments for a particular commit Id from source repository")
   .option("-i, --image-tag <image-tag>", "Get deployments for a particular image tag")
   .option("-e, --env <environment>", "Get deployments for a particular environment")
+  .option("-o, --output <output-format>", "Get output in one of these forms: normal, wide, JSON")
   .action((env, options) => {
       AccessHelper.verifyAppConfiguration(() => {
-        AccessHelper.getDeployments(env.env, env.imageTag, env.buildId, env.commitId);
+        AccessHelper.getDeployments(processOutputFormat(env.output), env.env, env.imageTag, env.buildId, env.commitId);
       });
   })
   .on('--help', () => {
@@ -128,3 +134,13 @@ program
   });
 
 program.parse(process.argv);
+
+function processOutputFormat(outputFormat: string): OUTPUT_FORMAT {
+    if (outputFormat && outputFormat.toLowerCase() === "wide") {
+        return OUTPUT_FORMAT.WIDE;
+    } else if (outputFormat && outputFormat.toLowerCase() === "json") {
+        return OUTPUT_FORMAT.JSON;
+    }
+
+    return OUTPUT_FORMAT.NORMAL;
+}

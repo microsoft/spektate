@@ -9,6 +9,7 @@ import Pipeline from '../models/pipeline/Pipeline';
 import { Author } from '../models/repository/Author';
 import { GitHub } from '../models/repository/GitHub';
 import { Repository } from '../models/repository/Repository';
+import { OUTPUT_FORMAT } from './cli';
 
 let hldPipeline: Pipeline;
 let clusterPipeline: Pipeline;
@@ -110,48 +111,63 @@ export class AccessHelper {
         }
     }
 
-    public static getDeployments = (environment?: string, imageTag?: string, p1Id?: string, commitId?: string) => {
+    public static getDeployments = (outputFormat: OUTPUT_FORMAT, environment?: string, imageTag?: string, p1Id?: string, commitId?: string) => {
         Deployment.getDeploymentsBasedOnFilters(config.STORAGE_PARTITION_KEY, srcPipeline, hldPipeline, clusterPipeline, environment, imageTag, p1Id, commitId, (deployments: Deployment[]) => {
-
-            if (deployments.length > 0) {
-                let row = [];
-                row.push("Start Time");
-                row.push("P1");
-                row.push("Result");
-                row.push("Commit");
-                row.push("P2");
-                row.push("Result");
-                row.push("Hld Commit");
-                row.push("Env");
-                row.push("Image Tag");
-                row.push("P3");
-                row.push("Result");
-                row.push("Manifest Commit");
-                row.push("End Time");
-                const table = new Table({head: row});
-                deployments.forEach((deployment) => {
-                    row = [];
-                    row.push(deployment.srcToDockerBuild ? deployment.srcToDockerBuild.startTime.toLocaleString() : "");
-                    row.push(deployment.srcToDockerBuild ? deployment.srcToDockerBuild.id : "");
-                    row.push(deployment.srcToDockerBuild ? AccessHelper.getStatus(deployment.srcToDockerBuild.result) : "");
-                    row.push(deployment.commitId);
-                    row.push(deployment.dockerToHldRelease ? deployment.dockerToHldRelease.id : "");
-                    row.push(deployment.dockerToHldRelease ? AccessHelper.getStatus(deployment.dockerToHldRelease.status) : "");
-                    row.push(deployment.hldCommitId);
-                    row.push(deployment.environment);
-                    row.push(deployment.imageTag);
-                    row.push(deployment.hldToManifestBuild ? deployment.hldToManifestBuild.id : "");
-                    row.push(deployment.hldToManifestBuild ? AccessHelper.getStatus(deployment.hldToManifestBuild.result) : "");
-                    row.push(deployment.manifestCommitId);
-                    row.push(deployment.hldToManifestBuild ? deployment.hldToManifestBuild.finishTime.toLocaleString() : "");
-                    table.push(row);
-                });
-
-                console.log(table.toString());
+            if (outputFormat === OUTPUT_FORMAT.JSON) {
+                console.log(JSON.stringify(deployments));
             } else {
-                console.log("No deployments found for specified filters.");
+                AccessHelper.printDeployments(deployments, outputFormat);
             }
         });
+    }
+
+    public static printDeployments = (deployments: Deployment[], outputFormat: OUTPUT_FORMAT) => {
+        if (deployments.length > 0) {
+            let row = [];
+            row.push("Start Time");
+            row.push("P1");
+            row.push("Image Tag");
+            row.push("Result");
+            row.push("Commit");
+            row.push("P2");
+            row.push("Result");
+            row.push("Hld Commit");
+            row.push("Env");
+            row.push("P3");
+            row.push("Result");
+            if (outputFormat === OUTPUT_FORMAT.WIDE) {
+                row.push("Duration");
+                row.push("Status");
+                row.push("Manifest Commit");
+                row.push("End Time");
+            }
+            const table = new Table({head: row});
+            deployments.forEach((deployment) => {
+                row = [];
+                row.push(deployment.srcToDockerBuild ? deployment.srcToDockerBuild.startTime.toLocaleString() : "");
+                row.push(deployment.srcToDockerBuild ? deployment.srcToDockerBuild.id : "");
+                row.push(deployment.imageTag);
+                row.push(deployment.srcToDockerBuild ? AccessHelper.getStatus(deployment.srcToDockerBuild.result) : "");
+                row.push(deployment.commitId);
+                row.push(deployment.dockerToHldRelease ? deployment.dockerToHldRelease.id : "");
+                row.push(deployment.dockerToHldRelease ? AccessHelper.getStatus(deployment.dockerToHldRelease.status) : "");
+                row.push(deployment.hldCommitId);
+                row.push(deployment.environment);
+                row.push(deployment.hldToManifestBuild ? deployment.hldToManifestBuild.id : "");
+                row.push(deployment.hldToManifestBuild ? AccessHelper.getStatus(deployment.hldToManifestBuild.result) : "");
+                if (outputFormat === OUTPUT_FORMAT.WIDE) {
+                    row.push(deployment.duration() + " mins");
+                    row.push(deployment.status());
+                    row.push(deployment.manifestCommitId);
+                    row.push(deployment.hldToManifestBuild ? deployment.hldToManifestBuild.finishTime.toLocaleString() : "");
+                }
+                table.push(row);
+            });
+
+            console.log(table.toString());
+        } else {
+            console.log("No deployments found for specified filters.");
+        }
     }
 
     public static getStatus = ( status: string) => {
