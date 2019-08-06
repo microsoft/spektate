@@ -27,7 +27,6 @@ class Deployment {
     }
 
     public static async getDeployments(partitionKey: string, srcPipeline: Pipeline, hldPipeline: Pipeline, manifestPipeline: Pipeline, callback?: (deployments: Deployment[]) => void, query?: azure.TableQuery) {
-        
         const tableService = azure.createTableService(config.STORAGE_ACCOUNT_NAME, config.STORAGE_ACCOUNT_KEY);
         // Disabling ts-lint on line below, to get around issue https://github.com/Azure/azure-storage-node/issues/545
         // tslint:disable-next-line
@@ -41,7 +40,7 @@ class Deployment {
         tableService.queryEntities(config.STORAGE_TABLE_NAME, 
             query,
             nextContinuationToken,
-                (error: any, result: any) => {
+            (error: any, result: any) => {
                 if (!error) {
                     const srcBuildIds: Set<string> = new Set<string>();
                     const manifestBuildIds: Set<string> = new Set<string>();
@@ -73,7 +72,7 @@ class Deployment {
                     });
                     
                 }
-        });
+            });
     }
 
     public static compare(a: Deployment, b: Deployment) {
