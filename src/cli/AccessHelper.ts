@@ -1,6 +1,7 @@
 
 import Table = require('cli-table');
 import * as fs from 'fs';
+import open = require('open');
 import * as os from 'os';
 import { config } from '../config';
 import Deployment from '../models/Deployment';
@@ -89,19 +90,22 @@ export class AccessHelper {
         if (buildId !== undefined && buildId !== "") {
             const p1 = srcPipeline.getListOfBuilds();
             const p2 = clusterPipeline.getListOfBuilds();
-            Promise.all([p1, p2]).then(() => {
+            Promise.all([p1, p2]).then(async () => {
                 if (buildId in srcPipeline.builds) {
-                    console.log("Navigate to: " + srcPipeline.builds[buildId].URL);
+                    console.log("Navigating to: " + srcPipeline.builds[buildId].URL);
+                    await open(srcPipeline.builds[buildId].URL);
                 } else if (buildId in clusterPipeline.builds) {
-                    console.log("Navigate to: " + clusterPipeline.builds[buildId].URL);
+                    console.log("Navigating to: " + clusterPipeline.builds[buildId].URL);
+                    await open(clusterPipeline.builds[buildId].URL);
                 } else {
                     console.log("Unable to find build for " + buildId);
                 }
             });
         } else if (releaseId !== undefined && releaseId !== "") {
-            hldPipeline.getListOfReleases().then(() => {
+            hldPipeline.getListOfReleases().then(async () => {
                 if (releaseId in hldPipeline.releases) {
-                    console.log("Navigate to: " + hldPipeline.releases[releaseId].URL);
+                    console.log("Navigating to: " + hldPipeline.releases[releaseId].URL);
+                    await open(hldPipeline.releases[releaseId].URL);
                 } else {
                     console.log("Unable to find release for " + releaseId);
                 }
