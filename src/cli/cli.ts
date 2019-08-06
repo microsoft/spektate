@@ -94,6 +94,7 @@ program
     console.log('');
     console.log('Examples:');
     console.log('');
+    console.log('  $ deployments --env Dev -o wide');
     console.log('  $ deployments --build-id 5477');
     console.log('  $ deployments --image-tag hello-bedrock-master-5429');
     console.log('  $ deployments --env Dev');
@@ -134,6 +135,9 @@ program
   });
 
 program.parse(process.argv);
+if (process.argv.length === 2) {
+    program.outputHelp();
+}
 
 function processOutputFormat(outputFormat: string): OUTPUT_FORMAT {
     if (outputFormat && outputFormat.toLowerCase() === "wide") {
