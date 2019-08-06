@@ -15,19 +15,19 @@ def update_pipeline(account_name, account_key, table_name, partition_name, filte
     for entity in entities:
         count = count + 1
         add = False
-        if name1 in entity and entity[name1] != value1:
+        if name1 in entity and entity[name1] != value1.lower():
             add = True
-        entity[name1] = value1
+        entity[name1] = value1.lower()
 
         if name2 != None and value2 != None:
-            if name2 in entity and entity[name2] != value2:
+            if name2 in entity and entity[name2] != value2.lower():
                 add = True
-            entity[name2] = value2
+            entity[name2] = value2.lower()
         
         if name3 != None and value3 != None:
-            if name3 in entity and entity[name3] != value3:
+            if name3 in entity and entity[name3] != value3.lower():
                 add = True
-            entity[name3] = value3
+            entity[name3] = value3.lower()
 
         if add == False:
             table_service.update_entity(table_name, entity)
@@ -50,11 +50,11 @@ def add_pipeline(account_name, account_key, table_name, partition_name, filter_n
     new_entry["RowKey"] = generate_row_key()
     new_entry["PartitionKey"] = partition_name
     new_entry[filter_name] = filter_value
-    new_entry[name1] = value1
+    new_entry[name1] = value1.lower()
     if name2 != None and value2 != None:
-        new_entry[name2] = value2
+        new_entry[name2] = value2.lower()
     if name3 != None and value3 != None:
-        new_entry[name3] = value3
+        new_entry[name3] = value3.lower()
     print(new_entry)
     table_service = TableService(account_name=account_name, account_key=account_key)
     table_service.insert_entity(table_name, new_entry)
