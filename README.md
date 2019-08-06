@@ -3,7 +3,7 @@
 
 # Container Journey
 
-This is an initiative to visualize [Project Bedrock](https://github.com/microsoft/bedrock). 
+This is an initiative to visualize [Project Bedrock](https://github.com/microsoft/bedrock). Currently, it consists of a command line interface and a simple text based dashboard prototype. The instructions to use both are below.
 
 ##  Onboard a Bedrock project to use Container Journey
 
@@ -86,7 +86,35 @@ If you have already followed the steps [here](https://github.com/microsoft/bedro
 
 5. Kick off a full deployment from the source to docker pipeline, and you should see some entries coming into the database for each subsequent deployment after the tasks have been added! 
 
-## Run the Container Journey prototype
+## Command Line Interface
+
+To use the CLI for Container Journey:
+1. Go to Releases in this repository and download the CLI for your platform.
+2. Make it an executable, for eg. `chmod +x cli-macos`
+3. Run `init` command to initialize the CLI with configuration for your application. Note that you will only need to run this once on your machine to initialize the CLI. 
+    ```bash
+    ./cli-macos init --azure-org <azure_organization> --azure-project <azure_project> --docker-pipeline-id <docker_to_HLD_pipeline_ID> --github-manifest <github_manifest_repo_name> --github-manifest-username <github_manifest_repo_username> --hld-pipeline-id <hld_to_manifest_pipeline_ID> --src-pipeline-id <src_to_docker_pipeline_ID> --storage-account-key <storage_account_key> --storage-account-name <storage_account_name> --storage-partition-key <storage_account_partition_key> --storage-table-name <storage_table_name>
+    ```
+4. You may now use the CLI to get information about deployments! (Assuming that you've followed steps above to onboard pipelines to Container Journey)
+
+### CLI usage examples
+
+- To query deployments based on
+    - image tag: `./cli-macos deployments --image-tag hello-bedrock-master-5439`
+    - environment: `./cli-macos deployments --env Staging`
+    - commit id in source repository: `./cli-macos deployments --commit-id e3d6504`
+    - build id in source pipeline: `./cli-macos deployments --build-id 5439`
+    - a combination of any of the above, for eg. `./cli-macos deployments --build-id 5439 --image-tag hello-bedrock-master-5439`
+- To query author for a deployment based on
+    - commit Id in source repository: `./cli-macos author --commit-id e3d6504`
+    - build Id in source pipeline: `./cli-macos author --build-id 5272`
+- To query logs URL for a build or release based on
+    - build Id: `./cli-macos logs --build-id 5265`
+    - release Id: `./cli-macos logs --release-id 102` 
+- To query cluster sync status of the Kubernetes cluster, just run `./cli-macos cluster-sync` which would return the commit Id in source repository of the commit which is synced on the cluster.
+
+
+## Dashboard prototype
 
 1. Clone this repository, and run `npm install`. 
 2. Make sure the file located in `src/config.ts` is updated with values for the azure storage table. 
