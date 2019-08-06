@@ -156,7 +156,7 @@ export class AccessHelper {
                 row.push(deployment.dockerToHldRelease ? deployment.dockerToHldRelease.id : "");
                 row.push(deployment.dockerToHldRelease ? AccessHelper.getStatus(deployment.dockerToHldRelease.status) : "");
                 row.push(deployment.hldCommitId);
-                row.push(deployment.environment);
+                row.push(deployment.environment.toUpperCase());
                 row.push(deployment.hldToManifestBuild ? deployment.hldToManifestBuild.id : "");
                 row.push(deployment.hldToManifestBuild ? AccessHelper.getStatus(deployment.hldToManifestBuild.result) : "");
                 if (outputFormat === OUTPUT_FORMAT.WIDE) {

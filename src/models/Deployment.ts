@@ -11,16 +11,16 @@ class Deployment {
     public static async getDeploymentsBasedOnFilters(partitionKey: string, srcPipeline: Pipeline, hldPipeline: Pipeline, manifestPipeline: Pipeline, environment?: string, imageTag?: string, p1Id?: string, commitId?: string, callback?: (deployments: Deployment[]) => void) {
         const query = new azure.TableQuery().where("PartitionKey eq '" +  partitionKey + "'");
         if (environment && environment !== "") {
-            query.and("env eq '" + environment + "'");
+            query.and("env eq '" + environment.toLowerCase() + "'");
         }
         if (imageTag && imageTag !== "") {
-            query.and("imageTag eq '" + imageTag + "'");
+            query.and("imageTag eq '" + imageTag.toLowerCase() + "'");
         }
         if (p1Id && p1Id !== "") {
-            query.and("p1 eq '" + p1Id + "'");
+            query.and("p1 eq '" + p1Id.toLowerCase() + "'");
         }
         if (commitId && commitId !== "") {
-            query.and("commitId eq '" + commitId + "'");
+            query.and("commitId eq '" + commitId.toLowerCase() + "'");
         }
 
         await this.getDeployments(partitionKey, srcPipeline, hldPipeline, manifestPipeline, callback, query);
