@@ -37,6 +37,9 @@ export class AccessHelper {
             AccessHelper.configureAppFromFile(callback);
         } else {
             AccessHelper.initializePipelines();
+            if (callback) {
+                callback();
+            }
         }
     }
 

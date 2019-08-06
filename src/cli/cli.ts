@@ -49,15 +49,19 @@ program
   .option('-b, --build-id <build-id>', 'Get author for a particular build id')
   .action((env, options) => {
     if (env.commitId || env.buildId) {
-        AccessHelper.getAuthorForCommitOrBuild(env.commitId, env.buildId, (author: Author) => {
-            if (author) {
-                console.log("Username: " + author.username);
-                console.log("Name: " + author.name);
-                console.log("URL: " + author.URL);
-            } else {
-                console.log("No author found");
-            }
+        AccessHelper.verifyAppConfiguration(() => {
+            AccessHelper.getAuthorForCommitOrBuild(env.commitId, env.buildId, (author: Author) => {
+                if (author) {
+                    console.log("Username: " + author.username);
+                    console.log("Name: " + author.name);
+                    console.log("URL: " + author.URL);
+                } else {
+                    console.log("No author found");
+                }
+            });
         });
+    } else {
+        console.log("Either one of commit id or build id need to be specified.");
     }
   })
   .on('--help', () => {
