@@ -20,9 +20,9 @@ const fileLocation = os.homedir() + "/.ContainerJourney";
 export class AccessHelper {
 
     public static initializePipelines() {
-        hldPipeline = new AzureDevOpsPipeline(config.AZURE_ORG, config.AZURE_PROJECT, config.DOCKER_PIPELINE_ID, true);
-        clusterPipeline = new AzureDevOpsPipeline(config.AZURE_ORG, config.AZURE_PROJECT, config.HLD_PIPELINE_ID);
-        srcPipeline = new AzureDevOpsPipeline(config.AZURE_ORG, config.AZURE_PROJECT, config.SRC_PIPELINE_ID);
+        srcPipeline = new AzureDevOpsPipeline(config.AZURE_ORG, config.AZURE_PROJECT, config.SRC_PIPELINE_ID, false, config.AZURE_PIPELINE_ACCESS_TOKEN);
+        hldPipeline = new AzureDevOpsPipeline(config.AZURE_ORG, config.AZURE_PROJECT, config.DOCKER_PIPELINE_ID, true, config.AZURE_PIPELINE_ACCESS_TOKEN);
+        clusterPipeline = new AzureDevOpsPipeline(config.AZURE_ORG, config.AZURE_PROJECT, config.HLD_PIPELINE_ID, false, config.AZURE_PIPELINE_ACCESS_TOKEN);
     }
 
     public static getAuthorForCommitOrBuild(commitId?: string, buildId?: string, callback?: ((author?: Author) => void)) {
@@ -35,7 +35,7 @@ export class AccessHelper {
         });
     }
     public static verifyAppConfiguration = (callback?: () => void) => {
-        if (config.STORAGE_TABLE_NAME === "" || config.STORAGE_PARTITION_KEY === "" || config.STORAGE_ACCOUNT_NAME === "" || config.STORAGE_ACCOUNT_KEY === "" || config.SRC_PIPELINE_ID === 0 || config.HLD_PIPELINE_ID === 0 || config.GITHUB_MANIFEST_USERNAME === "" || config.GITHUB_MANIFEST === "" || config.DOCKER_PIPELINE_ID === undefined || config.AZURE_PROJECT === "" || config.AZURE_ORG === "") {
+        if (config.STORAGE_TABLE_NAME === "" || config.STORAGE_PARTITION_KEY === "" || config.STORAGE_ACCOUNT_NAME === "" || config.STORAGE_ACCOUNT_KEY === "" || config.SRC_PIPELINE_ID === 0 || config.HLD_PIPELINE_ID === 0 || config.GITHUB_MANIFEST_USERNAME === "" || config.MANIFEST === "" || config.DOCKER_PIPELINE_ID === undefined || config.AZURE_PROJECT === "" || config.AZURE_ORG === "") {
             AccessHelper.configureAppFromFile(callback);
         } else {
             AccessHelper.initializePipelines();
@@ -76,7 +76,7 @@ export class AccessHelper {
     }
 
     public static getClusterSync = (callback?: (syncCommit: string) => void): void => {
-        const manifestRepo: Repository = new GitHub(config.GITHUB_MANIFEST_USERNAME, config.GITHUB_MANIFEST);
+        const manifestRepo: Repository = new GitHub(config.GITHUB_MANIFEST_USERNAME, config.MANIFEST, config.MANIFEST_ACCESS_TOKEN);
         manifestRepo.getManifestSyncState((commit) => {
             if (callback) {
                 callback(commit);
@@ -129,15 +129,15 @@ export class AccessHelper {
         if (deployments.length > 0) {
             let row = [];
             row.push("Start Time");
-            row.push("P1");
+            row.push("Commit");
+            row.push("Src to ACR");
             row.push("Image Tag");
             row.push("Result");
-            row.push("Commit");
-            row.push("P2");
-            row.push("Result");
-            row.push("Hld Commit");
+            row.push("ACR to HLD");
             row.push("Env");
-            row.push("P3");
+            row.push("Hld Commit");
+            row.push("Result");
+            row.push("HLD to Manifest");
             row.push("Result");
             if (outputFormat === OUTPUT_FORMAT.WIDE) {
                 row.push("Duration");
@@ -149,21 +149,21 @@ export class AccessHelper {
             deployments.forEach((deployment) => {
                 row = [];
                 row.push(deployment.srcToDockerBuild ? deployment.srcToDockerBuild.startTime.toLocaleString() : "");
+                row.push(deployment.commitId);
                 row.push(deployment.srcToDockerBuild ? deployment.srcToDockerBuild.id : "");
                 row.push(deployment.imageTag);
                 row.push(deployment.srcToDockerBuild ? AccessHelper.getStatus(deployment.srcToDockerBuild.result) : "");
-                row.push(deployment.commitId);
                 row.push(deployment.dockerToHldRelease ? deployment.dockerToHldRelease.id : "");
-                row.push(deployment.dockerToHldRelease ? AccessHelper.getStatus(deployment.dockerToHldRelease.status) : "");
-                row.push(deployment.hldCommitId);
                 row.push(deployment.environment.toUpperCase());
+                row.push(deployment.hldCommitId);
+                row.push(deployment.dockerToHldRelease ? AccessHelper.getStatus(deployment.dockerToHldRelease.status) : "");
                 row.push(deployment.hldToManifestBuild ? deployment.hldToManifestBuild.id : "");
                 row.push(deployment.hldToManifestBuild ? AccessHelper.getStatus(deployment.hldToManifestBuild.result) : "");
                 if (outputFormat === OUTPUT_FORMAT.WIDE) {
                     row.push(deployment.duration() + " mins");
                     row.push(deployment.status());
                     row.push(deployment.manifestCommitId);
-                    row.push(deployment.hldToManifestBuild ? deployment.hldToManifestBuild.finishTime.toLocaleString() : "");
+                    row.push(deployment.hldToManifestBuild && deployment.hldToManifestBuild.finishTime && !isNaN(deployment.hldToManifestBuild.finishTime.getTime()) ? deployment.hldToManifestBuild.finishTime.toLocaleString() : "");
                 }
                 table.push(row);
             });
@@ -177,6 +177,8 @@ export class AccessHelper {
     public static getStatus = ( status: string) => {
         if (status === "succeeded") {
             return '\u2713';
+        } else if (!status) {
+            return "...";
         }
         return '\u0445';
     }

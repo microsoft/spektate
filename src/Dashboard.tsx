@@ -8,6 +8,7 @@ import Deployment from "./models/Deployment";
 import AzureDevOpsPipeline from "./models/pipeline/AzureDevOpsPipeline";
 import { Author } from './models/repository/Author';
 import { GitHub } from './models/repository/GitHub';
+// import { AzureDevOpsRepo } from './models/repository/AzureDevOpsRepo';
 import { Repository } from './models/repository/Repository';
 
 export interface IAuthors {
@@ -63,7 +64,7 @@ class Dashboard extends React.Component<{}, IDashboardState> {
                   <td>{deployment.duration()} mins</td>
                   <td>{deployment.status()}</td>
                   <td>{author !== undefined ? <a href={author.URL}>{author.name}</a> : ""}</td>
-                  <td>{deployment.manifestCommitId === state.manifestSync ? "Synced" : ""}</td>
+                  <td>{deployment.manifestCommitId === state.manifestSync && state.manifestSync !== "" ? "Synced" : ""}</td>
                   <td>{deployment.hldToManifestBuild ? (Number.isNaN(deployment.hldToManifestBuild!.finishTime.valueOf()) ? "-" : deployment.hldToManifestBuild!.finishTime.toLocaleString()) : "-"}</td>
                 </tr>);
         counter++;
@@ -97,11 +98,12 @@ class Dashboard extends React.Component<{}, IDashboardState> {
   }
 
   public getDeployments = () => {
-    const srcPipeline = new AzureDevOpsPipeline(config.AZURE_ORG, config.AZURE_PROJECT, config.SRC_PIPELINE_ID);
-    const hldPipeline = new AzureDevOpsPipeline(config.AZURE_ORG, config.AZURE_PROJECT, config.DOCKER_PIPELINE_ID, true);
-    const clusterPipeline = new AzureDevOpsPipeline(config.AZURE_ORG, config.AZURE_PROJECT, config.HLD_PIPELINE_ID);
+    const srcPipeline = new AzureDevOpsPipeline(config.AZURE_ORG, config.AZURE_PROJECT, config.SRC_PIPELINE_ID, false, config.AZURE_PIPELINE_ACCESS_TOKEN);
+    const hldPipeline = new AzureDevOpsPipeline(config.AZURE_ORG, config.AZURE_PROJECT, config.DOCKER_PIPELINE_ID, true, config.AZURE_PIPELINE_ACCESS_TOKEN);
+    const clusterPipeline = new AzureDevOpsPipeline(config.AZURE_ORG, config.AZURE_PROJECT, config.HLD_PIPELINE_ID, false, config.AZURE_PIPELINE_ACCESS_TOKEN);
 
-    const manifestRepo: Repository = new GitHub(config.GITHUB_MANIFEST_USERNAME, config.GITHUB_MANIFEST);
+    const manifestRepo: Repository = new GitHub(config.GITHUB_MANIFEST_USERNAME, config.MANIFEST, config.MANIFEST_ACCESS_TOKEN);
+    // const manifestRepo: Repository = new AzureDevOpsRepo(config.AZURE_ORG, config.AZURE_PROJECT, config.MANIFEST, config.MANIFEST_ACCESS_TOKEN);
     manifestRepo.getManifestSyncState((syncCommit) => {
       this.setState({manifestSync: syncCommit});
     });

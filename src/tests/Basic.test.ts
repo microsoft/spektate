@@ -15,7 +15,7 @@ describe('config validation', () => {
             expect(config.DOCKER_PIPELINE_ID).to.not.equal(0);
             expect(config.AZURE_ORG.length).to.not.equal(0);
             expect(config.AZURE_PROJECT.length).to.not.equal(0);
-            expect(config.GITHUB_MANIFEST.length).to.not.equal(0);
+            expect(config.MANIFEST.length).to.not.equal(0);
             expect(config.GITHUB_MANIFEST_USERNAME.length).to.not.equal(0);
             expect(config.STORAGE_ACCOUNT_KEY.length).to.not.equal(0);
             expect(config.STORAGE_ACCOUNT_NAME.length).to.not.equal(0);
@@ -48,9 +48,9 @@ describe('author', () => {
 describe('deployment', () => {
     it('should return a correct deployment on filter', () => {
         AccessHelper.verifyAppConfiguration(() => {
-            const srcPipeline = new AzureDevOpsPipeline(config.AZURE_ORG, config.AZURE_PROJECT, config.SRC_PIPELINE_ID);
-            const hldPipeline = new AzureDevOpsPipeline(config.AZURE_ORG, config.AZURE_PROJECT, config.DOCKER_PIPELINE_ID, true);
-            const clusterPipeline = new AzureDevOpsPipeline(config.AZURE_ORG, config.AZURE_PROJECT, config.HLD_PIPELINE_ID);
+            const srcPipeline = new AzureDevOpsPipeline(config.AZURE_ORG, config.AZURE_PROJECT, config.SRC_PIPELINE_ID, false, config.AZURE_PIPELINE_ACCESS_TOKEN);
+            const hldPipeline = new AzureDevOpsPipeline(config.AZURE_ORG, config.AZURE_PROJECT, config.DOCKER_PIPELINE_ID, true, config.AZURE_PIPELINE_ACCESS_TOKEN);
+            const clusterPipeline = new AzureDevOpsPipeline(config.AZURE_ORG, config.AZURE_PROJECT, config.HLD_PIPELINE_ID, false, config.AZURE_PIPELINE_ACCESS_TOKEN);
 
             Deployment.getDeploymentsBasedOnFilters(config.STORAGE_PARTITION_KEY, srcPipeline, hldPipeline, clusterPipeline, "Staging", undefined, undefined, undefined, (deployments: Deployment[]) => {
                 let found5432 = false;
