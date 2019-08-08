@@ -93,7 +93,7 @@ To use the CLI for Container Journey:
 2. Make it an executable, for eg. `chmod +x cli-macos`
 3. Run `init` command to initialize the CLI with configuration for your application. Note that you will only need to run this once on your machine to initialize the CLI. 
     ```bash
-    ./cli-macos init --azure-org <azure_organization> --azure-project <azure_project> --docker-pipeline-id <docker_to_HLD_pipeline_ID> --github-manifest <github_manifest_repo_name> --github-manifest-username <github_manifest_repo_username> --hld-pipeline-id <hld_to_manifest_pipeline_ID> --src-pipeline-id <src_to_docker_pipeline_ID> --storage-account-key <storage_account_key> --storage-account-name <storage_account_name> --storage-partition-key <storage_account_partition_key> --storage-table-name <storage_table_name>
+    ./cli-macos init --azure-org <azure_organization> --azure-project <azure_project> --docker-pipeline-id <docker_to_HLD_pipeline_ID> --manifest <manifest_repo_name> --github-manifest-username <github_manifest_repo_username_if_using_github> --hld-pipeline-id <hld_to_manifest_pipeline_ID> --src-pipeline-id <src_to_docker_pipeline_ID> --storage-account-key <storage_account_key> --storage-account-name <storage_account_name> --storage-partition-key <storage_account_partition_key> --storage-table-name <storage_table_name>
     ```
 4. You may now use the CLI to get information about deployments! (Assuming that you've followed steps above to onboard pipelines to Container Journey)
 

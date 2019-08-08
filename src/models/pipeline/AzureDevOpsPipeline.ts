@@ -1,4 +1,6 @@
+import { config } from '../../config';
 import { HttpHelper } from "../HttpHelper";
+import { AzureDevOpsRepo } from '../repository/AzureDevOpsRepo';
 import { GitHub } from '../repository/GitHub';
 import { Build } from "./Build";
 import Pipeline from "./Pipeline";
@@ -14,13 +16,15 @@ class AzureDevOpsPipeline extends Pipeline {
     public project: string;
     public definitionId: number;
     public isRelease?: boolean;
+    public accessToken?: string;
     
-    constructor(org: string, project: string, definitionId: number, isRelease?: boolean) {
+    constructor(org: string, project: string, definitionId: number, isRelease?: boolean, accessToken?: string) {
         super();
         this.org = org;
         this.project = project;
         this.definitionId = definitionId;
         this.isRelease = isRelease;
+        this.accessToken = accessToken;
     }
 
     public async getListOfBuilds(callback?: (data: any) => void, buildIds?: Set<string>): Promise<void> {
@@ -43,7 +47,11 @@ class AzureDevOpsPipeline extends Pipeline {
                     build.sourceVersionURL = row._links.sourceVersionDisplayUri.href;
                     build.finishTime = new Date(row.finishTime);
                     if (row.repository.type === "GitHub") {
-                        build.repository = new GitHub(row.repository.id.split('/')[0], row.repository.id.split('/')[1]);
+                        build.repository = new GitHub(row.repository.id.split('/')[0], row.repository.id.split('/')[1], config.MANIFEST_ACCESS_TOKEN);
+                    } else if (row.repository.type === "TfsGit") {
+                        console.log(row.repository.url.split('/'));
+                        const reposityUrlSplit = row.repository.url.split('/');
+                        build.repository = new AzureDevOpsRepo(reposityUrlSplit[3], reposityUrlSplit[4], reposityUrlSplit[6], config.MANIFEST_ACCESS_TOKEN);
                     }
                     builds.push(build);
                     this.builds[build.id] = build;
@@ -52,7 +60,7 @@ class AzureDevOpsPipeline extends Pipeline {
                 if (callback) {
                     callback(this.builds);
                 }
-            });
+            }, this.accessToken);
         });
     }
 
@@ -83,7 +91,7 @@ class AzureDevOpsPipeline extends Pipeline {
                 if (callback) {
                     callback(this.releases);
                 }
-            });
+            }, this.accessToken);
         });
     }
 

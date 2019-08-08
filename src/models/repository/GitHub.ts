@@ -7,12 +7,13 @@ const authorInfoURL = "https://api.github.com/repos/<owner>/<repo>/commits/<comm
 export class GitHub extends Repository {
     public username: string;
     public reponame: string;
+    public accessToken?: string;
 
-
-    constructor(username: string, reponame: string) {
+    constructor(username: string, reponame: string, accessToken?: string) {
         super();
         this.reponame = reponame;
         this.username = username;
+        this.accessToken = accessToken;
     }
 
     public getManifestSyncState(callback: (syncCommit: string) => void): Promise<void> {
@@ -29,7 +30,7 @@ export class GitHub extends Repository {
                         }
                     });
                 }
-            });
+            }, this.accessToken);
         });
     }
 
@@ -44,7 +45,7 @@ export class GitHub extends Repository {
                         callback(author);
                     }
                 }
-            });
+            }, this.accessToken);
         });
     }
 }

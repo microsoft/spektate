@@ -20,7 +20,7 @@ program
   .option('--azure-org <azure-org>', 'Organization under which the project lives in Azure')
   .option('--azure-project <azure-project>', 'Project under which pipeline lives in Azure')
   .option('--docker-pipeline-id <docker-pipeline-id>', 'Release Definition Id of the Docker to HLD Release')
-  .option('--github-manifest <github-manifest>', 'Name of the Github Manifest repository')
+  .option('--manifest <manifest>', 'Name of the Manifest repository')
   .option('--github-manifest-username <github-manifest-username>', 'Username of the Github account who owns manifest repository')
   .option('--hld-pipeline-id <hld-pipeline-id>', 'Build definition Id of the HLD to manifest pipeline')
   .option('--src-pipeline-id <src-pipeline-id', 'Build definition Id of the source to Docker pipeline')
@@ -29,11 +29,11 @@ program
   .option('--storage-partition-key <storage-partition-key>', 'Partition key in the storage table')
   .option('--storage-table-name <storage-table-name>', 'Name of the table in storage')
   .action((env, options) => {
-    if (env.azureOrg && env.azureProject && env.dockerPipelineId && env.githubManifest && env.githubManifestUsername && env.hldPipelineId && env.srcPipelineId && env.storageAccountKey && env.storageAccountName && env.storagePartitionKey && env.storageTableName) {
+    if (env.azureOrg && env.azureProject && env.dockerPipelineId && env.manifest && env.githubManifestUsername && env.hldPipelineId && env.srcPipelineId && env.storageAccountKey && env.storageAccountName && env.storagePartitionKey && env.storageTableName) {
         config.AZURE_ORG = env.azureOrg;
         config.AZURE_PROJECT = env.azureProject;
         config.DOCKER_PIPELINE_ID = env.dockerPipelineId;
-        config.GITHUB_MANIFEST = env.githubManifest;
+        config.MANIFEST = env.manifest;
         config.GITHUB_MANIFEST_USERNAME = env.githubManifestUsername;
         config.HLD_PIPELINE_ID = env.hldPipelineId;
         config.SRC_PIPELINE_ID = env.srcPipelineId;
