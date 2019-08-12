@@ -17,7 +17,8 @@
   "scripts": {
     "start": "react-scripts-ts start",
     "build": "react-scripts-ts build",
-    "test": "mocha -r ts-node/register src/tests/*.ts",
+    "test": "mocha -r ts-node/register src/tests/Basic.test.ts",
+    "private-github-test": "mocha -r ts-node/register src/tests/PrivateGitHub.test.ts",
     "eject": "react-scripts-ts eject",
     "start-cli": "nodemon --watch 'src/cli/**/*.ts' --exec 'ts-node' src/cli/cli.ts",
     "create-cli": "npm run build-cli",
