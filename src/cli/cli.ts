@@ -18,9 +18,11 @@ program
   .command('init')
   .description('Initialize container journey for the first time')
   .option('--azure-org <azure-org>', 'Organization under which the project lives in Azure')
+  .option('--azure-pipeline-access-token <azure-pipeline-access-token>', 'Access token for the pipeline (if private)')
   .option('--azure-project <azure-project>', 'Project under which pipeline lives in Azure')
   .option('--docker-pipeline-id <docker-pipeline-id>', 'Release Definition Id of the Docker to HLD Release')
   .option('--manifest <manifest>', 'Name of the Manifest repository')
+  .option('--manifest-access-token <manifest-access-token>', 'Access token for the manifest repository (if private)')
   .option('--github-manifest-username <github-manifest-username>', 'Username of the Github account who owns manifest repository')
   .option('--hld-pipeline-id <hld-pipeline-id>', 'Build definition Id of the HLD to manifest pipeline')
   .option('--src-pipeline-id <src-pipeline-id', 'Build definition Id of the source to Docker pipeline')
@@ -41,6 +43,8 @@ program
         config.STORAGE_ACCOUNT_NAME = env.storageAccountName;
         config.STORAGE_PARTITION_KEY = env.storagePartitionKey;
         config.STORAGE_TABLE_NAME = env.storageTableName;
+        config.AZURE_PIPELINE_ACCESS_TOKEN = env.azurePipelineAccessToken;
+        config.MANIFEST_ACCESS_TOKEN = env.manifestAccessToken;
         AccessHelper.writeConfigToFile(config);
     } else {
         console.log("You need to specify each of the config settings in order to run any command.");

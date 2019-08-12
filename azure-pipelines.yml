@@ -36,3 +36,13 @@ steps:
     npm run test
   workingDirectory: "./"
   displayName: "npm run test"
+
+- script: |
+    echo "./cli-linux init --azure-org $AZURE_ORG --azure-project $AZURE_PROJECT_PRIVATE --docker-pipeline-id $DOCKER_PIPELINE_GITHUB_PRIVATE_ID --manifest $GITHUB_PRIVATE_MANIFEST --github-manifest-username $GITHUB_MANIFEST_USERNAME --hld-pipeline-id $HLD_PIPELINE_GITHUB_PRIVATE_ID --src-pipeline-id $SRC_PIPELINE_GITHUB_PRIVATE_ID --storage-account-key $(STORAGE_ACCOUNT_KEY) --storage-account-name $STORAGE_ACCOUNT_NAME --storage-partition-key $STORAGE_PARTITION_KEY --storage-table-name $STORAGE_TABLE_NAME --azure-pipeline-access-token $(AZURE_PIPELINE_ACCESS_TOKEN) --manifest-access-token $(GITHUB_PRIVATE_MANIFEST_ACCESS_TOKEN)"
+    ./cli-linux init --azure-org $AZURE_ORG --azure-project $AZURE_PROJECT_PRIVATE --docker-pipeline-id $DOCKER_PIPELINE_GITHUB_PRIVATE_ID --manifest $GITHUB_PRIVATE_MANIFEST --github-manifest-username $GITHUB_MANIFEST_USERNAME --hld-pipeline-id $HLD_PIPELINE_GITHUB_PRIVATE_ID --src-pipeline-id $SRC_PIPELINE_GITHUB_PRIVATE_ID --storage-account-key $(STORAGE_ACCOUNT_KEY) --storage-account-name $STORAGE_ACCOUNT_NAME --storage-partition-key $STORAGE_PARTITION_KEY --storage-table-name $STORAGE_TABLE_NAME --azure-pipeline-access-token $(AZURE_PIPELINE_ACCESS_TOKEN) --manifest-access-token $(GITHUB_PRIVATE_MANIFEST_ACCESS_TOKEN)
+  displayName: "Set Config for GitHub Private"
+  
+- script: |
+    npm run private-github-test
+  workingDirectory: "./"
+  displayName: "npm run private-github-test"
