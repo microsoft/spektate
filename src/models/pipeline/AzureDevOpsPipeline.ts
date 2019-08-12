@@ -49,7 +49,6 @@ class AzureDevOpsPipeline extends Pipeline {
                     if (row.repository.type === "GitHub") {
                         build.repository = new GitHub(row.repository.id.split('/')[0], row.repository.id.split('/')[1], config.MANIFEST_ACCESS_TOKEN);
                     } else if (row.repository.type === "TfsGit") {
-                        console.log(row.repository.url.split('/'));
                         const reposityUrlSplit = row.repository.url.split('/');
                         build.repository = new AzureDevOpsRepo(reposityUrlSplit[3], reposityUrlSplit[4], reposityUrlSplit[6], config.MANIFEST_ACCESS_TOKEN);
                     }

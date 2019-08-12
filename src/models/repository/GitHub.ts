@@ -28,7 +28,7 @@ export class GitHub extends Repository {
                             this.manifestSync = syncStatus.data.object.sha.substring(0, 7);
                             callback(this.manifestSync);
                         }
-                    });
+                    }, this.accessToken);
                 }
             }, this.accessToken);
         });
