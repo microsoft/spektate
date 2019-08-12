@@ -21,6 +21,8 @@ describe('config validation', () => {
             expect(config.STORAGE_ACCOUNT_NAME.length).to.not.equal(0);
             expect(config.STORAGE_PARTITION_KEY.length).to.not.equal(0);
             expect(config.STORAGE_TABLE_NAME.length).to.not.equal(0);
+            expect(config.MANIFEST_ACCESS_TOKEN.length).to.not.equal(0);
+            expect(config.AZURE_PIPELINE_ACCESS_TOKEN.length).to.not.equal(0);
         });
     });
 });
