@@ -1,5 +1,5 @@
 
-import { DetailsList, DetailsListLayoutMode, IColumn } from 'office-ui-fabric-react/lib/DetailsList';
+import { DetailsList, DetailsListLayoutMode, IColumn, SelectionMode } from 'office-ui-fabric-react/lib/DetailsList';
 import { Icon } from 'office-ui-fabric-react/lib/Icon';
 import { Spinner, SpinnerSize } from 'office-ui-fabric-react/lib/Spinner';
 import * as React from 'react';
@@ -68,22 +68,19 @@ class Dashboard extends React.Component<{}, IDashboardState> {
 
   public renderNewPrototypeTable = () => {
     const columns: IColumn[] = [
-      { key: 'startTime', name: 'Start Time', isResizable: true, minWidth: 80, maxWidth: 120, fieldName: 'startTime'},
-      { key: 'imageTag', name: 'Image Tag', isResizable: true, minWidth: 100, maxWidth: 120, fieldName: 'imageTag'},
+      { key: 'startTime', name: 'Start Time', isResizable: true, minWidth: 120, maxWidth: 120, fieldName: 'startTime'},
       { key: 'srcCommitId', name: 'Commit', isResizable: true, minWidth: 60, maxWidth: 120, onRender: (item) => <a href={item.srcCommitURL}>{item.srcCommitId}</a> },
-      { key: 'srcPipelineId', name: 'SRC to ACR', isResizable: true, minWidth: 80, maxWidth: 120, onRender: (item) => <a href={item.srcPipelineURL}>{item.srcPipelineId}</a>},
-      { key: 'srcPipelineResult', isResizable: true, name: 'Result',  maxWidth: 100, onRender: (item) => this.getIcon(item.srcPipelineResult), minWidth: 60},
-      { key: 'dockerPipelineId', name: 'ACR to HLD', isResizable: true, minWidth: 100, maxWidth: 120, onRender: (item) => <a href={item.dockerPipelineURL}>{item.dockerPipelineId}</a>},
+      { key: 'srcPipelineId', name: 'SRC to ACR', isResizable: true, minWidth: 80, maxWidth: 120, onRender: (item) => <div>{this.getIcon(item.srcPipelineResult)}&nbsp;&nbsp;&nbsp;<a href={item.srcPipelineURL}>{item.srcPipelineId}</a></div>},
+      { key: 'imageTag', name: 'Image Tag', isResizable: true, minWidth: 100, maxWidth: 120, fieldName: 'imageTag'},
       { key: 'environment', name: 'Environment', isResizable: true, minWidth: 100, maxWidth: 120, fieldName: 'environment'},
-      { key: 'dockerPipelineResult', name: 'Result', maxWidth: 100, onRender: (item) => this.getIcon(item.dockerPipelineResult), isResizable: true, minWidth: 60},
+      { key: 'dockerPipelineId', name: 'ACR to HLD', isResizable: true, minWidth: 100, maxWidth: 120, onRender: (item) => <div>{this.getIcon(item.dockerPipelineResult)}&nbsp;&nbsp;&nbsp;<a href={item.dockerPipelineURL}>{item.dockerPipelineId}</a></div>},
       { key: 'hldCommitId', name: 'Commit', isResizable: true, minWidth: 60, maxWidth: 120, onRender: (item) => <a href={item.hldCommitURL}>{item.hldCommitId}</a>},
-      { key: 'hldPipelineId', name: 'HLD to Manifest', isResizable: true, minWidth: 100, maxWidth: 120, onRender: (item) => <a href={item.hldPipelineURL}>{item.hldPipelineId}</a>},
-      { key: 'hldPipelineResult', name: 'Result', maxWidth: 100, onRender: (item) => this.getIcon(item.hldPipelineResult), isResizable: true, minWidth: 60},
+      { key: 'hldPipelineId', name: 'HLD to Manifest', isResizable: true, minWidth: 100, maxWidth: 120, onRender: (item) => <div>{this.getIcon(item.hldPipelineResult)}&nbsp;&nbsp;&nbsp;<a href={item.hldPipelineURL}>{item.hldPipelineId}</a></div>},
       { key: 'duration', name: 'Duration', isResizable: true, minWidth: 60, maxWidth: 120, fieldName: 'duration'},
       { key: 'status', name: 'Status', isResizable: true, minWidth: 60, maxWidth: 120, fieldName: 'status'},
       { key: 'author', name: 'Author', isResizable: true, minWidth: 60, maxWidth: 120, onRender: (item) => <a href={item.authorURL}>{item.authorName}</a>},
       { key: 'clusterSync', name: 'Cluster-Sync', isResizable: true, minWidth: 70, maxWidth: 120, fieldName: 'clusterSync'},
-      { key: 'endTime', name: 'End Time', isResizable: true, minWidth: 100,maxWidth: 120,  fieldName: 'endTime'}
+      { key: 'endTime', name: 'End Time', isResizable: true, minWidth: 120,maxWidth: 120,  fieldName: 'endTime'}
     ];
 
     // tslint:disable-next-line: prefer-const
@@ -121,6 +118,7 @@ class Dashboard extends React.Component<{}, IDashboardState> {
               items={rows}
               columns={columns}
               layoutMode={DetailsListLayoutMode.justified}
+              selectionMode={SelectionMode.none}
               />);
   }
 
