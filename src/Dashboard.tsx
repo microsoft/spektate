@@ -1,4 +1,5 @@
 
+import { DetailsList, DetailsListLayoutMode, IColumn } from 'office-ui-fabric-react/lib/DetailsList';
 import { Icon } from 'office-ui-fabric-react/lib/Icon';
 import { Spinner, SpinnerSize } from 'office-ui-fabric-react/lib/Spinner';
 import * as React from 'react';
@@ -19,6 +20,30 @@ export interface IDashboardState{
   manifestSync: string,
   authors: IAuthors
 }
+export interface IDeploymentField {
+  startTime?: string;
+  imageTag?: string;
+  srcCommitId?: string;
+  srcCommitURL?: string;
+  srcPipelineId?: string;
+  srcPipelineURL?: string;
+  srcPipelineResult?: string;
+  dockerPipelineId?: string;
+  dockerPipelineURL?: string;
+  environment?: string;
+  dockerPipelineResult?: string;
+  hldCommitId?: string;
+  hldCommitURL?: string;
+  hldPipelineId?: string;
+  hldPipelineURL?: string;
+  hldPipelineResult?: string;
+  duration: string;
+  status: string;
+  clusterSync?: string;
+  endTime?: string;
+  authorName?: string;
+  authorURL?: string;
+}
 class Dashboard extends React.Component<{}, IDashboardState> {
   constructor(props:{}) {
     super(props);
@@ -33,11 +58,70 @@ class Dashboard extends React.Component<{}, IDashboardState> {
     return (
       <div className="App">
         <header className="App-header">
-          <h1 className="App-title">Container Journey Prototype</h1>
+          <h1 className="App-title">Bedrock Deployments</h1>
         </header>
-        {this.renderPrototypeTable()}
+        {this.renderNewPrototypeTable()}
+        {/* {this.renderPrototypeTable()} */}
       </div>
     );
+  }
+
+  public renderNewPrototypeTable = () => {
+    const columns: IColumn[] = [
+      { key: 'startTime', name: 'Start Time', isResizable: true, minWidth: 80, maxWidth: 120, fieldName: 'startTime'},
+      { key: 'imageTag', name: 'Image Tag', isResizable: true, minWidth: 100, maxWidth: 120, fieldName: 'imageTag'},
+      { key: 'srcCommitId', name: 'Commit', isResizable: true, minWidth: 60, maxWidth: 120, onRender: (item) => <a href={item.srcCommitURL}>{item.srcCommitId}</a> },
+      { key: 'srcPipelineId', name: 'SRC to ACR', isResizable: true, minWidth: 80, maxWidth: 120, onRender: (item) => <a href={item.srcPipelineURL}>{item.srcPipelineId}</a>},
+      { key: 'srcPipelineResult', isResizable: true, name: 'Result',  maxWidth: 100, onRender: (item) => this.getIcon(item.srcPipelineResult), minWidth: 60},
+      { key: 'dockerPipelineId', name: 'ACR to HLD', isResizable: true, minWidth: 100, maxWidth: 120, onRender: (item) => <a href={item.dockerPipelineURL}>{item.dockerPipelineId}</a>},
+      { key: 'environment', name: 'Environment', isResizable: true, minWidth: 100, maxWidth: 120, fieldName: 'environment'},
+      { key: 'dockerPipelineResult', name: 'Result', maxWidth: 100, onRender: (item) => this.getIcon(item.dockerPipelineResult), isResizable: true, minWidth: 60},
+      { key: 'hldCommitId', name: 'Commit', isResizable: true, minWidth: 60, maxWidth: 120, onRender: (item) => <a href={item.hldCommitURL}>{item.hldCommitId}</a>},
+      { key: 'hldPipelineId', name: 'HLD to Manifest', isResizable: true, minWidth: 100, maxWidth: 120, onRender: (item) => <a href={item.hldPipelineURL}>{item.hldPipelineId}</a>},
+      { key: 'hldPipelineResult', name: 'Result', maxWidth: 100, onRender: (item) => this.getIcon(item.hldPipelineResult), isResizable: true, minWidth: 60},
+      { key: 'duration', name: 'Duration', isResizable: true, minWidth: 60, maxWidth: 120, fieldName: 'duration'},
+      { key: 'status', name: 'Status', isResizable: true, minWidth: 60, maxWidth: 120, fieldName: 'status'},
+      { key: 'author', name: 'Author', isResizable: true, minWidth: 60, maxWidth: 120, onRender: (item) => <a href={item.authorURL}>{item.authorName}</a>},
+      { key: 'clusterSync', name: 'Cluster-Sync', isResizable: true, minWidth: 70, maxWidth: 120, fieldName: 'clusterSync'},
+      { key: 'endTime', name: 'End Time', isResizable: true, minWidth: 100,maxWidth: 120,  fieldName: 'endTime'}
+    ];
+
+    // tslint:disable-next-line: prefer-const
+    let rows: IDeploymentField[] = [];
+    this.state.deployments.forEach((deployment) => {
+      const author = this.getAuthor(deployment);
+      rows.push({
+        startTime: deployment.srcToDockerBuild ? deployment.srcToDockerBuild.startTime.toLocaleString() : "-",
+        // tslint:disable-next-line: object-literal-sort-keys
+        imageTag: deployment.imageTag,
+        srcCommitId: deployment.commitId,
+        srcCommitURL: deployment.srcToDockerBuild ? deployment.srcToDockerBuild.sourceVersionURL : "",
+        srcPipelineId: deployment.srcToDockerBuild ? deployment.srcToDockerBuild.id : "",
+        srcPipelineURL: deployment.srcToDockerBuild ? deployment.srcToDockerBuild.URL : "",
+        srcPipelineResult: deployment.srcToDockerBuild ? deployment.srcToDockerBuild.result : "-",
+        dockerPipelineId: deployment.dockerToHldRelease ? deployment.dockerToHldRelease.id : "",
+        dockerPipelineURL: deployment.dockerToHldRelease ? deployment.dockerToHldRelease.URL : "",
+        environment: deployment.environment.toUpperCase(),
+        dockerPipelineResult: deployment.dockerToHldRelease ? deployment.dockerToHldRelease.status : "-",
+        hldCommitId: deployment.hldCommitId,
+        hldCommitURL: deployment.hldToManifestBuild ? deployment.hldToManifestBuild.sourceVersionURL : "",
+        hldPipelineId: deployment.hldToManifestBuild ? deployment.hldToManifestBuild.id : "",
+        hldPipelineResult: deployment.hldToManifestBuild ? deployment.hldToManifestBuild.result : "-",
+        hldPipelineURL: deployment.hldToManifestBuild ? deployment.hldToManifestBuild.URL : "",
+        duration: deployment.duration() + " mins",
+        authorName: author ? author.name : "",
+        authorURL: author ? author.URL : "",
+        status: deployment.status(),
+        clusterSync: deployment.manifestCommitId === this.state.manifestSync && this.state.manifestSync !== "" ? "Synced" : "",
+        endTime: deployment.hldToManifestBuild ? (Number.isNaN(deployment.hldToManifestBuild!.finishTime.valueOf()) ? "-" : deployment.hldToManifestBuild!.finishTime.toLocaleString()) : "-"
+      })
+    });
+
+    return (<DetailsList
+              items={rows}
+              columns={columns}
+              layoutMode={DetailsListLayoutMode.justified}
+              />);
   }
 
   public renderPrototypeTable = () => {
