@@ -1,7 +1,15 @@
 
-import { DetailsList, DetailsListLayoutMode, IColumn, SelectionMode } from 'office-ui-fabric-react/lib/DetailsList';
-import { Icon } from 'office-ui-fabric-react/lib/Icon';
-import { Spinner, SpinnerSize } from 'office-ui-fabric-react/lib/Spinner';
+import { Ago } from "azure-devops-ui/Ago";
+import { ObservableValue } from "azure-devops-ui/Core/Observable";
+import { Duration } from "azure-devops-ui/Duration";
+// import { Icon } from 'office-ui-fabric-react/lib/Icon';
+import { Icon, IIconProps } from "azure-devops-ui/Icon";
+import { Link } from "azure-devops-ui/Link";
+import { IStatusProps, Status, Statuses, StatusSize } from "azure-devops-ui/Status";
+import { ColumnFill, ITableColumn, SimpleTableCell, Table, TwoLineTableCell } from 'azure-devops-ui/Table';
+import { Tooltip } from "azure-devops-ui/TooltipEx";
+import { ArrayItemProvider } from "azure-devops-ui/Utilities/Provider";
+// import { DetailsList, DetailsListLayoutMode, IColumn, SelectionMode } from 'office-ui-fabric-react/lib/DetailsList';
 import * as React from 'react';
 import { config } from "./config";
 import './css/dashboard.css';
@@ -9,21 +17,27 @@ import Deployment from "./models/Deployment";
 import AzureDevOpsPipeline from "./models/pipeline/AzureDevOpsPipeline";
 import { Author } from './models/repository/Author';
 import { GitHub } from './models/repository/GitHub';
-// import { AzureDevOpsRepo } from './models/repository/AzureDevOpsRepo';
 import { Repository } from './models/repository/Repository';
+import { Tag } from './models/repository/Tag';
 
+
+interface IStatusIndicatorData {
+  statusProps: IStatusProps;
+  label: string;
+}
 export interface IAuthors {
   [commitId: string]: Author;
 }
 export interface IDashboardState{
   deployments: Deployment[],
-  manifestSync: string,
+  manifestSync?: Tag,
   authors: IAuthors
 }
 export interface IDeploymentField {
-  startTime?: string;
+  startTime?: Date;
   imageTag?: string;
   srcCommitId?: string;
+  srcBranchName?: string;
   srcCommitURL?: string;
   srcPipelineId?: string;
   srcPipelineURL?: string;
@@ -40,7 +54,8 @@ export interface IDeploymentField {
   duration: string;
   status: string;
   clusterSync?: string;
-  endTime?: string;
+  clusterSyncDate?: string;
+  endTime?: Date;
   authorName?: string;
   authorURL?: string;
 }
@@ -49,8 +64,7 @@ class Dashboard extends React.Component<{}, IDashboardState> {
     super(props);
     this.state = {
       authors: {},
-      deployments: [],
-      manifestSync: ""
+      deployments: []
     };
       this.getDeployments();
   }
@@ -58,29 +72,26 @@ class Dashboard extends React.Component<{}, IDashboardState> {
     return (
       <div className="App">
         <header className="App-header">
-          <h1 className="App-title">Bedrock Deployments</h1>
+          <h1 className="App-title">Bedrock Deployment Observability</h1>
         </header>
-        {this.renderNewPrototypeTable()}
-        {/* {this.renderPrototypeTable()} */}
+        {this.renderPrototypeTable()}
       </div>
     );
   }
 
-  public renderNewPrototypeTable = () => {
-    const columns: IColumn[] = [
-      { key: 'startTime', name: 'Start Time', isResizable: true, minWidth: 120, maxWidth: 120, fieldName: 'startTime'},
-      { key: 'srcCommitId', name: 'Commit', isResizable: true, minWidth: 60, maxWidth: 120, onRender: (item) => <a href={item.srcCommitURL}>{item.srcCommitId}</a> },
-      { key: 'srcPipelineId', name: 'SRC to ACR', isResizable: true, minWidth: 80, maxWidth: 120, onRender: (item) => <div>{this.getIcon(item.srcPipelineResult)}&nbsp;&nbsp;&nbsp;<a href={item.srcPipelineURL}>{item.srcPipelineId}</a></div>},
-      { key: 'imageTag', name: 'Image Tag', isResizable: true, minWidth: 100, maxWidth: 120, fieldName: 'imageTag'},
-      { key: 'environment', name: 'Environment', isResizable: true, minWidth: 100, maxWidth: 120, fieldName: 'environment'},
-      { key: 'dockerPipelineId', name: 'ACR to HLD', isResizable: true, minWidth: 100, maxWidth: 120, onRender: (item) => <div>{this.getIcon(item.dockerPipelineResult)}&nbsp;&nbsp;&nbsp;<a href={item.dockerPipelineURL}>{item.dockerPipelineId}</a></div>},
-      { key: 'hldCommitId', name: 'Commit', isResizable: true, minWidth: 60, maxWidth: 120, onRender: (item) => <a href={item.hldCommitURL}>{item.hldCommitId}</a>},
-      { key: 'hldPipelineId', name: 'HLD to Manifest', isResizable: true, minWidth: 100, maxWidth: 120, onRender: (item) => <div>{this.getIcon(item.hldPipelineResult)}&nbsp;&nbsp;&nbsp;<a href={item.hldPipelineURL}>{item.hldPipelineId}</a></div>},
-      { key: 'duration', name: 'Duration', isResizable: true, minWidth: 60, maxWidth: 120, fieldName: 'duration'},
-      { key: 'status', name: 'Status', isResizable: true, minWidth: 60, maxWidth: 120, fieldName: 'status'},
-      { key: 'author', name: 'Author', isResizable: true, minWidth: 60, maxWidth: 120, onRender: (item) => <a href={item.authorURL}>{item.authorName}</a>},
-      { key: 'clusterSync', name: 'Cluster-Sync', isResizable: true, minWidth: 70, maxWidth: 120, fieldName: 'clusterSync'},
-      { key: 'endTime', name: 'End Time', isResizable: true, minWidth: 120,maxWidth: 120,  fieldName: 'endTime'}
+  public renderPrototypeTable = () => {
+
+    const columns: Array<ITableColumn<IDeploymentField>> = [
+      { id: 'status', name: 'State', width: new ObservableValue(70), renderCell: this.renderDeploymentStatus},      
+      { id: 'imageTag', name: 'Image Tag', width: new ObservableValue(220), renderCell: this.renderSimpleText},  
+      { id: 'environment', name: 'Environment', width: new ObservableValue(100), renderCell: this.renderSimpleText},
+      { id: 'srcPipelineId', name: 'SRC to ACR', width: new ObservableValue(200), renderCell: this.renderSrcBuild},
+      { id: 'dockerPipelineId', name: 'ACR to HLD', width: new ObservableValue(200), renderCell: this.renderDockerRelease},
+      { id: 'hldPipelineId', name: 'HLD to Manifest', width: new ObservableValue(200), renderCell: this.renderHldBuild},
+      { id: 'authorName', name: 'Author', width: new ObservableValue(80), renderCell: this.renderSimpleBoldText},
+      { id: 'clusterSync', name: 'Cluster-Sync', width: new ObservableValue(120), renderCell: this.renderClusterSync},
+      { id: 'deployedAt', name: 'Deployed at', width: new ObservableValue(180),renderCell: this.renderTime},
+      ColumnFill
     ];
 
     // tslint:disable-next-line: prefer-const
@@ -88,95 +99,36 @@ class Dashboard extends React.Component<{}, IDashboardState> {
     this.state.deployments.forEach((deployment) => {
       const author = this.getAuthor(deployment);
       rows.push({
-        startTime: deployment.srcToDockerBuild ? deployment.srcToDockerBuild.startTime.toLocaleString() : "-",
+        startTime: deployment.srcToDockerBuild ? deployment.srcToDockerBuild.startTime : new Date(),
         // tslint:disable-next-line: object-literal-sort-keys
         imageTag: deployment.imageTag,
         srcCommitId: deployment.commitId,
+        srcBranchName: deployment.srcToDockerBuild ? deployment.srcToDockerBuild.sourceBranch : "",
         srcCommitURL: deployment.srcToDockerBuild ? deployment.srcToDockerBuild.sourceVersionURL : "",
-        srcPipelineId: deployment.srcToDockerBuild ? deployment.srcToDockerBuild.id : "",
+        srcPipelineId: deployment.srcToDockerBuild ? deployment.srcToDockerBuild.buildNumber : "",
         srcPipelineURL: deployment.srcToDockerBuild ? deployment.srcToDockerBuild.URL : "",
         srcPipelineResult: deployment.srcToDockerBuild ? deployment.srcToDockerBuild.result : "-",
-        dockerPipelineId: deployment.dockerToHldRelease ? deployment.dockerToHldRelease.id : "",
+        dockerPipelineId: deployment.dockerToHldRelease ? deployment.dockerToHldRelease.releaseName : "",
         dockerPipelineURL: deployment.dockerToHldRelease ? deployment.dockerToHldRelease.URL : "",
         environment: deployment.environment.toUpperCase(),
         dockerPipelineResult: deployment.dockerToHldRelease ? deployment.dockerToHldRelease.status : "-",
         hldCommitId: deployment.hldCommitId,
         hldCommitURL: deployment.hldToManifestBuild ? deployment.hldToManifestBuild.sourceVersionURL : "",
-        hldPipelineId: deployment.hldToManifestBuild ? deployment.hldToManifestBuild.id : "",
+        hldPipelineId: deployment.hldToManifestBuild ? deployment.hldToManifestBuild.buildNumber : "",
         hldPipelineResult: deployment.hldToManifestBuild ? deployment.hldToManifestBuild.result : "-",
         hldPipelineURL: deployment.hldToManifestBuild ? deployment.hldToManifestBuild.URL : "",
         duration: deployment.duration() + " mins",
         authorName: author ? author.name : "",
         authorURL: author ? author.URL : "",
         status: deployment.status(),
-        clusterSync: deployment.manifestCommitId === this.state.manifestSync && this.state.manifestSync !== "" ? "Synced" : "",
-        endTime: deployment.hldToManifestBuild ? (Number.isNaN(deployment.hldToManifestBuild!.finishTime.valueOf()) ? "-" : deployment.hldToManifestBuild!.finishTime.toLocaleString()) : "-"
+        clusterSync: this.state.manifestSync && deployment.manifestCommitId === this.state.manifestSync.commit && this.state.manifestSync.commit !== "" ? "Synced" : "",
+        clusterSyncDate: this.state.manifestSync && deployment.manifestCommitId === this.state.manifestSync.commit && this.state.manifestSync.commit !== "" ? this.state.manifestSync.date.toString() : "",
+        endTime: deployment.hldToManifestBuild ? (Number.isNaN(deployment.hldToManifestBuild!.finishTime.valueOf()) ? new Date() : deployment.hldToManifestBuild!.finishTime) : new Date()
       })
     });
-
-    return (<DetailsList
-              items={rows}
-              columns={columns}
-              layoutMode={DetailsListLayoutMode.justified}
-              selectionMode={SelectionMode.none}
-              />);
-  }
-
-  public renderPrototypeTable = () => {
-    if (this.state.deployments.length === 0) {
-      return <Spinner size={SpinnerSize.large} />;
-    }
-    const rows = [] as any[];
-    let counter = 0;
-    const state = this.state;
-    this.state.deployments.forEach((deployment) => {
-      const author = this.getAuthor(deployment);
-      rows.push(<tr key={counter}>
-                  <td>{deployment.srcToDockerBuild ? deployment.srcToDockerBuild.startTime.toLocaleString() : "-"}</td>
-                  <td>{deployment.imageTag}</td>
-                  <td>{deployment.srcToDockerBuild ? <a href={deployment.srcToDockerBuild.sourceVersionURL}>{deployment.commitId}</a> : "-" }</td>
-                  <td>{deployment.srcToDockerBuild ? <a href={deployment.srcToDockerBuild.URL}>{deployment.srcToDockerBuild.id}</a> : "-"}</td>
-                  <td>{deployment.srcToDockerBuild ? this.getIcon(deployment.srcToDockerBuild.result) : "-"}</td>
-                  <td>{deployment.dockerToHldRelease ? <a href={deployment.dockerToHldRelease.URL}>{deployment.dockerToHldRelease!.id}</a> : "-"}</td>
-                  <td>{deployment.environment.toUpperCase()}</td>
-                  <td>{deployment.dockerToHldRelease ? this.getIcon(deployment.dockerToHldRelease!.status) : "-"}</td>
-                  <td>{deployment.hldToManifestBuild ? <a href={deployment.hldToManifestBuild.sourceVersionURL}>{deployment.hldCommitId}</a> : deployment.hldCommitId}</td>
-                  <td>{deployment.hldToManifestBuild ? <a href={deployment.hldToManifestBuild.URL}>{deployment.hldToManifestBuild!.id}</a> : "-"}</td>
-                  <td>{deployment.hldToManifestBuild ? this.getIcon(deployment.hldToManifestBuild!.result) : "-"}</td>
-                  <td>{deployment.duration()} mins</td>
-                  <td>{deployment.status()}</td>
-                  <td>{author !== undefined ? <a href={author.URL}>{author.name}</a> : ""}</td>
-                  <td>{deployment.manifestCommitId === state.manifestSync && state.manifestSync !== "" ? "Synced" : ""}</td>
-                  <td>{deployment.hldToManifestBuild ? (Number.isNaN(deployment.hldToManifestBuild!.finishTime.valueOf()) ? "-" : deployment.hldToManifestBuild!.finishTime.toLocaleString()) : "-"}</td>
-                </tr>);
-        counter++;
-    });
-    return (<table>
-          <thead>
-            <tr>
-              <th>Start Time</th>
-              <th>Image Version</th>
-              <th>Commit</th>
-              <th>SRC to ACR</th>
-              <th>Result</th>
-              <th>ACR to HLD</th>
-              <th>Environment</th>
-              <th>Result</th>
-              <th>Commit</th>
-              <th>HLD to Manifest</th>
-              <th>Result</th>
-              <th>Duration</th>
-              <th>Status</th>
-              <th>Author</th>
-              <th>Cluster Sync</th>
-              <th>End Time</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows}
-          </tbody>
-        </table>);
-  
+    return (
+      <Table columns={columns} pageSize={rows.length} role="table" itemProvider={new ArrayItemProvider<IDeploymentField>(rows)} showLines={true} />
+    );
   }
 
   public getDeployments = () => {
@@ -195,6 +147,221 @@ class Dashboard extends React.Component<{}, IDashboardState> {
     });
     return <div />;
   }
+
+  private renderClusterSync = (rowIndex: number, columnIndex: number, tableColumn: ITableColumn<IDeploymentField>, tableItem: IDeploymentField): JSX.Element => {
+    if (tableItem.clusterSyncDate !== "") {
+      return (
+        <TwoLineTableCell
+          key={"col-" + columnIndex}
+          columnIndex={columnIndex}
+          tableColumn={tableColumn}
+          line1={this.WithIcon({
+            children: (
+                tableItem.clusterSync!
+            ),
+            className: "fontSize font-size",
+            iconProps: { iconName: "CloudDownload" }
+        })}
+          line2={this.WithIcon({
+            children: (
+                <Ago date={new Date(tableItem.clusterSyncDate!)} />
+            ),
+            className: "fontSize font-size",
+            iconProps: { iconName: "Calendar" }
+        })}
+      />
+      );
+    }
+    return <SimpleTableCell columnIndex={columnIndex}/>;
+  } 
+
+  private renderSimpleText = (rowIndex: number, columnIndex: number, tableColumn: ITableColumn<IDeploymentField>, tableItem: IDeploymentField): JSX.Element => {
+    return (
+      <SimpleTableCell
+        columnIndex={columnIndex}
+          tableColumn={tableColumn}
+          key={"col-" + columnIndex}
+          contentClassName="fontSizeM font-size-m scroll-hidden"
+      >
+        <div className="flex-row scroll-hidden">
+                <Tooltip overflowOnly={true}>
+                    <span className="text-ellipsis">{tableItem[tableColumn.id]}</span>
+                </Tooltip>
+            </div>
+      </SimpleTableCell>
+    )
+  }
+
+  private renderSimpleBoldText = (rowIndex: number, columnIndex: number, tableColumn: ITableColumn<IDeploymentField>, tableItem: IDeploymentField): JSX.Element => {
+    return (
+      <SimpleTableCell
+        columnIndex={columnIndex}
+          tableColumn={tableColumn}
+          key={"col-" + columnIndex}
+          contentClassName="fontWeightSemiBold font-weight-semibold fontSizeM font-size-m scroll-hidden"
+      >
+        <div className="flex-row scroll-hidden">
+                <Tooltip overflowOnly={true}>
+                    <span className="text-ellipsis">{tableItem[tableColumn.id]}</span>
+                </Tooltip>
+            </div>
+      </SimpleTableCell>
+    )
+  }
+
+  private renderTime = (rowIndex: number, columnIndex: number, tableColumn: ITableColumn<IDeploymentField>, tableItem: IDeploymentField): JSX.Element => {
+    return (
+      <TwoLineTableCell
+        key={"col-" + columnIndex}
+        columnIndex={columnIndex}
+        tableColumn={tableColumn}
+        line1={this.WithIcon({
+            children: (
+                <Ago date={tableItem.endTime!} />
+            ),
+            className: "fontSize font-size",
+            iconProps: { iconName: "Calendar" }
+        })}
+        line2={this.WithIcon({
+            children: (
+                <Duration
+                    startDate={tableItem.startTime!}
+                    endDate={tableItem.endTime!}
+                />
+            ),
+            className: "fontSize font-size bolt-table-two-line-cell-item",
+            iconProps: { iconName: "Clock" },
+        })}
+    />
+    );
+  }
+
+  private renderSrcBuild = (rowIndex: number, columnIndex: number, tableColumn: ITableColumn<IDeploymentField>, tableItem: IDeploymentField): JSX.Element => {
+    // if (tableItem.srcPipelineResult && tableItem.srcPipelineId && tableItem.srcPipelineURL && tableItem.srcCommitId && tableItem.srcCommitURL) {
+      return this.renderBuild(rowIndex, columnIndex, tableColumn, tableItem.srcPipelineResult, "#" + tableItem.srcPipelineId, tableItem.srcPipelineURL, tableItem.srcCommitId, tableItem.srcCommitURL, "GitLogo");
+    // }
+    // return <SimpleTableCell columnIndex={columnIndex}/>;
+  }
+
+  private renderHldBuild = (rowIndex: number, columnIndex: number, tableColumn: ITableColumn<IDeploymentField>, tableItem: IDeploymentField): JSX.Element => {
+    // if (tableItem.hldPipelineResult && tableItem.hldPipelineId && tableItem.hldPipelineURL && tableItem.hldCommitId && tableItem.hldCommitURL) {
+      return this.renderBuild(rowIndex, columnIndex, tableColumn, tableItem.hldPipelineResult, "#" + tableItem.hldPipelineId, tableItem.hldPipelineURL, tableItem.hldCommitId, tableItem.hldCommitURL, "GitLogo");
+    // }
+    // return <SimpleTableCell columnIndex={columnIndex}/>;
+  }
+
+  private renderDockerRelease = (rowIndex: number, columnIndex: number, tableColumn: ITableColumn<IDeploymentField>, tableItem: IDeploymentField): JSX.Element => {
+    // if (tableItem.dockerPipelineResult && tableItem.dockerPipelineId && tableItem.dockerPipelineURL && tableItem.environment && tableItem.dockerPipelineURL) {
+      return this.renderBuild(rowIndex, columnIndex, tableColumn, tableItem.dockerPipelineResult, tableItem.dockerPipelineId, tableItem.dockerPipelineURL, tableItem.environment, tableItem.dockerPipelineURL, "World");
+    // }
+    // return <SimpleTableCell columnIndex={columnIndex}/>;
+  }
+
+  private renderBuild = (rowIndex: number, columnIndex: number, tableColumn: ITableColumn<IDeploymentField>, pipelineResult?: string, pipelineId?: string, pipelineURL?: string, commitId?: string, commitURL?: string, iconName?: string): JSX.Element => {
+    return (
+        <TwoLineTableCell
+            className="first-row no-cell-top-border bolt-table-cell-content-with-inline-link no-v-padding"
+            key={'col-' + columnIndex}
+            columnIndex={columnIndex}
+            tableColumn={tableColumn}
+            iconProps={this.getIcon(pipelineResult)}
+            line1={
+                    <Tooltip text={pipelineId} overflowOnly={true}>
+                        {pipelineURL && (<Link
+                            className="fontSizeM font-size-m text-ellipsis bolt-table-link bolt-table-inline-link"
+                            href={pipelineURL}
+                            // tslint:disable-next-line: jsx-no-lambda
+                            onClick={() => (parent.window.location.href = pipelineURL)}
+                        >
+                            {pipelineId}
+                        </Link>)}
+                    </Tooltip>
+            }
+            line2={
+                <Tooltip overflowOnly={true}>
+                    <span className="fontSize font-size secondary-text flex-row flex-center text-ellipsis">
+                    {
+                      commitId && (<Link
+                        className="monospaced-text text-ellipsis flex-row flex-center bolt-table-link bolt-table-inline-link"
+                        href={commitURL}
+                        // tslint:disable-next-line: jsx-no-lambda
+                        onClick={() => (parent.window.location.href = commitId)}
+                        >
+                      {this.WithIcon({
+                        className: "", 
+                        iconProps: { iconName }, 
+
+                        children: (
+                          <div>{commitId}</div>
+                        )
+                      })}
+                      </Link>
+                    )}
+                    </span>
+                </Tooltip>
+            }
+        />
+    );
+  }
+
+  private renderDeploymentStatus = (rowIndex: number, columnIndex: number, tableColumn: ITableColumn<IDeploymentField>, tableItem: IDeploymentField): JSX.Element => {
+    console.log(tableItem.status);
+    return (
+      <SimpleTableCell
+        columnIndex={columnIndex}
+        tableColumn={tableColumn}
+        key={"col-" + columnIndex}
+        contentClassName="fontWeightSemiBold font-weight-semibold fontSizeM font-size-m scroll-hidden"
+      >
+        
+        <Status
+                {...this.getStatusIndicatorData(tableItem.status).statusProps}
+                className="icon-large-margin"
+                size={StatusSize.l}
+            />
+      </SimpleTableCell>
+    )
+  }
+
+  private WithIcon = (props: {
+      className?: string;
+      iconProps: IIconProps;
+      children?: React.ReactNode;
+  }) => {
+      return (
+          <div className="flex-row flex-center">
+              {Icon({ ...props.iconProps, className: "icon-margin" })}
+              {props.children}
+          </div>
+      );
+  }
+
+  private getStatusIndicatorData = (status: string): IStatusIndicatorData => {
+    status = status || "";
+    status = status.toLowerCase();
+    console.log(status);
+    const indicatorData: IStatusIndicatorData = {
+        label: "Success",
+        statusProps: { ...Statuses.Success, ariaLabel: "Success" }
+    };
+    switch (status.toLowerCase()) {
+        case "failed":
+            indicatorData.statusProps = { ...Statuses.Failed, ariaLabel: "Failed" };
+            indicatorData.label = "Failed";
+            break;
+        case "in progress":
+            indicatorData.statusProps = { ...Statuses.Running, ariaLabel: "Running" };
+            indicatorData.label = "Running";
+            break;
+        case "warning":
+            indicatorData.statusProps = { ...Statuses.Warning, ariaLabel: "Warning" };
+            indicatorData.label = "Warning";
+
+            break;
+    }
+
+    return indicatorData;
+}
 
   private getAuthors = () => {
     const state = this.state;
@@ -218,13 +385,13 @@ class Dashboard extends React.Component<{}, IDashboardState> {
     return undefined;
   }
 
-  private getIcon(status: string): React.ReactElement {
+  private getIcon(status?: string): IIconProps {
     if(status === "succeeded") {
-      return <Icon style={{color: "green"}} iconName="CompletedSolid" />;
+      return {iconName: "SkypeCircleCheck", style: {color: "green"}};
     } else if (status === undefined || status === "inProgress") {
-      return <Icon style={{color: "blue"}} iconName="SkypeCircleClock" />; // SyncStatusSolid
+      return {iconName: "Clock", style: {color: "blue"}}; // SyncStatusSolid
     }
-    return <Icon style={{color: "#c80000"}} iconName="StatusErrorFull" />;
+    return {iconName: "SkypeCircleMinus", style: {color: "red"}};
   }
 }
 

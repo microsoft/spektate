@@ -3,6 +3,7 @@ import Table = require('cli-table');
 import * as fs from 'fs';
 import open = require('open');
 import * as os from 'os';
+import { Tag } from 'src/models/repository/Tag';
 import { config } from '../config';
 import Deployment from '../models/Deployment';
 import AzureDevOpsPipeline from '../models/pipeline/AzureDevOpsPipeline';
@@ -75,11 +76,11 @@ export class AccessHelper {
         });
     }
 
-    public static getClusterSync = (callback?: (syncCommit: string) => void): void => {
+    public static getClusterSync = (callback?: (syncTag: Tag) => void): void => {
         const manifestRepo: Repository = new GitHub(config.GITHUB_MANIFEST_USERNAME, config.MANIFEST, config.MANIFEST_ACCESS_TOKEN);
-        manifestRepo.getManifestSyncState((commit) => {
+        manifestRepo.getManifestSyncState((syncTag) => {
             if (callback) {
-                callback(commit);
+                callback(syncTag);
             }
         });
     }

@@ -30,8 +30,8 @@ describe('config validation', () => {
 describe('cluster-sync', () => {
     it('should return the most recent sync tag', () => {
         AccessHelper.verifyAppConfiguration(() => {
-            AccessHelper.getClusterSync((syncCommit) => {
-                expect(syncCommit.length).to.equal(7);
+            AccessHelper.getClusterSync((syncTag) => {
+                expect(syncTag.commit.length).to.equal(7);
             });
         });
     });
