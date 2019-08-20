@@ -77,6 +77,7 @@ class AzureDevOpsPipeline extends Pipeline {
                     release.finishTime = new Date(row.completedOn);
                     release.status = row.deploymentStatus;
                     release.URL = row.release._links.web.href;
+                    release.releaseName = row.release.name;
                     if (row.release.artifacts.length > 0) {
                         release.imageVersion = row.release.artifacts[0].definitionReference.version.id;
                         release.registryURL = row.release.artifacts[0].definitionReference.registryurl.id;

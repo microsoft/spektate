@@ -1,6 +1,7 @@
 import { HttpHelper } from '../HttpHelper';
 import { Author } from './Author';
 import { Repository } from './Repository';
+import { Tag } from './Tag';
 
 const authorInfoURL = "https://dev.azure.com/{organization}/{project}/_apis/git/repositories/{repositoryId}/commits/{commitId}?api-version=4.1";
 const manifestSyncTagsURL = "https://dev.azure.com/{organization}/{project}/_apis/git/repositories/{repositoryId}/refs?filter=tags&api-version=4.1";
@@ -19,7 +20,7 @@ export class AzureDevOpsRepo extends Repository {
         this.repo = repo;
         this.accessToken = accessToken;
     }
-    public getManifestSyncState(callback: (syncCommit: string) => void): Promise<void> {
+    public getManifestSyncState(callback: (syncTag: Tag) => void): Promise<void> {
         let tags;
         return new Promise((resolve, reject) => {
             HttpHelper.httpGet(manifestSyncTagsURL.replace("{organization}", this.org).replace("{project}", this.project).replace("{repositoryId}", this.repo), (data) => {
@@ -32,7 +33,7 @@ export class AzureDevOpsRepo extends Repository {
                             HttpHelper.httpGet(manifestSyncTagURL.replace("{organization}", this.org).replace("{project}", this.project).replace("{repositoryId}", this.repo).replace("{objectId}", objectId), (syncStatus) => {
                                 resolve();
                                 if (syncStatus != null) {
-                                    this.manifestSync = syncStatus.data.taggedObject.objectId.substring(0, 7);
+                                    this.manifestSync = new Tag(syncStatus.data.taggedObject.objectId.substring(0, 7), new Date());
                                     callback(this.manifestSync);
                                 }
                             }, this.accessToken);

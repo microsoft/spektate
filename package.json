@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "axios": "^0.19.0",
+    "azure-devops-ui": "^1.155.0",
     "cli-table": "^0.3.1",
     "commander": "^2.20.0",
     "fs": "0.0.1-security",
