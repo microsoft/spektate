@@ -1,13 +1,13 @@
 [![Build Status](https://dev.azure.com/epicstuff/hellobedrock/_apis/build/status/samiyaakhtar.container-journey?branchName=master)](https://dev.azure.com/epicstuff/hellobedrock/_build/latest?definitionId=105&branchName=master)
 
 
-# Container Journey
+# Spektate
 
 This is an initiative to visualize [Project Bedrock](https://github.com/microsoft/bedrock). Currently, it consists of a command line interface and a simple text based dashboard prototype. The instructions to use both are below.
 
-##  Onboard a Bedrock project to use Container Journey
+##  Onboard a Bedrock project to use Spektate
 
-If you have already followed the steps [here](https://github.com/microsoft/bedrock/tree/master/gitops) to setup the pipelines for a GitOps workflow in Bedrock, you may add a task to each of your pipelines to send data to the container journey storage. 
+If you have already followed the steps [here](https://github.com/microsoft/bedrock/tree/master/gitops) to setup the pipelines for a GitOps workflow in Bedrock, you may add a task to each of your pipelines to send data to the Spektate storage. 
 
 **Pre-Requisite**: Create an azure storage table account whose access keys you will need to use in subsequent steps.
 
@@ -22,8 +22,8 @@ If you have already followed the steps [here](https://github.com/microsoft/bedro
 
     ```yaml
     - bash: |
-        git clone https://github.com/samiyaakhtar/container-journey.git
-        cd container-journey/pipeline-scripts
+        git clone https://github.com/microsoft/spektate.git
+        cd spektate/pipeline-scripts
 
         sudo /usr/bin/easy_install virtualenv
         pip install virtualenv 
@@ -38,17 +38,17 @@ If you have already followed the steps [here](https://github.com/microsoft/bedro
         commitId=$(echo "${commitId:0:7}")
         echo "python update_pipeline.py $(ACCOUNT_NAME) $(ACCOUNT_KEY) $(TABLE_NAME) $(PARTITION_KEY) p1 $(Build.BuildId) imageTag $tag_name commitId $commitId"
         python update_pipeline.py $(ACCOUNT_NAME) $(ACCOUNT_KEY) $(TABLE_NAME) $(PARTITION_KEY) p1 $(Build.BuildId) imageTag $tag_name commitId $commitId 
-    displayName: Update source pipeline details in Container Journey db
+    displayName: Update source pipeline details in Spektate db
     ```
 
-**Note**: The earlier in the pipeline you add this task, the earlier it will send data to the container journey. Adding it before the crucial steps is recommended since it will capture details about failures if the next steps fail.
+**Note**: The earlier in the pipeline you add this task, the earlier it will send data to Spektate. Adding it before the crucial steps is recommended since it will capture details about failures if the next steps fail.
 
 3. To your CD release pipeline (ACR to HLD), add the following lines of code to the end of your release task: 
 
     ```yaml
     latest_commit=$(git rev-parse --short HEAD)
 
-    cd ../container-journey/pipeline-scripts
+    cd ../spektate/pipeline-scripts
 
     sudo /usr/bin/easy_install virtualenv
     pip install virtualenv 
@@ -66,8 +66,8 @@ If you have already followed the steps [here](https://github.com/microsoft/bedro
 
     ```yaml
     - bash: |
-        git clone https://github.com/samiyaakhtar/container-journey.git
-        cd container-journey/pipeline-scripts
+        git clone https://github.com/microsoft/spektate.git
+        cd spektate/pipeline-scripts
 
         sudo /usr/bin/easy_install virtualenv
         pip install virtualenv 
@@ -88,14 +88,14 @@ If you have already followed the steps [here](https://github.com/microsoft/bedro
 
 ## Command Line Interface
 
-To use the CLI for Container Journey:
+To use the CLI for Spektate:
 1. Go to Releases in this repository and download the CLI for your platform.
 2. Make it an executable, for eg. `chmod +x cli-macos`
 3. Run `init` command to initialize the CLI with configuration for your application. Note that you will only need to run this once on your machine to initialize the CLI. 
     ```bash
     ./cli-macos init --azure-org <azure_organization> --azure-project <azure_project> --docker-pipeline-id <docker_to_HLD_pipeline_ID> --manifest <manifest_repo_name> --github-manifest-username <github_manifest_repo_username_if_using_github> --hld-pipeline-id <hld_to_manifest_pipeline_ID> --src-pipeline-id <src_to_docker_pipeline_ID> --storage-account-key <storage_account_key> --storage-account-name <storage_account_name> --storage-partition-key <storage_account_partition_key> --storage-table-name <storage_table_name>
     ```
-4. You may now use the CLI to get information about deployments! (Assuming that you've followed steps above to onboard pipelines to Container Journey)
+4. You may now use the CLI to get information about deployments! (Assuming that you've followed steps above to onboard pipelines to Spektate)
 
 ### CLI usage examples
 
