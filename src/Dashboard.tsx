@@ -83,10 +83,11 @@ class Dashboard extends React.Component<{}, IDashboardState> {
 
     const columns: Array<ITableColumn<IDeploymentField>> = [
       { id: 'status', name: 'State', width: new ObservableValue(70), renderCell: this.renderDeploymentStatus},      
-      { id: 'imageTag', name: 'Image Tag', width: new ObservableValue(220), renderCell: this.renderSimpleText},  
+      // { id: 'imageTag', name: 'Image Tag', width: new ObservableValue(220), renderCell: this.renderSimpleText},     
+      { id: 'srcBranchName', name: 'Branch', width: new ObservableValue(180), renderCell: this.renderSimpleText}, 
       { id: 'environment', name: 'Environment', width: new ObservableValue(100), renderCell: this.renderSimpleText},
       { id: 'srcPipelineId', name: 'SRC to ACR', width: new ObservableValue(200), renderCell: this.renderSrcBuild},
-      { id: 'dockerPipelineId', name: 'ACR to HLD', width: new ObservableValue(200), renderCell: this.renderDockerRelease},
+      { id: 'dockerPipelineId', name: 'ACR to HLD', width: new ObservableValue(250), renderCell: this.renderDockerRelease},
       { id: 'hldPipelineId', name: 'HLD to Manifest', width: new ObservableValue(200), renderCell: this.renderHldBuild},
       { id: 'authorName', name: 'Author', width: new ObservableValue(80), renderCell: this.renderSimpleBoldText},
       { id: 'clusterSync', name: 'Cluster-Sync', width: new ObservableValue(120), renderCell: this.renderClusterSync},
@@ -237,27 +238,26 @@ class Dashboard extends React.Component<{}, IDashboardState> {
   }
 
   private renderSrcBuild = (rowIndex: number, columnIndex: number, tableColumn: ITableColumn<IDeploymentField>, tableItem: IDeploymentField): JSX.Element => {
-    // if (tableItem.srcPipelineResult && tableItem.srcPipelineId && tableItem.srcPipelineURL && tableItem.srcCommitId && tableItem.srcCommitURL) {
-      return this.renderBuild(rowIndex, columnIndex, tableColumn, tableItem.srcPipelineResult, "#" + tableItem.srcPipelineId, tableItem.srcPipelineURL, tableItem.srcCommitId, tableItem.srcCommitURL, "GitLogo");
-    // }
-    // return <SimpleTableCell columnIndex={columnIndex}/>;
+      return this.renderBuild(rowIndex, columnIndex, tableColumn, tableItem.srcPipelineResult, "#" + tableItem.srcPipelineId, tableItem.srcPipelineURL, tableItem.srcCommitId, tableItem.srcCommitURL, "BranchPullRequest");
   }
 
   private renderHldBuild = (rowIndex: number, columnIndex: number, tableColumn: ITableColumn<IDeploymentField>, tableItem: IDeploymentField): JSX.Element => {
-    // if (tableItem.hldPipelineResult && tableItem.hldPipelineId && tableItem.hldPipelineURL && tableItem.hldCommitId && tableItem.hldCommitURL) {
-      return this.renderBuild(rowIndex, columnIndex, tableColumn, tableItem.hldPipelineResult, "#" + tableItem.hldPipelineId, tableItem.hldPipelineURL, tableItem.hldCommitId, tableItem.hldCommitURL, "GitLogo");
-    // }
-    // return <SimpleTableCell columnIndex={columnIndex}/>;
+      return this.renderBuild(rowIndex, columnIndex, tableColumn, tableItem.hldPipelineResult, "#" + tableItem.hldPipelineId, tableItem.hldPipelineURL, tableItem.hldCommitId, tableItem.hldCommitURL, "BranchPullRequest");
   }
 
   private renderDockerRelease = (rowIndex: number, columnIndex: number, tableColumn: ITableColumn<IDeploymentField>, tableItem: IDeploymentField): JSX.Element => {
-    // if (tableItem.dockerPipelineResult && tableItem.dockerPipelineId && tableItem.dockerPipelineURL && tableItem.environment && tableItem.dockerPipelineURL) {
-      return this.renderBuild(rowIndex, columnIndex, tableColumn, tableItem.dockerPipelineResult, tableItem.dockerPipelineId, tableItem.dockerPipelineURL, tableItem.environment, tableItem.dockerPipelineURL, "World");
-    // }
-    // return <SimpleTableCell columnIndex={columnIndex}/>;
+      return this.renderBuild(rowIndex, columnIndex, tableColumn, tableItem.dockerPipelineResult, tableItem.dockerPipelineId, tableItem.dockerPipelineURL, tableItem.imageTag, "", "Product");
   }
 
   private renderBuild = (rowIndex: number, columnIndex: number, tableColumn: ITableColumn<IDeploymentField>, pipelineResult?: string, pipelineId?: string, pipelineURL?: string, commitId?: string, commitURL?: string, iconName?: string): JSX.Element => {
+    const commitCell = this.WithIcon({
+      className: "", 
+      iconProps: { iconName }, 
+
+      children: (
+        <div>{commitId}</div>
+      )
+    });
     return (
         <TwoLineTableCell
             className="first-row no-cell-top-border bolt-table-cell-content-with-inline-link no-v-padding"
@@ -281,22 +281,16 @@ class Dashboard extends React.Component<{}, IDashboardState> {
                 <Tooltip overflowOnly={true}>
                     <span className="fontSize font-size secondary-text flex-row flex-center text-ellipsis">
                     {
-                      commitId && (<Link
+                      commitId && (commitURL && commitURL !== "" && <Link
                         className="monospaced-text text-ellipsis flex-row flex-center bolt-table-link bolt-table-inline-link"
                         href={commitURL}
                         // tslint:disable-next-line: jsx-no-lambda
-                        onClick={() => (parent.window.location.href = commitId)}
+                        onClick={() => (parent.window.location.href = commitURL)}
                         >
-                      {this.WithIcon({
-                        className: "", 
-                        iconProps: { iconName }, 
-
-                        children: (
-                          <div>{commitId}</div>
-                        )
-                      })}
+                          {commitCell}
                       </Link>
                     )}
+                    { commitId && commitURL === "" && commitCell }
                     </span>
                 </Tooltip>
             }
