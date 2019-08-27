@@ -16,7 +16,7 @@ import { OUTPUT_FORMAT } from './cli';
 let hldPipeline: Pipeline;
 let clusterPipeline: Pipeline;
 let srcPipeline: Pipeline;
-const fileLocation = os.homedir() + "/.ContainerJourney";
+const fileLocation = os.homedir() + "/.Spektate";
 
 export class AccessHelper {
 
