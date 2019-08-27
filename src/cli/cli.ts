@@ -16,7 +16,7 @@ program
 
 program
   .command('init')
-  .description('Initialize container journey for the first time')
+  .description('Initialize Spektate for the first time')
   .option('--azure-org <azure-org>', 'Organization under which the project lives in Azure')
   .option('--azure-pipeline-access-token <azure-pipeline-access-token>', 'Access token for the pipeline (if private)')
   .option('--azure-project <azure-project>', 'Project under which pipeline lives in Azure')

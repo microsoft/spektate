@@ -34,6 +34,7 @@ export interface IDashboardState{
   authors: IAuthors
 }
 export interface IDeploymentField {
+  deploymentId: string;
   startTime?: Date;
   imageTag?: string;
   srcCommitId?: string;
@@ -72,7 +73,7 @@ class Dashboard extends React.Component<{}, IDashboardState> {
     return (
       <div className="App">
         <header className="App-header">
-          <h1 className="App-title">Bedrock Deployment Observability</h1>
+          <h1 className="App-title">Spektate</h1>
         </header>
         {this.renderPrototypeTable()}
       </div>
@@ -82,6 +83,7 @@ class Dashboard extends React.Component<{}, IDashboardState> {
   public renderPrototypeTable = () => {
 
     const columns: Array<ITableColumn<IDeploymentField>> = [
+      { id: 'deploymentId', name: 'Deployment ID', width: new ObservableValue(140), renderCell: this.renderDeploymentId}, 
       { id: 'status', name: 'State', width: new ObservableValue(70), renderCell: this.renderDeploymentStatus},      
       // { id: 'imageTag', name: 'Image Tag', width: new ObservableValue(220), renderCell: this.renderSimpleText},     
       { id: 'srcBranchName', name: 'Branch', width: new ObservableValue(180), renderCell: this.renderSimpleText}, 
@@ -89,7 +91,7 @@ class Dashboard extends React.Component<{}, IDashboardState> {
       { id: 'srcPipelineId', name: 'SRC to ACR', width: new ObservableValue(200), renderCell: this.renderSrcBuild},
       { id: 'dockerPipelineId', name: 'ACR to HLD', width: new ObservableValue(250), renderCell: this.renderDockerRelease},
       { id: 'hldPipelineId', name: 'HLD to Manifest', width: new ObservableValue(200), renderCell: this.renderHldBuild},
-      { id: 'authorName', name: 'Author', width: new ObservableValue(80), renderCell: this.renderSimpleBoldText},
+      { id: 'authorName', name: 'Author', width: new ObservableValue(200), renderCell: this.renderSimpleBoldText},
       { id: 'clusterSync', name: 'Cluster-Sync', width: new ObservableValue(120), renderCell: this.renderClusterSync},
       { id: 'deployedAt', name: 'Deployed at', width: new ObservableValue(180),renderCell: this.renderTime},
       ColumnFill
@@ -100,6 +102,7 @@ class Dashboard extends React.Component<{}, IDashboardState> {
     this.state.deployments.forEach((deployment) => {
       const author = this.getAuthor(deployment);
       rows.push({
+        deploymentId: deployment.deploymentId,
         startTime: deployment.srcToDockerBuild ? deployment.srcToDockerBuild.startTime : new Date(),
         // tslint:disable-next-line: object-literal-sort-keys
         imageTag: deployment.imageTag,
@@ -177,6 +180,9 @@ class Dashboard extends React.Component<{}, IDashboardState> {
   } 
 
   private renderSimpleText = (rowIndex: number, columnIndex: number, tableColumn: ITableColumn<IDeploymentField>, tableItem: IDeploymentField): JSX.Element => {
+    if (!tableItem[tableColumn.id]) {
+      return <SimpleTableCell columnIndex={columnIndex}/>;
+    }
     return (
       <SimpleTableCell
         columnIndex={columnIndex}
@@ -193,7 +199,30 @@ class Dashboard extends React.Component<{}, IDashboardState> {
     )
   }
 
+  private renderDeploymentId = (rowIndex: number, columnIndex: number, tableColumn: ITableColumn<IDeploymentField>, tableItem: IDeploymentField): JSX.Element => {
+    if (!tableItem[tableColumn.id]) {
+      return <SimpleTableCell columnIndex={columnIndex}/>;
+    }
+    return (
+      <SimpleTableCell
+        columnIndex={columnIndex}
+          tableColumn={tableColumn}
+          key={"col-" + columnIndex}
+          contentClassName="monospaced-text fontSize font-size scroll-hidden"
+      >
+        <div className="flex-row scroll-hidden">
+                <Tooltip overflowOnly={true}>
+                    <span className="text-ellipsis">{tableItem[tableColumn.id]}</span>
+                </Tooltip>
+            </div>
+      </SimpleTableCell>
+    )
+  }
+
   private renderSimpleBoldText = (rowIndex: number, columnIndex: number, tableColumn: ITableColumn<IDeploymentField>, tableItem: IDeploymentField): JSX.Element => {
+    if (!tableItem[tableColumn.id]) {
+      return <SimpleTableCell columnIndex={columnIndex}/>;
+    }
     return (
       <SimpleTableCell
         columnIndex={columnIndex}
@@ -211,6 +240,9 @@ class Dashboard extends React.Component<{}, IDashboardState> {
   }
 
   private renderTime = (rowIndex: number, columnIndex: number, tableColumn: ITableColumn<IDeploymentField>, tableItem: IDeploymentField): JSX.Element => {
+    if (!tableItem.startTime || !tableItem.endTime) {
+      return <SimpleTableCell columnIndex={columnIndex}/>;
+    }
     return (
       <TwoLineTableCell
         key={"col-" + columnIndex}
@@ -238,18 +270,21 @@ class Dashboard extends React.Component<{}, IDashboardState> {
   }
 
   private renderSrcBuild = (rowIndex: number, columnIndex: number, tableColumn: ITableColumn<IDeploymentField>, tableItem: IDeploymentField): JSX.Element => {
-      return this.renderBuild(rowIndex, columnIndex, tableColumn, tableItem.srcPipelineResult, "#" + tableItem.srcPipelineId, tableItem.srcPipelineURL, tableItem.srcCommitId, tableItem.srcCommitURL, "BranchPullRequest");
+      return this.renderBuild(rowIndex, columnIndex, tableColumn, tableItem, tableItem.srcPipelineResult, "#" + tableItem.srcPipelineId, tableItem.srcPipelineURL, tableItem.srcCommitId, tableItem.srcCommitURL, "BranchPullRequest");
   }
 
   private renderHldBuild = (rowIndex: number, columnIndex: number, tableColumn: ITableColumn<IDeploymentField>, tableItem: IDeploymentField): JSX.Element => {
-      return this.renderBuild(rowIndex, columnIndex, tableColumn, tableItem.hldPipelineResult, "#" + tableItem.hldPipelineId, tableItem.hldPipelineURL, tableItem.hldCommitId, tableItem.hldCommitURL, "BranchPullRequest");
+      return this.renderBuild(rowIndex, columnIndex, tableColumn, tableItem, tableItem.hldPipelineResult, "#" + tableItem.hldPipelineId, tableItem.hldPipelineURL, tableItem.hldCommitId, tableItem.hldCommitURL, "BranchPullRequest");
   }
 
   private renderDockerRelease = (rowIndex: number, columnIndex: number, tableColumn: ITableColumn<IDeploymentField>, tableItem: IDeploymentField): JSX.Element => {
-      return this.renderBuild(rowIndex, columnIndex, tableColumn, tableItem.dockerPipelineResult, tableItem.dockerPipelineId, tableItem.dockerPipelineURL, tableItem.imageTag, "", "Product");
+      return this.renderBuild(rowIndex, columnIndex, tableColumn, tableItem, tableItem.dockerPipelineResult, tableItem.dockerPipelineId, tableItem.dockerPipelineURL, tableItem.imageTag, "", "Product");
   }
 
-  private renderBuild = (rowIndex: number, columnIndex: number, tableColumn: ITableColumn<IDeploymentField>, pipelineResult?: string, pipelineId?: string, pipelineURL?: string, commitId?: string, commitURL?: string, iconName?: string): JSX.Element => {
+  private renderBuild = (rowIndex: number, columnIndex: number, tableColumn: ITableColumn<IDeploymentField>, tableItem: IDeploymentField, pipelineResult?: string, pipelineId?: string, pipelineURL?: string, commitId?: string, commitURL?: string, iconName?: string): JSX.Element => {
+    if (!pipelineResult || !pipelineId || !pipelineURL || !commitId ) {
+      return <SimpleTableCell columnIndex={columnIndex} />
+    }
     const commitCell = this.WithIcon({
       className: "", 
       iconProps: { iconName }, 
@@ -300,6 +335,9 @@ class Dashboard extends React.Component<{}, IDashboardState> {
 
   private renderDeploymentStatus = (rowIndex: number, columnIndex: number, tableColumn: ITableColumn<IDeploymentField>, tableItem: IDeploymentField): JSX.Element => {
     console.log(tableItem.status);
+    if (!tableItem.status) {
+      return <SimpleTableCell columnIndex={columnIndex}/>;
+    }
     return (
       <SimpleTableCell
         columnIndex={columnIndex}

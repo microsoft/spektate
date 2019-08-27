@@ -18,7 +18,7 @@ If you have already followed the steps [here](https://github.com/microsoft/bedro
     - `TABLE_NAME`: Set this to the name of the table in your storage account that you prefer to use
 
     ![](./images/variable_group.png)
-2. To your CI pipeline that runs from the source repository to build the docker image, copy and paste the following task which will update the database for every build that runs from the source repository to show up in the container journey.
+2. To your CI pipeline that runs from the source repository to build the docker image, copy and paste the following task which will update the database for every build that runs from the source repository to show up in Spektate.
 
     ```yaml
     - bash: |
@@ -58,11 +58,11 @@ If you have already followed the steps [here](https://github.com/microsoft/bedro
     python -m pip install --upgrade pip
     pip install -r requirements.txt
 
-    echo "python update_pipeline.py $(ACCOUNT_NAME) $(ACCOUNT_KEY) $(TABLE_NAME) $(PARTITION_KEY) imageTag $(Build.BuildId) p2 $(Release.ReleaseId) hldCommitId $latest_commit"
-    python update_pipeline.py $(ACCOUNT_NAME) $(ACCOUNT_KEY) $(TABLE_NAME) $(PARTITION_KEY) imageTag $(Build.BuildId) p2 $(Release.ReleaseId) hldCommitId $latest_commit
+    echo "python update_pipeline.py $(ACCOUNT_NAME) $(ACCOUNT_KEY) $(TABLE_NAME) $(PARTITION_KEY) imageTag $(Build.BuildId) p2 $(Release.ReleaseId) hldCommitId $latest_commit env $(Release.EnvironmentName)"
+    python update_pipeline.py $(ACCOUNT_NAME) $(ACCOUNT_KEY) $(TABLE_NAME) $(PARTITION_KEY) imageTag $(Build.BuildId) p2 $(Release.ReleaseId) hldCommitId $latest_commit env $(Release.EnvironmentName)
     ```
 
-4. To the HLD to manifest pipeline, add a task that updates the db with its information to connect the three pipelines end-to-end. Again, the earlier in the tasks this appears, the more information about subsequent failures it will capture. 
+4. To the HLD to manifest pipeline, we will need to add two tasks, one that updates the storage with the pipeline Id and another with an update for the commit Id that was made into the manifest repo. The reason these two are currently separate steps is to track more information about failures (if they were to happen). For the first step, before the fabrikate steps, add the step below:
 
     ```yaml
     - bash: |
@@ -84,7 +84,26 @@ If you have already followed the steps [here](https://github.com/microsoft/bedro
     displayName: Update manifest pipeline details in CJ db
     ```
 
+    For the step to update manifest commit Id:
+    ```yaml
+    - script: |
+        cd "$HOME"
+        cd hello-bedrock-manifest
+        latest_commit=$(git rev-parse --short HEAD)
+        cd ../spektate/pipeline-scripts
+        source venv/bin/activate
+        echo "python update_pipeline.py $(ACCOUNT_NAME) $(ACCOUNT_KEY) $(TABLE_NAME) $(PARTITION_KEY) p3 $(Build.BuildId) manifestCommitId $latest_commit"
+        python update_pipeline.py $(ACCOUNT_NAME) $(ACCOUNT_KEY) $(TABLE_NAME) $(PARTITION_KEY) p3 $(Build.BuildId) manifestCommitId $latest_commit
+      displayName: Update commit id in database
+      ```
+
 5. Kick off a full deployment from the source to docker pipeline, and you should see some entries coming into the database for each subsequent deployment after the tasks have been added! 
+
+## Dashboard prototype
+
+1. Clone this repository, and run `npm install`. 
+2. Make sure the file located in `src/config.ts` is updated with the config values. 
+3. Then run `npm start` to view the dashboard for the hello world deployment screen.
 
 ## Command Line Interface
 
@@ -112,13 +131,6 @@ To use the CLI for Spektate:
     - build Id: `./cli-macos logs --build-id 5265`
     - release Id: `./cli-macos logs --release-id 102` 
 - To query cluster sync status of the Kubernetes cluster, just run `./cli-macos cluster-sync` which would return the commit Id in source repository of the commit which is synced on the cluster.
-
-
-## Dashboard prototype
-
-1. Clone this repository, and run `npm install`. 
-2. Make sure the file located in `src/config.ts` is updated with values for the azure storage table. 
-3. Then run `npm start` to view the dashboard for the hello world deployment screen.
 
 # Contributing
 
