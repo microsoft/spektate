@@ -4,7 +4,6 @@ import { AccessHelper } from "../cli/AccessHelper";
 import { config } from "../config";
 import Deployment from "../models/Deployment";
 import AzureDevOpsPipeline from "../models/pipeline/AzureDevOpsPipeline";
-import { Author } from "../models/repository/Author";
 
 describe("config validation", () => {
   it("should be configured", () => {
@@ -32,20 +31,6 @@ describe("cluster-sync", () => {
       AccessHelper.getClusterSync(syncTag => {
         expect(syncTag.commit.length).to.equal(7);
       });
-    });
-  });
-});
-
-describe("author", () => {
-  it("should return the right author", () => {
-    AccessHelper.verifyAppConfiguration(() => {
-      AccessHelper.getAuthorForCommitOrBuild(
-        "2e0f79b",
-        undefined,
-        (author: Author) => {
-          expect(author.username).equal("samiyaakhtar");
-        }
-      );
     });
   });
 });
@@ -85,56 +70,6 @@ describe("deployment", () => {
         undefined,
         undefined,
         (deployments: Deployment[]) => {
-          let found5644 = false;
-          deployments.forEach(deployment => {
-            if (
-              deployment.srcToDockerBuild &&
-              deployment.srcToDockerBuild.id.toString() === "5644"
-            ) {
-              found5644 = true;
-              expect(
-                deployment.srcToDockerBuild.sourceVersion.substring(0, 7)
-              ).to.equal("2e0f79b");
-              expect(deployment.srcToDockerBuild.result).to.equal("succeeded");
-
-              if (
-                deployment.dockerToHldRelease &&
-                deployment.dockerToHldRelease.id.toString() === "5"
-              ) {
-                expect(deployment.dockerToHldRelease.imageVersion).to.equal(
-                  "hello-bedrock-private-master-5644"
-                );
-                expect(deployment.dockerToHldRelease.id.toString()).to.equal(
-                  "5"
-                );
-                expect(deployment.dockerToHldRelease.status).to.equal(
-                  "succeeded"
-                );
-              }
-
-              if (
-                deployment.hldToManifestBuild &&
-                deployment.hldToManifestBuild.id.toString() === "5645"
-              ) {
-                expect(deployment.manifestCommitId).to.equal("de1965d");
-                expect(deployment.hldToManifestBuild.id.toString()).to.equal(
-                  "5645"
-                );
-                expect(deployment.hldToManifestBuild.result).to.equal(
-                  "succeeded"
-                );
-              }
-              if (deployment.srcToDockerBuild.repository) {
-                deployment.srcToDockerBuild.repository.getAuthor(
-                  deployment.srcToDockerBuild.sourceVersion,
-                  (author: Author) => {
-                    expect(author.username).to.equal("samiyaakhtar");
-                  }
-                );
-              }
-            }
-          });
-          expect(found5644).to.equal(true);
           expect(deployments.length).to.greaterThan(0);
         }
       );
