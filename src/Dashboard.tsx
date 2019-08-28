@@ -34,6 +34,7 @@ export interface IDashboardState{
   authors: IAuthors
 }
 export interface IDeploymentField {
+  service: string;
   deploymentId: string;
   startTime?: Date;
   imageTag?: string;
@@ -54,8 +55,8 @@ export interface IDeploymentField {
   hldPipelineResult?: string;
   duration: string;
   status: string;
-  clusterSync?: string;
-  clusterSyncDate?: string;
+  clusterSync?: boolean;
+  clusterSyncDate?: Date;
   endTime?: Date;
   authorName?: string;
   authorURL?: string;
@@ -83,8 +84,9 @@ class Dashboard extends React.Component<{}, IDashboardState> {
   public renderPrototypeTable = () => {
 
     const columns: Array<ITableColumn<IDeploymentField>> = [
-      { id: 'deploymentId', name: 'Deployment ID', width: new ObservableValue(140), renderCell: this.renderDeploymentId}, 
-      { id: 'status', name: 'State', width: new ObservableValue(70), renderCell: this.renderDeploymentStatus},      
+      { id: 'status', name: 'State', width: new ObservableValue(70), renderCell: this.renderDeploymentStatus},    
+      { id: 'deploymentId', name: 'Deployment ID', width: new ObservableValue(140), renderCell: this.renderDeploymentId},  
+      { id: 'service', name: 'Service', width: new ObservableValue(220), renderCell: this.renderSimpleText},     
       // { id: 'imageTag', name: 'Image Tag', width: new ObservableValue(220), renderCell: this.renderSimpleText},     
       { id: 'srcBranchName', name: 'Branch', width: new ObservableValue(180), renderCell: this.renderSimpleText}, 
       { id: 'environment', name: 'Environment', width: new ObservableValue(100), renderCell: this.renderSimpleText},
@@ -92,7 +94,7 @@ class Dashboard extends React.Component<{}, IDashboardState> {
       { id: 'dockerPipelineId', name: 'ACR to HLD', width: new ObservableValue(250), renderCell: this.renderDockerRelease},
       { id: 'hldPipelineId', name: 'HLD to Manifest', width: new ObservableValue(200), renderCell: this.renderHldBuild},
       { id: 'authorName', name: 'Author', width: new ObservableValue(200), renderCell: this.renderSimpleBoldText},
-      { id: 'clusterSync', name: 'Cluster-Sync', width: new ObservableValue(120), renderCell: this.renderClusterSync},
+      // { id: 'clusterSync', name: 'Cluster-Sync', width: new ObservableValue(120), renderCell: this.renderClusterSync},
       { id: 'deployedAt', name: 'Deployed at', width: new ObservableValue(180),renderCell: this.renderTime},
       ColumnFill
     ];
@@ -103,6 +105,7 @@ class Dashboard extends React.Component<{}, IDashboardState> {
       const author = this.getAuthor(deployment);
       rows.push({
         deploymentId: deployment.deploymentId,
+        service: deployment.service,
         startTime: deployment.srcToDockerBuild ? deployment.srcToDockerBuild.startTime : new Date(),
         // tslint:disable-next-line: object-literal-sort-keys
         imageTag: deployment.imageTag,
@@ -125,8 +128,8 @@ class Dashboard extends React.Component<{}, IDashboardState> {
         authorName: author ? author.name : "",
         authorURL: author ? author.URL : "",
         status: deployment.status(),
-        clusterSync: this.state.manifestSync && deployment.manifestCommitId === this.state.manifestSync.commit && this.state.manifestSync.commit !== "" ? "Synced" : "",
-        clusterSyncDate: this.state.manifestSync && deployment.manifestCommitId === this.state.manifestSync.commit && this.state.manifestSync.commit !== "" ? this.state.manifestSync.date.toString() : "",
+        clusterSync: this.state.manifestSync && deployment.manifestCommitId === this.state.manifestSync.commit && this.state.manifestSync.commit !== "",
+        clusterSyncDate: this.state.manifestSync && deployment.manifestCommitId === this.state.manifestSync.commit && this.state.manifestSync.commit !== "" ? this.state.manifestSync.date : new Date(),
         endTime: deployment.hldToManifestBuild ? (Number.isNaN(deployment.hldToManifestBuild!.finishTime.valueOf()) ? new Date() : deployment.hldToManifestBuild!.finishTime) : new Date()
       })
     });
@@ -151,33 +154,6 @@ class Dashboard extends React.Component<{}, IDashboardState> {
     });
     return <div />;
   }
-
-  private renderClusterSync = (rowIndex: number, columnIndex: number, tableColumn: ITableColumn<IDeploymentField>, tableItem: IDeploymentField): JSX.Element => {
-    if (tableItem.clusterSyncDate !== "") {
-      return (
-        <TwoLineTableCell
-          key={"col-" + columnIndex}
-          columnIndex={columnIndex}
-          tableColumn={tableColumn}
-          line1={this.WithIcon({
-            children: (
-                tableItem.clusterSync!
-            ),
-            className: "fontSize font-size",
-            iconProps: { iconName: "CloudDownload" }
-        })}
-          line2={this.WithIcon({
-            children: (
-                <Ago date={new Date(tableItem.clusterSyncDate!)} />
-            ),
-            className: "fontSize font-size",
-            iconProps: { iconName: "Calendar" }
-        })}
-      />
-      );
-    }
-    return <SimpleTableCell columnIndex={columnIndex}/>;
-  } 
 
   private renderSimpleText = (rowIndex: number, columnIndex: number, tableColumn: ITableColumn<IDeploymentField>, tableItem: IDeploymentField): JSX.Element => {
     if (!tableItem[tableColumn.id]) {
@@ -347,10 +323,18 @@ class Dashboard extends React.Component<{}, IDashboardState> {
       >
         
         <Status
-                {...this.getStatusIndicatorData(tableItem.status).statusProps}
+                {...this.getStatusIndicatorData(tableItem.status, tableItem.clusterSync).statusProps}
                 className="icon-large-margin"
                 size={StatusSize.l}
             />
+            {tableItem.clusterSync && 
+              <Tooltip overflowOnly={false} text={"Synced at " + tableItem.clusterSyncDate!.toLocaleString()}>
+                { this.WithIcon({
+                  className: "fontSizeM font-size-m",
+                  iconProps: { iconName: "CloudUpload" }
+                })} 
+              </Tooltip>
+            }
       </SimpleTableCell>
     )
   }
@@ -368,7 +352,7 @@ class Dashboard extends React.Component<{}, IDashboardState> {
       );
   }
 
-  private getStatusIndicatorData = (status: string): IStatusIndicatorData => {
+  private getStatusIndicatorData = (status: string, clusterSync?: boolean): IStatusIndicatorData => {
     status = status || "";
     status = status.toLowerCase();
     console.log(status);
