@@ -11,7 +11,6 @@ import {
   StatusSize
 } from "azure-devops-ui/Status";
 import {
-  ColumnFill,
   ITableColumn,
   SimpleTableCell,
   Table,
@@ -156,8 +155,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         name: "Deployed at",
         renderCell: this.renderTime,
         width: new ObservableValue(180)
-      },
-      ColumnFill
+      }
     ];
 
     const rows: IDeploymentField[] = this.state.deployments.map(deployment => {
@@ -224,8 +222,8 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
           this.state.manifestSync.commit !== ""
             ? this.state.manifestSync.date.toString()
             : "",
-        endTime: deployment.hldToManifestBuild
-          ? Number.isNaN(deployment.hldToManifestBuild!.finishTime.valueOf())
+        endTime: deployment.hldToManifestBuild && deployment.hldToManifestBuild!.finishTime
+          ? Number.isNaN(deployment.hldToManifestBuild!.finishTime!.valueOf())
             ? new Date()
             : deployment.hldToManifestBuild!.finishTime
           : new Date()
@@ -626,10 +624,10 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     this.state.deployments.forEach(deployment => {
       if (
         deployment.srcToDockerBuild &&
-        !(deployment.srcToDockerBuild.sourceVersion in state.authors)
+        !(deployment.srcToDockerBuild.sourceVersion! in state.authors)
       ) {
         deployment.fetchAuthor((author: Author) => {
-          if (author && deployment.srcToDockerBuild) {
+          if (author && deployment.srcToDockerBuild && deployment.srcToDockerBuild.sourceVersion) {
             const copy = state.authors;
             copy[deployment.srcToDockerBuild.sourceVersion] = author;
             this.setState({ authors: copy });
@@ -641,7 +639,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
 
   private getAuthor = (deployment: Deployment): Author | undefined => {
     if (
-      deployment.srcToDockerBuild &&
+      deployment.srcToDockerBuild && deployment.srcToDockerBuild.sourceVersion &&
       deployment.srcToDockerBuild.sourceVersion in this.state.authors
     ) {
       return this.state.authors[deployment.srcToDockerBuild.sourceVersion];

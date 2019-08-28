@@ -114,7 +114,7 @@ program
         AccessHelper.getAuthorForCommitOrBuild(
           env.commitId,
           env.buildId,
-          (author: Author) => {
+          (author?: Author | undefined) => {
             if (author) {
               console.log("Username: " + author.username);
               console.log("Name: " + author.name);

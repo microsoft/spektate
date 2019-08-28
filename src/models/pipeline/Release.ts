@@ -1,12 +1,12 @@
 export class Release {
-  public releaseName: string;
-  public id: string;
-  public imageVersion: string;
-  public registryURL: string;
-  public registryResourceGroup: string;
-  public queueTime: Date;
-  public status: string;
-  public startTime: Date;
-  public finishTime: Date;
-  public URL: string;
+  public releaseName: string | undefined;
+  public id: string | undefined;
+  public imageVersion: string | undefined;
+  public registryURL: string | undefined;
+  public registryResourceGroup: string | undefined;
+  public queueTime: Date | undefined;
+  public status: string | undefined;
+  public startTime: Date | undefined;
+  public finishTime: Date | undefined;
+  public URL: string | undefined;
 }

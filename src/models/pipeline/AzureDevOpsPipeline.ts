@@ -76,7 +76,7 @@ class AzureDevOpsPipeline extends Pipeline {
               );
             }
             builds.push(build);
-            this.builds[build.id] = build;
+            this.builds[build.id!] = build;
           }
           resolve();
           if (callback) {
@@ -117,7 +117,7 @@ class AzureDevOpsPipeline extends Pipeline {
                 row.release.artifacts[0].definitionReference.resourcegroup.id;
             }
             releases.push(release);
-            this.releases[release.id] = release;
+            this.releases[release.id!] = release;
           }
 
           resolve();

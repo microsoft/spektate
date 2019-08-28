@@ -2,7 +2,7 @@ import { Author } from "./Author";
 import { Tag } from "./Tag";
 
 export abstract class Repository {
-  public manifestSync: Tag;
+  public manifestSync: Tag | undefined;
   public abstract getManifestSyncState(
     callback: (syncTag: Tag) => void
   ): Promise<void>;

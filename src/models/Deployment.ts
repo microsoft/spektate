@@ -247,23 +247,23 @@ class Deployment {
 
   public duration(): string {
     let duration = 0;
-    if (this.srcToDockerBuild != null) {
+    if (this.srcToDockerBuild != null && this.srcToDockerBuild.queueTime) {
       duration =
-        (Number.isNaN(this.srcToDockerBuild.finishTime.valueOf())
+        (!this.srcToDockerBuild.finishTime || Number.isNaN(this.srcToDockerBuild.finishTime.valueOf())
           ? Date.now().valueOf()
           : this.srcToDockerBuild.finishTime.valueOf()) -
         this.srcToDockerBuild.queueTime.valueOf();
     }
-    if (this.dockerToHldRelease != null) {
+    if (this.dockerToHldRelease != null && this.dockerToHldRelease.queueTime) {
       duration +=
-        (Number.isNaN(this.dockerToHldRelease.finishTime.valueOf())
+        (!this.dockerToHldRelease.finishTime || Number.isNaN(this.dockerToHldRelease.finishTime.valueOf())
           ? Date.now().valueOf()
           : this.dockerToHldRelease.finishTime.valueOf()) -
         this.dockerToHldRelease.queueTime.valueOf();
     }
-    if (this.hldToManifestBuild != null) {
+    if (this.hldToManifestBuild != null && this.hldToManifestBuild.queueTime) {
       duration +=
-        (Number.isNaN(this.hldToManifestBuild.finishTime.valueOf())
+        (!this.hldToManifestBuild.finishTime || Number.isNaN(this.hldToManifestBuild.finishTime.valueOf())
           ? Date.now().valueOf()
           : this.hldToManifestBuild.finishTime.valueOf()) -
         this.hldToManifestBuild.queueTime.valueOf();
@@ -291,7 +291,7 @@ class Deployment {
   }
 
   public fetchAuthor(callback: (author: Author) => void): void {
-    if (this.srcToDockerBuild && this.srcToDockerBuild.repository) {
+    if (this.srcToDockerBuild && this.srcToDockerBuild.repository && this.srcToDockerBuild.sourceVersion) {
       this.srcToDockerBuild.repository.getAuthor(
         this.srcToDockerBuild.sourceVersion,
         callback

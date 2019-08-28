@@ -140,10 +140,10 @@ export class AccessHelper {
       Promise.all([p1, p2]).then(async () => {
         if (buildId in srcPipeline.builds) {
           console.log("Navigating to: " + srcPipeline.builds[buildId].URL);
-          await open(srcPipeline.builds[buildId].URL);
+          await open(srcPipeline.builds[buildId].URL!);
         } else if (buildId in clusterPipeline.builds) {
           console.log("Navigating to: " + clusterPipeline.builds[buildId].URL);
-          await open(clusterPipeline.builds[buildId].URL);
+          await open(clusterPipeline.builds[buildId].URL!);
         } else {
           console.log("Unable to find build for " + buildId);
         }
@@ -152,7 +152,7 @@ export class AccessHelper {
       hldPipeline.getListOfReleases().then(async () => {
         if (releaseId in hldPipeline.releases) {
           console.log("Navigating to: " + hldPipeline.releases[releaseId].URL);
-          await open(hldPipeline.releases[releaseId].URL);
+          await open(hldPipeline.releases[releaseId].URL!);
         } else {
           console.log("Unable to find release for " + releaseId);
         }
@@ -215,7 +215,7 @@ export class AccessHelper {
       deployments.forEach(deployment => {
         row = [];
         row.push(
-          deployment.srcToDockerBuild
+          deployment.srcToDockerBuild && deployment.srcToDockerBuild.startTime
             ? deployment.srcToDockerBuild.startTime.toLocaleString()
             : ""
         );
@@ -225,7 +225,7 @@ export class AccessHelper {
         );
         row.push(deployment.imageTag);
         row.push(
-          deployment.srcToDockerBuild
+          deployment.srcToDockerBuild && deployment.srcToDockerBuild.result
             ? AccessHelper.getStatus(deployment.srcToDockerBuild.result)
             : ""
         );
@@ -235,7 +235,7 @@ export class AccessHelper {
         row.push(deployment.environment.toUpperCase());
         row.push(deployment.hldCommitId);
         row.push(
-          deployment.dockerToHldRelease
+          deployment.dockerToHldRelease && deployment.dockerToHldRelease.status
             ? AccessHelper.getStatus(deployment.dockerToHldRelease.status)
             : ""
         );
@@ -243,7 +243,7 @@ export class AccessHelper {
           deployment.hldToManifestBuild ? deployment.hldToManifestBuild.id : ""
         );
         row.push(
-          deployment.hldToManifestBuild
+          deployment.hldToManifestBuild && deployment.hldToManifestBuild.result
             ? AccessHelper.getStatus(deployment.hldToManifestBuild.result)
             : ""
         );
