@@ -69,15 +69,20 @@ export interface IDeploymentField {
   authorName?: string;
   authorURL?: string;
 }
-class Dashboard extends React.Component<{}, IDashboardState> {
-  constructor(props: {}) {
+
+class Dashboard<Props> extends React.Component<Props, IDashboardState> {
+  constructor(props: Props) {
     super(props);
     this.state = {
       authors: {},
       deployments: []
     };
+  }
+
+  public componentDidMount() {
     this.getDeployments();
   }
+
   public render() {
     return (
       <div className="App">
@@ -89,7 +94,7 @@ class Dashboard extends React.Component<{}, IDashboardState> {
     );
   }
 
-  public renderPrototypeTable = () => {
+  private renderPrototypeTable = () => {
     const columns: Array<ITableColumn<IDeploymentField>> = [
       {
         id: "deploymentId",
@@ -155,7 +160,6 @@ class Dashboard extends React.Component<{}, IDashboardState> {
       ColumnFill
     ];
 
-    // tslint:disable-next-line: prefer-const
     const rows: IDeploymentField[] = this.state.deployments.map(deployment => {
       const author = this.getAuthor(deployment);
       return {
@@ -228,17 +232,19 @@ class Dashboard extends React.Component<{}, IDashboardState> {
       };
     });
     return (
-      <Table
-        columns={columns}
-        pageSize={rows.length}
-        role="table"
-        itemProvider={new ArrayItemProvider<IDeploymentField>(rows)}
-        showLines={true}
-      />
+      <div className="PrototypeTable">
+        <Table
+          columns={columns}
+          pageSize={rows.length}
+          role="table"
+          itemProvider={new ArrayItemProvider<IDeploymentField>(rows)}
+          showLines={true}
+        />
+      </div>
     );
   };
 
-  public getDeployments = () => {
+  private getDeployments = () => {
     const srcPipeline = new AzureDevOpsPipeline(
       config.AZURE_ORG,
       config.AZURE_PROJECT,
