@@ -44,6 +44,7 @@ class Deployment {
                 if (!error) {
                     const srcBuildIds: Set<string> = new Set<string>();
                     const manifestBuildIds: Set<string> = new Set<string>();
+                    const releaseIds: Set<string> = new Set<string>();
                     for (const entry of result.entries) {
                         if (entry.p1) {
                             srcBuildIds.add(entry.p1._);
@@ -51,11 +52,14 @@ class Deployment {
                         if (entry.p3) {
                             manifestBuildIds.add(entry.p3._);
                         }
+                        if (entry.p2) {
+                          releaseIds.add(entry.p2._);
+                        }
                     }
 
                     const p1 = srcPipeline.getListOfBuilds(undefined, srcBuildIds);
                     // TODO: send releaseIds to below after bug in release API is fixed
-                    const p2 = hldPipeline.getListOfReleases();
+                    const p2 = hldPipeline.getListOfReleases(undefined, releaseIds);
                     const p3 = manifestPipeline.getListOfBuilds(undefined, manifestBuildIds);
 
                     // Wait for all three pipelines to load their respective builds before we instantiate deployments

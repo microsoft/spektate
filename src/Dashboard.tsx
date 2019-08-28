@@ -309,8 +309,12 @@ class Dashboard extends React.Component<{}, IDashboardState> {
     );
   }
 
-  private renderDeploymentStatus = (rowIndex: number, columnIndex: number, tableColumn: ITableColumn<IDeploymentField>, tableItem: IDeploymentField): JSX.Element => {
-    console.log(tableItem.status);
+  private renderDeploymentStatus = (
+    rowIndex: number,
+    columnIndex: number,
+    tableColumn: ITableColumn<IDeploymentField>,
+    tableItem: IDeploymentField
+  ): JSX.Element => {
     if (!tableItem.status) {
       return <SimpleTableCell columnIndex={columnIndex}/>;
     }
@@ -355,7 +359,6 @@ class Dashboard extends React.Component<{}, IDashboardState> {
   private getStatusIndicatorData = (status: string, clusterSync?: boolean): IStatusIndicatorData => {
     status = status || "";
     status = status.toLowerCase();
-    console.log(status);
     const indicatorData: IStatusIndicatorData = {
         label: "Success",
         statusProps: { ...Statuses.Success, ariaLabel: "Success" }

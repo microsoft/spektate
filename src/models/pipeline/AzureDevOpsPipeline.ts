@@ -9,6 +9,7 @@ import { Release } from "./Release";
 const buildFilterUrl = "https://dev.azure.com/{organization}/{project}/_apis/build/builds?buildIds={buildIds}&api-version=5.0";
 const baseBuildUrl = "https://dev.azure.com/{organization}/{project}/_apis/build/builds?definitions={definitionId}&api-version=5.0&queryOrder=startTimeDescending";
 const baseReleaseUrl = "https://vsrm.dev.azure.com/{organization}/{project}/_apis/release/deployments?api-version=5.0&definitionId={definitionId}&queryOrder=startTimeDescending";
+const releaseFilterUrl = "https://vsrm.dev.azure.com/{organization}/{project}/_apis/release/deployments?api-version=5.0&releaseIdFilter={releaseIds}&queryOrder=startTimeDescending";
 
 class AzureDevOpsPipeline extends Pipeline {
     // User defined fields
@@ -63,37 +64,47 @@ class AzureDevOpsPipeline extends Pipeline {
         });
     }
 
-    // TODO: Once the bug with release API is fixed (regarding returning only top 50 rows),
-    // improve the code below, and use the variable releaseIds
-    public async getListOfReleases(callback?: (data: any) => void, releaseIds?: Set<string>): Promise<void> {
-        return new Promise((resolve, reject) => {
-            HttpHelper.httpGet(this.getReleaseUrl(), (json) => {
-                const releases: Release[] = [];
-                for (const row of json.data.value) {
-                    const release = new Release();
-                    release.id = row.release.id;
-                    release.queueTime = new Date(row.queuedOn);
-                    release.startTime = new Date(row.startedOn);
-                    release.finishTime = new Date(row.completedOn);
-                    release.status = row.deploymentStatus;
-                    release.URL = row.release._links.web.href;
-                    release.releaseName = row.release.name;
-                    if (row.release.artifacts.length > 0) {
-                        release.imageVersion = row.release.artifacts[0].definitionReference.version.id;
-                        release.registryURL = row.release.artifacts[0].definitionReference.registryurl.id;
-                        release.registryResourceGroup = row.release.artifacts[0].definitionReference.resourcegroup.id;
-                    }
-                    releases.push(release);
-                    this.releases[release.id] = release;
-                }
 
-                resolve();
-                if (callback) {
-                    callback(this.releases);
-                }
-            }, this.accessToken);
-        });
-    }
+  // TODO: Once the bug with release API is fixed (regarding returning only top 50 rows),
+  // improve the code below, and use the variable releaseIds
+  public async getListOfReleases(
+    callback?: (data: any) => void,
+    releaseIds?: Set<string>
+  ): Promise<void> {
+    console.log(releaseIds);
+    console.log(this.getReleaseUrl(releaseIds));
+    return new Promise((resolve, reject) => {
+      HttpHelper.httpGet(
+        this.getReleaseUrl(releaseIds),
+        json => {
+          const releases: Release[] = [];
+          for (const row of json.data.value) {
+            const release = new Release();
+            release.id = row.release.id;
+            release.queueTime = new Date(row.queuedOn);
+            release.startTime = new Date(row.startedOn);
+            release.finishTime = new Date(row.completedOn);
+            release.status = row.deploymentStatus;
+            release.URL = row.release._links.web.href;
+            release.releaseName = row.release.name;
+            if (row.release.artifacts.length > 0) {
+              release.imageVersion =
+                row.release.artifacts[0].definitionReference.version.id;
+              release.registryURL =
+                row.release.artifacts[0].definitionReference.registryurl.id;
+              release.registryResourceGroup =
+                row.release.artifacts[0].definitionReference.resourcegroup.id;
+            }
+            releases.push(release);
+            this.releases[release.id] = release;
+          }
+          resolve();
+          if (callback) {
+              callback(this.releases);
+          }
+      }, this.accessToken);
+  });
+}
 
     private getBuildUrl(buildIds?: Set<string>) {
         if (buildIds) {
@@ -106,17 +117,21 @@ class AzureDevOpsPipeline extends Pipeline {
 
         return baseBuildUrl.replace("{organization}", this.org).replace("{project}", this.project).replace("{definitionId}", this.definitionId + '');
     }
-    private getReleaseUrl(releaseIds?: Set<string>) {
-        if (releaseIds) {
-            let strBuildIds = "";
-            releaseIds.forEach((releaseId) => {
-                strBuildIds += releaseId + ",";
-            });
-            return buildFilterUrl.replace("{buildIds}", strBuildIds).replace("{organization}", this.org).replace("{project}", this.project).replace("{definitionId}", this.definitionId + '');
-        }
-
-        return baseReleaseUrl.replace("{organization}", this.org).replace("{project}", this.project).replace("{definitionId}", this.definitionId + '');
+  private getReleaseUrl(releaseIds?: Set<string>) {
+    if (releaseIds) {
+      let strBuildIds = "";
+      releaseIds.forEach(releaseId => {
+        strBuildIds += releaseId + ",";
+      });
+      return releaseFilterUrl
+        .replace("{releaseIds}", strBuildIds)
+        .replace("{organization}", this.org)
+        .replace("{project}", this.project)
+        .replace("{definitionId}", this.definitionId + "");
     }
+
+    return baseReleaseUrl.replace("{organization}", this.org).replace("{project}", this.project).replace("{definitionId}", this.definitionId + '');
+  }
 }
 
 export default AzureDevOpsPipeline;
