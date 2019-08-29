@@ -12,6 +12,8 @@ const baseBuildUrl =
   "https://dev.azure.com/{organization}/{project}/_apis/build/builds?definitions={definitionId}&api-version=5.0&queryOrder=startTimeDescending";
 const baseReleaseUrl =
   "https://vsrm.dev.azure.com/{organization}/{project}/_apis/release/deployments?api-version=5.0&definitionId={definitionId}&queryOrder=startTimeDescending";
+const releaseFilterUrl =
+  "https://vsrm.dev.azure.com/{organization}/{project}/_apis/release/deployments?api-version=5.0&releaseIdFilter={releaseIds}&queryOrder=startTimeDescending";
 
 class AzureDevOpsPipeline extends Pipeline {
   // User defined fields
@@ -96,7 +98,7 @@ class AzureDevOpsPipeline extends Pipeline {
   ): Promise<void> {
     return new Promise((resolve, reject) => {
       HttpHelper.httpGet(
-        this.getReleaseUrl(),
+        this.getReleaseUrl(releaseIds),
         json => {
           const releases: Release[] = [];
           for (const row of json.data.value) {
@@ -119,7 +121,6 @@ class AzureDevOpsPipeline extends Pipeline {
             releases.push(release);
             this.releases[release.id] = release;
           }
-
           resolve();
           if (callback) {
             callback(this.releases);
@@ -153,8 +154,8 @@ class AzureDevOpsPipeline extends Pipeline {
       releaseIds.forEach(releaseId => {
         strBuildIds += releaseId + ",";
       });
-      return buildFilterUrl
-        .replace("{buildIds}", strBuildIds)
+      return releaseFilterUrl
+        .replace("{releaseIds}", strBuildIds)
         .replace("{organization}", this.org)
         .replace("{project}", this.project)
         .replace("{definitionId}", this.definitionId + "");

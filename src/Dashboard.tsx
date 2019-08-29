@@ -44,6 +44,7 @@ export interface IDashboardState {
 }
 export interface IDeploymentField {
   deploymentId: string;
+  service: string;
   startTime?: Date;
   imageTag?: string;
   srcCommitId?: string;
@@ -63,8 +64,8 @@ export interface IDeploymentField {
   hldPipelineResult?: string;
   duration: string;
   status: string;
-  clusterSync?: string;
-  clusterSyncDate?: string;
+  clusterSync?: boolean;
+  clusterSyncDate?: Date;
   endTime?: Date;
   authorName?: string;
   authorURL?: string;
@@ -94,8 +95,59 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     );
   }
 
+  private getDeployments = () => {
+    const srcPipeline = new AzureDevOpsPipeline(
+      config.AZURE_ORG,
+      config.AZURE_PROJECT,
+      config.SRC_PIPELINE_ID,
+      false,
+      config.AZURE_PIPELINE_ACCESS_TOKEN
+    );
+    const hldPipeline = new AzureDevOpsPipeline(
+      config.AZURE_ORG,
+      config.AZURE_PROJECT,
+      config.DOCKER_PIPELINE_ID,
+      true,
+      config.AZURE_PIPELINE_ACCESS_TOKEN
+    );
+    const clusterPipeline = new AzureDevOpsPipeline(
+      config.AZURE_ORG,
+      config.AZURE_PROJECT,
+      config.HLD_PIPELINE_ID,
+      false,
+      config.AZURE_PIPELINE_ACCESS_TOKEN
+    );
+
+    const manifestRepo: Repository = new GitHub(
+      config.GITHUB_MANIFEST_USERNAME,
+      config.MANIFEST,
+      config.MANIFEST_ACCESS_TOKEN
+    );
+    // const manifestRepo: Repository = new AzureDevOpsRepo(config.AZURE_ORG, config.AZURE_PROJECT, config.MANIFEST, config.MANIFEST_ACCESS_TOKEN);
+    manifestRepo.getManifestSyncState(syncCommit => {
+      this.setState({ manifestSync: syncCommit });
+    });
+    Deployment.getDeployments(
+      config.STORAGE_PARTITION_KEY,
+      srcPipeline,
+      hldPipeline,
+      clusterPipeline,
+      (deployments: Deployment[]) => {
+        this.setState({ deployments });
+        this.getAuthors();
+      }
+    );
+    return <div />;
+  };
+
   private renderPrototypeTable = () => {
     const columns: Array<ITableColumn<IDeploymentField>> = [
+      {
+        id: "status",
+        name: "State",
+        renderCell: this.renderDeploymentStatus,
+        width: new ObservableValue(70)
+      },
       {
         id: "deploymentId",
         name: "Deployment ID",
@@ -103,17 +155,16 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         width: new ObservableValue(140)
       },
       {
-        id: "status",
-        name: "State",
-        renderCell: this.renderDeploymentStatus,
-        width: new ObservableValue(70)
+        id: "service",
+        name: "Service",
+        renderCell: this.renderSimpleText,
+        width: new ObservableValue(220),
       },
-      // { id: 'imageTag', name: 'Image Tag', width: new ObservableValue(220), renderCell: this.renderSimpleText},
       {
         id: "srcBranchName",
         name: "Branch",
         renderCell: this.renderSimpleText,
-        width: new ObservableValue(180)
+        width: new ObservableValue(180),
       },
       {
         id: "environment",
@@ -131,7 +182,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         id: "dockerPipelineId",
         name: "ACR to HLD",
         renderCell: this.renderDockerRelease,
-        width: new ObservableValue(250)
+        width: new ObservableValue(250),
       },
       {
         id: "hldPipelineId",
@@ -146,12 +197,6 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         width: new ObservableValue(200)
       },
       {
-        id: "clusterSync",
-        name: "Cluster-Sync",
-        renderCell: this.renderClusterSync,
-        width: new ObservableValue(120)
-      },
-      {
         id: "deployedAt",
         name: "Deployed at",
         renderCell: this.renderTime,
@@ -164,6 +209,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       const author = this.getAuthor(deployment);
       return {
         deploymentId: deployment.deploymentId,
+        service: deployment.service,
         startTime: deployment.srcToDockerBuild
           ? deployment.srcToDockerBuild.startTime
           : new Date(),
@@ -215,15 +261,13 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         clusterSync:
           this.state.manifestSync &&
           deployment.manifestCommitId === this.state.manifestSync.commit &&
-          this.state.manifestSync.commit !== ""
-            ? "Synced"
-            : "",
+          this.state.manifestSync.commit !== "",
         clusterSyncDate:
           this.state.manifestSync &&
           deployment.manifestCommitId === this.state.manifestSync.commit &&
           this.state.manifestSync.commit !== ""
-            ? this.state.manifestSync.date.toString()
-            : "",
+            ? this.state.manifestSync.date
+            : new Date(),
         endTime: deployment.hldToManifestBuild
           ? Number.isNaN(deployment.hldToManifestBuild!.finishTime.valueOf())
             ? new Date()
@@ -242,79 +286,6 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         />
       </div>
     );
-  };
-
-  private getDeployments = () => {
-    const srcPipeline = new AzureDevOpsPipeline(
-      config.AZURE_ORG,
-      config.AZURE_PROJECT,
-      config.SRC_PIPELINE_ID,
-      false,
-      config.AZURE_PIPELINE_ACCESS_TOKEN
-    );
-    const hldPipeline = new AzureDevOpsPipeline(
-      config.AZURE_ORG,
-      config.AZURE_PROJECT,
-      config.DOCKER_PIPELINE_ID,
-      true,
-      config.AZURE_PIPELINE_ACCESS_TOKEN
-    );
-    const clusterPipeline = new AzureDevOpsPipeline(
-      config.AZURE_ORG,
-      config.AZURE_PROJECT,
-      config.HLD_PIPELINE_ID,
-      false,
-      config.AZURE_PIPELINE_ACCESS_TOKEN
-    );
-
-    const manifestRepo: Repository = new GitHub(
-      config.GITHUB_MANIFEST_USERNAME,
-      config.MANIFEST,
-      config.MANIFEST_ACCESS_TOKEN
-    );
-    // const manifestRepo: Repository = new AzureDevOpsRepo(config.AZURE_ORG, config.AZURE_PROJECT, config.MANIFEST, config.MANIFEST_ACCESS_TOKEN);
-    manifestRepo.getManifestSyncState(syncCommit => {
-      this.setState({ manifestSync: syncCommit });
-    });
-    Deployment.getDeployments(
-      config.STORAGE_PARTITION_KEY,
-      srcPipeline,
-      hldPipeline,
-      clusterPipeline,
-      (deployments: Deployment[]) => {
-        this.setState({ deployments });
-        this.getAuthors();
-      }
-    );
-    return <div />;
-  };
-
-  private renderClusterSync = (
-    rowIndex: number,
-    columnIndex: number,
-    tableColumn: ITableColumn<IDeploymentField>,
-    tableItem: IDeploymentField
-  ): JSX.Element => {
-    if (tableItem.clusterSyncDate !== "") {
-      return (
-        <TwoLineTableCell
-          key={"col-" + columnIndex}
-          columnIndex={columnIndex}
-          tableColumn={tableColumn}
-          line1={this.WithIcon({
-            children: tableItem.clusterSync!,
-            className: "fontSize font-size",
-            iconProps: { iconName: "CloudDownload" }
-          })}
-          line2={this.WithIcon({
-            children: <Ago date={new Date(tableItem.clusterSyncDate!)} />,
-            className: "fontSize font-size",
-            iconProps: { iconName: "Calendar" }
-          })}
-        />
-      );
-    }
-    return <SimpleTableCell columnIndex={columnIndex} />;
   };
 
   private renderSimpleText = (
@@ -555,7 +526,6 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     tableColumn: ITableColumn<IDeploymentField>,
     tableItem: IDeploymentField
   ): JSX.Element => {
-    console.log(tableItem.status);
     if (!tableItem.status) {
       return <SimpleTableCell columnIndex={columnIndex} />;
     }
@@ -567,10 +537,24 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         contentClassName="fontWeightSemiBold font-weight-semibold fontSizeM font-size-m scroll-hidden"
       >
         <Status
-          {...this.getStatusIndicatorData(tableItem.status).statusProps}
+          {...this.getStatusIndicatorData(
+            tableItem.status,
+            tableItem.clusterSync
+          ).statusProps}
           className="icon-large-margin"
           size={StatusSize.l}
         />
+        {tableItem.clusterSync && (
+          <Tooltip
+            overflowOnly={false}
+            text={"Synced at " + tableItem.clusterSyncDate!.toLocaleString()}
+          >
+            {this.WithIcon({
+              className: "fontSizeM font-size-m",
+              iconProps: { iconName: "CloudUpload" }
+            })}
+          </Tooltip>
+        )}
       </SimpleTableCell>
     );
   };
@@ -588,10 +572,12 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     );
   };
 
-  private getStatusIndicatorData = (status: string): IStatusIndicatorData => {
+  private getStatusIndicatorData = (
+    status: string,
+    clusterSync?: boolean
+  ): IStatusIndicatorData => {
     status = status || "";
     status = status.toLowerCase();
-    console.log(status);
     const indicatorData: IStatusIndicatorData = {
       label: "Success",
       statusProps: { ...Statuses.Success, ariaLabel: "Success" }

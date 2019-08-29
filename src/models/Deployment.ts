@@ -76,6 +76,7 @@ class Deployment {
         if (!error) {
           const srcBuildIds: Set<string> = new Set<string>();
           const manifestBuildIds: Set<string> = new Set<string>();
+          const releaseIds: Set<string> = new Set<string>();
           for (const entry of result.entries) {
             if (entry.p1) {
               srcBuildIds.add(entry.p1._);
@@ -83,11 +84,14 @@ class Deployment {
             if (entry.p3) {
               manifestBuildIds.add(entry.p3._);
             }
+            if (entry.p2) {
+              releaseIds.add(entry.p2._);
+            }
           }
 
           const p1 = srcPipeline.getListOfBuilds(undefined, srcBuildIds);
           // TODO: send releaseIds to below after bug in release API is fixed
-          const p2 = hldPipeline.getListOfReleases();
+          const p2 = hldPipeline.getListOfReleases(undefined, releaseIds);
           const p3 = manifestPipeline.getListOfBuilds(
             undefined,
             manifestBuildIds
@@ -176,6 +180,7 @@ class Deployment {
     let hldCommitId = "";
     let manifestCommitId = "";
     let env = "";
+    let service = "";
     if (entry.p2 != null) {
       p2 = hldPipeline.releases[entry.p2._];
     }
@@ -193,6 +198,9 @@ class Deployment {
     if (entry.env != null) {
       env = entry.env._;
     }
+    if (entry.service != null) {
+      service = entry.service._;
+    }
 
     const deployment = new Deployment(
       entry.RowKey._,
@@ -201,6 +209,7 @@ class Deployment {
       imageTag,
       entry.Timestamp._,
       env,
+      service,
       manifestCommitId,
       p1,
       p2,
@@ -220,6 +229,7 @@ class Deployment {
   public manifestCommitId?: string;
   public author?: Author;
   public environment: string;
+  public service: string;
 
   constructor(
     deploymentId: string,
@@ -228,6 +238,7 @@ class Deployment {
     imageTag: string,
     timeStamp: string,
     environment: string,
+    service: string,
     manifestCommitId?: string,
     srcToDockerBuild?: Build,
     dockerToHldRelease?: Release,
@@ -243,6 +254,7 @@ class Deployment {
     this.timeStamp = timeStamp;
     this.manifestCommitId = manifestCommitId;
     this.environment = environment;
+    this.service = service;
   }
 
   public duration(): string {
