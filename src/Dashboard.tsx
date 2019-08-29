@@ -1,25 +1,34 @@
-
 import { Ago } from "azure-devops-ui/Ago";
 import { ObservableValue } from "azure-devops-ui/Core/Observable";
 import { Duration } from "azure-devops-ui/Duration";
 // import { Icon } from 'office-ui-fabric-react/lib/Icon';
 import { Icon, IIconProps } from "azure-devops-ui/Icon";
 import { Link } from "azure-devops-ui/Link";
-import { IStatusProps, Status, Statuses, StatusSize } from "azure-devops-ui/Status";
-import { ColumnFill, ITableColumn, SimpleTableCell, Table, TwoLineTableCell } from 'azure-devops-ui/Table';
+import {
+  IStatusProps,
+  Status,
+  Statuses,
+  StatusSize
+} from "azure-devops-ui/Status";
+import {
+  ColumnFill,
+  ITableColumn,
+  SimpleTableCell,
+  Table,
+  TwoLineTableCell
+} from "azure-devops-ui/Table";
 import { Tooltip } from "azure-devops-ui/TooltipEx";
 import { ArrayItemProvider } from "azure-devops-ui/Utilities/Provider";
 // import { DetailsList, DetailsListLayoutMode, IColumn, SelectionMode } from 'office-ui-fabric-react/lib/DetailsList';
-import * as React from 'react';
+import * as React from "react";
 import { config } from "./config";
-import './css/dashboard.css';
+import "./css/dashboard.css";
 import Deployment from "./models/Deployment";
 import AzureDevOpsPipeline from "./models/pipeline/AzureDevOpsPipeline";
-import { Author } from './models/repository/Author';
-import { GitHub } from './models/repository/GitHub';
-import { Repository } from './models/repository/Repository';
-import { Tag } from './models/repository/Tag';
-
+import { Author } from "./models/repository/Author";
+import { GitHub } from "./models/repository/GitHub";
+import { Repository } from "./models/repository/Repository";
+import { Tag } from "./models/repository/Tag";
 
 interface IStatusIndicatorData {
   statusProps: IStatusProps;
@@ -28,14 +37,14 @@ interface IStatusIndicatorData {
 export interface IAuthors {
   [commitId: string]: Author;
 }
-export interface IDashboardState{
-  deployments: Deployment[],
-  manifestSync?: Tag,
-  authors: IAuthors
+export interface IDashboardState {
+  deployments: Deployment[];
+  manifestSync?: Tag;
+  authors: IAuthors;
 }
 export interface IDeploymentField {
-  service: string;
   deploymentId: string;
+  service: string;
   startTime?: Date;
   imageTag?: string;
   srcCommitId?: string;
@@ -61,15 +70,20 @@ export interface IDeploymentField {
   authorName?: string;
   authorURL?: string;
 }
-class Dashboard extends React.Component<{}, IDashboardState> {
-  constructor(props:{}) {
+
+class Dashboard<Props> extends React.Component<Props, IDashboardState> {
+  constructor(props: Props) {
     super(props);
     this.state = {
       authors: {},
       deployments: []
     };
-      this.getDeployments();
   }
+
+  public componentDidMount() {
+    this.getDeployments();
+  }
+
   public render() {
     return (
       <div className="App">

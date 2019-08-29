@@ -1,7 +1,7 @@
-import { config } from '../../config';
+import { config } from "../../config";
 import { HttpHelper } from "../HttpHelper";
-import { AzureDevOpsRepo } from '../repository/AzureDevOpsRepo';
-import { GitHub } from '../repository/GitHub';
+import { AzureDevOpsRepo } from "../repository/AzureDevOpsRepo";
+import { GitHub } from "../repository/GitHub";
 import { Build } from "./Build";
 import Pipeline from "./Pipeline";
 import { Release } from "./Release";
