@@ -10,14 +10,8 @@ export interface IReleases {
 abstract class Pipeline {
   public builds: IBuilds = {};
   public releases: IReleases = {};
-  public abstract getListOfBuilds(
-    callback?: (data: any) => void,
-    buildIds?: Set<string>
-  ): Promise<void>;
-  public abstract getListOfReleases(
-    callback?: (data: any) => void,
-    releaseIds?: Set<string>
-  ): Promise<void>;
+  public abstract getListOfBuilds(buildIds?: Set<string>): Promise<void>;
+  public abstract getListOfReleases(releaseIds?: Set<string>): Promise<void>;
 }
 
 export default Pipeline;

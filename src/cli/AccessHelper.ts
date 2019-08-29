@@ -22,21 +22,18 @@ export class AccessHelper {
     srcPipeline = new AzureDevOpsPipeline(
       config.AZURE_ORG,
       config.AZURE_PROJECT,
-      config.SRC_PIPELINE_ID,
       false,
       config.AZURE_PIPELINE_ACCESS_TOKEN
     );
     hldPipeline = new AzureDevOpsPipeline(
       config.AZURE_ORG,
       config.AZURE_PROJECT,
-      config.DOCKER_PIPELINE_ID,
       true,
       config.AZURE_PIPELINE_ACCESS_TOKEN
     );
     clusterPipeline = new AzureDevOpsPipeline(
       config.AZURE_ORG,
       config.AZURE_PROJECT,
-      config.HLD_PIPELINE_ID,
       false,
       config.AZURE_PIPELINE_ACCESS_TOKEN
     );
@@ -71,11 +68,8 @@ export class AccessHelper {
       config.STORAGE_PARTITION_KEY === "" ||
       config.STORAGE_ACCOUNT_NAME === "" ||
       config.STORAGE_ACCOUNT_KEY === "" ||
-      config.SRC_PIPELINE_ID === 0 ||
-      config.HLD_PIPELINE_ID === 0 ||
       config.GITHUB_MANIFEST_USERNAME === "" ||
       config.MANIFEST === "" ||
-      config.DOCKER_PIPELINE_ID === undefined ||
       config.AZURE_PROJECT === "" ||
       config.AZURE_ORG === ""
     ) {
@@ -135,8 +129,12 @@ export class AccessHelper {
   // improve the below and move it into models
   public static getLogs = (buildId: string, releaseId: string) => {
     if (buildId !== undefined && buildId !== "") {
-      const p1 = srcPipeline.getListOfBuilds();
-      const p2 = clusterPipeline.getListOfBuilds();
+      const p1 = srcPipeline.getListOfBuilds(
+        AccessHelper.getSetFromBuildIds(buildId)
+      );
+      const p2 = clusterPipeline.getListOfBuilds(
+        AccessHelper.getSetFromBuildIds(buildId)
+      );
       Promise.all([p1, p2]).then(async () => {
         if (buildId in srcPipeline.builds) {
           console.log("Navigating to: " + srcPipeline.builds[buildId].URL);
@@ -149,14 +147,18 @@ export class AccessHelper {
         }
       });
     } else if (releaseId !== undefined && releaseId !== "") {
-      hldPipeline.getListOfReleases().then(async () => {
-        if (releaseId in hldPipeline.releases) {
-          console.log("Navigating to: " + hldPipeline.releases[releaseId].URL);
-          await open(hldPipeline.releases[releaseId].URL);
-        } else {
-          console.log("Unable to find release for " + releaseId);
-        }
-      });
+      hldPipeline
+        .getListOfReleases(AccessHelper.getSetFromBuildIds(releaseId))
+        .then(async () => {
+          if (releaseId in hldPipeline.releases) {
+            console.log(
+              "Navigating to: " + hldPipeline.releases[releaseId].URL
+            );
+            await open(hldPipeline.releases[releaseId].URL);
+          } else {
+            console.log("Unable to find release for " + releaseId);
+          }
+        });
     } else {
       console.log("One of build-id or release-id need to be specified.");
     }
@@ -276,4 +278,10 @@ export class AccessHelper {
     }
     return "\u0445";
   };
+
+  private static getSetFromBuildIds(id: string): Set<string> {
+    const set = new Set<string>();
+    set.add(id);
+    return set;
+  }
 }

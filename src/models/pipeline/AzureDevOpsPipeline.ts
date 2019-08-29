@@ -9,9 +9,9 @@ import { Release } from "./Release";
 const buildFilterUrl =
   "https://dev.azure.com/{organization}/{project}/_apis/build/builds?buildIds={buildIds}&api-version=5.0";
 const baseBuildUrl =
-  "https://dev.azure.com/{organization}/{project}/_apis/build/builds?definitions={definitionId}&api-version=5.0&queryOrder=startTimeDescending";
+  "https://dev.azure.com/{organization}/{project}/_apis/build/builds?&api-version=5.0&queryOrder=startTimeDescending";
 const baseReleaseUrl =
-  "https://vsrm.dev.azure.com/{organization}/{project}/_apis/release/deployments?api-version=5.0&definitionId={definitionId}&queryOrder=startTimeDescending";
+  "https://vsrm.dev.azure.com/{organization}/{project}/_apis/release/deployments?api-version=5.0&queryOrder=startTimeDescending";
 const releaseFilterUrl =
   "https://vsrm.dev.azure.com/{organization}/{project}/_apis/release/deployments?api-version=5.0&releaseIdFilter={releaseIds}&queryOrder=startTimeDescending";
 
@@ -19,29 +19,23 @@ class AzureDevOpsPipeline extends Pipeline {
   // User defined fields
   public org: string;
   public project: string;
-  public definitionId: number;
   public isRelease?: boolean;
   public accessToken?: string;
 
   constructor(
     org: string,
     project: string,
-    definitionId: number,
     isRelease?: boolean,
     accessToken?: string
   ) {
     super();
     this.org = org;
     this.project = project;
-    this.definitionId = definitionId;
     this.isRelease = isRelease;
     this.accessToken = accessToken;
   }
 
-  public async getListOfBuilds(
-    callback?: (data: any) => void,
-    buildIds?: Set<string>
-  ): Promise<void> {
+  public async getListOfBuilds(buildIds?: Set<string>): Promise<void> {
     const buildUrl = this.getBuildUrl(buildIds);
     return new Promise((resolve, reject) => {
       HttpHelper.httpGet(
@@ -81,9 +75,6 @@ class AzureDevOpsPipeline extends Pipeline {
             this.builds[build.id] = build;
           }
           resolve();
-          if (callback) {
-            callback(this.builds);
-          }
         },
         this.accessToken
       );
@@ -92,10 +83,7 @@ class AzureDevOpsPipeline extends Pipeline {
 
   // TODO: Once the bug with release API is fixed (regarding returning only top 50 rows),
   // improve the code below, and use the variable releaseIds
-  public async getListOfReleases(
-    callback?: (data: any) => void,
-    releaseIds?: Set<string>
-  ): Promise<void> {
+  public async getListOfReleases(releaseIds?: Set<string>): Promise<void> {
     return new Promise((resolve, reject) => {
       HttpHelper.httpGet(
         this.getReleaseUrl(releaseIds),
@@ -122,9 +110,6 @@ class AzureDevOpsPipeline extends Pipeline {
             this.releases[release.id] = release;
           }
           resolve();
-          if (callback) {
-            callback(this.releases);
-          }
         },
         this.accessToken
       );
@@ -145,8 +130,7 @@ class AzureDevOpsPipeline extends Pipeline {
 
     return baseBuildUrl
       .replace("{organization}", this.org)
-      .replace("{project}", this.project)
-      .replace("{definitionId}", this.definitionId + "");
+      .replace("{project}", this.project);
   }
   private getReleaseUrl(releaseIds?: Set<string>) {
     if (releaseIds) {
@@ -157,14 +141,12 @@ class AzureDevOpsPipeline extends Pipeline {
       return releaseFilterUrl
         .replace("{releaseIds}", strBuildIds)
         .replace("{organization}", this.org)
-        .replace("{project}", this.project)
-        .replace("{definitionId}", this.definitionId + "");
+        .replace("{project}", this.project);
     }
 
     return baseReleaseUrl
       .replace("{organization}", this.org)
-      .replace("{project}", this.project)
-      .replace("{definitionId}", this.definitionId + "");
+      .replace("{project}", this.project);
   }
 }
 

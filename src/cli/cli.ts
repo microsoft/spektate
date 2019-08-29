@@ -28,10 +28,6 @@ program
     "--azure-project <azure-project>",
     "Project under which pipeline lives in Azure"
   )
-  .option(
-    "--docker-pipeline-id <docker-pipeline-id>",
-    "Release Definition Id of the Docker to HLD Release"
-  )
   .option("--manifest <manifest>", "Name of the Manifest repository")
   .option(
     "--manifest-access-token <manifest-access-token>",
@@ -40,14 +36,6 @@ program
   .option(
     "--github-manifest-username <github-manifest-username>",
     "Username of the Github account who owns manifest repository"
-  )
-  .option(
-    "--hld-pipeline-id <hld-pipeline-id>",
-    "Build definition Id of the HLD to manifest pipeline"
-  )
-  .option(
-    "--src-pipeline-id <src-pipeline-id",
-    "Build definition Id of the source to Docker pipeline"
   )
   .option(
     "--storage-account-key <storage-account-key>",
@@ -69,11 +57,8 @@ program
     if (
       env.azureOrg &&
       env.azureProject &&
-      env.dockerPipelineId &&
       env.manifest &&
       env.githubManifestUsername &&
-      env.hldPipelineId &&
-      env.srcPipelineId &&
       env.storageAccountKey &&
       env.storageAccountName &&
       env.storagePartitionKey &&
@@ -81,11 +66,8 @@ program
     ) {
       config.AZURE_ORG = env.azureOrg;
       config.AZURE_PROJECT = env.azureProject;
-      config.DOCKER_PIPELINE_ID = env.dockerPipelineId;
       config.MANIFEST = env.manifest;
       config.GITHUB_MANIFEST_USERNAME = env.githubManifestUsername;
-      config.HLD_PIPELINE_ID = env.hldPipelineId;
-      config.SRC_PIPELINE_ID = env.srcPipelineId;
       config.STORAGE_ACCOUNT_KEY = env.storageAccountKey;
       config.STORAGE_ACCOUNT_NAME = env.storageAccountName;
       config.STORAGE_PARTITION_KEY = env.storagePartitionKey;
