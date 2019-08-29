@@ -1,15 +1,9 @@
 import { Ago } from "azure-devops-ui/Ago";
 import { ObservableValue } from "azure-devops-ui/Core/Observable";
 import { Duration } from "azure-devops-ui/Duration";
-// import { Icon } from 'office-ui-fabric-react/lib/Icon';
 import { Icon, IIconProps } from "azure-devops-ui/Icon";
 import { Link } from "azure-devops-ui/Link";
-import {
-  IStatusProps,
-  Status,
-  Statuses,
-  StatusSize
-} from "azure-devops-ui/Status";
+import { Status, Statuses, StatusSize } from "azure-devops-ui/Status";
 import {
   ColumnFill,
   ITableColumn,
@@ -19,57 +13,19 @@ import {
 } from "azure-devops-ui/Table";
 import { Tooltip } from "azure-devops-ui/TooltipEx";
 import { ArrayItemProvider } from "azure-devops-ui/Utilities/Provider";
-// import { DetailsList, DetailsListLayoutMode, IColumn, SelectionMode } from 'office-ui-fabric-react/lib/DetailsList';
 import * as React from "react";
 import { config } from "./config";
 import "./css/dashboard.css";
+import {
+  IDashboardState,
+  IDeploymentField,
+  IStatusIndicatorData
+} from "./Dashboard.types";
 import Deployment from "./models/Deployment";
 import AzureDevOpsPipeline from "./models/pipeline/AzureDevOpsPipeline";
 import { Author } from "./models/repository/Author";
 import { GitHub } from "./models/repository/GitHub";
 import { Repository } from "./models/repository/Repository";
-import { Tag } from "./models/repository/Tag";
-
-interface IStatusIndicatorData {
-  statusProps: IStatusProps;
-  label: string;
-}
-export interface IAuthors {
-  [commitId: string]: Author;
-}
-export interface IDashboardState {
-  deployments: Deployment[];
-  manifestSync?: Tag;
-  authors: IAuthors;
-}
-export interface IDeploymentField {
-  deploymentId: string;
-  service: string;
-  startTime?: Date;
-  imageTag?: string;
-  srcCommitId?: string;
-  srcBranchName?: string;
-  srcCommitURL?: string;
-  srcPipelineId?: string;
-  srcPipelineURL?: string;
-  srcPipelineResult?: string;
-  dockerPipelineId?: string;
-  dockerPipelineURL?: string;
-  environment?: string;
-  dockerPipelineResult?: string;
-  hldCommitId?: string;
-  hldCommitURL?: string;
-  hldPipelineId?: string;
-  hldPipelineURL?: string;
-  hldPipelineResult?: string;
-  duration: string;
-  status: string;
-  clusterSync?: boolean;
-  clusterSyncDate?: Date;
-  endTime?: Date;
-  authorName?: string;
-  authorURL?: string;
-}
 
 class Dashboard<Props> extends React.Component<Props, IDashboardState> {
   constructor(props: Props) {
@@ -99,21 +55,18 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     const srcPipeline = new AzureDevOpsPipeline(
       config.AZURE_ORG,
       config.AZURE_PROJECT,
-      config.SRC_PIPELINE_ID,
       false,
       config.AZURE_PIPELINE_ACCESS_TOKEN
     );
     const hldPipeline = new AzureDevOpsPipeline(
       config.AZURE_ORG,
       config.AZURE_PROJECT,
-      config.DOCKER_PIPELINE_ID,
       true,
       config.AZURE_PIPELINE_ACCESS_TOKEN
     );
     const clusterPipeline = new AzureDevOpsPipeline(
       config.AZURE_ORG,
       config.AZURE_PROJECT,
-      config.HLD_PIPELINE_ID,
       false,
       config.AZURE_PIPELINE_ACCESS_TOKEN
     );
@@ -158,13 +111,13 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         id: "service",
         name: "Service",
         renderCell: this.renderSimpleText,
-        width: new ObservableValue(220),
+        width: new ObservableValue(220)
       },
       {
         id: "srcBranchName",
         name: "Branch",
         renderCell: this.renderSimpleText,
-        width: new ObservableValue(180),
+        width: new ObservableValue(180)
       },
       {
         id: "environment",
@@ -182,7 +135,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         id: "dockerPipelineId",
         name: "ACR to HLD",
         renderCell: this.renderDockerRelease,
-        width: new ObservableValue(250),
+        width: new ObservableValue(250)
       },
       {
         id: "hldPipelineId",
@@ -468,7 +421,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     commitURL?: string,
     iconName?: string
   ): JSX.Element => {
-    if (!pipelineResult || !pipelineId || !pipelineURL || !commitId) {
+    if (!pipelineId || !pipelineURL || !commitId) {
       return <SimpleTableCell columnIndex={columnIndex} />;
     }
     const commitCell = this.WithIcon({
@@ -597,9 +550,9 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       case "warning":
         indicatorData.statusProps = {
           ...Statuses.Warning,
-          ariaLabel: "Warning"
+          ariaLabel: "Incomplete"
         };
-        indicatorData.label = "Warning";
+        indicatorData.label = "Incomplete";
 
         break;
     }
@@ -639,7 +592,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     if (status === "succeeded") {
       return { iconName: "SkypeCircleCheck", style: { color: "green" } };
     } else if (status === undefined || status === "inProgress") {
-      return { iconName: "Clock", style: { color: "blue" } }; // SyncStatusSolid
+      return { iconName: "ProgressRingDots", style: { color: "blue" } }; // SyncStatusSolid
     }
     return { iconName: "SkypeCircleMinus", style: { color: "red" } };
   }

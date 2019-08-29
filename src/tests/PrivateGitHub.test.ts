@@ -8,9 +8,6 @@ import AzureDevOpsPipeline from "../models/pipeline/AzureDevOpsPipeline";
 describe("config validation", () => {
   it("should be configured", () => {
     AccessHelper.verifyAppConfiguration(() => {
-      expect(config.SRC_PIPELINE_ID).to.not.equal(0);
-      expect(config.HLD_PIPELINE_ID).to.not.equal(0);
-      expect(config.DOCKER_PIPELINE_ID).to.not.equal(0);
       expect(config.AZURE_ORG.length).to.not.equal(0);
       expect(config.AZURE_PROJECT.length).to.not.equal(0);
       expect(config.MANIFEST.length).to.not.equal(0);
@@ -41,21 +38,18 @@ describe("deployment", () => {
       const srcPipeline = new AzureDevOpsPipeline(
         config.AZURE_ORG,
         config.AZURE_PROJECT,
-        config.SRC_PIPELINE_ID,
         false,
         config.AZURE_PIPELINE_ACCESS_TOKEN
       );
       const hldPipeline = new AzureDevOpsPipeline(
         config.AZURE_ORG,
         config.AZURE_PROJECT,
-        config.DOCKER_PIPELINE_ID,
         true,
         config.AZURE_PIPELINE_ACCESS_TOKEN
       );
       const clusterPipeline = new AzureDevOpsPipeline(
         config.AZURE_ORG,
         config.AZURE_PROJECT,
-        config.HLD_PIPELINE_ID,
         false,
         config.AZURE_PIPELINE_ACCESS_TOKEN
       );

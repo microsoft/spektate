@@ -89,13 +89,10 @@ class Deployment {
             }
           }
 
-          const p1 = srcPipeline.getListOfBuilds(undefined, srcBuildIds);
+          const p1 = srcPipeline.getListOfBuilds(srcBuildIds);
           // TODO: send releaseIds to below after bug in release API is fixed
-          const p2 = hldPipeline.getListOfReleases(undefined, releaseIds);
-          const p3 = manifestPipeline.getListOfBuilds(
-            undefined,
-            manifestBuildIds
-          );
+          const p2 = hldPipeline.getListOfReleases(releaseIds);
+          const p3 = manifestPipeline.getListOfBuilds(manifestBuildIds);
 
           // Wait for all three pipelines to load their respective builds before we instantiate deployments
           Promise.all([p1, p2, p3]).then(() => {
@@ -200,6 +197,9 @@ class Deployment {
     }
     if (entry.service != null) {
       service = entry.service._;
+      if (service.split("/").length === 2) {
+        service = service.split("/")[1];
+      }
     }
 
     const deployment = new Deployment(
