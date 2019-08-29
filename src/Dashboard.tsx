@@ -25,21 +25,21 @@ import { config } from "./config";
 import "./css/dashboard.css";
 import Deployment from "./models/Deployment";
 import AzureDevOpsPipeline from "./models/pipeline/AzureDevOpsPipeline";
-import { Author } from "./models/repository/Author";
+import { IAuthor } from "./models/repository/Author";
 import { GitHub } from "./models/repository/GitHub";
-import { Repository } from "./models/repository/Repository";
-import { Tag } from "./models/repository/Tag";
+import { IRepository } from "./models/repository/Repository";
+import { ITag } from "./models/repository/Tag";
 
 interface IStatusIndicatorData {
   statusProps: IStatusProps;
   label: string;
 }
 export interface IAuthors {
-  [commitId: string]: Author;
+  [commitId: string]: IAuthor;
 }
 export interface IDashboardState {
   deployments: Deployment[];
-  manifestSync?: Tag;
+  manifestSync?: ITag;
   authors: IAuthors;
 }
 export interface IDeploymentField {
@@ -118,7 +118,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       config.AZURE_PIPELINE_ACCESS_TOKEN
     );
 
-    const manifestRepo: Repository = new GitHub(
+    const manifestRepo: IRepository = new GitHub(
       config.GITHUB_MANIFEST_USERNAME,
       config.MANIFEST,
       config.MANIFEST_ACCESS_TOKEN
@@ -158,13 +158,13 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         id: "service",
         name: "Service",
         renderCell: this.renderSimpleText,
-        width: new ObservableValue(220),
+        width: new ObservableValue(220)
       },
       {
         id: "srcBranchName",
         name: "Branch",
         renderCell: this.renderSimpleText,
-        width: new ObservableValue(180),
+        width: new ObservableValue(180)
       },
       {
         id: "environment",
@@ -182,7 +182,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         id: "dockerPipelineId",
         name: "ACR to HLD",
         renderCell: this.renderDockerRelease,
-        width: new ObservableValue(250),
+        width: new ObservableValue(250)
       },
       {
         id: "hldPipelineId",
@@ -614,7 +614,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         deployment.srcToDockerBuild &&
         !(deployment.srcToDockerBuild.sourceVersion in state.authors)
       ) {
-        deployment.fetchAuthor((author: Author) => {
+        deployment.fetchAuthor((author: IAuthor) => {
           if (author && deployment.srcToDockerBuild) {
             const copy = state.authors;
             copy[deployment.srcToDockerBuild.sourceVersion] = author;
@@ -625,7 +625,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     });
   };
 
-  private getAuthor = (deployment: Deployment): Author | undefined => {
+  private getAuthor = (deployment: Deployment): IAuthor | undefined => {
     if (
       deployment.srcToDockerBuild &&
       deployment.srcToDockerBuild.sourceVersion in this.state.authors

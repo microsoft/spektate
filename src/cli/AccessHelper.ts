@@ -2,14 +2,14 @@ import Table = require("cli-table");
 import * as fs from "fs";
 import open = require("open");
 import * as os from "os";
-import { Tag } from "src/models/repository/Tag";
+import { ITag } from "src/models/repository/Tag";
 import { config } from "../config";
 import Deployment from "../models/Deployment";
 import AzureDevOpsPipeline from "../models/pipeline/AzureDevOpsPipeline";
 import Pipeline from "../models/pipeline/Pipeline";
-import { Author } from "../models/repository/Author";
+import { IAuthor } from "../models/repository/Author";
 import { GitHub } from "../models/repository/GitHub";
-import { Repository } from "../models/repository/Repository";
+import { IRepository } from "../models/repository/Repository";
 import { OUTPUT_FORMAT } from "./cli";
 
 let hldPipeline: Pipeline;
@@ -45,7 +45,7 @@ export class AccessHelper {
   public static getAuthorForCommitOrBuild(
     commitId?: string,
     buildId?: string,
-    callback?: (author?: Author) => void
+    callback?: (author?: IAuthor) => void
   ) {
     Deployment.getDeploymentsBasedOnFilters(
       config.STORAGE_PARTITION_KEY,
@@ -118,8 +118,8 @@ export class AccessHelper {
     });
   };
 
-  public static getClusterSync = (callback?: (syncTag: Tag) => void): void => {
-    const manifestRepo: Repository = new GitHub(
+  public static getClusterSync = (callback?: (syncTag: ITag) => void): void => {
+    const manifestRepo: IRepository = new GitHub(
       config.GITHUB_MANIFEST_USERNAME,
       config.MANIFEST,
       config.MANIFEST_ACCESS_TOKEN

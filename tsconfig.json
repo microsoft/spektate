@@ -19,7 +19,9 @@
     "importHelpers": true,
     "strictNullChecks": true,
     "suppressImplicitAnyIndexErrors": true,
-    "noUnusedLocals": true
+    "noUnusedLocals": true,
+    "strict": true,
+    "strictFunctionTypes": false // azure-devops-ui has a bug which doesn't allow strict function types
   },
   "exclude": [
     "node_modules",

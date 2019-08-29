@@ -1,17 +1,17 @@
-import { Repository } from "../repository/Repository";
+import { IRepository } from "../repository/Repository";
 
-export class Build {
-  public buildNumber: string;
-  public id: string;
-  public author: string;
-  public queueTime: Date;
-  public result: string;
-  public status: string;
-  public sourceBranch: string;
-  public sourceVersion: string;
-  public sourceVersionURL: string;
-  public startTime: Date;
-  public finishTime: Date;
-  public URL: string;
-  public repository?: Repository;
+export interface IBuild {
+  buildNumber: string;
+  id: string;
+  author: string;
+  queueTime: Date;
+  result: string;
+  status: string;
+  sourceBranch: string;
+  sourceVersion: string;
+  sourceVersionURL: string;
+  startTime: Date;
+  finishTime: Date;
+  URL: string;
+  repository?: IRepository;
 }

@@ -1,23 +1,23 @@
-import { Build } from "./Build";
-import { Release } from "./Release";
+import { IBuild } from "./Build";
+import { IRelease } from "./Release";
 export interface IBuilds {
-  [buildId: string]: Build;
+  [buildId: string]: IBuild;
 }
 export interface IReleases {
-  [releaseId: string]: Release;
+  [releaseId: string]: IRelease;
 }
 
-abstract class Pipeline {
-  public builds: IBuilds = {};
-  public releases: IReleases = {};
-  public abstract getListOfBuilds(
+export interface IPipeline {
+  builds: IBuilds;
+  releases: IReleases;
+  getListOfBuilds: (
     callback?: (data: any) => void,
     buildIds?: Set<string>
-  ): Promise<void>;
-  public abstract getListOfReleases(
+  ) => Promise<void>;
+  getListOfReleases: (
     callback?: (data: any) => void,
     releaseIds?: Set<string>
-  ): Promise<void>;
+  ) => Promise<void>;
 }
 
-export default Pipeline;
+export default IPipeline;

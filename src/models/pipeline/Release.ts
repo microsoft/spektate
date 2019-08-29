@@ -1,12 +1,12 @@
-export class Release {
-  public releaseName: string;
-  public id: string;
-  public imageVersion: string;
-  public registryURL: string;
-  public registryResourceGroup: string;
-  public queueTime: Date;
-  public status: string;
-  public startTime: Date;
-  public finishTime: Date;
-  public URL: string;
+export interface IRelease {
+  releaseName: string;
+  id: string;
+  imageVersion?: string;
+  registryURL?: string;
+  registryResourceGroup?: string;
+  queueTime: Date;
+  status: string;
+  startTime: Date;
+  finishTime: Date;
+  URL: string;
 }

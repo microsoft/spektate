@@ -1,16 +1,16 @@
 import * as azure from "azure-storage";
 import { config } from "../config";
-import { Build } from "./pipeline/Build";
-import Pipeline from "./pipeline/Pipeline";
-import { Release } from "./pipeline/Release";
-import { Author } from "./repository/Author";
+import { IBuild } from "./pipeline/Build";
+import IPipeline from "./pipeline/Pipeline";
+import { IRelease } from "./pipeline/Release";
+import { IAuthor } from "./repository/Author";
 
 class Deployment {
   public static async getDeploymentsBasedOnFilters(
     partitionKey: string,
-    srcPipeline: Pipeline,
-    hldPipeline: Pipeline,
-    manifestPipeline: Pipeline,
+    srcPipeline: IPipeline,
+    hldPipeline: IPipeline,
+    manifestPipeline: IPipeline,
     environment?: string,
     imageTag?: string,
     p1Id?: string,
@@ -45,9 +45,9 @@ class Deployment {
 
   public static async getDeployments(
     partitionKey: string,
-    srcPipeline: Pipeline,
-    hldPipeline: Pipeline,
-    manifestPipeline: Pipeline,
+    srcPipeline: IPipeline,
+    hldPipeline: IPipeline,
+    manifestPipeline: IPipeline,
     callback?: (deployments: Deployment[]) => void,
     query?: azure.TableQuery
   ) {
@@ -159,9 +159,9 @@ class Deployment {
   // TODO: Look into cleaning up the parsing code below (avoid parsing underscores).
   private static getDeploymentFromDBEntry = (
     entry: any,
-    srcPipeline: Pipeline,
-    hldPipeline: Pipeline,
-    manifestPipeline: Pipeline
+    srcPipeline: IPipeline,
+    hldPipeline: IPipeline,
+    manifestPipeline: IPipeline
   ) => {
     let p1;
     let imageTag = "";
@@ -219,15 +219,15 @@ class Deployment {
   };
 
   public deploymentId: string;
-  public srcToDockerBuild?: Build;
-  public dockerToHldRelease?: Release;
-  public hldToManifestBuild?: Build;
+  public srcToDockerBuild?: IBuild;
+  public dockerToHldRelease?: IRelease;
+  public hldToManifestBuild?: IBuild;
   public commitId: string;
   public hldCommitId?: string;
   public imageTag: string;
   public timeStamp: string;
   public manifestCommitId?: string;
-  public author?: Author;
+  public author?: IAuthor;
   public environment: string;
   public service: string;
 
@@ -240,9 +240,9 @@ class Deployment {
     environment: string,
     service: string,
     manifestCommitId?: string,
-    srcToDockerBuild?: Build,
-    dockerToHldRelease?: Release,
-    hldToManifestBuild?: Build
+    srcToDockerBuild?: IBuild,
+    dockerToHldRelease?: IRelease,
+    hldToManifestBuild?: IBuild
   ) {
     this.srcToDockerBuild = srcToDockerBuild;
     this.hldToManifestBuild = hldToManifestBuild;
@@ -302,7 +302,7 @@ class Deployment {
     return "In Progress";
   }
 
-  public fetchAuthor(callback: (author: Author) => void): void {
+  public fetchAuthor(callback: (author: IAuthor) => void): void {
     if (this.srcToDockerBuild && this.srcToDockerBuild.repository) {
       this.srcToDockerBuild.repository.getAuthor(
         this.srcToDockerBuild.sourceVersion,

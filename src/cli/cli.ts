@@ -1,7 +1,7 @@
 #!/usr/bin/env ts-node
 
 import program = require("commander");
-import { Author } from "src/models/repository/Author";
+import { IAuthor } from "src/models/repository/Author";
 import { config } from "../config";
 import { AccessHelper } from "./AccessHelper";
 
@@ -114,7 +114,7 @@ program
         AccessHelper.getAuthorForCommitOrBuild(
           env.commitId,
           env.buildId,
-          (author: Author) => {
+          (author: IAuthor) => {
             if (author) {
               console.log("Username: " + author.username);
               console.log("Name: " + author.name);
