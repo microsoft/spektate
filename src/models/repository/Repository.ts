@@ -1,13 +1,11 @@
-import { Author } from "./Author";
-import { Tag } from "./Tag";
+import { IAuthor } from "./Author";
+import { ITag } from "./Tag";
 
-export abstract class Repository {
-  public manifestSync: Tag;
-  public abstract getManifestSyncState(
-    callback: (syncTag: Tag) => void
-  ): Promise<void>;
-  public abstract getAuthor(
+export interface IRepository {
+  manifestSync?: ITag;
+  getManifestSyncState: (callback: (syncTag: ITag) => void) => Promise<void>;
+  getAuthor: (
     commitId: string,
-    callback?: (author: Author) => void
-  ): Promise<void>;
+    callback?: (author: IAuthor) => void
+  ) => Promise<void>;
 }

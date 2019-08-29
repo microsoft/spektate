@@ -23,9 +23,9 @@ import {
 } from "./Dashboard.types";
 import Deployment from "./models/Deployment";
 import AzureDevOpsPipeline from "./models/pipeline/AzureDevOpsPipeline";
-import { Author } from "./models/repository/Author";
+import { IAuthor } from "./models/repository/Author";
 import { GitHub } from "./models/repository/GitHub";
-import { Repository } from "./models/repository/Repository";
+import { IRepository } from "./models/repository/Repository";
 
 class Dashboard<Props> extends React.Component<Props, IDashboardState> {
   constructor(props: Props) {
@@ -71,7 +71,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       config.AZURE_PIPELINE_ACCESS_TOKEN
     );
 
-    const manifestRepo: Repository = new GitHub(
+    const manifestRepo: IRepository = new GitHub(
       config.GITHUB_MANIFEST_USERNAME,
       config.MANIFEST,
       config.MANIFEST_ACCESS_TOKEN
@@ -209,7 +209,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
           : "",
         duration: deployment.duration() + " mins",
         authorName: author ? author.name : "",
-        authorURL: author ? author.URL : "",
+        authorURL: author ? author.url : "",
         status: deployment.status(),
         clusterSync:
           this.state.manifestSync &&
@@ -567,7 +567,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         deployment.srcToDockerBuild &&
         !(deployment.srcToDockerBuild.sourceVersion in state.authors)
       ) {
-        deployment.fetchAuthor((author: Author) => {
+        deployment.fetchAuthor((author: IAuthor) => {
           if (author && deployment.srcToDockerBuild) {
             const copy = state.authors;
             copy[deployment.srcToDockerBuild.sourceVersion] = author;
@@ -578,7 +578,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     });
   };
 
-  private getAuthor = (deployment: Deployment): Author | undefined => {
+  private getAuthor = (deployment: Deployment): IAuthor | undefined => {
     if (
       deployment.srcToDockerBuild &&
       deployment.srcToDockerBuild.sourceVersion in this.state.authors

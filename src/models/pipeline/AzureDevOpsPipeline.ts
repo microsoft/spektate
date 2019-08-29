@@ -2,9 +2,9 @@ import { config } from "../../config";
 import { HttpHelper } from "../HttpHelper";
 import { AzureDevOpsRepo } from "../repository/AzureDevOpsRepo";
 import { GitHub } from "../repository/GitHub";
-import { Build } from "./Build";
-import Pipeline from "./Pipeline";
-import { Release } from "./Release";
+import { IBuild } from "./Build";
+import IPipeline from "./Pipeline";
+import { IRelease } from "./Release";
 
 const buildFilterUrl =
   "https://dev.azure.com/{organization}/{project}/_apis/build/builds?buildIds={buildIds}&api-version=5.0";
@@ -15,12 +15,14 @@ const baseReleaseUrl =
 const releaseFilterUrl =
   "https://vsrm.dev.azure.com/{organization}/{project}/_apis/release/deployments?api-version=5.0&releaseIdFilter={releaseIds}&queryOrder=startTimeDescending";
 
-class AzureDevOpsPipeline extends Pipeline {
+export class AzureDevOpsPipeline implements IPipeline {
   // User defined fields
   public org: string;
   public project: string;
   public isRelease?: boolean;
   public accessToken?: string;
+  public builds = {};
+  public releases = {};
 
   constructor(
     org: string,
@@ -28,7 +30,6 @@ class AzureDevOpsPipeline extends Pipeline {
     isRelease?: boolean,
     accessToken?: string
   ) {
-    super();
     this.org = org;
     this.project = project;
     this.isRelease = isRelease;
@@ -41,21 +42,22 @@ class AzureDevOpsPipeline extends Pipeline {
       HttpHelper.httpGet(
         buildUrl,
         json => {
-          const builds: Build[] = [];
+          const builds: IBuild[] = [];
           for (const row of json.data.value) {
-            const build = new Build();
-            build.author = row.requestedFor.displayName;
-            build.buildNumber = row.buildNumber;
-            build.id = row.id;
-            build.queueTime = new Date(row.queueTime);
-            build.sourceBranch = row.sourceBranch;
-            build.status = row.status;
-            build.startTime = new Date(row.startTime);
-            build.URL = row._links.web.href;
-            build.result = row.result;
-            build.sourceVersion = row.sourceVersion;
-            build.sourceVersionURL = row._links.sourceVersionDisplayUri.href;
-            build.finishTime = new Date(row.finishTime);
+            const build: IBuild = {
+              URL: row._links.web.href,
+              author: row.requestedFor.displayName,
+              buildNumber: row.buildNumber,
+              finishTime: new Date(row.finishTime),
+              id: row.id,
+              queueTime: new Date(row.queueTime),
+              result: row.result,
+              sourceBranch: row.sourceBranch,
+              sourceVersion: row.sourceVersion,
+              sourceVersionURL: row._links.sourceVersionDisplayUri.href,
+              startTime: new Date(row.startTime),
+              status: row.status
+            };
             if (row.repository.type === "GitHub") {
               build.repository = new GitHub(
                 row.repository.id.split("/")[0],
@@ -88,16 +90,17 @@ class AzureDevOpsPipeline extends Pipeline {
       HttpHelper.httpGet(
         this.getReleaseUrl(releaseIds),
         json => {
-          const releases: Release[] = [];
+          const releases: IRelease[] = [];
           for (const row of json.data.value) {
-            const release = new Release();
-            release.id = row.release.id;
-            release.queueTime = new Date(row.queuedOn);
-            release.startTime = new Date(row.startedOn);
-            release.finishTime = new Date(row.completedOn);
-            release.status = row.deploymentStatus;
-            release.URL = row.release._links.web.href;
-            release.releaseName = row.release.name;
+            const release: IRelease = {
+              URL: row.release._links.web.href,
+              finishTime: new Date(row.completedOn),
+              id: row.release.id,
+              queueTime: new Date(row.queuedOn),
+              releaseName: row.release.name,
+              startTime: new Date(row.startedOn),
+              status: row.deploymentStatus
+            };
             if (row.release.artifacts.length > 0) {
               release.imageVersion =
                 row.release.artifacts[0].definitionReference.version.id;
