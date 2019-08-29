@@ -96,8 +96,6 @@ class AzureDevOpsPipeline extends Pipeline {
     callback?: (data: any) => void,
     releaseIds?: Set<string>
   ): Promise<void> {
-    console.log(releaseIds);
-    console.log(this.getReleaseUrl(releaseIds));
     return new Promise((resolve, reject) => {
       HttpHelper.httpGet(
         this.getReleaseUrl(releaseIds),

@@ -95,7 +95,52 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     );
   }
 
-  public renderPrototypeTable = () => {
+  private getDeployments = () => {
+    const srcPipeline = new AzureDevOpsPipeline(
+      config.AZURE_ORG,
+      config.AZURE_PROJECT,
+      config.SRC_PIPELINE_ID,
+      false,
+      config.AZURE_PIPELINE_ACCESS_TOKEN
+    );
+    const hldPipeline = new AzureDevOpsPipeline(
+      config.AZURE_ORG,
+      config.AZURE_PROJECT,
+      config.DOCKER_PIPELINE_ID,
+      true,
+      config.AZURE_PIPELINE_ACCESS_TOKEN
+    );
+    const clusterPipeline = new AzureDevOpsPipeline(
+      config.AZURE_ORG,
+      config.AZURE_PROJECT,
+      config.HLD_PIPELINE_ID,
+      false,
+      config.AZURE_PIPELINE_ACCESS_TOKEN
+    );
+
+    const manifestRepo: Repository = new GitHub(
+      config.GITHUB_MANIFEST_USERNAME,
+      config.MANIFEST,
+      config.MANIFEST_ACCESS_TOKEN
+    );
+    // const manifestRepo: Repository = new AzureDevOpsRepo(config.AZURE_ORG, config.AZURE_PROJECT, config.MANIFEST, config.MANIFEST_ACCESS_TOKEN);
+    manifestRepo.getManifestSyncState(syncCommit => {
+      this.setState({ manifestSync: syncCommit });
+    });
+    Deployment.getDeployments(
+      config.STORAGE_PARTITION_KEY,
+      srcPipeline,
+      hldPipeline,
+      clusterPipeline,
+      (deployments: Deployment[]) => {
+        this.setState({ deployments });
+        this.getAuthors();
+      }
+    );
+    return <div />;
+  };
+
+  private renderPrototypeTable = () => {
     const columns: Array<ITableColumn<IDeploymentField>> = [
       {
         id: "status",
@@ -115,7 +160,6 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         renderCell: this.renderSimpleText,
         width: new ObservableValue(220),
       },
-      // { id: 'imageTag', name: 'Image Tag', width: new ObservableValue(220), renderCell: this.renderSimpleText},
       {
         id: "srcBranchName",
         name: "Branch",
@@ -152,7 +196,6 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         renderCell: this.renderSimpleBoldText,
         width: new ObservableValue(200)
       },
-      // { id: 'clusterSync', name: 'Cluster-Sync', width: new ObservableValue(120), renderCell: this.renderClusterSync},
       {
         id: "deployedAt",
         name: "Deployed at",
@@ -162,11 +205,9 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       ColumnFill
     ];
 
-    // tslint:disable-next-line: prefer-const
-    let rows: IDeploymentField[] = [];
-    this.state.deployments.forEach(deployment => {
+    const rows: IDeploymentField[] = this.state.deployments.map(deployment => {
       const author = this.getAuthor(deployment);
-      rows.push({
+      return {
         deploymentId: deployment.deploymentId,
         service: deployment.service,
         startTime: deployment.srcToDockerBuild
@@ -232,62 +273,19 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
             ? new Date()
             : deployment.hldToManifestBuild!.finishTime
           : new Date()
-      });
+      };
     });
     return (
-      <Table
-        columns={columns}
-        pageSize={rows.length}
-        role="table"
-        itemProvider={new ArrayItemProvider<IDeploymentField>(rows)}
-        showLines={true}
-      />
+      <div className="PrototypeTable">
+        <Table
+          columns={columns}
+          pageSize={rows.length}
+          role="table"
+          itemProvider={new ArrayItemProvider<IDeploymentField>(rows)}
+          showLines={true}
+        />
+      </div>
     );
-  };
-
-  public getDeployments = () => {
-    const srcPipeline = new AzureDevOpsPipeline(
-      config.AZURE_ORG,
-      config.AZURE_PROJECT,
-      config.SRC_PIPELINE_ID,
-      false,
-      config.AZURE_PIPELINE_ACCESS_TOKEN
-    );
-    const hldPipeline = new AzureDevOpsPipeline(
-      config.AZURE_ORG,
-      config.AZURE_PROJECT,
-      config.DOCKER_PIPELINE_ID,
-      true,
-      config.AZURE_PIPELINE_ACCESS_TOKEN
-    );
-    const clusterPipeline = new AzureDevOpsPipeline(
-      config.AZURE_ORG,
-      config.AZURE_PROJECT,
-      config.HLD_PIPELINE_ID,
-      false,
-      config.AZURE_PIPELINE_ACCESS_TOKEN
-    );
-
-    const manifestRepo: Repository = new GitHub(
-      config.GITHUB_MANIFEST_USERNAME,
-      config.MANIFEST,
-      config.MANIFEST_ACCESS_TOKEN
-    );
-    // const manifestRepo: Repository = new AzureDevOpsRepo(config.AZURE_ORG, config.AZURE_PROJECT, config.MANIFEST, config.MANIFEST_ACCESS_TOKEN);
-    manifestRepo.getManifestSyncState(syncCommit => {
-      this.setState({ manifestSync: syncCommit });
-    });
-    Deployment.getDeployments(
-      config.STORAGE_PARTITION_KEY,
-      srcPipeline,
-      hldPipeline,
-      clusterPipeline,
-      (deployments: Deployment[]) => {
-        this.setState({ deployments });
-        this.getAuthors();
-      }
-    );
-    return <div />;
   };
 
   private renderSimpleText = (
