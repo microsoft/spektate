@@ -18,6 +18,12 @@ If you have already followed the steps [here](https://github.com/microsoft/bedro
     - `TABLE_NAME`: Set this to the name of the table in your storage account that you prefer to use
 
     ![](./images/variable_group.png)
+
+    Make sure that you update the pipelines in the following steps to include this variable group, such as below: 
+    ```yaml
+    variables:
+    - group: <your-variable-group-name>
+    ```
 2. To your CI pipeline that runs from the source repository to build the docker image, copy and paste the following task which will update the database for every build that runs from the source repository to show up in Spektate.
 
     ```yaml
