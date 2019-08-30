@@ -118,7 +118,7 @@ export class AccessHelper {
       config.MANIFEST,
       config.MANIFEST_ACCESS_TOKEN
     );
-    manifestRepo.getManifestSyncState(syncTag => {
+    manifestRepo.getManifestSyncState().then(syncTag => {
       if (callback) {
         callback(syncTag);
       }

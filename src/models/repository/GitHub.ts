@@ -20,67 +20,58 @@ export class GitHub implements IRepository {
     this.accessToken = accessToken;
   }
 
-  public getManifestSyncState(
-    callback: (syncTag: ITag) => void
-  ): Promise<void> {
-    let tag;
-    return new Promise((resolve, reject) => {
-      HttpHelper.httpGet(
-        manifestSyncTagURL
-          .replace("<owner>", this.username)
-          .replace("<repo>", this.reponame),
-        data => {
-          tag = data.data;
-          if (tag != null) {
-            HttpHelper.httpGet(
-              tag.object.url,
-              syncStatus => {
-                resolve();
-                if (syncStatus != null) {
-                  this.manifestSync = {
-                    commit: syncStatus.data.object.sha.substring(0, 7),
-                    date: new Date(syncStatus.data.tagger.date),
-                    message: syncStatus.data.message,
-                    tagger: syncStatus.data.tagger.name
-                  };
-                  callback(this.manifestSync);
-                }
-              },
-              this.accessToken
-            );
-          }
-        },
+  public async getManifestSyncState() {
+    const data = await HttpHelper.httpGet<any>(
+      manifestSyncTagURL
+        .replace("<owner>", this.username)
+        .replace("<repo>", this.reponame),
+      this.accessToken
+    );
+
+    const tag = data.data;
+    if (tag != null) {
+      const syncStatus = await HttpHelper.httpGet<any>(
+        tag.object.url,
         this.accessToken
       );
-    });
+
+      if (syncStatus != null) {
+        this.manifestSync = {
+          commit: syncStatus.data.object.sha.substring(0, 7),
+          date: new Date(syncStatus.data.tagger.date),
+          message: syncStatus.data.message,
+          tagger: syncStatus.data.tagger.name
+        };
+        return this.manifestSync;
+      }
+    }
+
+    throw new Error(
+      `Unable to sync manifests for Github repo ${this.username}/${this.reponame}`
+    );
   }
 
-  public getAuthor(
-    commitId: string,
-    callback?: (author: IAuthor) => void
-  ): Promise<void> {
-    return new Promise((resolve, reject) => {
-      HttpHelper.httpGet(
-        authorInfoURL
-          .replace("<owner>", this.username)
-          .replace("<repo>", this.reponame)
-          .replace("<commitId>", commitId),
-        data => {
-          const authorInfo = data.data;
-          if (authorInfo != null) {
-            const author: IAuthor = {
-              name: authorInfo.commit.author.name,
-              url: authorInfo.author.html_url,
-              username: authorInfo.committer.login
-            };
-            resolve();
-            if (callback) {
-              callback(author);
-            }
-          }
-        },
-        this.accessToken
-      );
-    });
+  public async getAuthor(commitId: string) {
+    const data = await HttpHelper.httpGet<any>(
+      authorInfoURL
+        .replace("<owner>", this.username)
+        .replace("<repo>", this.reponame)
+        .replace("<commitId>", commitId),
+      this.accessToken
+    );
+
+    const authorInfo = data.data;
+    if (authorInfo != null) {
+      const author: IAuthor = {
+        name: authorInfo.commit.author.name,
+        url: authorInfo.author.html_url,
+        username: authorInfo.committer.login
+      };
+      return author;
+    }
+
+    throw new Error(
+      `Unable to get author for github repo ${this.username}/${this.reponame}`
+    );
   }
 }

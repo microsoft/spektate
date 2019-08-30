@@ -1,13 +1,9 @@
 import axios from "axios";
 
 export class HttpHelper {
-  public static httpGet(
-    theUrl: string,
-    callback: (data: any) => void,
-    accessToken?: string
-  ) {
-    axios
-      .get(
+  public static httpGet<T>(theUrl: string, accessToken?: string) {
+    return axios
+      .get<T>(
         theUrl,
         accessToken
           ? {
@@ -18,11 +14,9 @@ export class HttpHelper {
             }
           : {}
       )
-      .then(response => {
-        callback(response);
-      })
       .catch(error => {
         console.log(error);
+        throw error;
       });
   }
 }

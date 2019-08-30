@@ -304,10 +304,9 @@ class Deployment {
 
   public fetchAuthor(callback: (author: IAuthor) => void): void {
     if (this.srcToDockerBuild && this.srcToDockerBuild.repository) {
-      this.srcToDockerBuild.repository.getAuthor(
-        this.srcToDockerBuild.sourceVersion,
-        callback
-      );
+      this.srcToDockerBuild.repository
+        .getAuthor(this.srcToDockerBuild.sourceVersion)
+        .then(callback);
     }
   }
 }
