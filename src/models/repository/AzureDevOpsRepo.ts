@@ -1,7 +1,7 @@
 import { HttpHelper } from "../HttpHelper";
-import { Author } from "./Author";
-import { Repository } from "./Repository";
-import { Tag } from "./Tag";
+import { IAuthor } from "./Author";
+import { IRepository } from "./Repository";
+import { ITag } from "./Tag";
 
 const authorInfoURL =
   "https://dev.azure.com/{organization}/{project}/_apis/git/repositories/{repositoryId}/commits/{commitId}?api-version=4.1";
@@ -10,11 +10,12 @@ const manifestSyncTagsURL =
 const manifestSyncTagURL =
   "https://dev.azure.com/{organization}/{project}/_apis/git/repositories/{repositoryId}/annotatedtags/{objectId}?api-version=4.1-preview.1";
 
-export class AzureDevOpsRepo extends Repository {
+export class AzureDevOpsRepo implements IRepository {
   public org: string;
   public project: string;
   public repo: string;
   public accessToken?: string;
+  public manifestSync?: ITag = undefined;
 
   constructor(
     org: string,
@@ -22,13 +23,14 @@ export class AzureDevOpsRepo extends Repository {
     repo: string,
     accessToken?: string
   ) {
-    super();
     this.org = org;
     this.project = project;
     this.repo = repo;
     this.accessToken = accessToken;
   }
-  public getManifestSyncState(callback: (syncTag: Tag) => void): Promise<void> {
+  public getManifestSyncState(
+    callback: (syncTag: ITag) => void
+  ): Promise<void> {
     let tags;
     return new Promise((resolve, reject) => {
       HttpHelper.httpGet(
@@ -52,10 +54,13 @@ export class AzureDevOpsRepo extends Repository {
                   syncStatus => {
                     resolve();
                     if (syncStatus != null) {
-                      this.manifestSync = new Tag(
-                        syncStatus.data.taggedObject.objectId.substring(0, 7),
-                        new Date()
-                      );
+                      this.manifestSync = {
+                        commit: syncStatus.data.taggedObject.objectId.substring(
+                          0,
+                          7
+                        ),
+                        date: new Date()
+                      };
                       callback(this.manifestSync);
                     }
                   },
@@ -71,7 +76,7 @@ export class AzureDevOpsRepo extends Repository {
   }
   public getAuthor(
     commitId: string,
-    callback?: ((author: Author) => void) | undefined
+    callback?: ((author: IAuthor) => void) | undefined
   ): Promise<void> {
     return new Promise((resolve, reject) => {
       HttpHelper.httpGet(
@@ -83,11 +88,11 @@ export class AzureDevOpsRepo extends Repository {
         data => {
           const commitInfo = data.data;
           if (commitInfo) {
-            const author = new Author(
-              commitInfo.author.imageUrl,
-              commitInfo.author.name,
-              commitInfo.author.email
-            );
+            const author: IAuthor = {
+              name: commitInfo.author.name,
+              url: commitInfo.author.imageUrl,
+              username: commitInfo.author.email
+            };
             resolve();
             if (callback) {
               callback(author);

@@ -1,17 +1,17 @@
-import { Build } from "./Build";
-import { Release } from "./Release";
+import { IBuild } from "./Build";
+import { IRelease } from "./Release";
 export interface IBuilds {
-  [buildId: string]: Build;
+  [buildId: string]: IBuild;
 }
 export interface IReleases {
-  [releaseId: string]: Release;
+  [releaseId: string]: IRelease;
 }
 
-abstract class Pipeline {
-  public builds: IBuilds = {};
-  public releases: IReleases = {};
-  public abstract getListOfBuilds(buildIds?: Set<string>): Promise<void>;
-  public abstract getListOfReleases(releaseIds?: Set<string>): Promise<void>;
+export interface IPipeline {
+  builds: IBuilds;
+  releases: IReleases;
+  getListOfBuilds: (buildIds?: Set<string>) => Promise<void>;
+  getListOfReleases: (releaseIds?: Set<string>) => Promise<void>;
 }
 
-export default Pipeline;
+export default IPipeline;

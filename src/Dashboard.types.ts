@@ -1,18 +1,18 @@
 import { IStatusProps } from "azure-devops-ui/Status";
 import Deployment from "./models/Deployment";
-import { Author } from "./models/repository/Author";
-import { Tag } from "./models/repository/Tag";
+import { IAuthor } from "./models/repository/Author";
+import { ITag } from "./models/repository/Tag";
 
 export interface IStatusIndicatorData {
   statusProps: IStatusProps;
   label: string;
 }
 export interface IAuthors {
-  [commitId: string]: Author;
+  [commitId: string]: IAuthor;
 }
 export interface IDashboardState {
   deployments: Deployment[];
-  manifestSync?: Tag;
+  manifestSync?: ITag;
   authors: IAuthors;
 }
 export interface IDeploymentField {
