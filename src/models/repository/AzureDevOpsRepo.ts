@@ -28,79 +28,66 @@ export class AzureDevOpsRepo implements IRepository {
     this.repo = repo;
     this.accessToken = accessToken;
   }
-  public getManifestSyncState(
-    callback: (syncTag: ITag) => void
-  ): Promise<void> {
-    let tags;
-    return new Promise((resolve, reject) => {
-      HttpHelper.httpGet(
-        manifestSyncTagsURL
-          .replace("{organization}", this.org)
-          .replace("{project}", this.project)
-          .replace("{repositoryId}", this.repo),
-        data => {
-          tags = data.data.value;
-          if (tags != null && tags.length > 0) {
-            // tslint:disable-next-line: prefer-for-of
-            for (let i = 0; i < tags.length; i++) {
-              if (tags[i].name === "refs/tags/flux-sync") {
-                const objectId = tags[i].objectId;
-                HttpHelper.httpGet(
-                  manifestSyncTagURL
-                    .replace("{organization}", this.org)
-                    .replace("{project}", this.project)
-                    .replace("{repositoryId}", this.repo)
-                    .replace("{objectId}", objectId),
-                  syncStatus => {
-                    resolve();
-                    if (syncStatus != null) {
-                      this.manifestSync = {
-                        commit: syncStatus.data.taggedObject.objectId.substring(
-                          0,
-                          7
-                        ),
-                        date: new Date()
-                      };
-                      callback(this.manifestSync);
-                    }
-                  },
-                  this.accessToken
-                );
-              }
-            }
-          }
-        },
-        this.accessToken
-      );
-    });
-  }
-  public getAuthor(
-    commitId: string,
-    callback?: ((author: IAuthor) => void) | undefined
-  ): Promise<void> {
-    return new Promise((resolve, reject) => {
-      HttpHelper.httpGet(
-        authorInfoURL
-          .replace("{organization}", this.org)
-          .replace("{project}", this.project)
-          .replace("{repositoryId}", this.repo)
-          .replace("{commitId}", commitId),
-        data => {
-          const commitInfo = data.data;
-          if (commitInfo) {
-            const author: IAuthor = {
-              name: commitInfo.author.name,
-              url: commitInfo.author.imageUrl,
-              username: commitInfo.author.email
+  public async getManifestSyncState() {
+    const data = await HttpHelper.httpGet<any>(
+      manifestSyncTagsURL
+        .replace("{organization}", this.org)
+        .replace("{project}", this.project)
+        .replace("{repositoryId}", this.repo),
+      this.accessToken
+    );
+
+    const tags = data.data.value;
+    if (tags != null && tags.length > 0) {
+      for (const tag of tags) {
+        if (tag.name === "refs/tags/flux-sync") {
+          const objectId = tag.objectId;
+          const syncStatus = await HttpHelper.httpGet<any>(
+            manifestSyncTagURL
+              .replace("{organization}", this.org)
+              .replace("{project}", this.project)
+              .replace("{repositoryId}", this.repo)
+              .replace("{objectId}", objectId),
+            this.accessToken
+          );
+
+          if (syncStatus != null) {
+            this.manifestSync = {
+              commit: syncStatus.data.taggedObject.objectId.substring(0, 7),
+              date: new Date()
             };
-            resolve();
-            if (callback) {
-              callback(author);
-            }
+            return this.manifestSync;
           }
-        },
-        this.accessToken
-      );
-    });
+        }
+      }
+    }
+    throw new Error(
+      `Unable to to find flux-sync tag from ${this.org}-${this.project}-${this.repo}`
+    );
+  }
+
+  public async getAuthor(commitId: string) {
+    const data = await HttpHelper.httpGet<any>(
+      authorInfoURL
+        .replace("{organization}", this.org)
+        .replace("{project}", this.project)
+        .replace("{repositoryId}", this.repo)
+        .replace("{commitId}", commitId),
+      this.accessToken
+    );
+
+    const commitInfo = data.data;
+    if (commitInfo) {
+      const author: IAuthor = {
+        name: commitInfo.author.name,
+        url: commitInfo.author.imageUrl,
+        username: commitInfo.author.email
+      };
+      return author;
+    }
+
+    throw new Error(
+      `Unable to get author for ${this.org}-${this.project}-${this.repo}@${commitId}`
+    );
   }
 }

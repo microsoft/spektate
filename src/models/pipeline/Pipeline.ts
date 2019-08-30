@@ -10,8 +10,8 @@ export interface IReleases {
 export interface IPipeline {
   builds: IBuilds;
   releases: IReleases;
-  getListOfBuilds: (buildIds?: Set<string>) => Promise<void>;
-  getListOfReleases: (releaseIds?: Set<string>) => Promise<void>;
+  getListOfBuilds: (buildIds?: Set<string>) => Promise<IBuilds>;
+  getListOfReleases: (releaseIds?: Set<string>) => Promise<IReleases>;
 }
 
 export default IPipeline;

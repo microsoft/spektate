@@ -77,7 +77,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       config.MANIFEST_ACCESS_TOKEN
     );
     // const manifestRepo: Repository = new AzureDevOpsRepo(config.AZURE_ORG, config.AZURE_PROJECT, config.MANIFEST, config.MANIFEST_ACCESS_TOKEN);
-    manifestRepo.getManifestSyncState(syncCommit => {
+    manifestRepo.getManifestSyncState().then(syncCommit => {
       this.setState({ manifestSync: syncCommit });
     });
     Deployment.getDeployments(
