@@ -38,7 +38,7 @@ If you have already followed the steps [here](https://github.com/microsoft/bedro
         commitId=$(echo "${commitId:0:7}")
         echo "python update_pipeline.py $(ACCOUNT_NAME) $(ACCOUNT_KEY) $(TABLE_NAME) $(PARTITION_KEY) p1 $(Build.BuildId) imageTag $tag_name commitId $commitId service $(Build.Repository.Name)"
         python update_pipeline.py $(ACCOUNT_NAME) $(ACCOUNT_KEY) $(TABLE_NAME) $(PARTITION_KEY) p1 $(Build.BuildId) imageTag $tag_name commitId $commitId service $(Build.Repository.Name)
-    displayName: Update source pipeline details in Spektate db
+      displayName: Update source pipeline details in Spektate db
     ```
 
 **Note**: The earlier in the pipeline you add this task, the earlier it will send data to Spektate. Adding it before the crucial steps is recommended since it will capture details about failures if the next steps fail.
