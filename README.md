@@ -1,5 +1,4 @@
-[![Build Status](https://dev.azure.com/epicstuff/hellobedrock/_apis/build/status/samiyaakhtar.container-journey?branchName=master)](https://dev.azure.com/epicstuff/hellobedrock/_build/latest?definitionId=105&branchName=master)
-
+[![Build Status](https://dev.azure.com/epicstuff/bedrock/_apis/build/status/microsoft.spektate?branchName=master)](https://dev.azure.com/epicstuff/bedrock/_build/latest?definitionId=124&branchName=master)
 
 # Spektate
 
