@@ -81,7 +81,7 @@ If you have already followed the steps [here](https://github.com/microsoft/bedro
         commitId=$(echo "${commitId:0:7}")
         echo "python update_pipeline.py $(ACCOUNT_NAME) $(ACCOUNT_KEY) $(TABLE_NAME) $(PARTITION_KEY) hldCommitId $commitId p3 $(Build.BuildId)"
         python update_pipeline.py $(ACCOUNT_NAME) $(ACCOUNT_KEY) $(TABLE_NAME) $(PARTITION_KEY) hldCommitId $commitId p3 $(Build.BuildId)
-    displayName: Update manifest pipeline details in CJ db
+      displayName: Update manifest pipeline details in CJ db
     ```
 
     For the step to update manifest commit Id:
