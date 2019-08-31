@@ -24,7 +24,6 @@ steps:
 
 - script: |
     npm run build-cli 
-    pkg build/dist/cli/spex.js
   displayName: "Package CLI"
 
 - script: |
