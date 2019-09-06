@@ -27,7 +27,9 @@ import { IAuthor } from "./models/repository/Author";
 import { GitHub } from "./models/repository/GitHub";
 import { IRepository } from "./models/repository/Repository";
 
+const REFRESH_INTERVAL = 30000;
 class Dashboard<Props> extends React.Component<Props, IDashboardState> {
+  private interval: NodeJS.Timeout;
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -37,7 +39,12 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
   }
 
   public componentDidMount() {
-    this.getDeployments();
+    this.interval = setInterval(this.updateDeployments, REFRESH_INTERVAL);
+    this.updateDeployments();
+  }
+
+  public componentWillUnmount() {
+    clearInterval(this.interval);
   }
 
   public render() {
@@ -51,7 +58,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     );
   }
 
-  private getDeployments = () => {
+  private updateDeployments = () => {
     const srcPipeline = new AzureDevOpsPipeline(
       config.AZURE_ORG,
       config.AZURE_PROJECT,
@@ -111,7 +118,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         id: "service",
         name: "Service",
         renderCell: this.renderSimpleText,
-        width: new ObservableValue(220)
+        width: new ObservableValue(200)
       },
       {
         id: "srcBranchName",
