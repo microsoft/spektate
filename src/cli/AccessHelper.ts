@@ -10,7 +10,7 @@ import IPipeline from "../models/pipeline/Pipeline";
 import { IAuthor } from "../models/repository/Author";
 import { GitHub } from "../models/repository/GitHub";
 import { IRepository } from "../models/repository/Repository";
-import { OUTPUT_FORMAT } from "./cli";
+import { OUTPUT_FORMAT } from "./spex";
 
 let hldPipeline: IPipeline;
 let clusterPipeline: IPipeline;
