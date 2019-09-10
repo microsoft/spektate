@@ -41,8 +41,10 @@ If you have already followed the steps [here](https://github.com/microsoft/bedro
         tag_name="$(PARTITION_KEY)-$(Build.SourceBranchName)-$(Build.BuildId)"
         commitId=$(Build.SourceVersion)
         commitId=$(echo "${commitId:0:7}")
-        echo "python update_pipeline.py $(ACCOUNT_NAME) $(ACCOUNT_KEY) $(TABLE_NAME) $(PARTITION_KEY) p1 $(Build.BuildId) imageTag $tag_name commitId $commitId service $(Build.Repository.Name)"
-        python update_pipeline.py $(ACCOUNT_NAME) $(ACCOUNT_KEY) $(TABLE_NAME) $(PARTITION_KEY) p1 $(Build.BuildId) imageTag $tag_name commitId $commitId service $(Build.Repository.Name)
+        service=$(Build.Repository.Name)
+        service=${service##*/}
+        echo "python update_pipeline.py $(ACCOUNT_NAME) $(ACCOUNT_KEY) $(TABLE_NAME) $(PARTITION_KEY) p1 $(Build.BuildId) imageTag $tag_name commitId $commitId service $service"
+        python update_pipeline.py $(ACCOUNT_NAME) $(ACCOUNT_KEY) $(TABLE_NAME) $(PARTITION_KEY) p1 $(Build.BuildId) imageTag $tag_name commitId $commitId service $service
       displayName: Update source pipeline details in Spektate db
     ```
 

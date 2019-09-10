@@ -92,6 +92,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       srcPipeline,
       hldPipeline,
       clusterPipeline,
+      undefined,
       (deployments: Deployment[]) => {
         this.setState({ deployments });
         this.getAuthors();

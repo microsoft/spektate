@@ -53,6 +53,7 @@ export class AccessHelper {
       undefined,
       buildId,
       commitId,
+      undefined,
       (deployments: Deployment[]) => {
         if (deployments.length > 0 && callback) {
           deployments[0].fetchAuthor(callback);
@@ -169,7 +170,8 @@ export class AccessHelper {
     environment?: string,
     imageTag?: string,
     p1Id?: string,
-    commitId?: string
+    commitId?: string,
+    service?: string
   ) => {
     Deployment.getDeploymentsBasedOnFilters(
       config.STORAGE_PARTITION_KEY,
@@ -180,6 +182,7 @@ export class AccessHelper {
       imageTag,
       p1Id,
       commitId,
+      service,
       (deployments: Deployment[]) => {
         if (outputFormat === OUTPUT_FORMAT.JSON) {
           console.log(JSON.stringify(deployments));
@@ -197,6 +200,7 @@ export class AccessHelper {
     if (deployments.length > 0) {
       let row = [];
       row.push("Start Time");
+      row.push("Service");
       row.push("Commit");
       row.push("Src to ACR");
       row.push("Image Tag");
@@ -221,6 +225,7 @@ export class AccessHelper {
             ? deployment.srcToDockerBuild.startTime.toLocaleString()
             : ""
         );
+        row.push(deployment.service);
         row.push(deployment.commitId);
         row.push(
           deployment.srcToDockerBuild ? deployment.srcToDockerBuild.id : ""

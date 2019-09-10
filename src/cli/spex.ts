@@ -139,6 +139,10 @@ program
     "Get deployments for a particular environment"
   )
   .option(
+    "-s, --service <service-name>",
+    "Get deployments for a particular service"
+  )
+  .option(
     "-o, --output <output-format>",
     "Get output in one of these forms: normal, wide, JSON"
   )
@@ -149,7 +153,8 @@ program
         env.env,
         env.imageTag,
         env.buildId,
-        env.commitId
+        env.commitId,
+        env.service
       );
     });
   })
@@ -158,6 +163,7 @@ program
     console.log("Examples:");
     console.log("");
     console.log("  $ deployments --env Dev -o wide");
+    console.log("  $ deployments --service hello-bedrock -o wide");
     console.log("  $ deployments --build-id 5477");
     console.log("  $ deployments --image-tag hello-bedrock-master-5429");
     console.log("  $ deployments --env Dev");
