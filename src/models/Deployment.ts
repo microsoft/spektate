@@ -15,6 +15,7 @@ class Deployment {
     imageTag?: string,
     p1Id?: string,
     commitId?: string,
+    service?: string,
     callback?: (deployments: Deployment[]) => void
   ) {
     const query = new azure.TableQuery().where(
@@ -32,14 +33,17 @@ class Deployment {
     if (commitId && commitId !== "") {
       query.and("commitId eq '" + commitId.toLowerCase() + "'");
     }
+    if (service && service !== "") {
+      query.and("service eq '" + service.toLowerCase() + "'");
+    }
 
     await this.getDeployments(
       partitionKey,
       srcPipeline,
       hldPipeline,
       manifestPipeline,
-      callback,
-      query
+      query,
+      callback
     );
   }
 
@@ -48,8 +52,8 @@ class Deployment {
     srcPipeline: IPipeline,
     hldPipeline: IPipeline,
     manifestPipeline: IPipeline,
-    callback?: (deployments: Deployment[]) => void,
-    query?: azure.TableQuery
+    query?: azure.TableQuery,
+    callback?: (deployments: Deployment[]) => void
   ) {
     const tableService = azure.createTableService(
       config.STORAGE_ACCOUNT_NAME,
