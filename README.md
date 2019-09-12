@@ -2,7 +2,11 @@
 
 # Spektate
 
-This is an initiative to visualize [Project Bedrock](https://github.com/microsoft/bedrock). Currently, it consists of a command line interface and a simple text based dashboard prototype. The instructions to use both are below.
+This is an initiative to visualize [Project Bedrock](https://github.com/microsoft/bedrock). Here's a high level diagram describing the Spektate workflow:
+
+![](./images/spektate-workflow.png)
+
+Currently, Spektate consists of a command line interface and a simple dashboard prototype. The instructions to use both are below. 
 
 ##  Onboard a Bedrock project to use Spektate
 
