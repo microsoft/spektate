@@ -21,8 +21,8 @@ export class AzureDevOpsPipeline implements IPipeline {
   public project: string;
   public isRelease?: boolean;
   public accessToken?: string;
-  public builds = {};
-  public releases = {};
+  public builds: {[id: string]: IBuild} = {};
+  public releases: {[id: string]: IRelease} = {};
 
   constructor(
     org: string,
