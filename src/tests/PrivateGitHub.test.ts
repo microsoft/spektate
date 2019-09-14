@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import "mocha";
-import Deployment from "spektate/dist/Deployment";
-import AzureDevOpsPipeline from "spektate/dist/pipeline/AzureDevOpsPipeline";
+import Deployment from "spektate/lib/Deployment";
+import AzureDevOpsPipeline from "spektate/lib/pipeline/AzureDevOpsPipeline";
 import { AccessHelper } from "../cli/AccessHelper";
 import { config } from "../config";
 

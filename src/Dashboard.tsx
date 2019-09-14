@@ -14,11 +14,11 @@ import {
 import { Tooltip } from "azure-devops-ui/TooltipEx";
 import { ArrayItemProvider } from "azure-devops-ui/Utilities/Provider";
 import * as React from "react";
-import Deployment from "spektate/dist/Deployment";
-import AzureDevOpsPipeline from "spektate/dist/pipeline/AzureDevOpsPipeline";
-import { IAuthor } from "spektate/dist/repository/Author";
-import { GitHub } from "spektate/dist/repository/GitHub";
-import { IRepository } from "spektate/dist/repository/Repository";
+import Deployment from "spektate/lib/Deployment";
+import AzureDevOpsPipeline from "spektate/lib/pipeline/AzureDevOpsPipeline";
+import { IAuthor } from "spektate/lib/repository/Author";
+import { GitHub } from "spektate/lib/repository/GitHub";
+import { IRepository } from "spektate/lib/repository/Repository";
 import { config } from "./config";
 import "./css/dashboard.css";
 import {
