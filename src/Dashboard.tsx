@@ -14,6 +14,11 @@ import {
 import { Tooltip } from "azure-devops-ui/TooltipEx";
 import { ArrayItemProvider } from "azure-devops-ui/Utilities/Provider";
 import * as React from "react";
+import Deployment from "spektate/dist/Deployment";
+import AzureDevOpsPipeline from "spektate/dist/pipeline/AzureDevOpsPipeline";
+import { IAuthor } from "spektate/dist/repository/Author";
+import { GitHub } from "spektate/dist/repository/GitHub";
+import { IRepository } from "spektate/dist/repository/Repository";
 import { config } from "./config";
 import "./css/dashboard.css";
 import {
@@ -21,11 +26,6 @@ import {
   IDeploymentField,
   IStatusIndicatorData
 } from "./Dashboard.types";
-import Deployment from "./models/Deployment";
-import AzureDevOpsPipeline from "./models/pipeline/AzureDevOpsPipeline";
-import { IAuthor } from "./models/repository/Author";
-import { GitHub } from "./models/repository/GitHub";
-import { IRepository } from "./models/repository/Repository";
 
 const REFRESH_INTERVAL = 30000;
 class Dashboard<Props> extends React.Component<Props, IDashboardState> {
@@ -88,6 +88,9 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       this.setState({ manifestSync: syncCommit });
     });
     Deployment.getDeployments(
+      config.STORAGE_ACCOUNT_NAME,
+      config.STORAGE_ACCOUNT_KEY,
+      config.STORAGE_TABLE_NAME,
       config.STORAGE_PARTITION_KEY,
       srcPipeline,
       hldPipeline,

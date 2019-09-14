@@ -1,0 +1,42 @@
+{
+  "name": "spektate",
+  "version": "0.1.0",
+  "description": "Visualization tool backend for microsoft/bedrock",
+  "main": "lib/spektate.js",
+  "types": "lib/src/index.d.ts",
+  "scripts": {
+    "build": "shx rm -rf lib && tsc -p . && webpack",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "change": "beachball change",
+    "check": "beachball check",
+    "publish": "beachball publish"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/microsoft/spektate.git"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/microsoft/spektate/issues"
+  },
+  "homepage": "https://github.com/microsoft/spektate#readme",
+  "devDependencies": {
+    "@types/node": "^12.7.4",
+    "beachball": "^1.13.1",
+    "shx": "^0.3.2",
+    "ts-loader": "^6.0.4",
+    "typescript": "^3.6.2",
+    "webpack": "^4.39.3",
+    "webpack-cli": "^3.3.8"
+  },
+  "dependencies": {
+    "axios": "^0.19.0",
+    "azure-storage": "^2.10.3"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx,css,json,md,yaml,yml}": [
+      "prettier --write",
+      "git add"
+    ]
+  }
+}

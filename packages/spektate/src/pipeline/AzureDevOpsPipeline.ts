@@ -1,4 +1,3 @@
-import { config } from "../../config";
 import { HttpHelper } from "../HttpHelper";
 import { AzureDevOpsRepo } from "../repository/AzureDevOpsRepo";
 import { GitHub } from "../repository/GitHub";
@@ -21,8 +20,8 @@ export class AzureDevOpsPipeline implements IPipeline {
   public project: string;
   public isRelease?: boolean;
   public accessToken?: string;
-  public builds: {[id: string]: IBuild} = {};
-  public releases: {[id: string]: IRelease} = {};
+  public builds: { [id: string]: IBuild } = {};
+  public releases: { [id: string]: IRelease } = {};
 
   constructor(
     org: string,
@@ -59,16 +58,14 @@ export class AzureDevOpsPipeline implements IPipeline {
       if (row.repository.type === "GitHub") {
         build.repository = new GitHub(
           row.repository.id.split("/")[0],
-          row.repository.id.split("/")[1],
-          config.MANIFEST_ACCESS_TOKEN
+          row.repository.id.split("/")[1]
         );
       } else if (row.repository.type === "TfsGit") {
         const reposityUrlSplit = row.repository.url.split("/");
         build.repository = new AzureDevOpsRepo(
           reposityUrlSplit[3],
           reposityUrlSplit[4],
-          reposityUrlSplit[6],
-          config.MANIFEST_ACCESS_TOKEN
+          reposityUrlSplit[6]
         );
       }
       builds.push(build);

@@ -2,14 +2,14 @@ import Table = require("cli-table");
 import * as fs from "fs";
 import open = require("open");
 import * as os from "os";
-import { ITag } from "src/models/repository/Tag";
+import Deployment from "spektate/dist/Deployment";
+import AzureDevOpsPipeline from "spektate/dist/pipeline/AzureDevOpsPipeline";
+import IPipeline from "spektate/dist/pipeline/Pipeline";
+import { IAuthor } from "spektate/dist/repository/Author";
+import { GitHub } from "spektate/dist/repository/GitHub";
+import { IRepository } from "spektate/dist/repository/Repository";
+import { ITag } from "spektate/dist/repository/Tag";
 import { config } from "../config";
-import Deployment from "../models/Deployment";
-import AzureDevOpsPipeline from "../models/pipeline/AzureDevOpsPipeline";
-import IPipeline from "../models/pipeline/Pipeline";
-import { IAuthor } from "../models/repository/Author";
-import { GitHub } from "../models/repository/GitHub";
-import { IRepository } from "../models/repository/Repository";
 import { OUTPUT_FORMAT } from "./spex";
 
 let hldPipeline: IPipeline;
@@ -45,6 +45,9 @@ export class AccessHelper {
     callback?: (author?: IAuthor) => void
   ) {
     Deployment.getDeploymentsBasedOnFilters(
+      config.STORAGE_ACCOUNT_NAME,
+      config.STORAGE_ACCOUNT_KEY,
+      config.STORAGE_TABLE_NAME,
       config.STORAGE_PARTITION_KEY,
       srcPipeline,
       hldPipeline,
@@ -174,6 +177,9 @@ export class AccessHelper {
     service?: string
   ) => {
     Deployment.getDeploymentsBasedOnFilters(
+      config.STORAGE_ACCOUNT_NAME,
+      config.STORAGE_ACCOUNT_KEY,
+      config.STORAGE_TABLE_NAME,
       config.STORAGE_PARTITION_KEY,
       srcPipeline,
       hldPipeline,

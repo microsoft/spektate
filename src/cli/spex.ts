@@ -1,7 +1,7 @@
 #!/usr/bin/env ts-node
 
 import program = require("commander");
-import { IAuthor } from "src/models/repository/Author";
+import { IAuthor } from "spektate/dist/repository/Author";
 import { config } from "../config";
 import { AccessHelper } from "./AccessHelper";
 
