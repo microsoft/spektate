@@ -1,0 +1,8 @@
+{
+  "type": "minor",
+  "comment": "Adding npmignore and minimizing package size",
+  "packageName": "spektate",
+  "email": "samiyaakhtar7@gmail.com",
+  "commit": "652b31fb00dd275dc2d06a2e9b9ef10b4cf8c65b",
+  "date": "2019-09-15T04:04:30.680Z"
+}
