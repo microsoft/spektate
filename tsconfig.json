@@ -27,6 +27,7 @@
     "acceptance-tests",
     "webpack",
     "src/setupTests.ts",
-    "pipeline-scripts"
+    "pipeline-scripts",
+    "packages"
   ]
 }
