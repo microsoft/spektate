@@ -1,5 +1,5 @@
 {
-  "name": "@microsoft/spektate",
+  "name": "spektate",
   "version": "0.1.0",
   "main": "build/dist/index.js",
   "types": "build/dist/index.d.ts",
