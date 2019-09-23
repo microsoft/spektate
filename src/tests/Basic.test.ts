@@ -1,9 +1,9 @@
 import { expect } from "chai";
 import "mocha";
+import Deployment from "spektate/lib/Deployment";
+import AzureDevOpsPipeline from "spektate/lib/pipeline/AzureDevOpsPipeline";
 import { AccessHelper } from "../cli/AccessHelper";
 import { config } from "../config";
-import Deployment from "../models/Deployment";
-import AzureDevOpsPipeline from "../models/pipeline/AzureDevOpsPipeline";
 
 describe("config validation", () => {
   it("should be configured", () => {
@@ -53,6 +53,9 @@ describe("deployment", () => {
       );
 
       Deployment.getDeploymentsBasedOnFilters(
+        config.STORAGE_ACCOUNT_NAME,
+        config.STORAGE_ACCOUNT_KEY,
+        config.STORAGE_TABLE_NAME,
         config.STORAGE_PARTITION_KEY,
         srcPipeline,
         hldPipeline,

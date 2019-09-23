@@ -1,5 +1,4 @@
 import * as azure from "azure-storage";
-import { config } from "../config";
 import { IBuild } from "./pipeline/Build";
 import IPipeline from "./pipeline/Pipeline";
 import { IRelease } from "./pipeline/Release";
@@ -7,6 +6,9 @@ import { IAuthor } from "./repository/Author";
 
 class Deployment {
   public static async getDeploymentsBasedOnFilters(
+    storageAccount: string,
+    storageAccountKey: string,
+    storageTableName: string,
     partitionKey: string,
     srcPipeline: IPipeline,
     hldPipeline: IPipeline,
@@ -38,6 +40,9 @@ class Deployment {
     }
 
     await this.getDeployments(
+      storageAccount,
+      storageAccountKey,
+      storageTableName,
       partitionKey,
       srcPipeline,
       hldPipeline,
@@ -48,6 +53,9 @@ class Deployment {
   }
 
   public static async getDeployments(
+    storageAccount: string,
+    storageAccountKey: string,
+    storageTableName: string,
     partitionKey: string,
     srcPipeline: IPipeline,
     hldPipeline: IPipeline,
@@ -56,8 +64,8 @@ class Deployment {
     callback?: (deployments: Deployment[]) => void
   ) {
     const tableService = azure.createTableService(
-      config.STORAGE_ACCOUNT_NAME,
-      config.STORAGE_ACCOUNT_KEY
+      storageAccount,
+      storageAccountKey
     );
     // Disabling ts-lint on line below, to get around issue https://github.com/Azure/azure-storage-node/issues/545
     // tslint:disable-next-line
@@ -73,7 +81,7 @@ class Deployment {
     }
 
     tableService.queryEntities(
-      config.STORAGE_TABLE_NAME,
+      storageTableName,
       query,
       nextContinuationToken,
       (error: any, result: any) => {

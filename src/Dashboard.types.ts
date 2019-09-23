@@ -1,7 +1,7 @@
 import { IStatusProps } from "azure-devops-ui/Status";
-import Deployment from "./models/Deployment";
-import { IAuthor } from "./models/repository/Author";
-import { ITag } from "./models/repository/Tag";
+import Deployment from "spektate/lib/Deployment";
+import { IAuthor } from "spektate/lib/repository/Author";
+import { ITag } from "spektate/lib/repository/Tag";
 
 export interface IStatusIndicatorData {
   statusProps: IStatusProps;
