@@ -152,7 +152,6 @@ program
   )
   .action((env, options) => {
     AccessHelper.verifyAppConfiguration(() => {
-      console.log(env.deploymentId);
       AccessHelper.getDeployments(
         processOutputFormat(env.output),
         env.env,
