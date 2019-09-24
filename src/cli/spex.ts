@@ -131,6 +131,10 @@ program
     "Get deployments for a particular commit Id from source repository"
   )
   .option(
+    "-d, --deployment-id <deployment-id>",
+    "Get deployments for a particular deployment Id from source repository"
+  )
+  .option(
     "-i, --image-tag <image-tag>",
     "Get deployments for a particular image tag"
   )
@@ -154,7 +158,8 @@ program
         env.imageTag,
         env.buildId,
         env.commitId,
-        env.service
+        env.service,
+        env.deploymentId
       );
     });
   })
@@ -168,6 +173,7 @@ program
     console.log("  $ deployments --image-tag hello-bedrock-master-5429");
     console.log("  $ deployments --env Dev");
     console.log("  $ deployments --commit-id e3d6504");
+    console.log("  $ deployments --deployment-id d3d5934");
   });
 
 program
