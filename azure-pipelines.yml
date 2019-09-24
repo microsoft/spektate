@@ -28,8 +28,8 @@ steps:
 
 - script: |
     cd spex-linux
-    echo "./spex init --azure-org $AZURE_ORG --azure-project $AZURE_PROJECT --manifest $GITHUB_MANIFEST --github-manifest-username $GITHUB_MANIFEST_USERNAME --storage-account-key $(STORAGE_ACCOUNT_KEY) --storage-account-name $STORAGE_ACCOUNT_NAME --storage-partition-key $STORAGE_PARTITION_KEY --storage-table-name $STORAGE_TABLE_NAME"
-    ./spex init --azure-org $AZURE_ORG --azure-project $AZURE_PROJECT --manifest $GITHUB_MANIFEST --github-manifest-username $GITHUB_MANIFEST_USERNAME --storage-account-key $(STORAGE_ACCOUNT_KEY) --storage-account-name $STORAGE_ACCOUNT_NAME --storage-partition-key $STORAGE_PARTITION_KEY --storage-table-name $STORAGE_TABLE_NAME
+    echo "./spex init --azure-org $AZURE_ORG --azure-project $AZURE_PROJECT --manifest $GITHUB_MANIFEST --github-manifest-username $GITHUB_MANIFEST_USERNAME --storage-account-key $STORAGE_ACCOUNT_KEY --storage-account-name $STORAGE_ACCOUNT_NAME --storage-partition-key $STORAGE_PARTITION_KEY --storage-table-name $STORAGE_TABLE_NAME"
+    ./spex init --azure-org $AZURE_ORG --azure-project $AZURE_PROJECT --manifest $GITHUB_MANIFEST --github-manifest-username $GITHUB_MANIFEST_USERNAME --storage-account-key $STORAGE_ACCOUNT_KEY --storage-account-name $STORAGE_ACCOUNT_NAME --storage-partition-key $STORAGE_PARTITION_KEY --storage-table-name $STORAGE_TABLE_NAME
   displayName: "Set Config"
   
 - script: |
