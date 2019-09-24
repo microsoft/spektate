@@ -18,6 +18,7 @@ class Deployment {
     p1Id?: string,
     commitId?: string,
     service?: string,
+    deploymentId?: string,
     callback?: (deployments: Deployment[]) => void
   ) {
     const query = new azure.TableQuery().where(
@@ -37,6 +38,9 @@ class Deployment {
     }
     if (service && service !== "") {
       query.and("service eq '" + service.toLowerCase() + "'");
+    }
+    if (deploymentId && deploymentId !== "") {
+      query.and("RowKey eq '" + deploymentId.toLowerCase() + "'");
     }
 
     await this.getDeployments(
