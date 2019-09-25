@@ -17,7 +17,8 @@ class Deployment {
     imageTag?: string,
     p1Id?: string,
     commitId?: string,
-    service?: string
+    service?: string,
+    deploymentId?: string
   ): Promise<Deployment[]> {
     const query = new azure.TableQuery().where(
       "PartitionKey eq '" + partitionKey + "'"
@@ -36,6 +37,9 @@ class Deployment {
     }
     if (service && service !== "") {
       query.and("service eq '" + service.toLowerCase() + "'");
+    }
+    if (deploymentId && deploymentId !== "") {
+      query.and("RowKey eq '" + deploymentId.toLowerCase() + "'");
     }
 
     return await this.getDeployments(

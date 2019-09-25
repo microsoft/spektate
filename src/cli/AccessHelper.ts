@@ -56,6 +56,7 @@ export class AccessHelper {
       undefined,
       buildId,
       commitId,
+      undefined,
       undefined
     ).then((deployments: Deployment[]) => {
       if (deployments.length > 0 && callback) {
@@ -173,7 +174,8 @@ export class AccessHelper {
     imageTag?: string,
     p1Id?: string,
     commitId?: string,
-    service?: string
+    service?: string,
+    deploymentId?: string
   ) => {
     Deployment.getDeploymentsBasedOnFilters(
       config.STORAGE_ACCOUNT_NAME,
@@ -187,7 +189,8 @@ export class AccessHelper {
       imageTag,
       p1Id,
       commitId,
-      service
+      service,
+      deploymentId
     ).then((deployments: Deployment[]) => {
       if (outputFormat === OUTPUT_FORMAT.JSON) {
         console.log(JSON.stringify(deployments));
@@ -206,6 +209,7 @@ export class AccessHelper {
       row.push("Start Time");
       row.push("Service");
       row.push("Commit");
+      row.push("Deployment");
       row.push("Src to ACR");
       row.push("Image Tag");
       row.push("Result");
@@ -231,6 +235,7 @@ export class AccessHelper {
         );
         row.push(deployment.service);
         row.push(deployment.commitId);
+        row.push(deployment.deploymentId);
         row.push(
           deployment.srcToDockerBuild ? deployment.srcToDockerBuild.id : ""
         );

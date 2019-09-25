@@ -1,38 +1,38 @@
 trigger:
-- master
+  - master
 
 pool:
-  vmImage: 'ubuntu-latest'
+  vmImage: "ubuntu-latest"
 
 steps:
-- task: NodeTool@0
-  inputs:
-    versionSpec: '10.x'
-  displayName: 'Install Node.js'
+  - task: NodeTool@0
+    inputs:
+      versionSpec: "10.x"
+    displayName: "Install Node.js"
 
-- script: |
-    npm install
-    npm install -g ts-node
-    npm install -g pkg
-  workingDirectory: "./"
-  displayName: "npm install"
+  - script: |
+      npm install
+      npm install -g ts-node
+      npm install -g pkg
+    workingDirectory: "./"
+    displayName: "npm install"
 
-- script: |
-    npm run lint
-  workingDirectory: "./"
-  displayName: "tslint"
+  - script: |
+      npm run lint
+    workingDirectory: "./"
+    displayName: "tslint"
 
-- script: |
-    npm run build-cli 
-  displayName: "Package CLI"
+  - script: |
+      npm run build-cli
+    displayName: "Package CLI"
 
-- script: |
-    cd spex-linux
-    echo "./spex init --azure-org $AZURE_ORG --azure-project $AZURE_PROJECT --manifest $GITHUB_MANIFEST --github-manifest-username $GITHUB_MANIFEST_USERNAME --storage-account-key $(STORAGE_ACCOUNT_KEY) --storage-account-name $STORAGE_ACCOUNT_NAME --storage-partition-key $STORAGE_PARTITION_KEY --storage-table-name $STORAGE_TABLE_NAME"
-    ./spex init --azure-org $AZURE_ORG --azure-project $AZURE_PROJECT --manifest $GITHUB_MANIFEST --github-manifest-username $GITHUB_MANIFEST_USERNAME --storage-account-key $(STORAGE_ACCOUNT_KEY) --storage-account-name $STORAGE_ACCOUNT_NAME --storage-partition-key $STORAGE_PARTITION_KEY --storage-table-name $STORAGE_TABLE_NAME
-  displayName: "Set Config"
-  
-- script: |
-    npm run test
-  workingDirectory: "./"
-  displayName: "npm run test"
+  - script: |
+      cd spex-linux
+      echo "./spex init --azure-org $AZURE_ORG --azure-project $AZURE_PROJECT --manifest $GITHUB_MANIFEST --github-manifest-username $GITHUB_MANIFEST_USERNAME --storage-account-key $STORAGE_ACCOUNT_KEY --storage-account-name $STORAGE_ACCOUNT_NAME --storage-partition-key $STORAGE_PARTITION_KEY --storage-table-name $STORAGE_TABLE_NAME"
+      ./spex init --azure-org $AZURE_ORG --azure-project $AZURE_PROJECT --manifest $GITHUB_MANIFEST --github-manifest-username $GITHUB_MANIFEST_USERNAME --storage-account-key $STORAGE_ACCOUNT_KEY --storage-account-name $STORAGE_ACCOUNT_NAME --storage-partition-key $STORAGE_PARTITION_KEY --storage-table-name $STORAGE_TABLE_NAME
+    displayName: "Set Config"
+
+  - script: |
+      npm run test
+    workingDirectory: "./"
+    displayName: "npm run test"

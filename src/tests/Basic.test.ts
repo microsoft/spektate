@@ -64,6 +64,7 @@ describe("deployment", () => {
         undefined,
         undefined,
         undefined,
+        undefined,
         undefined
       ).then((deployments: Deployment[]) => {
         expect(deployments.length).greaterThan(0);
