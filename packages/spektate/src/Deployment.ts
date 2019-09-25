@@ -18,9 +18,8 @@ class Deployment {
     p1Id?: string,
     commitId?: string,
     service?: string,
-    deploymentId?: string,
-    callback?: (deployments: Deployment[]) => void
-  ) {
+    deploymentId?: string
+  ): Promise<Deployment[]> {
     const query = new azure.TableQuery().where(
       "PartitionKey eq '" + partitionKey + "'"
     );
@@ -43,7 +42,7 @@ class Deployment {
       query.and("RowKey eq '" + deploymentId.toLowerCase() + "'");
     }
 
-    await this.getDeployments(
+    return await this.getDeployments(
       storageAccount,
       storageAccountKey,
       storageTableName,
@@ -51,8 +50,7 @@ class Deployment {
       srcPipeline,
       hldPipeline,
       manifestPipeline,
-      query,
-      callback
+      query
     );
   }
 
@@ -64,9 +62,8 @@ class Deployment {
     srcPipeline: IPipeline,
     hldPipeline: IPipeline,
     manifestPipeline: IPipeline,
-    query?: azure.TableQuery,
-    callback?: (deployments: Deployment[]) => void
-  ) {
+    query?: azure.TableQuery
+  ): Promise<Deployment[]> {
     const tableService = azure.createTableService(
       storageAccount,
       storageAccountKey
@@ -84,54 +81,55 @@ class Deployment {
       );
     }
 
-    tableService.queryEntities(
-      storageTableName,
-      query,
-      nextContinuationToken,
-      (error: any, result: any) => {
-        if (!error) {
-          const srcBuildIds: Set<string> = new Set<string>();
-          const manifestBuildIds: Set<string> = new Set<string>();
-          const releaseIds: Set<string> = new Set<string>();
-          for (const entry of result.entries) {
-            if (entry.p1) {
-              srcBuildIds.add(entry.p1._);
-            }
-            if (entry.p3) {
-              manifestBuildIds.add(entry.p3._);
-            }
-            if (entry.p2) {
-              releaseIds.add(entry.p2._);
-            }
-          }
-
-          const p1 = srcPipeline.getListOfBuilds(srcBuildIds);
-          // TODO: send releaseIds to below after bug in release API is fixed
-          const p2 = hldPipeline.getListOfReleases(releaseIds);
-          const p3 = manifestPipeline.getListOfBuilds(manifestBuildIds);
-
-          // Wait for all three pipelines to load their respective builds before we instantiate deployments
-          Promise.all([p1, p2, p3]).then(() => {
-            // tslint:disable-next-line:no-console
-            // console.log(result.entries);
+    return new Promise<Deployment[]>(resolve => {
+      tableService.queryEntities(
+        storageTableName,
+        query!,
+        nextContinuationToken,
+        (error: any, result: any) => {
+          if (!error) {
+            const srcBuildIds: Set<string> = new Set<string>();
+            const manifestBuildIds: Set<string> = new Set<string>();
+            const releaseIds: Set<string> = new Set<string>();
             for (const entry of result.entries) {
-              deployments.push(
-                Deployment.getDeploymentFromDBEntry(
-                  entry,
-                  srcPipeline,
-                  hldPipeline,
-                  manifestPipeline
-                )
-              );
+              if (entry.p1) {
+                srcBuildIds.add(entry.p1._);
+              }
+              if (entry.p3) {
+                manifestBuildIds.add(entry.p3._);
+              }
+              if (entry.p2) {
+                releaseIds.add(entry.p2._);
+              }
             }
-            if (callback) {
-              deployments.sort(Deployment.compare);
-              callback(deployments);
-            }
-          });
+
+            const p1 = srcPipeline.getListOfBuilds(srcBuildIds);
+            const p2 = hldPipeline.getListOfReleases(releaseIds);
+            const p3 = manifestPipeline.getListOfBuilds(manifestBuildIds);
+
+            // Wait for all three pipelines to load their respective builds before we instantiate deployments
+            Promise.all([p1, p2, p3])
+              .then(() => {
+                for (const entry of result.entries) {
+                  deployments.push(
+                    Deployment.getDeploymentFromDBEntry(
+                      entry,
+                      srcPipeline,
+                      hldPipeline,
+                      manifestPipeline
+                    )
+                  );
+                }
+                deployments.sort(Deployment.compare);
+                resolve(deployments);
+              })
+              .catch(_ => {
+                resolve([]);
+              });
+          }
         }
-      }
-    );
+      );
+    });
   }
 
   public static compare(a: Deployment, b: Deployment) {

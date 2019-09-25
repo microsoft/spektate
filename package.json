@@ -16,7 +16,7 @@
     "react": "^16.8.5",
     "react-dom": "^16.8.5",
     "react-scripts-ts": "^4.0.8",
-    "spektate": "^0.1.4"
+    "spektate": "^0.1.5"
   },
   "scripts": {
     "start": "react-scripts-ts start",
