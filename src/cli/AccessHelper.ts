@@ -56,15 +56,14 @@ export class AccessHelper {
       undefined,
       buildId,
       commitId,
-      undefined,
-      (deployments: Deployment[]) => {
-        if (deployments.length > 0 && callback) {
-          deployments[0].fetchAuthor(callback);
-        } else if (callback) {
-          callback(undefined);
-        }
+      undefined
+    ).then((deployments: Deployment[]) => {
+      if (deployments.length > 0 && callback) {
+        deployments[0].fetchAuthor(callback);
+      } else if (callback) {
+        callback(undefined);
       }
-    );
+    });
   }
   public static verifyAppConfiguration = (callback?: () => void) => {
     if (
@@ -188,15 +187,14 @@ export class AccessHelper {
       imageTag,
       p1Id,
       commitId,
-      service,
-      (deployments: Deployment[]) => {
-        if (outputFormat === OUTPUT_FORMAT.JSON) {
-          console.log(JSON.stringify(deployments));
-        } else {
-          AccessHelper.printDeployments(deployments, outputFormat);
-        }
+      service
+    ).then((deployments: Deployment[]) => {
+      if (outputFormat === OUTPUT_FORMAT.JSON) {
+        console.log(JSON.stringify(deployments));
+      } else {
+        AccessHelper.printDeployments(deployments, outputFormat);
       }
-    );
+    });
   };
 
   public static printDeployments = (

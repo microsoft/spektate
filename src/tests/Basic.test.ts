@@ -64,11 +64,10 @@ describe("deployment", () => {
         undefined,
         undefined,
         undefined,
-        undefined,
-        (deployments: Deployment[]) => {
-          expect(deployments.length).greaterThan(0);
-        }
-      );
+        undefined
+      ).then((deployments: Deployment[]) => {
+        expect(deployments.length).greaterThan(0);
+      });
     });
   });
 });
