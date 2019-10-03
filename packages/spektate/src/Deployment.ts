@@ -122,6 +122,15 @@ class Deployment {
                 }
                 deployments.sort(Deployment.compare);
                 resolve(deployments);
+                Deployment.cleanUpDeploymentsFromDB(
+                  result.entries,
+                  srcPipeline,
+                  hldPipeline,
+                  manifestPipeline,
+                  storageAccount,
+                  storageAccountKey,
+                  storageTableName
+                );
               })
               .catch(_ => {
                 resolve([]);
@@ -165,6 +174,40 @@ class Deployment {
     }
 
     return 0;
+  }
+
+  public static cleanUpDeploymentsFromDB(
+    entries: any[],
+    srcPipeline: IPipeline,
+    hldPipeline: IPipeline,
+    manifestPipeline: IPipeline,
+    storageAccountName: string,
+    storageAccountKey: string,
+    storageAccountTable: string
+  ) {
+    const batch = new azure.TableBatch();
+    entries.forEach((entry: any) => {
+      if (
+        (entry.p1 != null && !srcPipeline.builds[entry.p1._]) ||
+        (entry.p2 != null && !hldPipeline.releases[entry.p2._]) ||
+        (entry.p3 != null && !manifestPipeline.builds[entry.p3._])
+      ) {
+        // Remove this deployment from db
+        batch.deleteEntity(entry);
+      }
+    });
+
+    if (batch.size() > 0) {
+      const tableService = azure.createTableService(
+        storageAccountName,
+        storageAccountKey
+      );
+      tableService.executeBatch(storageAccountTable, batch, (error, result) => {
+        if (!error) {
+          console.log("Deleted {0} entities", batch.size());
+        }
+      });
+    }
   }
 
   // TODO: Look into cleaning up the parsing code below (avoid parsing underscores).
