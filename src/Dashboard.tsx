@@ -77,16 +77,17 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       false,
       config.AZURE_PIPELINE_ACCESS_TOKEN
     );
-
-    const manifestRepo: IRepository = new GitHub(
-      config.GITHUB_MANIFEST_USERNAME,
-      config.MANIFEST,
-      config.MANIFEST_ACCESS_TOKEN
-    );
-    // const manifestRepo: Repository = new AzureDevOpsRepo(config.AZURE_ORG, config.AZURE_PROJECT, config.MANIFEST, config.MANIFEST_ACCESS_TOKEN);
-    manifestRepo.getManifestSyncState().then(syncCommit => {
-      this.setState({ manifestSync: syncCommit });
-    });
+    if (config.MANIFEST !== "" && config.GITHUB_MANIFEST_USERNAME) {
+      const manifestRepo: IRepository = new GitHub(
+        config.GITHUB_MANIFEST_USERNAME,
+        config.MANIFEST,
+        config.MANIFEST_ACCESS_TOKEN
+      );
+      // const manifestRepo: Repository = new AzureDevOpsRepo(config.AZURE_ORG, config.AZURE_PROJECT, config.MANIFEST, config.MANIFEST_ACCESS_TOKEN);
+      manifestRepo.getManifestSyncState().then(syncCommit => {
+        this.setState({ manifestSync: syncCommit });
+      });
+    }
     Deployment.getDeployments(
       config.STORAGE_ACCOUNT_NAME,
       config.STORAGE_ACCOUNT_KEY,
@@ -258,7 +259,9 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     tableItem: IDeploymentField
   ): JSX.Element => {
     if (!tableItem[tableColumn.id]) {
-      return <SimpleTableCell columnIndex={columnIndex} />;
+      return (
+        <SimpleTableCell key={"col-" + columnIndex} columnIndex={columnIndex} />
+      );
     }
     return (
       <SimpleTableCell
@@ -283,7 +286,9 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     tableItem: IDeploymentField
   ): JSX.Element => {
     if (!tableItem[tableColumn.id]) {
-      return <SimpleTableCell columnIndex={columnIndex} />;
+      return (
+        <SimpleTableCell key={"col-" + columnIndex} columnIndex={columnIndex} />
+      );
     }
     return (
       <SimpleTableCell
@@ -308,7 +313,9 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     tableItem: IDeploymentField
   ): JSX.Element => {
     if (!tableItem[tableColumn.id]) {
-      return <SimpleTableCell columnIndex={columnIndex} />;
+      return (
+        <SimpleTableCell key={"col-" + columnIndex} columnIndex={columnIndex} />
+      );
     }
     return (
       <SimpleTableCell
@@ -333,7 +340,9 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     tableItem: IDeploymentField
   ): JSX.Element => {
     if (!tableItem.startTime || !tableItem.endTime) {
-      return <SimpleTableCell columnIndex={columnIndex} />;
+      return (
+        <SimpleTableCell key={"col-" + columnIndex} columnIndex={columnIndex} />
+      );
     }
     return (
       <TwoLineTableCell
@@ -432,7 +441,9 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     iconName?: string
   ): JSX.Element => {
     if (!pipelineId || !pipelineURL || !commitId) {
-      return <SimpleTableCell columnIndex={columnIndex} />;
+      return (
+        <SimpleTableCell key={"col-" + columnIndex} columnIndex={columnIndex} />
+      );
     }
     const commitCell = this.WithIcon({
       className: "",
@@ -490,7 +501,9 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     tableItem: IDeploymentField
   ): JSX.Element => {
     if (!tableItem.status) {
-      return <SimpleTableCell columnIndex={columnIndex} />;
+      return (
+        <SimpleTableCell key={"col-" + columnIndex} columnIndex={columnIndex} />
+      );
     }
     return (
       <SimpleTableCell
