@@ -40,3 +40,12 @@ steps:
       npm run test
     workingDirectory: "./"
     displayName: "npm run test"
+
+  - task: Docker@2
+    inputs:
+      containerRegistry: "spektateacrconnection"
+      repository: "spektate"
+      command: "buildAndPush"
+      Dockerfile: "**/Dockerfile"
+      tags: "spektate-$(Build.SourceBranchName)-$(Build.BuildId)"
+    condition: ne(variables['Build.Reason'], 'PullRequest')
