@@ -23,6 +23,10 @@ steps:
     displayName: "tslint"
 
   - script: |
+      npm run build
+    displayName: "Build"
+
+  - script: |
       npm run build-cli
     displayName: "Package CLI"
 
