@@ -85,14 +85,14 @@ export class AccessHelper {
   }
   public static verifyAppConfiguration = (callback?: () => void) => {
     if (
-      config.STORAGE_TABLE_NAME === "" ||
-      config.STORAGE_PARTITION_KEY === "" ||
-      config.STORAGE_ACCOUNT_NAME === "" ||
-      config.STORAGE_ACCOUNT_KEY === "" ||
-      config.GITHUB_MANIFEST_USERNAME === "" ||
-      config.MANIFEST === "" ||
-      config.AZURE_PROJECT === "" ||
-      config.AZURE_ORG === ""
+      !config.STORAGE_TABLE_NAME ||
+      !config.STORAGE_PARTITION_KEY ||
+      !config.STORAGE_ACCOUNT_NAME ||
+      !config.STORAGE_ACCOUNT_KEY ||
+      !config.GITHUB_MANIFEST_USERNAME ||
+      !config.MANIFEST ||
+      !config.AZURE_PROJECT ||
+      !config.AZURE_ORG
     ) {
       AccessHelper.configureAppFromFile(callback);
     } else {
