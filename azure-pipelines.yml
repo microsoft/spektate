@@ -48,4 +48,4 @@ steps:
       command: "buildAndPush"
       Dockerfile: "**/Dockerfile"
       tags: "spektate-$(Build.SourceBranchName)-$(Build.BuildId)"
-    # condition: ne(variables['Build.Reason'], 'PullRequest')
+    condition: ne(variables['Build.Reason'], 'PullRequest')
