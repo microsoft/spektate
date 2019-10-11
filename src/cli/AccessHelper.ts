@@ -19,6 +19,12 @@ const fileLocation = os.homedir() + "/.Spektate";
 
 export class AccessHelper {
   public static initializePipelines() {
+    if (!config.AZURE_ORG || !config.AZURE_PROJECT) {
+      console.error(
+        "Configuration is not defined for AZURE_ORG and AZURE_PROJECT"
+      );
+      return;
+    }
     srcPipeline = new AzureDevOpsPipeline(
       config.AZURE_ORG,
       config.AZURE_PROJECT,
@@ -44,6 +50,17 @@ export class AccessHelper {
     buildId?: string,
     callback?: (author?: IAuthor) => void
   ) {
+    if (
+      !config.STORAGE_ACCOUNT_NAME ||
+      !config.STORAGE_ACCOUNT_KEY ||
+      !config.STORAGE_TABLE_NAME ||
+      !config.STORAGE_PARTITION_KEY
+    ) {
+      console.error(
+        "Configuration is not defined for STORAGE_ACCOUNT_NAME, STORAGE_ACCOUNT_KEY, STORAGE_TABLE_NAME and STORAGE_PARTITION_KEY"
+      );
+      return;
+    }
     Deployment.getDeploymentsBasedOnFilters(
       config.STORAGE_ACCOUNT_NAME,
       config.STORAGE_ACCOUNT_KEY,
@@ -68,14 +85,14 @@ export class AccessHelper {
   }
   public static verifyAppConfiguration = (callback?: () => void) => {
     if (
-      config.STORAGE_TABLE_NAME === "" ||
-      config.STORAGE_PARTITION_KEY === "" ||
-      config.STORAGE_ACCOUNT_NAME === "" ||
-      config.STORAGE_ACCOUNT_KEY === "" ||
-      config.GITHUB_MANIFEST_USERNAME === "" ||
-      config.MANIFEST === "" ||
-      config.AZURE_PROJECT === "" ||
-      config.AZURE_ORG === ""
+      !config.STORAGE_TABLE_NAME ||
+      !config.STORAGE_PARTITION_KEY ||
+      !config.STORAGE_ACCOUNT_NAME ||
+      !config.STORAGE_ACCOUNT_KEY ||
+      !config.GITHUB_MANIFEST_USERNAME ||
+      !config.MANIFEST ||
+      !config.AZURE_PROJECT ||
+      !config.AZURE_ORG
     ) {
       AccessHelper.configureAppFromFile(callback);
     } else {
@@ -117,16 +134,18 @@ export class AccessHelper {
   };
 
   public static getClusterSync = (callback?: (syncTag: ITag) => void): void => {
-    const manifestRepo: IRepository = new GitHub(
-      config.GITHUB_MANIFEST_USERNAME,
-      config.MANIFEST,
-      config.MANIFEST_ACCESS_TOKEN
-    );
-    manifestRepo.getManifestSyncState().then(syncTag => {
-      if (callback) {
-        callback(syncTag);
-      }
-    });
+    if (config.MANIFEST && config.GITHUB_MANIFEST_USERNAME) {
+      const manifestRepo: IRepository = new GitHub(
+        config.GITHUB_MANIFEST_USERNAME,
+        config.MANIFEST,
+        config.MANIFEST_ACCESS_TOKEN
+      );
+      manifestRepo.getManifestSyncState().then(syncTag => {
+        if (callback) {
+          callback(syncTag);
+        }
+      });
+    }
   };
 
   // TODO: Once the bug with release API is fixed (regarding returning only top 50 rows),
@@ -177,6 +196,17 @@ export class AccessHelper {
     service?: string,
     deploymentId?: string
   ) => {
+    if (
+      !config.STORAGE_ACCOUNT_NAME ||
+      !config.STORAGE_ACCOUNT_KEY ||
+      !config.STORAGE_TABLE_NAME ||
+      !config.STORAGE_PARTITION_KEY
+    ) {
+      console.error(
+        "Configuration is not defined for STORAGE_ACCOUNT_NAME, STORAGE_ACCOUNT_KEY, STORAGE_TABLE_NAME and STORAGE_PARTITION_KEY"
+      );
+      return;
+    }
     Deployment.getDeploymentsBasedOnFilters(
       config.STORAGE_ACCOUNT_NAME,
       config.STORAGE_ACCOUNT_KEY,
