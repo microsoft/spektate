@@ -59,6 +59,16 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
   }
 
   private updateDeployments = () => {
+    if (
+      !config.AZURE_ORG ||
+      !config.AZURE_PROJECT ||
+      !config.STORAGE_ACCOUNT_NAME ||
+      !config.STORAGE_ACCOUNT_KEY ||
+      !config.STORAGE_TABLE_NAME ||
+      !config.STORAGE_PARTITION_KEY
+    ) {
+      return;
+    }
     const srcPipeline = new AzureDevOpsPipeline(
       config.AZURE_ORG,
       config.AZURE_PROJECT,
@@ -77,7 +87,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       false,
       config.AZURE_PIPELINE_ACCESS_TOKEN
     );
-    if (config.MANIFEST !== "" && config.GITHUB_MANIFEST_USERNAME) {
+    if (config.MANIFEST && config.GITHUB_MANIFEST_USERNAME) {
       const manifestRepo: IRepository = new GitHub(
         config.GITHUB_MANIFEST_USERNAME,
         config.MANIFEST,
