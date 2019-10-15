@@ -13,7 +13,6 @@ FROM nginx:1.16.0-alpine
 COPY --from=build /app/build /usr/share/nginx/html
 EXPOSE 80
 
-# RUN ["chmod", "+x", "dockerenv.sh"]
 COPY docker-entrypoint.sh /
 ENTRYPOINT ["/docker-entrypoint.sh"]
 CMD ["nginx", "-g", "daemon off;"]
