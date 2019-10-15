@@ -10,7 +10,6 @@ RUN npm run build
 
 # production environment
 FROM nginx:1.16.0-alpine
-RUN apk add --no-cache jq
 COPY --from=build /app/build /usr/share/nginx/html
 EXPOSE 80
 
