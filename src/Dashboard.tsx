@@ -178,77 +178,81 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       },
       ColumnFill
     ];
-
-    const rows: IDeploymentField[] = this.state.deployments.map(deployment => {
-      const author = this.getAuthor(deployment);
-      return {
-        deploymentId: deployment.deploymentId,
-        service: deployment.service,
-        startTime: deployment.srcToDockerBuild
-          ? deployment.srcToDockerBuild.startTime
-          : new Date(),
-        // tslint:disable-next-line: object-literal-sort-keys
-        imageTag: deployment.imageTag,
-        srcCommitId: deployment.commitId,
-        srcBranchName: deployment.srcToDockerBuild
-          ? deployment.srcToDockerBuild.sourceBranch
-          : "",
-        srcCommitURL: deployment.srcToDockerBuild
-          ? deployment.srcToDockerBuild.sourceVersionURL
-          : "",
-        srcPipelineId: deployment.srcToDockerBuild
-          ? deployment.srcToDockerBuild.buildNumber
-          : "",
-        srcPipelineURL: deployment.srcToDockerBuild
-          ? deployment.srcToDockerBuild.URL
-          : "",
-        srcPipelineResult: deployment.srcToDockerBuild
-          ? deployment.srcToDockerBuild.result
-          : "-",
-        dockerPipelineId: deployment.dockerToHldRelease
-          ? deployment.dockerToHldRelease.releaseName
-          : "",
-        dockerPipelineURL: deployment.dockerToHldRelease
-          ? deployment.dockerToHldRelease.URL
-          : "",
-        environment: deployment.environment.toUpperCase(),
-        dockerPipelineResult: deployment.dockerToHldRelease
-          ? deployment.dockerToHldRelease.status
-          : "-",
-        hldCommitId: deployment.hldCommitId,
-        hldCommitURL: deployment.hldToManifestBuild
-          ? deployment.hldToManifestBuild.sourceVersionURL
-          : "",
-        hldPipelineId: deployment.hldToManifestBuild
-          ? deployment.hldToManifestBuild.buildNumber
-          : "",
-        hldPipelineResult: deployment.hldToManifestBuild
-          ? deployment.hldToManifestBuild.result
-          : "-",
-        hldPipelineURL: deployment.hldToManifestBuild
-          ? deployment.hldToManifestBuild.URL
-          : "",
-        duration: deployment.duration() + " mins",
-        authorName: author ? author.name : "",
-        authorURL: author ? author.url : "",
-        status: deployment.status(),
-        clusterSync:
-          this.state.manifestSync &&
-          deployment.manifestCommitId === this.state.manifestSync.commit &&
-          this.state.manifestSync.commit !== "",
-        clusterSyncDate:
-          this.state.manifestSync &&
-          deployment.manifestCommitId === this.state.manifestSync.commit &&
-          this.state.manifestSync.commit !== ""
-            ? this.state.manifestSync.date
+    let rows: IDeploymentField[] = [];
+    try {
+      rows = this.state.deployments.map(deployment => {
+        const author = this.getAuthor(deployment);
+        return {
+          deploymentId: deployment.deploymentId,
+          service: deployment.service,
+          startTime: deployment.srcToDockerBuild
+            ? deployment.srcToDockerBuild.startTime
             : new Date(),
-        endTime: deployment.hldToManifestBuild
-          ? Number.isNaN(deployment.hldToManifestBuild!.finishTime.valueOf())
-            ? new Date()
-            : deployment.hldToManifestBuild!.finishTime
-          : new Date()
-      };
-    });
+          // tslint:disable-next-line: object-literal-sort-keys
+          imageTag: deployment.imageTag,
+          srcCommitId: deployment.commitId,
+          srcBranchName: deployment.srcToDockerBuild
+            ? deployment.srcToDockerBuild.sourceBranch
+            : "",
+          srcCommitURL: deployment.srcToDockerBuild
+            ? deployment.srcToDockerBuild.sourceVersionURL
+            : "",
+          srcPipelineId: deployment.srcToDockerBuild
+            ? deployment.srcToDockerBuild.buildNumber
+            : "",
+          srcPipelineURL: deployment.srcToDockerBuild
+            ? deployment.srcToDockerBuild.URL
+            : "",
+          srcPipelineResult: deployment.srcToDockerBuild
+            ? deployment.srcToDockerBuild.result
+            : "-",
+          dockerPipelineId: deployment.dockerToHldRelease
+            ? deployment.dockerToHldRelease.releaseName
+            : "",
+          dockerPipelineURL: deployment.dockerToHldRelease
+            ? deployment.dockerToHldRelease.URL
+            : "",
+          environment: deployment.environment.toUpperCase(),
+          dockerPipelineResult: deployment.dockerToHldRelease
+            ? deployment.dockerToHldRelease.status
+            : "-",
+          hldCommitId: deployment.hldCommitId,
+          hldCommitURL: deployment.hldToManifestBuild
+            ? deployment.hldToManifestBuild.sourceVersionURL
+            : "",
+          hldPipelineId: deployment.hldToManifestBuild
+            ? deployment.hldToManifestBuild.buildNumber
+            : "",
+          hldPipelineResult: deployment.hldToManifestBuild
+            ? deployment.hldToManifestBuild.result
+            : "-",
+          hldPipelineURL: deployment.hldToManifestBuild
+            ? deployment.hldToManifestBuild.URL
+            : "",
+          duration: deployment.duration() + " mins",
+          authorName: author ? author.name : "",
+          authorURL: author ? author.url : "",
+          status: deployment.status(),
+          clusterSync:
+            this.state.manifestSync &&
+            deployment.manifestCommitId === this.state.manifestSync.commit &&
+            this.state.manifestSync.commit !== "",
+          clusterSyncDate:
+            this.state.manifestSync &&
+            deployment.manifestCommitId === this.state.manifestSync.commit &&
+            this.state.manifestSync.commit !== ""
+              ? this.state.manifestSync.date
+              : new Date(),
+          endTime: deployment.hldToManifestBuild
+            ? Number.isNaN(deployment.hldToManifestBuild!.finishTime.valueOf())
+              ? new Date()
+              : deployment.hldToManifestBuild!.finishTime
+            : new Date()
+        };
+      });
+    } catch (err) {
+      console.error(err);
+    }
     return (
       <div className="PrototypeTable">
         <Table
@@ -600,13 +604,17 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         deployment.srcToDockerBuild &&
         !(deployment.srcToDockerBuild.sourceVersion in state.authors)
       ) {
-        deployment.fetchAuthor((author: IAuthor) => {
-          if (author && deployment.srcToDockerBuild) {
-            const copy = state.authors;
-            copy[deployment.srcToDockerBuild.sourceVersion] = author;
-            this.setState({ authors: copy });
-          }
-        });
+        try {
+          deployment.fetchAuthor((author: IAuthor) => {
+            if (author && deployment.srcToDockerBuild) {
+              const copy = state.authors;
+              copy[deployment.srcToDockerBuild.sourceVersion] = author;
+              this.setState({ authors: copy });
+            }
+          });
+        } catch (err) {
+          console.error(err);
+        }
       }
     });
   };

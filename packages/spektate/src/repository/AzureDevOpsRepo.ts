@@ -77,7 +77,7 @@ export class AzureDevOpsRepo implements IRepository {
     );
 
     const commitInfo = data.data;
-    if (commitInfo) {
+    if (commitInfo && commitInfo.author) {
       const author: IAuthor = {
         name: commitInfo.author.name,
         url: commitInfo.author.imageUrl,
@@ -85,9 +85,5 @@ export class AzureDevOpsRepo implements IRepository {
       };
       return author;
     }
-
-    throw new Error(
-      `Unable to get author for ${this.org}-${this.project}-${this.repo}@${commitId}`
-    );
   }
 }

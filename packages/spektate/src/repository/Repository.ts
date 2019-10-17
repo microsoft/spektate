@@ -4,5 +4,5 @@ import { ITag } from "./Tag";
 export interface IRepository {
   manifestSync?: ITag;
   getManifestSyncState: () => Promise<ITag>;
-  getAuthor: (commitId: string) => Promise<IAuthor>;
+  getAuthor: (commitId: string) => Promise<IAuthor | undefined>;
 }
