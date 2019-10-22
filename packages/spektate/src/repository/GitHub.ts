@@ -69,9 +69,5 @@ export class GitHub implements IRepository {
       };
       return author;
     }
-
-    throw new Error(
-      `Unable to get author for github repo ${this.username}/${this.reponame}`
-    );
   }
 }
