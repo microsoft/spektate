@@ -96,10 +96,14 @@ export class AzureDevOpsPipeline implements IPipeline {
       if (row.release.artifacts.length > 0) {
         release.imageVersion =
           row.release.artifacts[0].definitionReference.version.id;
-        release.registryURL =
-          row.release.artifacts[0].definitionReference.registryurl.id;
-        release.registryResourceGroup =
-          row.release.artifacts[0].definitionReference.resourcegroup.id;
+        if (row.release.artifacts[0].definitionReference.registryurl) {
+          release.registryURL =
+            row.release.artifacts[0].definitionReference.registryurl.id;
+        }
+        if (row.release.artifacts[0].definitionReference.resourcegroup) {
+          release.registryResourceGroup =
+            row.release.artifacts[0].definitionReference.resourcegroup.id;
+        }
       }
       releases.push(release);
       this.releases[release.id] = release;
