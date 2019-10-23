@@ -24,6 +24,10 @@ export let config: { [id: string]: string | undefined } = {
     browser.ENV && browser.ENV.REACT_APP_MANIFEST_ACCESS_TOKEN !== undefined
       ? browser.ENV.REACT_APP_MANIFEST_ACCESS_TOKEN
       : process.env.REACT_APP_MANIFEST_ACCESS_TOKEN,
+  SOURCE_REPO_ACCESS_TOKEN:
+    browser.ENV && browser.ENV.REACT_APP_SOURCE_REPO_ACCESS_TOKEN !== undefined
+      ? browser.ENV.REACT_APP_SOURCE_REPO_ACCESS_TOKEN
+      : process.env.REACT_APP_SOURCE_REPO_ACCESS_TOKEN,
   STORAGE_ACCOUNT_KEY:
     browser.ENV && browser.ENV.REACT_APP_STORAGE_ACCESS_KEY !== undefined
       ? browser.ENV.REACT_APP_STORAGE_ACCESS_KEY

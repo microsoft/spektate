@@ -73,7 +73,8 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       config.AZURE_ORG,
       config.AZURE_PROJECT,
       false,
-      config.AZURE_PIPELINE_ACCESS_TOKEN
+      config.AZURE_PIPELINE_ACCESS_TOKEN,
+      config.SOURCE_REPO_ACCESS_TOKEN
     );
     const hldPipeline = new AzureDevOpsPipeline(
       config.AZURE_ORG,

@@ -19,25 +19,31 @@ export class AzureDevOpsPipeline implements IPipeline {
   public org: string;
   public project: string;
   public isRelease?: boolean;
-  public accessToken?: string;
+  public pipelineAccessToken?: string;
   public builds: { [id: string]: IBuild } = {};
   public releases: { [id: string]: IRelease } = {};
+  public repoAccessToken?: string;
 
   constructor(
     org: string,
     project: string,
     isRelease?: boolean,
-    accessToken?: string
+    pipelineAccessToken?: string,
+    repoAccessToken?: string
   ) {
     this.org = org;
     this.project = project;
     this.isRelease = isRelease;
-    this.accessToken = accessToken;
+    this.pipelineAccessToken = pipelineAccessToken;
+    this.repoAccessToken = repoAccessToken;
   }
 
   public async getListOfBuilds(buildIds?: Set<string>) {
     const buildUrl = this.getBuildUrl(buildIds);
-    const json = await HttpHelper.httpGet<any>(buildUrl, this.accessToken);
+    const json = await HttpHelper.httpGet<any>(
+      buildUrl,
+      this.pipelineAccessToken
+    );
 
     const builds: IBuild[] = [];
     for (const row of json.data.value) {
@@ -58,14 +64,16 @@ export class AzureDevOpsPipeline implements IPipeline {
       if (row.repository.type === "GitHub") {
         build.repository = new GitHub(
           row.repository.id.split("/")[0],
-          row.repository.id.split("/")[1]
+          row.repository.id.split("/")[1],
+          this.repoAccessToken
         );
       } else if (row.repository.type === "TfsGit") {
         const reposityUrlSplit = row.repository.url.split("/");
         build.repository = new AzureDevOpsRepo(
           reposityUrlSplit[3],
           reposityUrlSplit[4],
-          reposityUrlSplit[6]
+          reposityUrlSplit[6],
+          this.repoAccessToken
         );
       }
       builds.push(build);
@@ -79,7 +87,7 @@ export class AzureDevOpsPipeline implements IPipeline {
   public async getListOfReleases(releaseIds?: Set<string>) {
     const json = await HttpHelper.httpGet<any>(
       this.getReleaseUrl(releaseIds),
-      this.accessToken
+      this.pipelineAccessToken
     );
 
     const releases: IRelease[] = [];
