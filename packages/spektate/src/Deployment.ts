@@ -179,12 +179,12 @@ class Deployment {
     let commitId = "";
     if (entry.p1 != null) {
       p1 = srcPipeline.builds[entry.p1._];
-      if (entry.commitId != null) {
-        commitId = entry.commitId._;
-      }
-      if (entry.imageTag != null) {
-        imageTag = entry.imageTag._;
-      }
+    }
+    if (entry.commitId != null) {
+      commitId = entry.commitId._;
+    }
+    if (entry.imageTag != null) {
+      imageTag = entry.imageTag._;
     }
 
     let p2;
