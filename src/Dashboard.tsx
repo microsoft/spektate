@@ -630,7 +630,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     if (status === "succeeded") {
       return { iconName: "SkypeCircleCheck", style: { color: "green" } };
     } else if (status === undefined || status === "inProgress") {
-      return { iconName: "SkypeCircleClock", style: { color: "blue" } }; // SyncStatusSolid
+      return { iconName: "ProgressRingDots", style: { color: "blue" } }; // SyncStatusSolid
     }
     return { iconName: "SkypeCircleMinus", style: { color: "red" } };
   }
