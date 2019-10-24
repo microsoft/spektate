@@ -244,11 +244,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
             this.state.manifestSync.commit !== ""
               ? this.state.manifestSync.date
               : new Date(),
-          endTime: deployment.hldToManifestBuild
-            ? Number.isNaN(deployment.hldToManifestBuild!.finishTime.valueOf())
-              ? new Date()
-              : deployment.hldToManifestBuild!.finishTime
-            : new Date()
+          endTime: deployment.endTime()
         };
       });
     } catch (err) {
@@ -585,7 +581,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         };
         indicatorData.label = "Running";
         break;
-      case "warning":
+      case "incomplete":
         indicatorData.statusProps = {
           ...Statuses.Warning,
           ariaLabel: "Incomplete"
@@ -634,7 +630,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     if (status === "succeeded") {
       return { iconName: "SkypeCircleCheck", style: { color: "green" } };
     } else if (status === undefined || status === "inProgress") {
-      return { iconName: "ProgressRingDots", style: { color: "blue" } }; // SyncStatusSolid
+      return { iconName: "SkypeCircleClock", style: { color: "blue" } }; // SyncStatusSolid
     }
     return { iconName: "SkypeCircleMinus", style: { color: "red" } };
   }

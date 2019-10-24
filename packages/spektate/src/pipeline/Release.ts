@@ -9,4 +9,5 @@ export interface IRelease {
   startTime: Date;
   finishTime: Date;
   URL: string;
+  lastUpdateTime?: Date;
 }

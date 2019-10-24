@@ -59,7 +59,8 @@ export class AzureDevOpsPipeline implements IPipeline {
         sourceVersion: row.sourceVersion,
         sourceVersionURL: row._links.sourceVersionDisplayUri.href,
         startTime: new Date(row.startTime),
-        status: row.status
+        status: row.status,
+        lastUpdateTime: new Date(row.lastChangedDate)
       };
       if (row.repository.type === "GitHub") {
         build.repository = new GitHub(
@@ -99,7 +100,8 @@ export class AzureDevOpsPipeline implements IPipeline {
         queueTime: new Date(row.queuedOn),
         releaseName: row.release.name,
         startTime: new Date(row.startedOn),
-        status: row.deploymentStatus
+        status: row.deploymentStatus,
+        lastUpdateTime: new Date(row.lastModifiedOn)
       };
       if (row.release.artifacts.length > 0) {
         release.imageVersion =
