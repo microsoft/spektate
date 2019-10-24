@@ -135,37 +135,43 @@ class Deployment {
   public static compare(a: Deployment, b: Deployment) {
     let aInt = 0;
     let bInt = 0;
-    if (a.srcToDockerBuild != null && b.srcToDockerBuild != null) {
-      aInt = Number(a.srcToDockerBuild.id);
-      bInt = Number(b.srcToDockerBuild.id);
-      if (aInt < bInt) {
-        return 1;
-      } else if (aInt > bInt) {
-        return -1;
-      }
-    }
-    if (a.dockerToHldRelease != null && b.dockerToHldRelease != null) {
-      aInt = Number(a.dockerToHldRelease.id);
-      bInt = Number(b.dockerToHldRelease.id);
-      if (aInt < bInt) {
-        return 1;
-      } else if (aInt > bInt) {
-        return -1;
-      }
-    }
 
-    if (a.hldToManifestBuild != null && b.hldToManifestBuild != null) {
-      aInt = Number(a.hldToManifestBuild.id);
-      bInt = Number(b.hldToManifestBuild.id);
-      if (aInt < bInt) {
-        return 1;
-      } else if (aInt > bInt) {
-        return -1;
-      }
+    aInt = Math.max(
+      Deployment.getLastUpdateTime(a.srcToDockerBuild),
+      Deployment.getLastUpdateTime(undefined, a.dockerToHldRelease),
+      Deployment.getLastUpdateTime(a.hldToManifestBuild)
+    );
+    bInt = Math.max(
+      Deployment.getLastUpdateTime(b.srcToDockerBuild),
+      Deployment.getLastUpdateTime(undefined, b.dockerToHldRelease),
+      Deployment.getLastUpdateTime(b.hldToManifestBuild)
+    );
+    if (aInt < bInt) {
+      return 1;
     }
-
-    return 0;
+    return -1;
   }
+
+  private static getLastUpdateTime = (
+    build: IBuild | undefined,
+    release?: IRelease | undefined
+  ): number => {
+    if (build) {
+      return Math.max(
+        build.finishTime.getTime(),
+        build.queueTime.getTime(),
+        build.startTime.getTime()
+      );
+    }
+    if (release) {
+      return Math.max(
+        release.finishTime.getTime(),
+        release.queueTime.getTime(),
+        release.startTime.getTime()
+      );
+    }
+    return 0;
+  };
 
   // TODO: Look into cleaning up the parsing code below (avoid parsing underscores).
   private static getDeploymentFromDBEntry = (
@@ -179,12 +185,12 @@ class Deployment {
     let commitId = "";
     if (entry.p1 != null) {
       p1 = srcPipeline.builds[entry.p1._];
-      if (entry.commitId != null) {
-        commitId = entry.commitId._;
-      }
-      if (entry.imageTag != null) {
-        imageTag = entry.imageTag._;
-      }
+    }
+    if (entry.commitId != null) {
+      commitId = entry.commitId._;
+    }
+    if (entry.imageTag != null) {
+      imageTag = entry.imageTag._;
     }
 
     let p2;
