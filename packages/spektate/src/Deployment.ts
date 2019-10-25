@@ -136,42 +136,13 @@ class Deployment {
     let aInt = 0;
     let bInt = 0;
 
-    aInt = Math.max(
-      Deployment.getLastUpdateTime(a.srcToDockerBuild),
-      Deployment.getLastUpdateTime(undefined, a.dockerToHldRelease),
-      Deployment.getLastUpdateTime(a.hldToManifestBuild)
-    );
-    bInt = Math.max(
-      Deployment.getLastUpdateTime(b.srcToDockerBuild),
-      Deployment.getLastUpdateTime(undefined, b.dockerToHldRelease),
-      Deployment.getLastUpdateTime(b.hldToManifestBuild)
-    );
+    aInt = a.endTime().getTime();
+    bInt = b.endTime().getTime();
     if (aInt < bInt) {
       return 1;
     }
     return -1;
   }
-
-  private static getLastUpdateTime = (
-    build: IBuild | undefined,
-    release?: IRelease | undefined
-  ): number => {
-    if (build) {
-      return Math.max(
-        build.finishTime.getTime(),
-        build.queueTime.getTime(),
-        build.startTime.getTime()
-      );
-    }
-    if (release) {
-      return Math.max(
-        release.finishTime.getTime(),
-        release.queueTime.getTime(),
-        release.startTime.getTime()
-      );
-    }
-    return 0;
-  };
 
   // TODO: Look into cleaning up the parsing code below (avoid parsing underscores).
   private static getDeploymentFromDBEntry = (
@@ -304,22 +275,41 @@ class Deployment {
     return Number(duration / 60000).toFixed(2);
   }
 
+  public endTime = (): Date => {
+    if (this.hldToManifestBuild && this.hldToManifestBuild.lastUpdateTime) {
+      return this.hldToManifestBuild.lastUpdateTime;
+    } else if (
+      this.dockerToHldRelease &&
+      this.dockerToHldRelease.lastUpdateTime
+    ) {
+      return this.dockerToHldRelease.lastUpdateTime;
+    } else if (this.srcToDockerBuild && this.srcToDockerBuild.lastUpdateTime) {
+      return this.srcToDockerBuild.lastUpdateTime;
+    }
+    return new Date(Date.now());
+  };
+
   public status(): string {
     if (
-      (this.srcToDockerBuild
-        ? this.srcToDockerBuild.status === "completed"
-        : false) &&
-      (this.hldToManifestBuild
-        ? this.hldToManifestBuild.status === "completed"
-        : false) &&
-      (this.dockerToHldRelease
-        ? this.dockerToHldRelease.status === "succeeded" ||
-          this.dockerToHldRelease.status === "failed"
-        : false)
+      (this.srcToDockerBuild &&
+        this.srcToDockerBuild.status === "inProgress") ||
+      (this.dockerToHldRelease &&
+        this.dockerToHldRelease.status === "inProgress") ||
+      (this.hldToManifestBuild &&
+        this.hldToManifestBuild.status === "inProgress")
+    ) {
+      return "In Progress";
+    } else if (
+      this.srcToDockerBuild &&
+      this.srcToDockerBuild.status === "completed" &&
+      (this.dockerToHldRelease &&
+        this.dockerToHldRelease.status === "succeeded") &&
+      (this.hldToManifestBuild &&
+        this.hldToManifestBuild.status === "completed")
     ) {
       return "Complete";
     }
-    return "In Progress";
+    return "Incomplete";
   }
 
   public fetchAuthor(callback: (author: IAuthor | undefined) => void): void {

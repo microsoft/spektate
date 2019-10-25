@@ -14,4 +14,5 @@ export interface IBuild {
   finishTime: Date;
   URL: string;
   repository?: IRepository;
+  lastUpdateTime?: Date;
 }
