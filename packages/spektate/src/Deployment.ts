@@ -111,14 +111,19 @@ class Deployment {
             Promise.all([p1, p2, p3])
               .then(() => {
                 for (const entry of result.entries) {
-                  deployments.push(
-                    Deployment.getDeploymentFromDBEntry(
-                      entry,
-                      srcPipeline,
-                      hldPipeline,
-                      manifestPipeline
-                    )
+                  const dep = Deployment.getDeploymentFromDBEntry(
+                    entry,
+                    srcPipeline,
+                    hldPipeline,
+                    manifestPipeline
                   );
+                  if (
+                    dep.srcToDockerBuild ||
+                    dep.dockerToHldRelease ||
+                    dep.hldToManifestBuild
+                  ) {
+                    deployments.push(dep);
+                  }
                 }
                 deployments.sort(Deployment.compare);
                 resolve(deployments);
