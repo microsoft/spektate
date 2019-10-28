@@ -91,6 +91,8 @@ class Deployment {
             const srcBuildIds: Set<string> = new Set<string>();
             const manifestBuildIds: Set<string> = new Set<string>();
             const releaseIds: Set<string> = new Set<string>();
+            const releaseStageBuildIds: Set<string> = new Set<string>();
+
             for (const entry of result.entries) {
               if (entry.p1) {
                 srcBuildIds.add(entry.p1._);
@@ -98,13 +100,19 @@ class Deployment {
               if (entry.p3) {
                 manifestBuildIds.add(entry.p3._);
               }
-              if (entry.p2) {
+              if (entry.p2 && (!entry.isMultiStage || !entry.isMultiStage._)) {
                 releaseIds.add(entry.p2._);
+              } else {
+                // For multi stage pipelines there is no releaseId, it is a buildId
+                releaseStageBuildIds.add(entry.p2._);
               }
             }
 
             const p1 = srcPipeline.getListOfBuilds(srcBuildIds);
             const p2 = hldPipeline.getListOfReleases(releaseIds);
+            const p2ReleaseStage = hldPipeline.getListOfBuilds(
+              releaseStageBuildIds
+            );
             const p3 = manifestPipeline.getListOfBuilds(manifestBuildIds);
 
             // Wait for all three pipelines to load their respective builds before we instantiate deployments
@@ -170,13 +178,19 @@ class Deployment {
     }
 
     let p2;
+    let p2ReleaseStage;
     let hldCommitId = "";
     let manifestCommitId = "";
     let env = "";
     let service = "";
     if (entry.p2 != null) {
-      p2 = hldPipeline.releases[entry.p2._];
+      if (!entry.isMultiStage || !entry.isMultiStage._) {
+        p2 = hldPipeline.releases[entry.p2._];
+      } else {
+        p2ReleaseStage = hldPipeline.builds[entry.p2._];
+      }
     }
+
     let p3;
     if (entry.p3 != null) {
       p3 = manifestPipeline.builds[entry.p3._];
@@ -209,7 +223,8 @@ class Deployment {
       manifestCommitId,
       p1,
       p2,
-      p3
+      p3,
+      p2ReleaseStage
     );
     return deployment;
   };
@@ -217,6 +232,7 @@ class Deployment {
   public deploymentId: string;
   public srcToDockerBuild?: IBuild;
   public dockerToHldRelease?: IRelease;
+  public dockerToHldReleaseStage?: IBuild;
   public hldToManifestBuild?: IBuild;
   public commitId: string;
   public hldCommitId?: string;
@@ -238,12 +254,14 @@ class Deployment {
     manifestCommitId?: string,
     srcToDockerBuild?: IBuild,
     dockerToHldRelease?: IRelease,
-    hldToManifestBuild?: IBuild
+    hldToManifestBuild?: IBuild,
+    dockerToHldReleaseStage?: IBuild
   ) {
     this.srcToDockerBuild = srcToDockerBuild;
     this.hldToManifestBuild = hldToManifestBuild;
     this.deploymentId = deploymentId;
     this.dockerToHldRelease = dockerToHldRelease;
+    this.dockerToHldReleaseStage = dockerToHldReleaseStage;
     this.commitId = commitId;
     this.hldCommitId = hldCommitId;
     this.imageTag = imageTag;
@@ -276,6 +294,13 @@ class Deployment {
           : this.hldToManifestBuild.finishTime.valueOf()) -
         this.hldToManifestBuild.queueTime.valueOf();
     }
+    if (this.dockerToHldReleaseStage != null) {
+      duration =
+        (Number.isNaN(this.dockerToHldReleaseStage.finishTime.valueOf())
+          ? Date.now().valueOf()
+          : this.dockerToHldReleaseStage.finishTime.valueOf()) -
+        this.dockerToHldReleaseStage.queueTime.valueOf();
+    }
 
     return Number(duration / 60000).toFixed(2);
   }
@@ -288,6 +313,11 @@ class Deployment {
       this.dockerToHldRelease.lastUpdateTime
     ) {
       return this.dockerToHldRelease.lastUpdateTime;
+    } else if (
+      this.dockerToHldReleaseStage &&
+      this.dockerToHldReleaseStage.lastUpdateTime
+    ) {
+      return this.dockerToHldReleaseStage.lastUpdateTime;
     } else if (this.srcToDockerBuild && this.srcToDockerBuild.lastUpdateTime) {
       return this.srcToDockerBuild.lastUpdateTime;
     }
@@ -300,6 +330,8 @@ class Deployment {
         this.srcToDockerBuild.status === "inProgress") ||
       (this.dockerToHldRelease &&
         this.dockerToHldRelease.status === "inProgress") ||
+      (this.dockerToHldReleaseStage &&
+        this.dockerToHldReleaseStage.status === "inProgress") ||
       (this.hldToManifestBuild &&
         this.hldToManifestBuild.status === "inProgress")
     ) {
@@ -307,8 +339,10 @@ class Deployment {
     } else if (
       this.srcToDockerBuild &&
       this.srcToDockerBuild.status === "completed" &&
-      (this.dockerToHldRelease &&
-        this.dockerToHldRelease.status === "succeeded") &&
+      ((this.dockerToHldRelease &&
+        this.dockerToHldRelease.status === "succeeded") ||
+        (this.dockerToHldReleaseStage &&
+          this.dockerToHldReleaseStage.status === "completed")) &&
       (this.hldToManifestBuild &&
         this.hldToManifestBuild.status === "completed")
     ) {
