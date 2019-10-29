@@ -100,7 +100,8 @@ class Deployment {
               if (entry.p3) {
                 manifestBuildIds.add(entry.p3._);
               }
-              if (entry.p2 && (!entry.p1 || entry.p1 != entry.p2)) {
+              if (entry.p2) {
+                // Assumption: build pipelines are multi stage if the ids of p1 and p2 are the same
                 if (!entry.p1 || entry.p1 != entry.p2) {
                   releaseIds.add(entry.p2._);
                 } else if (entry.p2 == entry.p1) {
@@ -185,9 +186,9 @@ class Deployment {
     let env = "";
     let service = "";
     if (entry.p2 != null) {
-      if (entry.p1 === null || entry.p1 !== entry.p2) {
+      if (entry.p1 == null || entry.p1 != entry.p2) {
         p2 = hldPipeline.releases[entry.p2._];
-      } else if (entry.p1 !== entry.p2) {
+      } else if (entry.p1 != entry.p2) {
         p2ReleaseStage = hldPipeline.builds[entry.p2._];
       }
     }
