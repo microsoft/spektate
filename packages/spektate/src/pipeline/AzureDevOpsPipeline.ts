@@ -4,7 +4,7 @@ import { GitHub } from "../repository/GitHub";
 import { IBuild } from "./Build";
 import IPipeline from "./Pipeline";
 import { IRelease } from "./Release";
-import { ITimelineRecord, IPipelineStage } from "./PipelineStage";
+import { IPipelineStage } from "./PipelineStage";
 
 const buildFilterUrl =
   "https://dev.azure.com/{organization}/{project}/_apis/build/builds?buildIds={buildIds}&api-version=5.0";
@@ -81,23 +81,22 @@ export class AzureDevOpsPipeline implements IPipeline {
       }
       builds.push(build);
 
-      // to-do: remove
-      if (build.id === "7004") {
-        await this.getBuildStages(build);
-      }
-
       this.builds[build.id] = build;
     }
     return this.builds;
   }
 
+  /**
+   * Gets the pipeline stages of the corresponding build
+   * @param build The build to query for pipeline stages
+   */
   public async getBuildStages(build: IBuild): Promise<IPipelineStage[]> {
     const json = await HttpHelper.httpGet<any>(
       build.timelineURL,
       this.pipelineAccessToken
     );
 
-    if (json.data.records.length === 0) {
+    if (json.data && json.data.records.length == 0) {
       return [];
     }
 
@@ -107,7 +106,7 @@ export class AzureDevOpsPipeline implements IPipeline {
       let recordType: string = record.type;
       recordType = recordType.toLowerCase();
 
-      if (recordType === "stage") {
+      if (recordType == "stage") {
         let stage: IPipelineStage = {
           name: record.name,
           id: record.id,

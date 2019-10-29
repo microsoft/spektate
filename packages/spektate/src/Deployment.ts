@@ -100,11 +100,12 @@ class Deployment {
               if (entry.p3) {
                 manifestBuildIds.add(entry.p3._);
               }
-              if (entry.p2 && (!entry.p1 || entry.p1 !== entry.p2)) {
-                releaseIds.add(entry.p2._);
-              } else {
-                // For multi stage pipelines there is no releaseId, it is a buildId
-                releaseStageBuildIds.add(entry.p2._);
+              if (entry.p2 && (!entry.p1 || entry.p1 != entry.p2)) {
+                if (!entry.p1 || entry.p1 != entry.p2) {
+                  releaseIds.add(entry.p2._);
+                } else if (entry.p2 == entry.p1) {
+                  releaseStageBuildIds.add(entry.p2._);
+                }
               }
             }
 
