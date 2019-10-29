@@ -100,7 +100,7 @@ class Deployment {
               if (entry.p3) {
                 manifestBuildIds.add(entry.p3._);
               }
-              if (entry.p2 && (!entry.isMultiStage || !entry.isMultiStage._)) {
+              if (entry.p2 && (!entry.p1 || entry.p1 !== entry.p2)) {
                 releaseIds.add(entry.p2._);
               } else {
                 // For multi stage pipelines there is no releaseId, it is a buildId
@@ -116,7 +116,7 @@ class Deployment {
             const p3 = manifestPipeline.getListOfBuilds(manifestBuildIds);
 
             // Wait for all three pipelines to load their respective builds before we instantiate deployments
-            Promise.all([p1, p2, p3])
+            Promise.all([p1, p2, p3, p2ReleaseStage])
               .then(() => {
                 for (const entry of result.entries) {
                   const dep = Deployment.getDeploymentFromDBEntry(
@@ -184,9 +184,9 @@ class Deployment {
     let env = "";
     let service = "";
     if (entry.p2 != null) {
-      if (!entry.isMultiStage || !entry.isMultiStage._) {
+      if (entry.p1 === null || entry.p1 !== entry.p2) {
         p2 = hldPipeline.releases[entry.p2._];
-      } else {
+      } else if (entry.p1 !== entry.p2) {
         p2ReleaseStage = hldPipeline.builds[entry.p2._];
       }
     }

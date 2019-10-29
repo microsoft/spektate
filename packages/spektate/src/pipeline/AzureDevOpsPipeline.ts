@@ -4,6 +4,7 @@ import { GitHub } from "../repository/GitHub";
 import { IBuild } from "./Build";
 import IPipeline from "./Pipeline";
 import { IRelease } from "./Release";
+import { ITimelineRecord, IPipelineStage } from "./PipelineStage";
 
 const buildFilterUrl =
   "https://dev.azure.com/{organization}/{project}/_apis/build/builds?buildIds={buildIds}&api-version=5.0";
@@ -60,7 +61,8 @@ export class AzureDevOpsPipeline implements IPipeline {
         sourceVersion: row.sourceVersion,
         sourceVersionURL: row._links.sourceVersionDisplayUri.href,
         startTime: new Date(row.startTime),
-        status: row.status
+        status: row.status,
+        timelineURL: row._links.timeline.href
       };
       if (row.repository.type === "GitHub") {
         build.repository = new GitHub(
@@ -78,9 +80,46 @@ export class AzureDevOpsPipeline implements IPipeline {
         );
       }
       builds.push(build);
+
+      // to-do: remove
+      if (build.id === "7004") {
+        await this.getBuildStages(build);
+      }
+
       this.builds[build.id] = build;
     }
     return this.builds;
+  }
+
+  public async getBuildStages(build: IBuild): Promise<IPipelineStage[]> {
+    const json = await HttpHelper.httpGet<any>(
+      build.timelineURL,
+      this.pipelineAccessToken
+    );
+
+    if (json.data.records.length === 0) {
+      return [];
+    }
+
+    build.stages = [];
+
+    for (const record of json.data.records) {
+      let recordType: string = record.type;
+      recordType = recordType.toLowerCase();
+
+      if (recordType === "stage") {
+        let stage: IPipelineStage = {
+          name: record.name,
+          id: record.id,
+          state: record.state,
+          result: record.result
+        };
+
+        build.stages.push(stage);
+      }
+    }
+
+    return build.stages;
   }
 
   // TODO: Once the bug with release API is fixed (regarding returning only top 50 rows),

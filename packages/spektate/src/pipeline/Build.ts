@@ -1,4 +1,5 @@
 import { IRepository } from "../repository/Repository";
+import { IPipelineStage } from "./PipelineStage";
 
 export interface IBuild {
   buildNumber: string;
@@ -15,4 +16,6 @@ export interface IBuild {
   URL: string;
   repository?: IRepository;
   lastUpdateTime?: Date;
+  timelineURL: string;
+  stages?: IPipelineStage[];
 }
