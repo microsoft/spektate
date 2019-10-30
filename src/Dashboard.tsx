@@ -209,14 +209,20 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
             : "-",
           dockerPipelineId: deployment.dockerToHldRelease
             ? deployment.dockerToHldRelease.releaseName
+            : deployment.dockerToHldReleaseStage
+            ? deployment.dockerToHldReleaseStage.buildNumber
             : "",
           dockerPipelineURL: deployment.dockerToHldRelease
             ? deployment.dockerToHldRelease.URL
+            : deployment.dockerToHldReleaseStage
+            ? deployment.dockerToHldReleaseStage.URL
             : "",
           environment: deployment.environment.toUpperCase(),
           dockerPipelineResult: deployment.dockerToHldRelease
             ? deployment.dockerToHldRelease.status
-            : "-",
+            : deployment.dockerToHldReleaseStage
+            ? deployment.dockerToHldReleaseStage.result
+            : "",
           hldCommitId: deployment.hldCommitId,
           hldCommitURL: deployment.hldToManifestBuild
             ? deployment.hldToManifestBuild.sourceVersionURL

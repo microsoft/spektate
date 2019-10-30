@@ -3,8 +3,8 @@ import { AzureDevOpsRepo } from "../repository/AzureDevOpsRepo";
 import { GitHub } from "../repository/GitHub";
 import { IBuild } from "./Build";
 import IPipeline from "./Pipeline";
-import { IRelease } from "./Release";
 import { IPipelineStage } from "./PipelineStage";
+import { IRelease } from "./Release";
 
 const buildFilterUrl =
   "https://dev.azure.com/{organization}/{project}/_apis/build/builds?buildIds={buildIds}&api-version=5.0";
@@ -96,7 +96,7 @@ export class AzureDevOpsPipeline implements IPipeline {
       this.pipelineAccessToken
     );
 
-    if (json.data && json.data.records.length == 0) {
+    if (json.data && json.data.records.length === 0) {
       return [];
     }
 
@@ -106,12 +106,12 @@ export class AzureDevOpsPipeline implements IPipeline {
       let recordType: string = record.type;
       recordType = recordType.toLowerCase();
 
-      if (recordType == "stage") {
-        let stage: IPipelineStage = {
-          name: record.name,
+      if (recordType === "stage") {
+        const stage: IPipelineStage = {
           id: record.id,
-          state: record.state,
-          result: record.result
+          name: record.name,
+          result: record.result,
+          state: record.state
         };
 
         build.stages.push(stage);
