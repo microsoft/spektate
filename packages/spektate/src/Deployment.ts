@@ -1,5 +1,5 @@
 import * as azure from "azure-storage";
-import { IBuild } from "./pipeline/Build";
+import { copy, IBuild } from "./pipeline/Build";
 import IPipeline from "./pipeline/Pipeline";
 import { IPipelineStages } from "./pipeline/PipelineStage";
 import { IRelease } from "./pipeline/Release";
@@ -112,9 +112,9 @@ class Deployment {
 
             // Wait for all three pipelines to load their respective builds before we instantiate deployments
             Promise.all([p1, p2, p3])
-              .then(() => {
+              .then(async () => {
                 for (const entry of result.entries) {
-                  const dep = Deployment.getDeploymentFromDBEntry(
+                  const dep = await Deployment.getDeploymentFromDBEntry(
                     entry,
                     srcPipeline,
                     hldPipeline,
@@ -153,13 +153,13 @@ class Deployment {
   }
 
   // TODO: Look into cleaning up the parsing code below (avoid parsing underscores).
-  private static getDeploymentFromDBEntry = (
+  private static getDeploymentFromDBEntry = async (
     entry: any,
     srcPipeline: IPipeline,
     hldPipeline: IPipeline,
     manifestPipeline: IPipeline
   ) => {
-    let p1;
+    let p1: IBuild | undefined;
     let imageTag = "";
     let commitId = "";
     if (entry.p1 != null) {
@@ -172,26 +172,41 @@ class Deployment {
       imageTag = entry.imageTag._;
     }
 
-    let p2;
-    let p2ReleaseStage;
+    let p2: IRelease | undefined;
+    let p2ReleaseStage: IBuild | undefined;
     let hldCommitId = "";
     let manifestCommitId = "";
     let env = "";
     let service = "";
+    const promises = [];
     if (entry.p2 != null) {
       if (entry.p1 && entry.p1._ === entry.p2._) {
-        p2ReleaseStage = srcPipeline.builds[entry.p2._];
-        srcPipeline
-          .getBuildStages(p2ReleaseStage)
-          .then((stages: IPipelineStages) => {
-            console.log(stages);
-          });
+        p2ReleaseStage = copy(srcPipeline.builds[entry.p2._]);
+        // Make the call for details only when the overall pipeline has failed
+        if (p2ReleaseStage.result !== "succeeded") {
+          const promise = srcPipeline
+            .getBuildStages(p2ReleaseStage)
+            .then((stages: IPipelineStages) => {
+              console.log(stages);
+              if (stages && p2ReleaseStage) {
+                if (p1 && stages[1]) {
+                  p1.result = stages[1].result;
+                  p1.status = stages[1].state;
+                }
+                if (stages[2]) {
+                  p2ReleaseStage.result = stages[2].result;
+                  p2ReleaseStage.status = stages[2].state;
+                }
+              }
+            });
+          promises.push(promise);
+        }
       } else if (entry.p1 == null || entry.p1 !== entry.p2) {
         p2 = hldPipeline.releases[entry.p2._];
       }
     }
 
-    let p3;
+    let p3: IBuild | undefined;
     if (entry.p3 != null) {
       p3 = manifestPipeline.builds[entry.p3._];
     }
@@ -211,7 +226,7 @@ class Deployment {
         service = service.split("/")[1];
       }
     }
-
+    await Promise.all(promises);
     const deployment = new Deployment(
       entry.RowKey._,
       commitId,
