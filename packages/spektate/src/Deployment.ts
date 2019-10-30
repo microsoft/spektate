@@ -1,6 +1,7 @@
 import * as azure from "azure-storage";
 import { IBuild } from "./pipeline/Build";
 import IPipeline from "./pipeline/Pipeline";
+import { IPipelineStages } from "./pipeline/PipelineStage";
 import { IRelease } from "./pipeline/Release";
 import { IAuthor } from "./repository/Author";
 
@@ -91,7 +92,6 @@ class Deployment {
             const srcBuildIds: Set<string> = new Set<string>();
             const manifestBuildIds: Set<string> = new Set<string>();
             const releaseIds: Set<string> = new Set<string>();
-            const releaseStageBuildIds: Set<string> = new Set<string>();
 
             for (const entry of result.entries) {
               if (entry.p1) {
@@ -100,25 +100,18 @@ class Deployment {
               if (entry.p3) {
                 manifestBuildIds.add(entry.p3._);
               }
-              if (entry.p2) {
+              if (entry.p2 && (!entry.p1 || entry.p1._ !== entry.p2._)) {
                 // Assumption: build pipelines are multi stage if the ids of p1 and p2 are the same
-                if (entry.p1 && entry.p2._ === entry.p1._) {
-                  releaseStageBuildIds.add(entry.p2._);
-                } else if (!entry.p1 || entry.p1 !== entry.p2) {
-                  releaseIds.add(entry.p2._);
-                }
+                releaseIds.add(entry.p2._);
               }
             }
 
             const p1 = srcPipeline.getListOfBuilds(srcBuildIds);
             const p2 = hldPipeline.getListOfReleases(releaseIds);
-            const p2ReleaseStage = hldPipeline.getListOfBuilds(
-              releaseStageBuildIds
-            );
             const p3 = manifestPipeline.getListOfBuilds(manifestBuildIds);
 
             // Wait for all three pipelines to load their respective builds before we instantiate deployments
-            Promise.all([p1, p2, p3, p2ReleaseStage])
+            Promise.all([p1, p2, p3])
               .then(() => {
                 for (const entry of result.entries) {
                   const dep = Deployment.getDeploymentFromDBEntry(
@@ -187,7 +180,12 @@ class Deployment {
     let service = "";
     if (entry.p2 != null) {
       if (entry.p1 && entry.p1._ === entry.p2._) {
-        p2ReleaseStage = hldPipeline.builds[entry.p2._];
+        p2ReleaseStage = srcPipeline.builds[entry.p2._];
+        srcPipeline
+          .getBuildStages(p2ReleaseStage)
+          .then((stages: IPipelineStages) => {
+            console.log(stages);
+          });
       } else if (entry.p1 == null || entry.p1 !== entry.p2) {
         p2 = hldPipeline.releases[entry.p2._];
       }

@@ -3,7 +3,7 @@ import { AzureDevOpsRepo } from "../repository/AzureDevOpsRepo";
 import { GitHub } from "../repository/GitHub";
 import { IBuild } from "./Build";
 import IPipeline from "./Pipeline";
-import { IPipelineStage } from "./PipelineStage";
+import { IPipelineStage, IPipelineStages } from "./PipelineStage";
 import { IRelease } from "./Release";
 
 const buildFilterUrl =
@@ -90,17 +90,17 @@ export class AzureDevOpsPipeline implements IPipeline {
    * Gets the pipeline stages of the corresponding build
    * @param build The build to query for pipeline stages
    */
-  public async getBuildStages(build: IBuild): Promise<IPipelineStage[]> {
+  public async getBuildStages(build: IBuild): Promise<IPipelineStages> {
     const json = await HttpHelper.httpGet<any>(
       build.timelineURL,
       this.pipelineAccessToken
     );
 
     if (json.data && json.data.records.length === 0) {
-      return [];
+      return {};
     }
 
-    build.stages = [];
+    build.stages = {};
 
     for (const record of json.data.records) {
       let recordType: string = record.type;
@@ -110,11 +110,12 @@ export class AzureDevOpsPipeline implements IPipeline {
         const stage: IPipelineStage = {
           id: record.id,
           name: record.name,
+          order: record.order,
           result: record.result,
           state: record.state
         };
 
-        build.stages.push(stage);
+        build.stages[stage.order] = stage;
       }
     }
 
