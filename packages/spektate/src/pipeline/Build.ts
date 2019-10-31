@@ -1,4 +1,5 @@
 import { IRepository } from "../repository/Repository";
+import { IPipelineStages } from "./PipelineStage";
 
 export interface IBuild {
   buildNumber: string;
@@ -15,4 +16,28 @@ export interface IBuild {
   URL: string;
   repository?: IRepository;
   lastUpdateTime?: Date;
+  timelineURL: string;
+  stages?: IPipelineStages;
 }
+
+export const copy = (build: IBuild): IBuild => {
+  const newBuild: IBuild = {
+    URL: build.URL,
+    author: build.author,
+    buildNumber: build.buildNumber,
+    finishTime: build.finishTime,
+    id: build.id,
+    lastUpdateTime: build.lastUpdateTime,
+    queueTime: build.queueTime,
+    repository: build.repository,
+    result: build.result,
+    sourceBranch: build.sourceBranch,
+    sourceVersion: build.sourceVersion,
+    sourceVersionURL: build.sourceVersionURL,
+    stages: build.stages,
+    startTime: build.startTime,
+    status: build.status,
+    timelineURL: build.timelineURL
+  };
+  return newBuild;
+};

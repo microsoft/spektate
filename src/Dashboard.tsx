@@ -95,7 +95,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         config.MANIFEST_ACCESS_TOKEN
       );
       // const manifestRepo: Repository = new AzureDevOpsRepo(config.AZURE_ORG, config.AZURE_PROJECT, config.MANIFEST, config.MANIFEST_ACCESS_TOKEN);
-      manifestRepo.getManifestSyncState().then(syncCommit => {
+      manifestRepo.getManifestSyncState().then((syncCommit: any) => {
         this.setState({ manifestSync: syncCommit });
       });
     }
@@ -209,14 +209,20 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
             : "-",
           dockerPipelineId: deployment.dockerToHldRelease
             ? deployment.dockerToHldRelease.releaseName
+            : deployment.dockerToHldReleaseStage
+            ? deployment.dockerToHldReleaseStage.buildNumber
             : "",
           dockerPipelineURL: deployment.dockerToHldRelease
             ? deployment.dockerToHldRelease.URL
+            : deployment.dockerToHldReleaseStage
+            ? deployment.dockerToHldReleaseStage.URL
             : "",
           environment: deployment.environment.toUpperCase(),
           dockerPipelineResult: deployment.dockerToHldRelease
             ? deployment.dockerToHldRelease.status
-            : "-",
+            : deployment.dockerToHldReleaseStage
+            ? deployment.dockerToHldReleaseStage.result
+            : "",
           hldCommitId: deployment.hldCommitId,
           hldCommitURL: deployment.hldToManifestBuild
             ? deployment.hldToManifestBuild.sourceVersionURL
