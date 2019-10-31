@@ -187,7 +187,6 @@ class Deployment {
           const promise = srcPipeline
             .getBuildStages(p2ReleaseStage)
             .then((stages: IPipelineStages) => {
-              console.log(stages);
               if (stages && p2ReleaseStage) {
                 if (p1 && stages[1]) {
                   p1.result = stages[1].result;
