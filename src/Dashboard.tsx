@@ -17,6 +17,7 @@ import * as React from "react";
 import Deployment from "spektate/lib/Deployment";
 import AzureDevOpsPipeline from "spektate/lib/pipeline/AzureDevOpsPipeline";
 import { IAuthor } from "spektate/lib/repository/Author";
+import { AzureDevOpsRepo } from "spektate/lib/repository/AzureDevOpsRepo";
 import { GitHub } from "spektate/lib/repository/GitHub";
 import { IRepository } from "spektate/lib/repository/Repository";
 import { config } from "./config";
@@ -75,6 +76,8 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       false,
       config.AZURE_PIPELINE_ACCESS_TOKEN,
       config.SOURCE_REPO_ACCESS_TOKEN
+        ? config.SOURCE_REPO_ACCESS_TOKEN
+        : config.AZURE_PIPELINE_ACCESS_TOKEN
     );
     const hldPipeline = new AzureDevOpsPipeline(
       config.AZURE_ORG,
@@ -95,6 +98,16 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         config.MANIFEST_ACCESS_TOKEN
       );
       // const manifestRepo: Repository = new AzureDevOpsRepo(config.AZURE_ORG, config.AZURE_PROJECT, config.MANIFEST, config.MANIFEST_ACCESS_TOKEN);
+      manifestRepo.getManifestSyncState().then((syncCommit: any) => {
+        this.setState({ manifestSync: syncCommit });
+      });
+    } else if (config.MANIFEST) {
+      const manifestRepo: IRepository = new AzureDevOpsRepo(
+        config.AZURE_ORG,
+        config.AZURE_PROJECT,
+        config.MANIFEST,
+        config.AZURE_PIPELINE_ACCESS_TOKEN
+      );
       manifestRepo.getManifestSyncState().then((syncCommit: any) => {
         this.setState({ manifestSync: syncCommit });
       });
@@ -540,7 +553,9 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         {tableItem.clusterSync && (
           <Tooltip
             overflowOnly={false}
-            text={"Synced at " + tableItem.clusterSyncDate!.toLocaleString()}
+            text={
+              "Cluster synced at " + tableItem.clusterSyncDate!.toLocaleString()
+            }
           >
             {this.WithIcon({
               className: "fontSizeM font-size-m",
@@ -637,6 +652,8 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       return { iconName: "SkypeCircleCheck", style: { color: "green" } };
     } else if (status === undefined || status === "inProgress") {
       return { iconName: "ProgressRingDots", style: { color: "blue" } }; // SyncStatusSolid
+    } else if (status === "canceled") {
+      return { iconName: "SkypeCircleSlash", style: { color: "gray" } };
     }
     return { iconName: "SkypeCircleMinus", style: { color: "red" } };
   }
