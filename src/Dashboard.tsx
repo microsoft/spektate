@@ -1,8 +1,11 @@
 import { Ago } from "azure-devops-ui/Ago";
 import { ObservableValue } from "azure-devops-ui/Core/Observable";
+import { DropdownFilterBarItem } from "azure-devops-ui/Dropdown";
 import { Duration } from "azure-devops-ui/Duration";
+import { FilterBar } from "azure-devops-ui/FilterBar";
 import { Icon, IIconProps } from "azure-devops-ui/Icon";
 import { Link } from "azure-devops-ui/Link";
+// import { Observer } from "azure-devops-ui/Observer";
 import { Status, Statuses, StatusSize } from "azure-devops-ui/Status";
 import {
   ColumnFill,
@@ -11,7 +14,13 @@ import {
   Table,
   TwoLineTableCell
 } from "azure-devops-ui/Table";
+import { KeywordFilterBarItem } from "azure-devops-ui/TextFilterBarItem";
 import { Tooltip } from "azure-devops-ui/TooltipEx";
+import { DropdownMultiSelection } from "azure-devops-ui/Utilities/DropdownSelection";
+import {
+  Filter,
+  FILTER_CHANGE_EVENT /* FilterOperatorType */
+} from "azure-devops-ui/Utilities/Filter";
 import { ArrayItemProvider } from "azure-devops-ui/Utilities/Provider";
 import * as React from "react";
 import Deployment from "spektate/lib/Deployment";
@@ -31,12 +40,28 @@ import {
 const REFRESH_INTERVAL = 30000;
 class Dashboard<Props> extends React.Component<Props, IDashboardState> {
   private interval: NodeJS.Timeout;
+  private filter: Filter;
+  private currentState = new ObservableValue("");
+  private selectionServiceList = new DropdownMultiSelection();
+  private selectionAuthorList = new DropdownMultiSelection();
+  private selectionEnvList = new DropdownMultiSelection();
+
   constructor(props: Props) {
     super(props);
     this.state = {
       authors: {},
       deployments: []
     };
+
+    this.filter = new Filter();
+    // this.filter.setFilterItemState("listMulti", {
+    //   operator: FilterOperatorType.and,
+    //   value: []
+    // });
+    this.filter.subscribe(() => {
+      this.currentState.value = JSON.stringify(this.filter.getState(), null, 4);
+      console.log(this.currentState.value);
+    }, FILTER_CHANGE_EVENT);
   }
 
   public componentDidMount() {
@@ -54,6 +79,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         <header className="App-header">
           <h1 className="App-title">Spektate</h1>
         </header>
+        {this.createFilters()}
         {this.renderPrototypeTable()}
       </div>
     );
@@ -279,6 +305,85 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
           showLines={true}
         />
       </div>
+    );
+  };
+
+  private createFilters = () => {
+    return (
+      <FilterBar filter={this.filter}>
+        <KeywordFilterBarItem filterItemKey="keywordFilter" />
+
+        <DropdownFilterBarItem
+          filterItemKey="serviceFilter"
+          filter={this.filter}
+          items={this.getListOfServices().map(i => {
+            return {
+              iconProps: { iconName: "Home" },
+              id: i,
+              text: i
+            };
+          })}
+          selection={this.selectionServiceList}
+          placeholder="Service"
+          noItemsText="No services found"
+        />
+
+        <DropdownFilterBarItem
+          filterItemKey="authorFilter"
+          filter={this.filter}
+          items={this.getListOfAuthors().map(i => {
+            return {
+              iconProps: { iconName: "Contact" },
+              id: i,
+              text: i
+            };
+          })}
+          selection={this.selectionAuthorList}
+          placeholder="Author"
+          noItemsText="No authors found"
+        />
+
+        <DropdownFilterBarItem
+          filterItemKey="envFilter"
+          filter={this.filter}
+          items={this.getListOfEnvironments().map(i => {
+            return {
+              iconProps: { iconName: "Globe" },
+              id: i,
+              text: i
+            };
+          })}
+          selection={this.selectionEnvList}
+          placeholder="Environment"
+          noItemsText="No environments found"
+        />
+      </FilterBar>
+    );
+  };
+
+  private getListOfEnvironments = (): string[] => {
+    const envs: { [id: string]: boolean } = {};
+    this.state.deployments.forEach((deployment: Deployment) => {
+      if (deployment.environment !== "" && !(deployment.environment in envs)) {
+        envs[deployment.environment.toUpperCase()] = true;
+      }
+    });
+    return Array.from(Object.keys(envs));
+  };
+
+  private getListOfServices = (): string[] => {
+    const services: { [id: string]: boolean } = {};
+    this.state.deployments.forEach((deployment: Deployment) => {
+      if (deployment.service !== "" && !(deployment.service in services)) {
+        services[deployment.service] = true;
+      }
+    });
+    return Array.from(Object.keys(services));
+  };
+
+  private getListOfAuthors = (): string[] => {
+    return Array.from(Object.values(this.state.authors)).map(
+      author => author.name
     );
   };
 
