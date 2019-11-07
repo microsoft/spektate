@@ -1,11 +1,8 @@
 import { Ago } from "azure-devops-ui/Ago";
 import { ObservableValue } from "azure-devops-ui/Core/Observable";
-import { DropdownFilterBarItem } from "azure-devops-ui/Dropdown";
 import { Duration } from "azure-devops-ui/Duration";
-import { FilterBar } from "azure-devops-ui/FilterBar";
 import { Icon, IIconProps } from "azure-devops-ui/Icon";
 import { Link } from "azure-devops-ui/Link";
-// import { Observer } from "azure-devops-ui/Observer";
 import { Status, Statuses, StatusSize } from "azure-devops-ui/Status";
 import {
   ColumnFill,
@@ -14,13 +11,8 @@ import {
   Table,
   TwoLineTableCell
 } from "azure-devops-ui/Table";
-import { KeywordFilterBarItem } from "azure-devops-ui/TextFilterBarItem";
 import { Tooltip } from "azure-devops-ui/TooltipEx";
-import { DropdownMultiSelection } from "azure-devops-ui/Utilities/DropdownSelection";
-import {
-  Filter,
-  FILTER_CHANGE_EVENT /* FilterOperatorType */
-} from "azure-devops-ui/Utilities/Filter";
+import { Filter } from "azure-devops-ui/Utilities/Filter";
 import { ArrayItemProvider } from "azure-devops-ui/Utilities/Provider";
 import * as React from "react";
 import Deployment from "spektate/lib/Deployment";
@@ -36,32 +28,20 @@ import {
   IDeploymentField,
   IStatusIndicatorData
 } from "./Dashboard.types";
+import { DeploymentFilter } from "./DeploymentFilter";
 
 const REFRESH_INTERVAL = 30000;
 class Dashboard<Props> extends React.Component<Props, IDashboardState> {
   private interval: NodeJS.Timeout;
-  private filter: Filter;
-  private currentState = new ObservableValue("");
-  private selectionServiceList = new DropdownMultiSelection();
-  private selectionAuthorList = new DropdownMultiSelection();
-  private selectionEnvList = new DropdownMultiSelection();
+  private filter?: Filter;
 
   constructor(props: Props) {
     super(props);
     this.state = {
       authors: {},
-      deployments: []
+      deployments: [],
+      filteredDeployments: []
     };
-
-    this.filter = new Filter();
-    // this.filter.setFilterItemState("listMulti", {
-    //   operator: FilterOperatorType.and,
-    //   value: []
-    // });
-    this.filter.subscribe(() => {
-      this.currentState.value = JSON.stringify(this.filter.getState(), null, 4);
-      console.log(this.currentState.value);
-    }, FILTER_CHANGE_EVENT);
   }
 
   public componentDidMount() {
@@ -79,7 +59,12 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         <header className="App-header">
           <h1 className="App-title">Spektate</h1>
         </header>
-        {this.createFilters()}
+        <DeploymentFilter
+          onFiltered={this.onDashboardFiltered}
+          listOfAuthors={this.getListOfAuthors()}
+          listOfEnvironments={this.getListOfEnvironments()}
+          listOfServices={this.getListOfServices()}
+        />
         {this.renderPrototypeTable()}
       </div>
     );
@@ -149,9 +134,9 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       undefined
     ).then((deployments: Deployment[]) => {
       this.setState({ deployments });
+      this.updateFilteredDeployments();
       this.getAuthors();
     });
-    return <div />;
   };
 
   private renderPrototypeTable = () => {
@@ -220,7 +205,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     ];
     let rows: IDeploymentField[] = [];
     try {
-      rows = this.state.deployments.map(deployment => {
+      rows = this.state.filteredDeployments.map(deployment => {
         const author = this.getAuthor(deployment);
         return {
           deploymentId: deployment.deploymentId,
@@ -308,64 +293,63 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     );
   };
 
-  private createFilters = () => {
-    return (
-      <FilterBar filter={this.filter}>
-        <KeywordFilterBarItem filterItemKey="keywordFilter" />
+  private onDashboardFiltered = (filterData: Filter) => {
+    // this.setState({ filter: filterData });
+    this.filter = filterData;
+    this.updateFilteredDeployments();
+  };
 
-        <DropdownFilterBarItem
-          filterItemKey="serviceFilter"
-          filter={this.filter}
-          items={this.getListOfServices().map(i => {
-            return {
-              iconProps: { iconName: "Home" },
-              id: i,
-              text: i
-            };
-          })}
-          selection={this.selectionServiceList}
-          placeholder="Service"
-          noItemsText="No services found"
-        />
+  private updateFilteredDeployments = () => {
+    this.setState({ filteredDeployments: this.state.deployments });
+    if (this.filter) {
+      let filteredDeployments: Deployment[] = this.state.deployments;
+      const keywordFilter: string | undefined = this.filter.getFilterItemValue(
+        "keywordFilter"
+      );
+      if (keywordFilter && keywordFilter.length > 0) {
+        filteredDeployments = filteredDeployments.filter(deployment => {
+          JSON.stringify(deployment).includes(keywordFilter);
+        });
+      }
 
-        <DropdownFilterBarItem
-          filterItemKey="authorFilter"
-          filter={this.filter}
-          items={this.getListOfAuthors().map(i => {
-            return {
-              iconProps: { iconName: "Contact" },
-              id: i,
-              text: i
-            };
-          })}
-          selection={this.selectionAuthorList}
-          placeholder="Author"
-          noItemsText="No authors found"
-        />
+      const serviceFilters: Set<string> = new Set(
+        this.filter.getFilterItemValue("serviceFilter")
+      );
+      const authorFilters: Set<string> = new Set(
+        this.filter.getFilterItemValue("authorFilter")
+      );
+      const envFilters: Set<string> = new Set(
+        this.filter.getFilterItemValue("envFilter")
+      );
 
-        <DropdownFilterBarItem
-          filterItemKey="envFilter"
-          filter={this.filter}
-          items={this.getListOfEnvironments().map(i => {
-            return {
-              iconProps: { iconName: "Globe" },
-              id: i,
-              text: i
-            };
-          })}
-          selection={this.selectionEnvList}
-          placeholder="Environment"
-          noItemsText="No environments found"
-        />
-      </FilterBar>
-    );
+      if (serviceFilters.size > 0) {
+        filteredDeployments = filteredDeployments.filter(deployment => {
+          return serviceFilters.has(deployment.service);
+        });
+      }
+      if (authorFilters.size > 0) {
+        filteredDeployments = filteredDeployments.filter(deployment => {
+          if (deployment.author) {
+            return authorFilters.has(deployment.author!.name);
+          }
+          return false;
+        });
+      }
+      if (envFilters.size > 0) {
+        filteredDeployments = filteredDeployments.filter(deployment => {
+          return envFilters.has(deployment.environment);
+        });
+      }
+
+      this.setState({ filteredDeployments });
+    }
   };
 
   private getListOfEnvironments = (): string[] => {
     const envs: { [id: string]: boolean } = {};
     this.state.deployments.forEach((deployment: Deployment) => {
       if (deployment.environment !== "" && !(deployment.environment in envs)) {
-        envs[deployment.environment.toUpperCase()] = true;
+        envs[deployment.environment] = true;
       }
     });
     return Array.from(Object.keys(envs));
@@ -381,9 +365,9 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     return Array.from(Object.keys(services));
   };
 
-  private getListOfAuthors = (): string[] => {
-    return Array.from(Object.values(this.state.authors)).map(
-      author => author.name
+  private getListOfAuthors = (): Set<string> => {
+    return new Set(
+      Array.from(Object.values(this.state.authors)).map(author => author.name)
     );
   };
 
@@ -747,6 +731,9 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       deployment.srcToDockerBuild &&
       deployment.srcToDockerBuild.sourceVersion in this.state.authors
     ) {
+      deployment.author = this.state.authors[
+        deployment.srcToDockerBuild.sourceVersion
+      ];
       return this.state.authors[deployment.srcToDockerBuild.sourceVersion];
     }
     return undefined;
