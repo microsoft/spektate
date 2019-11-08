@@ -26,3 +26,7 @@ body {
 .PrototypeTable {
   overflow: scroll;
 }
+
+.FilterBar {
+  margin-top: -8px;
+}

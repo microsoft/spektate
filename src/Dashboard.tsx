@@ -308,7 +308,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       );
       if (keywordFilter && keywordFilter.length > 0) {
         filteredDeployments = filteredDeployments.filter(deployment => {
-          JSON.stringify(deployment).includes(keywordFilter);
+          return JSON.stringify(deployment).includes(keywordFilter);
         });
       }
 

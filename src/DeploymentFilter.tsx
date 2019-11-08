@@ -8,6 +8,7 @@ import {
   FILTER_CHANGE_EVENT /* FilterOperatorType */
 } from "azure-devops-ui/Utilities/Filter";
 import * as React from "react";
+import "./css/dashboard.css";
 
 export interface IDeploymentFilterProps {
   listOfServices: string[];
@@ -42,54 +43,55 @@ export class DeploymentFilter extends React.Component<
 
   private createFilters = () => {
     return (
-      <FilterBar filter={this.filter}>
-        <KeywordFilterBarItem filterItemKey="keywordFilter" />
+      <div className="FilterBar">
+        <FilterBar filter={this.filter}>
+          <KeywordFilterBarItem filterItemKey="keywordFilter" />
+          <DropdownFilterBarItem
+            filterItemKey="serviceFilter"
+            filter={this.filter}
+            items={this.props.listOfServices.map(i => {
+              return {
+                iconProps: { iconName: "Home" },
+                id: i,
+                text: i
+              };
+            })}
+            selection={this.selectionServiceList}
+            placeholder="Service"
+            noItemsText="No services found"
+          />
 
-        <DropdownFilterBarItem
-          filterItemKey="serviceFilter"
-          filter={this.filter}
-          items={this.props.listOfServices.map(i => {
-            return {
-              iconProps: { iconName: "Home" },
-              id: i,
-              text: i
-            };
-          })}
-          selection={this.selectionServiceList}
-          placeholder="Service"
-          noItemsText="No services found"
-        />
+          <DropdownFilterBarItem
+            filterItemKey="authorFilter"
+            filter={this.filter}
+            items={Array.from(this.props.listOfAuthors).map(i => {
+              return {
+                iconProps: { iconName: "Contact" },
+                id: i,
+                text: i
+              };
+            })}
+            selection={this.selectionAuthorList}
+            placeholder="Author"
+            noItemsText="No authors found"
+          />
 
-        <DropdownFilterBarItem
-          filterItemKey="authorFilter"
-          filter={this.filter}
-          items={Array.from(this.props.listOfAuthors).map(i => {
-            return {
-              iconProps: { iconName: "Contact" },
-              id: i,
-              text: i
-            };
-          })}
-          selection={this.selectionAuthorList}
-          placeholder="Author"
-          noItemsText="No authors found"
-        />
-
-        <DropdownFilterBarItem
-          filterItemKey="envFilter"
-          filter={this.filter}
-          items={this.props.listOfEnvironments.map(i => {
-            return {
-              iconProps: { iconName: "Globe" },
-              id: i,
-              text: i.toUpperCase()
-            };
-          })}
-          selection={this.selectionEnvList}
-          placeholder="Environment"
-          noItemsText="No environments found"
-        />
-      </FilterBar>
+          <DropdownFilterBarItem
+            filterItemKey="envFilter"
+            filter={this.filter}
+            items={this.props.listOfEnvironments.map(i => {
+              return {
+                iconProps: { iconName: "Globe" },
+                id: i,
+                text: i.toUpperCase()
+              };
+            })}
+            selection={this.selectionEnvList}
+            placeholder="Environment"
+            noItemsText="No environments found"
+          />
+        </FilterBar>
+      </div>
     );
   };
 }
