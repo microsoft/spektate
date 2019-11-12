@@ -369,7 +369,10 @@ class Deployment {
     if (this.srcToDockerBuild && this.srcToDockerBuild.repository) {
       this.srcToDockerBuild.repository
         .getAuthor(this.srcToDockerBuild.sourceVersion)
-        .then(callback);
+        .then((author: IAuthor | undefined) => {
+          this.author = author;
+          callback(author);
+        });
     }
   }
 }

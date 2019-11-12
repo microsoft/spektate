@@ -12,6 +12,7 @@ import {
   TwoLineTableCell
 } from "azure-devops-ui/Table";
 import { Tooltip } from "azure-devops-ui/TooltipEx";
+import { Filter } from "azure-devops-ui/Utilities/Filter";
 import { ArrayItemProvider } from "azure-devops-ui/Utilities/Provider";
 import * as React from "react";
 import Deployment from "spektate/lib/Deployment";
@@ -27,15 +28,19 @@ import {
   IDeploymentField,
   IStatusIndicatorData
 } from "./Dashboard.types";
+import { DeploymentFilter } from "./DeploymentFilter";
 
 const REFRESH_INTERVAL = 30000;
 class Dashboard<Props> extends React.Component<Props, IDashboardState> {
   private interval: NodeJS.Timeout;
+  private filter?: Filter;
+
   constructor(props: Props) {
     super(props);
     this.state = {
       authors: {},
-      deployments: []
+      deployments: [],
+      filteredDeployments: []
     };
   }
 
@@ -54,6 +59,12 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         <header className="App-header">
           <h1 className="App-title">Spektate</h1>
         </header>
+        <DeploymentFilter
+          onFiltered={this.onDashboardFiltered}
+          listOfAuthors={this.getListOfAuthors()}
+          listOfEnvironments={this.getListOfEnvironments()}
+          listOfServices={this.getListOfServices()}
+        />
         {this.renderPrototypeTable()}
       </div>
     );
@@ -123,9 +134,9 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       undefined
     ).then((deployments: Deployment[]) => {
       this.setState({ deployments });
+      this.updateFilteredDeployments();
       this.getAuthors();
     });
-    return <div />;
   };
 
   private renderPrototypeTable = () => {
@@ -194,7 +205,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     ];
     let rows: IDeploymentField[] = [];
     try {
-      rows = this.state.deployments.map(deployment => {
+      rows = this.state.filteredDeployments.map(deployment => {
         const author = this.getAuthor(deployment);
         return {
           deploymentId: deployment.deploymentId,
@@ -279,6 +290,84 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
           showLines={true}
         />
       </div>
+    );
+  };
+
+  private onDashboardFiltered = (filterData: Filter) => {
+    // this.setState({ filter: filterData });
+    this.filter = filterData;
+    this.updateFilteredDeployments();
+  };
+
+  private updateFilteredDeployments = () => {
+    this.setState({ filteredDeployments: this.state.deployments });
+    if (this.filter) {
+      let filteredDeployments: Deployment[] = this.state.deployments;
+      const keywordFilter: string | undefined = this.filter.getFilterItemValue(
+        "keywordFilter"
+      );
+      if (keywordFilter && keywordFilter.length > 0) {
+        filteredDeployments = filteredDeployments.filter(deployment => {
+          return JSON.stringify(deployment).includes(keywordFilter);
+        });
+      }
+
+      const serviceFilters: Set<string> = new Set(
+        this.filter.getFilterItemValue("serviceFilter")
+      );
+      const authorFilters: Set<string> = new Set(
+        this.filter.getFilterItemValue("authorFilter")
+      );
+      const envFilters: Set<string> = new Set(
+        this.filter.getFilterItemValue("envFilter")
+      );
+
+      if (serviceFilters.size > 0) {
+        filteredDeployments = filteredDeployments.filter(deployment => {
+          return serviceFilters.has(deployment.service);
+        });
+      }
+      if (authorFilters.size > 0) {
+        filteredDeployments = filteredDeployments.filter(deployment => {
+          if (deployment.author) {
+            return authorFilters.has(deployment.author!.name);
+          }
+          return false;
+        });
+      }
+      if (envFilters.size > 0) {
+        filteredDeployments = filteredDeployments.filter(deployment => {
+          return envFilters.has(deployment.environment);
+        });
+      }
+
+      this.setState({ filteredDeployments });
+    }
+  };
+
+  private getListOfEnvironments = (): string[] => {
+    const envs: { [id: string]: boolean } = {};
+    this.state.deployments.forEach((deployment: Deployment) => {
+      if (deployment.environment !== "" && !(deployment.environment in envs)) {
+        envs[deployment.environment] = true;
+      }
+    });
+    return Array.from(Object.keys(envs));
+  };
+
+  private getListOfServices = (): string[] => {
+    const services: { [id: string]: boolean } = {};
+    this.state.deployments.forEach((deployment: Deployment) => {
+      if (deployment.service !== "" && !(deployment.service in services)) {
+        services[deployment.service] = true;
+      }
+    });
+    return Array.from(Object.keys(services));
+  };
+
+  private getListOfAuthors = (): Set<string> => {
+    return new Set(
+      Array.from(Object.values(this.state.authors)).map(author => author.name)
     );
   };
 
@@ -642,6 +731,9 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       deployment.srcToDockerBuild &&
       deployment.srcToDockerBuild.sourceVersion in this.state.authors
     ) {
+      deployment.author = this.state.authors[
+        deployment.srcToDockerBuild.sourceVersion
+      ];
       return this.state.authors[deployment.srcToDockerBuild.sourceVersion];
     }
     return undefined;
