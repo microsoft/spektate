@@ -6,10 +6,11 @@
   "types": "lib/src/index.d.ts",
   "scripts": {
     "build": "shx rm -rf lib && tsc -p . && webpack",
-    "test": "echo \"Error: no test specified\" && exit 1",
     "change": "beachball change",
     "check": "beachball check",
-    "publish": "beachball publish"
+    "publish": "beachball publish",
+    "test": "jest --coverage --coverageReporters=cobertura --coverageReporters=html --detectOpenHandles",
+    "test-watch": "jest --watchAll"
   },
   "repository": {
     "type": "git",
@@ -21,9 +22,14 @@
   },
   "homepage": "https://github.com/microsoft/spektate#readme",
   "devDependencies": {
+    "@types/jest": "^24.0.18",
+    "@types/jest-when": "^2.7.0",
     "@types/node": "^12.7.4",
     "beachball": "^1.13.1",
+    "jest": "^24.9.0",
+    "jest-when": "^2.7.0",
     "shx": "^0.3.2",
+    "ts-jest": "^24.0.2",
     "ts-loader": "^6.0.4",
     "typescript": "^3.6.2",
     "webpack": "^4.39.3",

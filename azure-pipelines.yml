@@ -34,3 +34,10 @@ steps:
       Dockerfile: "**/Dockerfile"
       tags: "spektate-$(Build.SourceBranchName)-$(Build.BuildId)"
     condition: ne(variables['Build.Reason'], 'PullRequest')
+
+  - script: |
+      cd packages/spektate
+      npm install 
+      npm run build
+      npm run test
+    displayName: "npm package build and test"

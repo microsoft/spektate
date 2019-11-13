@@ -5,7 +5,7 @@ import { IPipelineStages } from "./pipeline/PipelineStage";
 import { IRelease } from "./pipeline/Release";
 import { IAuthor } from "./repository/Author";
 
-class Deployment {
+export class Deployment {
   public static async getDeploymentsBasedOnFilters(
     storageAccount: string,
     storageAccountKey: string,
@@ -74,7 +74,6 @@ class Deployment {
     let nextContinuationToken: azure.TableService.TableContinuationToken = <
       any
     >null;
-    const deployments: Deployment[] = [];
 
     if (!query) {
       query = new azure.TableQuery().where(
@@ -89,51 +88,13 @@ class Deployment {
         nextContinuationToken,
         (error: any, result: any) => {
           if (!error) {
-            const srcBuildIds: Set<string> = new Set<string>();
-            const manifestBuildIds: Set<string> = new Set<string>();
-            const releaseIds: Set<string> = new Set<string>();
-
-            for (const entry of result.entries) {
-              if (entry.p1) {
-                srcBuildIds.add(entry.p1._);
-              }
-              if (entry.p3) {
-                manifestBuildIds.add(entry.p3._);
-              }
-              if (entry.p2 && (!entry.p1 || entry.p1._ !== entry.p2._)) {
-                // Assumption: build pipelines are multi stage if the ids of p1 and p2 are the same
-                releaseIds.add(entry.p2._);
-              }
-            }
-
-            const p1 = srcPipeline.getListOfBuilds(srcBuildIds);
-            const p2 = hldPipeline.getListOfReleases(releaseIds);
-            const p3 = manifestPipeline.getListOfBuilds(manifestBuildIds);
-
-            // Wait for all three pipelines to load their respective builds before we instantiate deployments
-            Promise.all([p1, p2, p3])
-              .then(async () => {
-                for (const entry of result.entries) {
-                  const dep = await Deployment.getDeploymentFromDBEntry(
-                    entry,
-                    srcPipeline,
-                    hldPipeline,
-                    manifestPipeline
-                  );
-                  if (
-                    dep.srcToDockerBuild ||
-                    dep.dockerToHldRelease ||
-                    dep.hldToManifestBuild
-                  ) {
-                    deployments.push(dep);
-                  }
-                }
-                deployments.sort(Deployment.compare);
-                resolve(deployments);
-              })
-              .catch(_ => {
-                resolve([]);
-              });
+            Deployment.parseDeploymentsFromDB(
+              result,
+              srcPipeline,
+              hldPipeline,
+              manifestPipeline,
+              resolve
+            );
           }
         }
       );
@@ -151,6 +112,64 @@ class Deployment {
     }
     return -1;
   }
+
+  public static parseDeploymentsFromDB = (
+    result: any,
+    srcPipeline: IPipeline,
+    hldPipeline: IPipeline,
+    manifestPipeline: IPipeline,
+    resolve: (
+      value?: Deployment[] | PromiseLike<Deployment[]> | undefined
+    ) => void
+  ) => {
+    const deployments: Deployment[] = [];
+    const srcBuildIds: Set<string> = new Set<string>();
+    const manifestBuildIds: Set<string> = new Set<string>();
+    const releaseIds: Set<string> = new Set<string>();
+
+    for (const entry of result.entries) {
+      if (entry.p1) {
+        srcBuildIds.add(entry.p1._);
+      }
+      if (entry.p3) {
+        manifestBuildIds.add(entry.p3._);
+      }
+      if (entry.p2 && (!entry.p1 || entry.p1._ !== entry.p2._)) {
+        // Assumption: build pipelines are multi stage if the ids of p1 and p2 are the same
+        releaseIds.add(entry.p2._);
+      }
+    }
+
+    const p1 = srcPipeline.getListOfBuilds(srcBuildIds);
+    const p2 = hldPipeline.getListOfReleases(releaseIds);
+    const p3 = manifestPipeline.getListOfBuilds(manifestBuildIds);
+
+    // Wait for all three pipelines to load their respective builds before we instantiate deployments
+    Promise.all([p1, p2, p3])
+      .then(async () => {
+        for (const entry of result.entries) {
+          const dep = await Deployment.getDeploymentFromDBEntry(
+            entry,
+            srcPipeline,
+            hldPipeline,
+            manifestPipeline
+          );
+          if (
+            dep.srcToDockerBuild ||
+            dep.dockerToHldRelease ||
+            dep.hldToManifestBuild
+          ) {
+            deployments.push(dep);
+          }
+        }
+        deployments.sort(Deployment.compare);
+        resolve(deployments);
+      })
+      .catch(err => {
+        console.error(err);
+        resolve([]);
+      });
+  };
 
   // TODO: Look into cleaning up the parsing code below (avoid parsing underscores).
   private static getDeploymentFromDBEntry = async (

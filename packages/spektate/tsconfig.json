@@ -8,5 +8,8 @@
     "strict": true,
     "esModuleInterop": true
   },
+  "typeAcquisition": {
+    "include": ["jest"]
+  },
   "exclude": ["**/*.test.ts", "node_modules", "lib"]
 }
