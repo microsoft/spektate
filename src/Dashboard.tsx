@@ -209,7 +209,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         const author = this.getAuthor(deployment);
         return {
           deploymentId: deployment.deploymentId,
-          service: deployment.service,
+          service: deployment.service !== "" ? deployment.service : "-",
           startTime: deployment.srcToDockerBuild
             ? deployment.srcToDockerBuild.startTime
             : new Date(),
@@ -218,7 +218,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
           srcCommitId: deployment.commitId,
           srcBranchName: deployment.srcToDockerBuild
             ? deployment.srcToDockerBuild.sourceBranch
-            : "",
+            : "-",
           srcCommitURL: deployment.srcToDockerBuild
             ? deployment.srcToDockerBuild.sourceVersionURL
             : "",
@@ -241,13 +241,17 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
             : deployment.dockerToHldReleaseStage
             ? deployment.dockerToHldReleaseStage.URL
             : "",
-          environment: deployment.environment.toUpperCase(),
+          environment:
+            deployment.environment !== ""
+              ? deployment.environment.toUpperCase()
+              : "-",
           dockerPipelineResult: deployment.dockerToHldRelease
             ? deployment.dockerToHldRelease.status
             : deployment.dockerToHldReleaseStage
             ? deployment.dockerToHldReleaseStage.result
             : "",
-          hldCommitId: deployment.hldCommitId,
+          hldCommitId:
+            deployment.hldCommitId !== "" ? deployment.hldCommitId : "-",
           hldCommitURL: deployment.hldToManifestBuild
             ? deployment.hldToManifestBuild.sourceVersionURL
             : "",
@@ -261,7 +265,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
             ? deployment.hldToManifestBuild.URL
             : "",
           duration: deployment.duration() + " mins",
-          authorName: author ? author.name : "",
+          authorName: author ? author.name : "-",
           authorURL: author ? author.url : "",
           status: deployment.status(),
           clusterSync:
@@ -561,7 +565,9 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
   ): JSX.Element => {
     if (!pipelineId || !pipelineURL || !commitId) {
       return (
-        <SimpleTableCell key={"col-" + columnIndex} columnIndex={columnIndex} />
+        <SimpleTableCell key={"col-" + columnIndex} columnIndex={columnIndex}>
+          -
+        </SimpleTableCell>
       );
     }
     const commitCell = this.WithIcon({

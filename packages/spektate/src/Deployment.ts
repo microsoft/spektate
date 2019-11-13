@@ -340,6 +340,11 @@ class Deployment {
 
   public status(): string {
     if (
+      this.hldToManifestBuild &&
+      this.hldToManifestBuild.status === "completed"
+    ) {
+      return "Complete";
+    } else if (
       (this.srcToDockerBuild &&
         this.srcToDockerBuild.status === "inProgress") ||
       (this.dockerToHldRelease &&
@@ -350,17 +355,6 @@ class Deployment {
         this.hldToManifestBuild.status === "inProgress")
     ) {
       return "In Progress";
-    } else if (
-      this.srcToDockerBuild &&
-      this.srcToDockerBuild.status === "completed" &&
-      ((this.dockerToHldRelease &&
-        this.dockerToHldRelease.status === "succeeded") ||
-        (this.dockerToHldReleaseStage &&
-          this.dockerToHldReleaseStage.status === "completed")) &&
-      (this.hldToManifestBuild &&
-        this.hldToManifestBuild.status === "completed")
-    ) {
-      return "Complete";
     }
     return "Incomplete";
   }
