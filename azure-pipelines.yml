@@ -41,3 +41,10 @@ steps:
       npm run build
       npm run test
     displayName: "npm package build and test"
+
+  - task: PublishCodeCoverageResults@1
+    inputs:
+      codeCoverageTool: Cobertura
+      summaryFileLocation: "$(System.DefaultWorkingDirectory)/**/*coverage.xml"
+      reportDirectory: "$(System.DefaultWorkingDirectory)/**/coverage"
+    condition: and(eq(variables['Agent.JobStatus'], 'Succeeded'), endsWith(variables['Agent.JobName'], 'node_12_x'))
