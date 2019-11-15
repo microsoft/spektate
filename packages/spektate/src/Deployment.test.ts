@@ -6,7 +6,7 @@ import IPipeline, { IBuilds, IReleases } from "./pipeline/Pipeline";
 import { IAuthor } from "./repository/Author";
 
 const mockDirectory = "src/mocks/";
-let deployments: Deployment[];
+let rawDeployments: Deployment[];
 let query: azure.TableQuery | undefined;
 
 // Declare these with a test name since response is mocked
@@ -36,12 +36,6 @@ jest
     }
   );
 
-jest
-  .spyOn(Deployment, "compare")
-  .mockImplementation((a: Deployment, b: Deployment): 1 | -1 => {
-    return 1;
-  });
-
 jest.spyOn(Deployment, "getDeployments").mockImplementation(
   (
     storageAccount: string,
@@ -55,13 +49,13 @@ jest.spyOn(Deployment, "getDeployments").mockImplementation(
   ): Promise<Deployment[]> => {
     query = query1;
     return new Promise(resolve => {
-      resolve(deployments);
+      resolve(rawDeployments);
     });
   }
 );
 
 beforeAll(() => {
-  deployments = JSON.parse(
+  rawDeployments = JSON.parse(
     fs.readFileSync(mockDirectory + "deployments.json", "utf-8")
   );
   srcPipeline.builds = JSON.parse(
@@ -73,13 +67,14 @@ beforeAll(() => {
   clusterPipeline.builds = JSON.parse(
     fs.readFileSync(mockDirectory + "hld-builds.json", "utf-8")
   );
+  updatePipelineDates();
 });
 
 describe("Deployment", () => {
   test("Deployments parsing is working as expected", () => {
     new Promise(resolve => {
       Deployment.parseDeploymentsFromDB(
-        deployments,
+        rawDeployments,
         srcPipeline,
         hldPipeline,
         clusterPipeline,
@@ -92,12 +87,17 @@ describe("Deployment", () => {
       deps.forEach(dep => {
         if (dep.deploymentId === "179c843496bd") {
           expect(dep.status()).toBe("Complete");
-          expect(dep.endTime()).toBe("2019-10-31T18:15:53.767Z");
-          expect(dep.duration()).toBeDefined();
+          expect(dep.endTime().getTime()).toBe(
+            new Date("2019-10-31T18:15:53.767Z").getTime()
+          );
+          expect(dep.duration()).toBe("9.24");
           verified = true;
         }
       });
       expect(verified).toBeTruthy();
+
+      deps.sort(Deployment.compare);
+      expect(deps).toHaveLength(62);
     });
   });
 });
@@ -140,3 +140,61 @@ describe("Deployment", () => {
     expect(queryString.includes("RowKey eq 'depid'")).toBeTruthy();
   });
 });
+
+// Since pipelines are coming from mock json, they need to be converted to date formats
+const updatePipelineDates = () => {
+  for (const build in srcPipeline.builds) {
+    if (build) {
+      srcPipeline.builds[build].finishTime = new Date(
+        srcPipeline.builds[build].finishTime
+      );
+      srcPipeline.builds[build].startTime = new Date(
+        srcPipeline.builds[build].startTime
+      );
+      srcPipeline.builds[build].queueTime = new Date(
+        srcPipeline.builds[build].queueTime
+      );
+      if (srcPipeline.builds[build].lastUpdateTime) {
+        srcPipeline.builds[build].lastUpdateTime = new Date(
+          srcPipeline.builds[build].lastUpdateTime!
+        );
+      }
+    }
+  }
+  for (const build in hldPipeline.releases) {
+    if (build) {
+      hldPipeline.releases[build].finishTime = new Date(
+        hldPipeline.releases[build].finishTime
+      );
+      hldPipeline.releases[build].startTime = new Date(
+        hldPipeline.releases[build].startTime
+      );
+      hldPipeline.releases[build].queueTime = new Date(
+        hldPipeline.releases[build].queueTime
+      );
+      if (hldPipeline.releases[build].lastUpdateTime) {
+        hldPipeline.releases[build].lastUpdateTime = new Date(
+          hldPipeline.releases[build].lastUpdateTime!
+        );
+      }
+    }
+  }
+  for (const build in clusterPipeline.builds) {
+    if (build) {
+      clusterPipeline.builds[build].finishTime = new Date(
+        clusterPipeline.builds[build].finishTime
+      );
+      clusterPipeline.builds[build].startTime = new Date(
+        clusterPipeline.builds[build].startTime
+      );
+      clusterPipeline.builds[build].queueTime = new Date(
+        clusterPipeline.builds[build].queueTime
+      );
+      if (clusterPipeline.builds[build].lastUpdateTime) {
+        clusterPipeline.builds[build].lastUpdateTime = new Date(
+          clusterPipeline.builds[build].lastUpdateTime!
+        );
+      }
+    }
+  }
+};

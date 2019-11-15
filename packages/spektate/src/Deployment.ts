@@ -104,7 +104,6 @@ export class Deployment {
   public static compare(a: Deployment, b: Deployment) {
     let aInt = 0;
     let bInt = 0;
-
     aInt = a.endTime().getTime();
     bInt = b.endTime().getTime();
     if (aInt < bInt) {
@@ -339,19 +338,29 @@ export class Deployment {
   }
 
   public endTime = (): Date => {
-    if (this.hldToManifestBuild && this.hldToManifestBuild.lastUpdateTime) {
+    if (
+      this.hldToManifestBuild &&
+      this.hldToManifestBuild.lastUpdateTime &&
+      !isNaN(this.hldToManifestBuild.lastUpdateTime.getTime())
+    ) {
       return this.hldToManifestBuild.lastUpdateTime;
     } else if (
       this.dockerToHldRelease &&
-      this.dockerToHldRelease.lastUpdateTime
+      this.dockerToHldRelease.lastUpdateTime &&
+      !isNaN(this.dockerToHldRelease.lastUpdateTime.getTime())
     ) {
       return this.dockerToHldRelease.lastUpdateTime;
     } else if (
       this.dockerToHldReleaseStage &&
-      this.dockerToHldReleaseStage.lastUpdateTime
+      this.dockerToHldReleaseStage.lastUpdateTime &&
+      !isNaN(this.dockerToHldReleaseStage.lastUpdateTime.getTime())
     ) {
       return this.dockerToHldReleaseStage.lastUpdateTime;
-    } else if (this.srcToDockerBuild && this.srcToDockerBuild.lastUpdateTime) {
+    } else if (
+      this.srcToDockerBuild &&
+      this.srcToDockerBuild.lastUpdateTime &&
+      !isNaN(this.srcToDockerBuild.lastUpdateTime.getTime())
+    ) {
       return this.srcToDockerBuild.lastUpdateTime;
     }
     return new Date(Date.now());
