@@ -9,7 +9,7 @@
     "change": "beachball change",
     "check": "beachball check",
     "publish": "beachball publish",
-    "test": "jest --coverage --coverageReporters=cobertura --coverageReporters=html --detectOpenHandles",
+    "test": "jest --coverage --coverageReporters=cobertura --coverageReporters=html",
     "test-watch": "jest --watchAll"
   },
   "repository": {
