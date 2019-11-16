@@ -1,0 +1,15 @@
+{
+  "name": "flux-sync",
+  "objectId": "0396d996eda4b2528dbda88dd8ab9c0bb6c27674",
+  "taggedObject": {
+    "objectId": "ab4c9f1ccb67a82256763e32fba1e70c897bd82a",
+    "objectType": "commit"
+  },
+  "taggedBy": {
+    "name": "Weave Flux",
+    "email": "support@weave.works",
+    "date": "2019-10-31T19:17:58"
+  },
+  "message": "Sync pointer\n",
+  "url": "https://dev.azure.com/epicstuff/e7236bd9-a6f9-4554-8dce-ad81ae94faf6/_apis/git/repositories/a4bba4cf-76d3-4aee-b456-e0953db8e8d3/annotatedTags/0396d996eda4b2528dbda88dd8ab9c0bb6c27674"
+}
