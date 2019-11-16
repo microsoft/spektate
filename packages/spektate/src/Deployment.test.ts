@@ -98,6 +98,10 @@ describe("Deployment", () => {
 
       deps.sort(Deployment.compare);
       expect(deps).toHaveLength(62);
+      expect(
+        deps[61].endTime().getTime() < deps[0].endTime().getTime()
+      ).toBeTruthy();
+      expect(deps[1].endTime().getTime() < deps[0].endTime().getTime());
     });
   });
 });
