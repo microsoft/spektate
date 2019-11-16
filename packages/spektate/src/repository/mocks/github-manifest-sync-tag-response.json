@@ -1,0 +1,23 @@
+{
+  "node_id": "MDM6VGFnMTkzODU0MjIzOjFiMTQ2ZDk5NzAwODM0YTNjMTdiNDdmMjBlMmE5ZGIzMTdiYjAwMzI=",
+  "sha": "1b146d99700834a3c17b47f20e2a9db317bb0032",
+  "url": "https://api.github.com/repos/samiyaakhtar/hello-bedrock-manifest/git/tags/1b146d99700834a3c17b47f20e2a9db317bb0032",
+  "tagger": {
+    "name": "Weave Flux",
+    "email": "support@weave.works",
+    "date": "2019-10-31T18:14:51Z"
+  },
+  "object": {
+    "sha": "096c95228c786715b14b0269a722a3de887c01bd",
+    "type": "commit",
+    "url": "https://api.github.com/repos/samiyaakhtar/hello-bedrock-manifest/git/commits/096c95228c786715b14b0269a722a3de887c01bd"
+  },
+  "tag": "flux-sync",
+  "message": "Sync pointer\n",
+  "verification": {
+    "verified": false,
+    "reason": "unsigned",
+    "signature": null,
+    "payload": null
+  }
+}
