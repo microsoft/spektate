@@ -51,9 +51,6 @@ describe("AzureDevOpsRepo", () => {
   test("gets manifest sync tag correctly", () => {
     repo.getManifestSyncState().then((tag: ITag) => {
       expect(tag.commit).toBe("ab4c9f1");
-      expect(tag.date.getTime()).toBe(
-        new Date("2019-10-31T23:17:58.000Z").getTime()
-      );
     });
   });
 });

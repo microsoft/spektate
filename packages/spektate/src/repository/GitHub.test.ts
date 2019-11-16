@@ -51,9 +51,6 @@ describe("GitHub", () => {
   test("gets manifest sync tag correctly", () => {
     repo.getManifestSyncState().then((tag: ITag) => {
       expect(tag.commit).toBe("096c952");
-      expect(tag.date.getTime()).toBe(
-        new Date("2019-10-31T18:14:51.000Z").getTime()
-      );
       expect(tag.tagger).toBeDefined();
       expect(tag.tagger).toBe("Weave Flux");
     });
