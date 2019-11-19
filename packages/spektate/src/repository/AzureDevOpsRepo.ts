@@ -28,42 +28,46 @@ export class AzureDevOpsRepo implements IRepository {
     this.repo = repo;
     this.accessToken = accessToken;
   }
-  public async getManifestSyncState() {
-    const data = await HttpHelper.httpGet<any>(
-      manifestSyncTagsURL
-        .replace("{organization}", this.org)
-        .replace("{project}", this.project)
-        .replace("{repositoryId}", this.repo),
-      this.accessToken
-    );
+  public async getManifestSyncState(): Promise<ITag> {
+    return new Promise(async (resolve, reject) => {
+      const data = await HttpHelper.httpGet<any>(
+        manifestSyncTagsURL
+          .replace("{organization}", this.org)
+          .replace("{project}", this.project)
+          .replace("{repositoryId}", this.repo),
+        this.accessToken
+      );
 
-    const tags = data.data.value;
-    if (tags != null && tags.length > 0) {
-      for (const tag of tags) {
-        if (tag.name === "refs/tags/flux-sync") {
-          const objectId = tag.objectId;
-          const syncStatus = await HttpHelper.httpGet<any>(
-            manifestSyncTagURL
-              .replace("{organization}", this.org)
-              .replace("{project}", this.project)
-              .replace("{repositoryId}", this.repo)
-              .replace("{objectId}", objectId),
-            this.accessToken
-          );
+      const tags = data.data.value;
+      if (tags != null && tags.length > 0) {
+        for (const tag of tags) {
+          if (tag.name === "refs/tags/flux-sync") {
+            const syncStatus = await HttpHelper.httpGet<any>(
+              manifestSyncTagURL
+                .replace("{organization}", this.org)
+                .replace("{project}", this.project)
+                .replace("{repositoryId}", this.repo)
+                .replace("{objectId}", tag.objectId),
+              this.accessToken
+            );
 
-          if (syncStatus != null) {
-            this.manifestSync = {
-              commit: syncStatus.data.taggedObject.objectId.substring(0, 7),
-              date: new Date()
-            };
-            return this.manifestSync;
+            if (syncStatus != null) {
+              this.manifestSync = {
+                commit: syncStatus.data.taggedObject.objectId.substring(0, 7),
+                date: new Date(syncStatus.data.taggedBy.date),
+                tagger: syncStatus.data.taggedBy.name
+              };
+              resolve(this.manifestSync);
+              return;
+            }
           }
         }
       }
-    }
-    throw new Error(
-      `Unable to to find flux-sync tag from ${this.org}-${this.project}-${this.repo}`
-    );
+      console.error(
+        `Unable to to find flux-sync tag from ${this.org}-${this.project}-${this.repo}`
+      );
+      reject();
+    });
   }
 
   public async getAuthor(commitId: string) {

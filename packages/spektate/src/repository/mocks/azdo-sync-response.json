@@ -1,0 +1,23 @@
+{
+  "value": [
+    {
+      "name": "refs/tags/flux-sync",
+      "objectId": "0396d996eda4b2528dbda88dd8ab9c0bb6c27674",
+      "creator": {
+        "displayName": "Samiya Akhtar",
+        "url": "https://spsprodcus1.vssps.visualstudio.com/A5ba215af-08b5-44cc-8587-9f8b80f7799a/_apis/Identities/e8900b94-217f-4a51-9d86-6bbf5d82b6fb",
+        "_links": {
+          "avatar": {
+            "href": "https://dev.azure.com/epicstuff/_apis/GraphProfile/MemberAvatars/aad.NDcwNGNkNGUtMjA0Yi03MDcxLWJiYWEtOTQzY2Y5ZmE1NTYz"
+          }
+        },
+        "id": "e8900b94-217f-4a51-9d86-6bbf5d82b6fb",
+        "uniqueName": "saakhta@microsoft.com",
+        "imageUrl": "https://dev.azure.com/epicstuff/_api/_common/identityImage?id=e8900b94-217f-4a51-9d86-6bbf5d82b6fb",
+        "descriptor": "aad.NDcwNGNkNGUtMjA0Yi03MDcxLWJiYWEtOTQzY2Y5ZmE1NTYz"
+      },
+      "url": "https://dev.azure.com/epicstuff/e7236bd9-a6f9-4554-8dce-ad81ae94faf6/_apis/git/repositories/a4bba4cf-76d3-4aee-b456-e0953db8e8d3/refs?filter=tags%2Fflux-sync"
+    }
+  ],
+  "count": 1
+}

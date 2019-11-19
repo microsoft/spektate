@@ -1,0 +1,51 @@
+{
+  "treeId": "41b9e31335ee0259c20c5404d5df57e6acd62ac0",
+  "commitId": "1bbcd91c3e6e08d0a61eb3bd70a1a2fe1c9987f4",
+  "author": {
+    "name": "Samiya Akhtar",
+    "email": "saakhta@microsoft.com",
+    "date": "2019-10-17T05:35:38Z",
+    "imageUrl": "https://dev.azure.com/epicstuff/_apis/GraphProfile/MemberAvatars/aad.NDcwNGNkNGUtMjA0Yi03MDcxLWJiYWEtOTQzY2Y5ZmE1NTYz"
+  },
+  "committer": {
+    "name": "Samiya Akhtar",
+    "email": "saakhta@microsoft.com",
+    "date": "2019-10-17T05:35:38Z",
+    "imageUrl": "https://dev.azure.com/epicstuff/_apis/GraphProfile/MemberAvatars/aad.NDcwNGNkNGUtMjA0Yi03MDcxLWJiYWEtOTQzY2Y5ZmE1NTYz"
+  },
+  "comment": "Updated azure-pipelines.yml",
+  "parents": ["dafdbd15067ac341dcf3f787797c7d761c28c7c4"],
+  "url": "https://dev.azure.com/epicstuff/e7236bd9-a6f9-4554-8dce-ad81ae94faf6/_apis/git/repositories/128dce21-1847-4fe3-9481-63f0c21b3c52/commits/1bbcd91c3e6e08d0a61eb3bd70a1a2fe1c9987f4",
+  "remoteUrl": "https://dev.azure.com/epicstuff/hellobedrockprivate/_git/hello-bedrock-azure-private/commit/1bbcd91c3e6e08d0a61eb3bd70a1a2fe1c9987f4",
+  "_links": {
+    "self": {
+      "href": "https://dev.azure.com/epicstuff/e7236bd9-a6f9-4554-8dce-ad81ae94faf6/_apis/git/repositories/128dce21-1847-4fe3-9481-63f0c21b3c52/commits/1bbcd91c3e6e08d0a61eb3bd70a1a2fe1c9987f4"
+    },
+    "repository": {
+      "href": "https://dev.azure.com/epicstuff/e7236bd9-a6f9-4554-8dce-ad81ae94faf6/_apis/git/repositories/128dce21-1847-4fe3-9481-63f0c21b3c52"
+    },
+    "web": {
+      "href": "https://dev.azure.com/epicstuff/hellobedrockprivate/_git/hello-bedrock-azure-private/commit/1bbcd91c3e6e08d0a61eb3bd70a1a2fe1c9987f4"
+    },
+    "changes": {
+      "href": "https://dev.azure.com/epicstuff/e7236bd9-a6f9-4554-8dce-ad81ae94faf6/_apis/git/repositories/128dce21-1847-4fe3-9481-63f0c21b3c52/commits/1bbcd91c3e6e08d0a61eb3bd70a1a2fe1c9987f4/changes"
+    }
+  },
+  "push": {
+    "pushedBy": {
+      "displayName": "Samiya Akhtar",
+      "url": "https://spsprodcus1.vssps.visualstudio.com/A5ba215af-08b5-44cc-8587-9f8b80f7799a/_apis/Identities/e8900b94-217f-4a51-9d86-6bbf5d82b6fb",
+      "_links": {
+        "avatar": {
+          "href": "https://dev.azure.com/epicstuff/_apis/GraphProfile/MemberAvatars/aad.NDcwNGNkNGUtMjA0Yi03MDcxLWJiYWEtOTQzY2Y5ZmE1NTYz"
+        }
+      },
+      "id": "e8900b94-217f-4a51-9d86-6bbf5d82b6fb",
+      "uniqueName": "saakhta@microsoft.com",
+      "imageUrl": "https://dev.azure.com/epicstuff/_api/_common/identityImage?id=e8900b94-217f-4a51-9d86-6bbf5d82b6fb",
+      "descriptor": "aad.NDcwNGNkNGUtMjA0Yi03MDcxLWJiYWEtOTQzY2Y5ZmE1NTYz"
+    },
+    "pushId": 1150,
+    "date": "2019-10-17T05:35:38.5605462Z"
+  }
+}

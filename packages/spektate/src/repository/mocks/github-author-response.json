@@ -1,0 +1,98 @@
+{
+  "sha": "f19cb81f889d8d29dd21d860df04967fdf5af567",
+  "node_id": "MDY6Q29tbWl0MjE2NjUyODgyOmYxOWNiODFmODg5ZDhkMjlkZDIxZDg2MGRmMDQ5NjdmZGY1YWY1Njc=",
+  "commit": {
+    "author": {
+      "name": "Edaena Salinas",
+      "email": "edaena@users.noreply.github.com",
+      "date": "2019-10-28T21:54:37Z"
+    },
+    "committer": {
+      "name": "Edaena Salinas",
+      "email": "edaena@users.noreply.github.com",
+      "date": "2019-10-28T21:54:37Z"
+    },
+    "message": "Update azure-pipelines.yml for Azure Pipelines",
+    "tree": {
+      "sha": "f4c0fc3a42efba4ba9eaf75a8e55a5d911650397",
+      "url": "https://api.github.com/repos/edaena/spartan-app/git/trees/f4c0fc3a42efba4ba9eaf75a8e55a5d911650397"
+    },
+    "url": "https://api.github.com/repos/edaena/spartan-app/git/commits/f19cb81f889d8d29dd21d860df04967fdf5af567",
+    "comment_count": 0,
+    "verification": {
+      "verified": false,
+      "reason": "unsigned",
+      "signature": null,
+      "payload": null
+    }
+  },
+  "url": "https://api.github.com/repos/edaena/spartan-app/commits/f19cb81f889d8d29dd21d860df04967fdf5af567",
+  "html_url": "https://github.com/edaena/spartan-app/commit/f19cb81f889d8d29dd21d860df04967fdf5af567",
+  "comments_url": "https://api.github.com/repos/edaena/spartan-app/commits/f19cb81f889d8d29dd21d860df04967fdf5af567/comments",
+  "author": {
+    "login": "edaena",
+    "id": 1280985,
+    "node_id": "MDQ6VXNlcjEyODA5ODU=",
+    "avatar_url": "https://avatars0.githubusercontent.com/u/1280985?v=4",
+    "gravatar_id": "",
+    "url": "https://api.github.com/users/edaena",
+    "html_url": "https://github.com/edaena",
+    "followers_url": "https://api.github.com/users/edaena/followers",
+    "following_url": "https://api.github.com/users/edaena/following{/other_user}",
+    "gists_url": "https://api.github.com/users/edaena/gists{/gist_id}",
+    "starred_url": "https://api.github.com/users/edaena/starred{/owner}{/repo}",
+    "subscriptions_url": "https://api.github.com/users/edaena/subscriptions",
+    "organizations_url": "https://api.github.com/users/edaena/orgs",
+    "repos_url": "https://api.github.com/users/edaena/repos",
+    "events_url": "https://api.github.com/users/edaena/events{/privacy}",
+    "received_events_url": "https://api.github.com/users/edaena/received_events",
+    "type": "User",
+    "site_admin": false
+  },
+  "committer": {
+    "login": "edaena",
+    "id": 1280985,
+    "node_id": "MDQ6VXNlcjEyODA5ODU=",
+    "avatar_url": "https://avatars0.githubusercontent.com/u/1280985?v=4",
+    "gravatar_id": "",
+    "url": "https://api.github.com/users/edaena",
+    "html_url": "https://github.com/edaena",
+    "followers_url": "https://api.github.com/users/edaena/followers",
+    "following_url": "https://api.github.com/users/edaena/following{/other_user}",
+    "gists_url": "https://api.github.com/users/edaena/gists{/gist_id}",
+    "starred_url": "https://api.github.com/users/edaena/starred{/owner}{/repo}",
+    "subscriptions_url": "https://api.github.com/users/edaena/subscriptions",
+    "organizations_url": "https://api.github.com/users/edaena/orgs",
+    "repos_url": "https://api.github.com/users/edaena/repos",
+    "events_url": "https://api.github.com/users/edaena/events{/privacy}",
+    "received_events_url": "https://api.github.com/users/edaena/received_events",
+    "type": "User",
+    "site_admin": false
+  },
+  "parents": [
+    {
+      "sha": "9001199dd921aa8d6b2c30fe196e0433e20a0e91",
+      "url": "https://api.github.com/repos/edaena/spartan-app/commits/9001199dd921aa8d6b2c30fe196e0433e20a0e91",
+      "html_url": "https://github.com/edaena/spartan-app/commit/9001199dd921aa8d6b2c30fe196e0433e20a0e91"
+    }
+  ],
+  "stats": {
+    "total": 2,
+    "additions": 1,
+    "deletions": 1
+  },
+  "files": [
+    {
+      "sha": "7a8efa0b4f343e92a523f1ecb57dcfbdac186e2f",
+      "filename": "azure-pipelines.yml",
+      "status": "modified",
+      "additions": 1,
+      "deletions": 1,
+      "changes": 2,
+      "blob_url": "https://github.com/edaena/spartan-app/blob/f19cb81f889d8d29dd21d860df04967fdf5af567/azure-pipelines.yml",
+      "raw_url": "https://github.com/edaena/spartan-app/raw/f19cb81f889d8d29dd21d860df04967fdf5af567/azure-pipelines.yml",
+      "contents_url": "https://api.github.com/repos/edaena/spartan-app/contents/azure-pipelines.yml?ref=f19cb81f889d8d29dd21d860df04967fdf5af567",
+      "patch": "@@ -100,7 +100,7 @@ stages:\n         echo \"latest_commit=$latest_commit\"\n \n         # Download update storage script\n-        curl https://raw.githubusercontent.com/samiyaakhtar/spk/686-simply-pipelines/scripts/update_introspection.sh > script.sh\n+        curl https://raw.githubusercontent.com/edaena/spk/master/scripts/update_introspection.sh > script.sh\n         chmod +x script.sh\n         ./script.sh $(ACCOUNT_NAME) $(ACCOUNT_KEY) $(TABLE_NAME) $(PARTITION_KEY) imageTag \"$(Build.Repository.Name):$(build.BuildNumber)\" p2 $(Build.BuildId) hldCommitId $latest_commit env \"DEV\" isMultiStage true\n       env:"
+    }
+  ]
+}
