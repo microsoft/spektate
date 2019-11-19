@@ -13,10 +13,30 @@ body {
   background-color: #222;
   padding: 20px;
   color: white;
+  position: relative;
 }
 
 .App-title {
   font-size: 1.5em;
+  display: inline-block;
+}
+
+.App-last-update {
+  float: right;
+  height: 100%;
+  position: absolute;
+  right: 20px;
+  font-size: 1em;
+  top: 0px;
+}
+
+.App-last-update > div {
+  height: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: sans-serif;
+  max-height: 100%;
 }
 
 .App-intro {

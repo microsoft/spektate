@@ -58,6 +58,9 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       <div className="App">
         <header className="App-header">
           <h1 className="App-title">Spektate</h1>
+          <div className="App-last-update">
+            <div>Last updated at {new Date().toLocaleTimeString()}</div>
+          </div>
         </header>
         <DeploymentFilter
           onFiltered={this.onDashboardFiltered}
