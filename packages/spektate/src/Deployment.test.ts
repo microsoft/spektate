@@ -94,13 +94,13 @@ describe("Deployment", () => {
           verified = true;
         }
       });
-      expect(verified).toBeTruthy();
+      expect(verified).toBe(true);
 
       deps.sort(Deployment.compare);
       expect(deps).toHaveLength(62);
-      expect(
-        deps[61].endTime().getTime() < deps[0].endTime().getTime()
-      ).toBeTruthy();
+      expect(deps[61].endTime().getTime() < deps[0].endTime().getTime()).toBe(
+        true
+      );
       expect(deps[1].endTime().getTime() < deps[0].endTime().getTime());
     });
   });
@@ -120,7 +120,7 @@ describe("Deployment", () => {
       ""
     );
     let queryString = JSON.stringify(query);
-    expect(queryString.includes("env eq 'dev'")).toBeTruthy();
+    expect(queryString.includes("env eq 'dev'")).toBe(true);
     Deployment.getDeploymentsBasedOnFilters(
       "",
       "",
@@ -137,11 +137,11 @@ describe("Deployment", () => {
       "depId"
     );
     queryString = JSON.stringify(query);
-    expect(queryString.includes("imageTag eq 'tag'")).toBeTruthy();
-    expect(queryString.includes("p1 eq '211'")).toBeTruthy();
-    expect(queryString.includes("commitId eq 'abcdefg'")).toBeTruthy();
-    expect(queryString.includes("service eq 'service'")).toBeTruthy();
-    expect(queryString.includes("RowKey eq 'depid'")).toBeTruthy();
+    expect(queryString.includes("imageTag eq 'tag'")).toBe(true);
+    expect(queryString.includes("p1 eq '211'")).toBe(true);
+    expect(queryString.includes("commitId eq 'abcdefg'")).toBe(true);
+    expect(queryString.includes("service eq 'service'")).toBe(true);
+    expect(queryString.includes("RowKey eq 'depid'")).toBe(true);
   });
 });
 
