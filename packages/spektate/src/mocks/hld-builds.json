@@ -1,0 +1,882 @@
+{
+  "6616": {
+    "URL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_build/results?buildId=6616",
+    "author": "GitHub",
+    "buildNumber": "20191019.1",
+    "finishTime": "2019-10-19T06:14:41.375Z",
+    "id": 6616,
+    "lastUpdateTime": "2019-10-19T06:14:41.547Z",
+    "queueTime": "2019-10-19T06:13:32.767Z",
+    "result": "failed",
+    "sourceBranch": "refs/heads/master",
+    "sourceVersion": "19a2ec7ec37deaf13e22ffc91f7e5b8f42698610",
+    "sourceVersionURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/6616/sources",
+    "startTime": "2019-10-19T06:13:52.014Z",
+    "status": "completed",
+    "timelineURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/6616/Timeline",
+    "repository": {
+      "reponame": "hello-spektate-hld",
+      "username": "samiyaakhtar"
+    }
+  },
+  "6617": {
+    "URL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_build/results?buildId=6617",
+    "author": "GitHub",
+    "buildNumber": "20191019.2",
+    "finishTime": "2019-10-19T06:22:30.699Z",
+    "id": 6617,
+    "lastUpdateTime": "2019-10-19T06:22:30.830Z",
+    "queueTime": "2019-10-19T06:20:40.940Z",
+    "result": "succeeded",
+    "sourceBranch": "refs/heads/master",
+    "sourceVersion": "5b4bb2a75b7016532e99f8dc1945ddaa97c869a5",
+    "sourceVersionURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/6617/sources",
+    "startTime": "2019-10-19T06:20:56.687Z",
+    "status": "completed",
+    "timelineURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/6617/Timeline",
+    "repository": {
+      "reponame": "hello-spektate-hld",
+      "username": "samiyaakhtar"
+    }
+  },
+  "6746": {
+    "URL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_build/results?buildId=6746",
+    "author": "GitHub",
+    "buildNumber": "20191023.1",
+    "finishTime": "2019-10-23T17:18:02.842Z",
+    "id": 6746,
+    "lastUpdateTime": "2019-10-23T17:18:02.950Z",
+    "queueTime": "2019-10-23T17:16:16.186Z",
+    "result": "succeeded",
+    "sourceBranch": "refs/heads/master",
+    "sourceVersion": "ba3b5e39969e572e682584ee2ba884decafd47af",
+    "sourceVersionURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/6746/sources",
+    "startTime": "2019-10-23T17:16:29.054Z",
+    "status": "completed",
+    "timelineURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/6746/Timeline",
+    "repository": {
+      "reponame": "hello-spektate-hld",
+      "username": "samiyaakhtar"
+    }
+  },
+  "6748": {
+    "URL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_build/results?buildId=6748",
+    "author": "GitHub",
+    "buildNumber": "20191023.2",
+    "finishTime": "2019-10-23T17:21:42.291Z",
+    "id": 6748,
+    "lastUpdateTime": "2019-10-23T17:21:42.410Z",
+    "queueTime": "2019-10-23T17:19:53.063Z",
+    "result": "succeeded",
+    "sourceBranch": "refs/heads/master",
+    "sourceVersion": "01f68d43b36b260a58df73eec1d4d9a8f0d2e794",
+    "sourceVersionURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/6748/sources",
+    "startTime": "2019-10-23T17:20:04.043Z",
+    "status": "completed",
+    "timelineURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/6748/Timeline",
+    "repository": {
+      "reponame": "hello-spektate-hld",
+      "username": "samiyaakhtar"
+    }
+  },
+  "6753": {
+    "URL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_build/results?buildId=6753",
+    "author": "GitHub",
+    "buildNumber": "20191023.4",
+    "finishTime": "2019-10-23T17:44:55.598Z",
+    "id": 6753,
+    "lastUpdateTime": "2019-10-23T17:44:55.740Z",
+    "queueTime": "2019-10-23T17:43:10.105Z",
+    "result": "succeeded",
+    "sourceBranch": "refs/heads/master",
+    "sourceVersion": "8451efc6ed942e756e1ed5fa1b0aede826f269be",
+    "sourceVersionURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/6753/sources",
+    "startTime": "2019-10-23T17:43:24.064Z",
+    "status": "completed",
+    "timelineURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/6753/Timeline",
+    "repository": {
+      "reponame": "hello-spektate-hld",
+      "username": "samiyaakhtar"
+    }
+  },
+  "6828": {
+    "URL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_build/results?buildId=6828",
+    "author": "GitHub",
+    "buildNumber": "20191024.1",
+    "finishTime": "2019-10-24T18:30:32.995Z",
+    "id": 6828,
+    "lastUpdateTime": "2019-10-24T18:30:33.173Z",
+    "queueTime": "2019-10-24T18:28:38.674Z",
+    "result": "succeeded",
+    "sourceBranch": "refs/heads/master",
+    "sourceVersion": "f81fccca5e81c5e964c76bae6c0d92e22190ed89",
+    "sourceVersionURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/6828/sources",
+    "startTime": "2019-10-24T18:28:49.469Z",
+    "status": "completed",
+    "timelineURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/6828/Timeline",
+    "repository": {
+      "reponame": "hello-spektate-hld",
+      "username": "samiyaakhtar"
+    }
+  },
+  "6830": {
+    "URL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_build/results?buildId=6830",
+    "author": "GitHub",
+    "buildNumber": "20191024.2",
+    "finishTime": "2019-10-24T18:36:46.146Z",
+    "id": 6830,
+    "lastUpdateTime": "2019-10-24T18:36:46.300Z",
+    "queueTime": "2019-10-24T18:34:54.585Z",
+    "result": "succeeded",
+    "sourceBranch": "refs/heads/master",
+    "sourceVersion": "866162619d385ecb2e135902340595565413882a",
+    "sourceVersionURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/6830/sources",
+    "startTime": "2019-10-24T18:35:05.289Z",
+    "status": "completed",
+    "timelineURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/6830/Timeline",
+    "repository": {
+      "reponame": "hello-spektate-hld",
+      "username": "samiyaakhtar"
+    }
+  },
+  "6832": {
+    "URL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_build/results?buildId=6832",
+    "author": "GitHub",
+    "buildNumber": "20191024.3",
+    "finishTime": "2019-10-24T18:41:55.968Z",
+    "id": 6832,
+    "lastUpdateTime": "2019-10-24T18:41:56.097Z",
+    "queueTime": "2019-10-24T18:40:10.097Z",
+    "result": "succeeded",
+    "sourceBranch": "refs/heads/master",
+    "sourceVersion": "019a218f61cfe8aab5b5263a07e1fc39f6c87273",
+    "sourceVersionURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/6832/sources",
+    "startTime": "2019-10-24T18:40:19.351Z",
+    "status": "completed",
+    "timelineURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/6832/Timeline",
+    "repository": {
+      "reponame": "hello-spektate-hld",
+      "username": "samiyaakhtar"
+    }
+  },
+  "6837": {
+    "URL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_build/results?buildId=6837",
+    "author": "GitHub",
+    "buildNumber": "20191024.4",
+    "finishTime": "2019-10-24T19:40:54.620Z",
+    "id": 6837,
+    "lastUpdateTime": "2019-10-24T19:40:54.813Z",
+    "queueTime": "2019-10-24T19:39:19.399Z",
+    "result": "succeeded",
+    "sourceBranch": "refs/heads/master",
+    "sourceVersion": "01bec4ae89438a42cbde155bb93d028aeea4888f",
+    "sourceVersionURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/6837/sources",
+    "startTime": "2019-10-24T19:39:30.756Z",
+    "status": "completed",
+    "timelineURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/6837/Timeline",
+    "repository": {
+      "reponame": "hello-spektate-hld",
+      "username": "samiyaakhtar"
+    }
+  },
+  "6853": {
+    "URL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_build/results?buildId=6853",
+    "author": "GitHub",
+    "buildNumber": "20191024.9",
+    "finishTime": "2019-10-24T20:46:40.737Z",
+    "id": 6853,
+    "lastUpdateTime": "2019-10-24T20:46:40.870Z",
+    "queueTime": "2019-10-24T20:42:01.617Z",
+    "result": "succeeded",
+    "sourceBranch": "refs/heads/master",
+    "sourceVersion": "fd93168aa39fa4e1be32ca20a685e72615ee6986",
+    "sourceVersionURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/6853/sources",
+    "startTime": "2019-10-24T20:42:13.749Z",
+    "status": "completed",
+    "timelineURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/6853/Timeline",
+    "repository": {
+      "reponame": "spartan-app",
+      "username": "edaena"
+    }
+  },
+  "6854": {
+    "URL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_build/results?buildId=6854",
+    "author": "GitHub",
+    "buildNumber": "20191024.10",
+    "finishTime": "2019-10-24T20:56:03.366Z",
+    "id": 6854,
+    "lastUpdateTime": "2019-10-24T20:56:03.440Z",
+    "queueTime": "2019-10-24T20:49:26.953Z",
+    "result": "succeeded",
+    "sourceBranch": "refs/heads/master",
+    "sourceVersion": "c01ad17ccaba2958a399b9250ccd5467ec7ff363",
+    "sourceVersionURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/6854/sources",
+    "startTime": "2019-10-24T20:49:38.342Z",
+    "status": "completed",
+    "timelineURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/6854/Timeline",
+    "repository": {
+      "reponame": "spartan-app",
+      "username": "edaena"
+    }
+  },
+  "6861": {
+    "URL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_build/results?buildId=6861",
+    "author": "GitHub",
+    "buildNumber": "20191024.1",
+    "finishTime": "2019-10-24T21:17:35.064Z",
+    "id": 6861,
+    "lastUpdateTime": "2019-10-24T21:17:35.213Z",
+    "queueTime": "2019-10-24T21:16:23.280Z",
+    "result": "succeeded",
+    "sourceBranch": "refs/heads/master",
+    "sourceVersion": "7df517d19093902a3b496c0d012c5a5b0f44de1a",
+    "sourceVersionURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/6861/sources",
+    "startTime": "2019-10-24T21:16:33.199Z",
+    "status": "completed",
+    "timelineURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/6861/Timeline",
+    "repository": {
+      "reponame": "hello-bedrock-hld",
+      "username": "samiyaakhtar"
+    }
+  },
+  "6865": {
+    "URL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_build/results?buildId=6865",
+    "author": "GitHub",
+    "buildNumber": "20191024.2",
+    "finishTime": "2019-10-24T21:20:44.592Z",
+    "id": 6865,
+    "lastUpdateTime": "2019-10-24T21:20:44.723Z",
+    "queueTime": "2019-10-24T21:19:37.863Z",
+    "result": "succeeded",
+    "sourceBranch": "refs/heads/master",
+    "sourceVersion": "7eccac0389b9e853bddd8c2e4077325e6e21519f",
+    "sourceVersionURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/6865/sources",
+    "startTime": "2019-10-24T21:19:47.779Z",
+    "status": "completed",
+    "timelineURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/6865/Timeline",
+    "repository": {
+      "reponame": "hello-bedrock-hld",
+      "username": "samiyaakhtar"
+    }
+  },
+  "6867": {
+    "URL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_build/results?buildId=6867",
+    "author": "GitHub",
+    "buildNumber": "20191024.3",
+    "finishTime": "2019-10-24T21:21:17.000Z",
+    "id": 6867,
+    "lastUpdateTime": "2019-10-24T21:21:17.327Z",
+    "queueTime": "2019-10-24T21:20:04.728Z",
+    "result": "succeeded",
+    "sourceBranch": "refs/heads/master",
+    "sourceVersion": "346ccdef9a4ca18037c365600c7506a753d2d100",
+    "sourceVersionURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/6867/sources",
+    "startTime": "2019-10-24T21:20:16.454Z",
+    "status": "completed",
+    "timelineURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/6867/Timeline",
+    "repository": {
+      "reponame": "hello-bedrock-hld",
+      "username": "samiyaakhtar"
+    }
+  },
+  "6873": {
+    "URL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_build/results?buildId=6873",
+    "author": "GitHub",
+    "buildNumber": "20191024.4",
+    "finishTime": "2019-10-24T21:26:58.371Z",
+    "id": 6873,
+    "lastUpdateTime": "2019-10-24T21:26:58.493Z",
+    "queueTime": "2019-10-24T21:25:39.261Z",
+    "result": "succeeded",
+    "sourceBranch": "refs/heads/master",
+    "sourceVersion": "ba214d7a4f316cfa8f87a00981a37783c1722783",
+    "sourceVersionURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/6873/sources",
+    "startTime": "2019-10-24T21:25:51.100Z",
+    "status": "completed",
+    "timelineURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/6873/Timeline",
+    "repository": {
+      "reponame": "hello-bedrock-hld",
+      "username": "samiyaakhtar"
+    }
+  },
+  "6874": {
+    "URL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_build/results?buildId=6874",
+    "author": "GitHub",
+    "buildNumber": "20191024.5",
+    "finishTime": "2019-10-24T21:28:29.609Z",
+    "id": 6874,
+    "lastUpdateTime": "2019-10-24T21:28:29.713Z",
+    "queueTime": "2019-10-24T21:27:18.754Z",
+    "result": "succeeded",
+    "sourceBranch": "refs/heads/master",
+    "sourceVersion": "21bcc29ba904e6046ce670e24045e2d0c1f479f1",
+    "sourceVersionURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/6874/sources",
+    "startTime": "2019-10-24T21:27:31.189Z",
+    "status": "completed",
+    "timelineURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/6874/Timeline",
+    "repository": {
+      "reponame": "hello-bedrock-hld",
+      "username": "samiyaakhtar"
+    }
+  },
+  "6875": {
+    "URL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_build/results?buildId=6875",
+    "author": "GitHub",
+    "buildNumber": "20191024.6",
+    "finishTime": "2019-10-24T21:28:56.310Z",
+    "id": 6875,
+    "lastUpdateTime": "2019-10-24T21:28:56.437Z",
+    "queueTime": "2019-10-24T21:27:44.865Z",
+    "result": "succeeded",
+    "sourceBranch": "refs/heads/master",
+    "sourceVersion": "838aa6c966c6fae578c52c46d28ceec85ce08c4a",
+    "sourceVersionURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/6875/sources",
+    "startTime": "2019-10-24T21:27:54.569Z",
+    "status": "completed",
+    "timelineURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/6875/Timeline",
+    "repository": {
+      "reponame": "hello-bedrock-hld",
+      "username": "samiyaakhtar"
+    }
+  },
+  "6876": {
+    "URL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_build/results?buildId=6876",
+    "author": "GitHub",
+    "buildNumber": "20191024.7",
+    "finishTime": "2019-10-24T21:29:17.214Z",
+    "id": 6876,
+    "lastUpdateTime": "2019-10-24T21:29:17.347Z",
+    "queueTime": "2019-10-24T21:28:12.176Z",
+    "result": "succeeded",
+    "sourceBranch": "refs/heads/master",
+    "sourceVersion": "d7c9e6aec6281b75e81cf970b72759d71d64dfca",
+    "sourceVersionURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/6876/sources",
+    "startTime": "2019-10-24T21:28:22.527Z",
+    "status": "completed",
+    "timelineURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/6876/Timeline",
+    "repository": {
+      "reponame": "hello-bedrock-hld",
+      "username": "samiyaakhtar"
+    }
+  },
+  "6882": {
+    "URL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_build/results?buildId=6882",
+    "author": "GitHub",
+    "buildNumber": "20191024.8",
+    "finishTime": "2019-10-24T21:40:03.658Z",
+    "id": 6882,
+    "lastUpdateTime": "2019-10-24T21:40:03.800Z",
+    "queueTime": "2019-10-24T21:38:43.974Z",
+    "result": "succeeded",
+    "sourceBranch": "refs/heads/master",
+    "sourceVersion": "f2aaae325090486c472e98363315db431bc089f3",
+    "sourceVersionURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/6882/sources",
+    "startTime": "2019-10-24T21:38:56.923Z",
+    "status": "completed",
+    "timelineURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/6882/Timeline",
+    "repository": {
+      "reponame": "hello-bedrock-hld",
+      "username": "samiyaakhtar"
+    }
+  },
+  "6883": {
+    "URL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_build/results?buildId=6883",
+    "author": "GitHub",
+    "buildNumber": "20191024.5",
+    "finishTime": "2019-10-24T21:40:52.993Z",
+    "id": 6883,
+    "lastUpdateTime": "2019-10-24T21:40:53.147Z",
+    "queueTime": "2019-10-24T21:39:05.465Z",
+    "result": "succeeded",
+    "sourceBranch": "refs/heads/master",
+    "sourceVersion": "9e108fdbe2f0ba261d69e011726fa0d96ca7eaac",
+    "sourceVersionURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/6883/sources",
+    "startTime": "2019-10-24T21:39:15.063Z",
+    "status": "completed",
+    "timelineURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/6883/Timeline",
+    "repository": {
+      "reponame": "hello-spektate-hld",
+      "username": "samiyaakhtar"
+    }
+  },
+  "6884": {
+    "URL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_build/results?buildId=6884",
+    "author": "GitHub",
+    "buildNumber": "20191024.9",
+    "finishTime": "2019-10-24T21:40:12.825Z",
+    "id": 6884,
+    "lastUpdateTime": "2019-10-24T21:40:12.927Z",
+    "queueTime": "2019-10-24T21:39:10.097Z",
+    "result": "succeeded",
+    "sourceBranch": "refs/heads/master",
+    "sourceVersion": "554a79b78af997856139900f7a6835d6a8960934",
+    "sourceVersionURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/6884/sources",
+    "startTime": "2019-10-24T21:39:20.599Z",
+    "status": "completed",
+    "timelineURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/6884/Timeline",
+    "repository": {
+      "reponame": "hello-bedrock-hld",
+      "username": "samiyaakhtar"
+    }
+  },
+  "6885": {
+    "URL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_build/results?buildId=6885",
+    "author": "Samiya Akhtar",
+    "buildNumber": "20191024.11",
+    "finishTime": "2019-10-24T21:49:36.334Z",
+    "id": 6885,
+    "lastUpdateTime": "2019-10-24T21:49:36.470Z",
+    "queueTime": "2019-10-24T21:43:15.272Z",
+    "result": "succeeded",
+    "sourceBranch": "refs/heads/master",
+    "sourceVersion": "c01ad17ccaba2958a399b9250ccd5467ec7ff363",
+    "sourceVersionURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/6885/sources",
+    "startTime": "2019-10-24T21:43:29.596Z",
+    "status": "completed",
+    "timelineURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/6885/Timeline",
+    "repository": {
+      "reponame": "spartan-app",
+      "username": "edaena"
+    }
+  },
+  "6896": {
+    "URL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_build/results?buildId=6896",
+    "author": "GitHub",
+    "buildNumber": "20191024.6",
+    "finishTime": "2019-10-24T22:52:36.170Z",
+    "id": 6896,
+    "lastUpdateTime": "2019-10-24T22:52:36.280Z",
+    "queueTime": "2019-10-24T22:50:39.419Z",
+    "result": "succeeded",
+    "sourceBranch": "refs/heads/master",
+    "sourceVersion": "d5e6a4d0a1f5bd5270075da131a5703519e94a72",
+    "sourceVersionURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/6896/sources",
+    "startTime": "2019-10-24T22:50:50.824Z",
+    "status": "completed",
+    "timelineURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/6896/Timeline",
+    "repository": {
+      "reponame": "hello-spektate-hld",
+      "username": "samiyaakhtar"
+    }
+  },
+  "6900": {
+    "URL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_build/results?buildId=6900",
+    "author": "GitHub",
+    "buildNumber": "20191024.7",
+    "finishTime": "2019-10-24T23:08:50.453Z",
+    "id": 6900,
+    "lastUpdateTime": "2019-10-24T23:08:50.580Z",
+    "queueTime": "2019-10-24T23:07:05.850Z",
+    "result": "succeeded",
+    "sourceBranch": "refs/heads/master",
+    "sourceVersion": "d8a149390602e7ea837874b97a0c4c69a337fa5a",
+    "sourceVersionURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/6900/sources",
+    "startTime": "2019-10-24T23:07:15.884Z",
+    "status": "completed",
+    "timelineURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/6900/Timeline",
+    "repository": {
+      "reponame": "hello-spektate-hld",
+      "username": "samiyaakhtar"
+    }
+  },
+  "6904": {
+    "URL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_build/results?buildId=6904",
+    "author": "GitHub",
+    "buildNumber": "20191024.8",
+    "finishTime": "2019-10-24T23:34:23.962Z",
+    "id": 6904,
+    "lastUpdateTime": "2019-10-24T23:34:24.053Z",
+    "queueTime": "2019-10-24T23:32:38.021Z",
+    "result": "succeeded",
+    "sourceBranch": "refs/heads/master",
+    "sourceVersion": "dfb1cd914830e4b893ee5ca6d745d5cebea1ade5",
+    "sourceVersionURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/6904/sources",
+    "startTime": "2019-10-24T23:32:51.552Z",
+    "status": "completed",
+    "timelineURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/6904/Timeline",
+    "repository": {
+      "reponame": "hello-spektate-hld",
+      "username": "samiyaakhtar"
+    }
+  },
+  "7008": {
+    "URL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_build/results?buildId=7008",
+    "author": "Edaena Salinas Jasso",
+    "buildNumber": "20191028.3",
+    "finishTime": "2019-10-28T20:54:51.888Z",
+    "id": 7008,
+    "lastUpdateTime": "2019-10-28T20:54:51.990Z",
+    "queueTime": "2019-10-28T20:48:33.374Z",
+    "result": "succeeded",
+    "sourceBranch": "refs/heads/master",
+    "sourceVersion": "9001199dd921aa8d6b2c30fe196e0433e20a0e91",
+    "sourceVersionURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/7008/sources",
+    "startTime": "2019-10-28T20:48:46.037Z",
+    "status": "completed",
+    "timelineURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/7008/Timeline",
+    "repository": {
+      "reponame": "spartan-app",
+      "username": "edaena"
+    }
+  },
+  "7015": {
+    "URL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_build/results?buildId=7015",
+    "author": "GitHub",
+    "buildNumber": "20191028.4",
+    "finishTime": "2019-10-28T22:01:00.176Z",
+    "id": 7015,
+    "lastUpdateTime": "2019-10-28T22:01:00.270Z",
+    "queueTime": "2019-10-28T21:54:40.531Z",
+    "result": "succeeded",
+    "sourceBranch": "refs/heads/master",
+    "sourceVersion": "f19cb81f889d8d29dd21d860df04967fdf5af567",
+    "sourceVersionURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/7015/sources",
+    "startTime": "2019-10-28T21:54:54.719Z",
+    "status": "completed",
+    "timelineURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/7015/Timeline",
+    "repository": {
+      "reponame": "spartan-app",
+      "username": "edaena"
+    }
+  },
+  "7016": {
+    "URL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_build/results?buildId=7016",
+    "author": "Edaena Salinas Jasso",
+    "buildNumber": "20191028.5",
+    "finishTime": "2019-10-28T22:02:08.407Z",
+    "id": 7016,
+    "lastUpdateTime": "2019-10-28T22:02:08.473Z",
+    "queueTime": "2019-10-28T21:56:21.993Z",
+    "result": "succeeded",
+    "sourceBranch": "refs/heads/master",
+    "sourceVersion": "f19cb81f889d8d29dd21d860df04967fdf5af567",
+    "sourceVersionURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/7016/sources",
+    "startTime": "2019-10-28T21:56:33.471Z",
+    "status": "completed",
+    "timelineURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/7016/Timeline",
+    "repository": {
+      "reponame": "spartan-app",
+      "username": "edaena"
+    }
+  },
+  "7022": {
+    "URL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_build/results?buildId=7022",
+    "author": "GitHub",
+    "buildNumber": "20191028.1",
+    "finishTime": "2019-10-28T22:21:28.354Z",
+    "id": 7022,
+    "lastUpdateTime": "2019-10-28T22:21:28.483Z",
+    "queueTime": "2019-10-28T22:20:19.624Z",
+    "result": "succeeded",
+    "sourceBranch": "refs/heads/master",
+    "sourceVersion": "2f87b044aaa7be372a1d2ee6ea86a8dab037566d",
+    "sourceVersionURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/7022/sources",
+    "startTime": "2019-10-28T22:20:28.750Z",
+    "status": "completed",
+    "timelineURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/7022/Timeline",
+    "repository": {
+      "reponame": "hello-bedrock-hld",
+      "username": "samiyaakhtar"
+    }
+  },
+  "7023": {
+    "URL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_build/results?buildId=7023",
+    "author": "GitHub",
+    "buildNumber": "20191028.2",
+    "finishTime": "2019-10-28T22:22:05.777Z",
+    "id": 7023,
+    "lastUpdateTime": "2019-10-28T22:22:05.897Z",
+    "queueTime": "2019-10-28T22:20:57.164Z",
+    "result": "succeeded",
+    "sourceBranch": "refs/heads/master",
+    "sourceVersion": "2d1e8182e5141efea73db0fd4ca11ea19076f9ad",
+    "sourceVersionURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/7023/sources",
+    "startTime": "2019-10-28T22:21:06.695Z",
+    "status": "completed",
+    "timelineURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/7023/Timeline",
+    "repository": {
+      "reponame": "hello-bedrock-hld",
+      "username": "samiyaakhtar"
+    }
+  },
+  "7024": {
+    "URL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_build/results?buildId=7024",
+    "author": "GitHub",
+    "buildNumber": "20191028.3",
+    "finishTime": "2019-10-28T22:22:38.056Z",
+    "id": 7024,
+    "lastUpdateTime": "2019-10-28T22:22:38.200Z",
+    "queueTime": "2019-10-28T22:21:28.494Z",
+    "result": "succeeded",
+    "sourceBranch": "refs/heads/master",
+    "sourceVersion": "b4a68d6def7e7e38192c813761708b8f38b35e06",
+    "sourceVersionURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/7024/sources",
+    "startTime": "2019-10-28T22:21:38.220Z",
+    "status": "completed",
+    "timelineURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/7024/Timeline",
+    "repository": {
+      "reponame": "hello-bedrock-hld",
+      "username": "samiyaakhtar"
+    }
+  },
+  "7025": {
+    "URL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_build/results?buildId=7025",
+    "author": "GitHub",
+    "buildNumber": "20191028.4",
+    "finishTime": "2019-10-28T22:24:10.384Z",
+    "id": 7025,
+    "lastUpdateTime": "2019-10-28T22:24:10.503Z",
+    "queueTime": "2019-10-28T22:23:00.179Z",
+    "result": "succeeded",
+    "sourceBranch": "refs/heads/master",
+    "sourceVersion": "954f321425d0ce9e9ed2cf4bf1abe86ba4d2a480",
+    "sourceVersionURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/7025/sources",
+    "startTime": "2019-10-28T22:23:13.748Z",
+    "status": "completed",
+    "timelineURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/7025/Timeline",
+    "repository": {
+      "reponame": "hello-bedrock-hld",
+      "username": "samiyaakhtar"
+    }
+  },
+  "7035": {
+    "URL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_build/results?buildId=7035",
+    "author": "GitHub",
+    "buildNumber": "20191028.8",
+    "finishTime": "2019-10-28T22:42:22.754Z",
+    "id": 7035,
+    "lastUpdateTime": "2019-10-28T22:42:22.880Z",
+    "queueTime": "2019-10-28T22:39:21.898Z",
+    "result": "succeeded",
+    "sourceBranch": "refs/heads/master",
+    "sourceVersion": "4f9fff04fcc8261ec1416c5ef6b7dd7dfccca931",
+    "sourceVersionURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/7035/sources",
+    "startTime": "2019-10-28T22:39:33.119Z",
+    "status": "completed",
+    "timelineURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/7035/Timeline",
+    "repository": {
+      "reponame": "hello-bedrock-hld",
+      "username": "samiyaakhtar"
+    }
+  },
+  "7039": {
+    "URL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_build/results?buildId=7039",
+    "author": "GitHub",
+    "buildNumber": "20191028.9",
+    "finishTime": "2019-10-28T22:47:15.356Z",
+    "id": 7039,
+    "lastUpdateTime": "2019-10-28T22:47:15.470Z",
+    "queueTime": "2019-10-28T22:44:36.578Z",
+    "result": "succeeded",
+    "sourceBranch": "refs/heads/master",
+    "sourceVersion": "f0a173ea2a55c2addb086c70b64882785d6e7d34",
+    "sourceVersionURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/7039/sources",
+    "startTime": "2019-10-28T22:44:46.688Z",
+    "status": "completed",
+    "timelineURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/7039/Timeline",
+    "repository": {
+      "reponame": "hello-bedrock-hld",
+      "username": "samiyaakhtar"
+    }
+  },
+  "7044": {
+    "URL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_build/results?buildId=7044",
+    "author": "GitHub",
+    "buildNumber": "20191028.10",
+    "finishTime": "2019-10-28T23:11:39.849Z",
+    "id": 7044,
+    "lastUpdateTime": "2019-10-28T23:11:39.990Z",
+    "queueTime": "2019-10-28T23:08:32.972Z",
+    "result": "succeeded",
+    "sourceBranch": "refs/heads/master",
+    "sourceVersion": "6bb99d552a4d8f04b34ad31f3c2ed52a8fbef6f8",
+    "sourceVersionURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/7044/sources",
+    "startTime": "2019-10-28T23:08:47.644Z",
+    "status": "completed",
+    "timelineURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/7044/Timeline",
+    "repository": {
+      "reponame": "hello-bedrock-hld",
+      "username": "samiyaakhtar"
+    }
+  },
+  "7094": {
+    "URL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_build/results?buildId=7094",
+    "author": "Edaena Salinas Jasso",
+    "buildNumber": "20191029.1",
+    "finishTime": "2019-10-29T18:58:00.311Z",
+    "id": 7094,
+    "lastUpdateTime": "2019-10-29T18:58:00.467Z",
+    "queueTime": "2019-10-29T18:51:54.150Z",
+    "result": "succeeded",
+    "sourceBranch": "refs/heads/master",
+    "sourceVersion": "f19cb81f889d8d29dd21d860df04967fdf5af567",
+    "sourceVersionURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/7094/sources",
+    "startTime": "2019-10-29T18:52:09.097Z",
+    "status": "completed",
+    "timelineURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/7094/Timeline",
+    "repository": {
+      "reponame": "spartan-app",
+      "username": "edaena"
+    }
+  },
+  "7176": {
+    "URL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_build/results?buildId=7176",
+    "author": "Samiya Akhtar",
+    "buildNumber": "20191030.1",
+    "finishTime": "2019-10-30T21:05:25.768Z",
+    "id": 7176,
+    "lastUpdateTime": "2019-10-30T21:05:25.953Z",
+    "queueTime": "2019-10-30T20:58:57.432Z",
+    "result": "succeeded",
+    "sourceBranch": "refs/heads/master",
+    "sourceVersion": "f19cb81f889d8d29dd21d860df04967fdf5af567",
+    "sourceVersionURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/7176/sources",
+    "startTime": "2019-10-30T20:59:15.038Z",
+    "status": "completed",
+    "timelineURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/7176/Timeline",
+    "repository": {
+      "reponame": "spartan-app",
+      "username": "edaena"
+    }
+  },
+  "7194": {
+    "URL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_build/results?buildId=7194",
+    "author": "GitHub",
+    "buildNumber": "20191030.12",
+    "finishTime": "2019-10-30T21:51:31.498Z",
+    "id": 7194,
+    "lastUpdateTime": "2019-10-30T21:51:31.580Z",
+    "queueTime": "2019-10-30T21:50:19.963Z",
+    "result": "succeeded",
+    "sourceBranch": "refs/heads/master",
+    "sourceVersion": "7c66b4b5f72b61f6149eec5c9a10f8c4ced2615e",
+    "sourceVersionURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/7194/sources",
+    "startTime": "2019-10-30T21:50:34.700Z",
+    "status": "completed",
+    "timelineURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/7194/Timeline",
+    "repository": {
+      "reponame": "azure-voting-app",
+      "username": "samiyaakhtar"
+    }
+  },
+  "7195": {
+    "URL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_build/results?buildId=7195",
+    "author": "GitHub",
+    "buildNumber": "20191030.13",
+    "finishTime": "2019-10-30T21:52:58.403Z",
+    "id": 7195,
+    "lastUpdateTime": "2019-10-30T21:52:58.597Z",
+    "queueTime": "2019-10-30T21:51:47.560Z",
+    "result": "succeeded",
+    "sourceBranch": "refs/heads/master",
+    "sourceVersion": "8e69bd96061413b9af7aab616668f8f73a640516",
+    "sourceVersionURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/7195/sources",
+    "startTime": "2019-10-30T21:51:57.159Z",
+    "status": "completed",
+    "timelineURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/7195/Timeline",
+    "repository": {
+      "reponame": "azure-voting-app",
+      "username": "samiyaakhtar"
+    }
+  },
+  "7255": {
+    "URL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_build/results?buildId=7255",
+    "author": "GitHub",
+    "buildNumber": "20191031.1",
+    "finishTime": "2019-10-31T18:15:53.625Z",
+    "id": 7255,
+    "lastUpdateTime": "2019-10-31T18:15:53.767Z",
+    "queueTime": "2019-10-31T18:12:05.148Z",
+    "result": "succeeded",
+    "sourceBranch": "refs/heads/master",
+    "sourceVersion": "d6f7d7fc86bd30b9d7b013e72bfd981e9d0ac6c5",
+    "sourceVersionURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/7255/sources",
+    "startTime": "2019-10-31T18:12:30.351Z",
+    "status": "completed",
+    "timelineURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/7255/Timeline",
+    "repository": {
+      "reponame": "hello-bedrock-hld",
+      "username": "samiyaakhtar"
+    }
+  },
+  "7271": {
+    "URL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_build/results?buildId=7271",
+    "author": "Edaena Salinas Jasso",
+    "buildNumber": "20191031.1",
+    "finishTime": "2019-10-31T20:04:46.109Z",
+    "id": 7271,
+    "lastUpdateTime": "2019-10-31T20:04:46.593Z",
+    "queueTime": "2019-10-31T19:58:15.108Z",
+    "result": "succeeded",
+    "sourceBranch": "refs/heads/master",
+    "sourceVersion": "f19cb81f889d8d29dd21d860df04967fdf5af567",
+    "sourceVersionURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/7271/sources",
+    "startTime": "2019-10-31T19:58:27.944Z",
+    "status": "completed",
+    "timelineURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/7271/Timeline",
+    "repository": {
+      "reponame": "spartan-app",
+      "username": "edaena"
+    }
+  },
+  "7278": {
+    "URL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_build/results?buildId=7278",
+    "author": "Edaena Salinas Jasso",
+    "buildNumber": "20191031.2",
+    "finishTime": "2019-10-31T20:17:53.368Z",
+    "id": 7278,
+    "lastUpdateTime": "2019-10-31T20:17:53.540Z",
+    "queueTime": "2019-10-31T20:11:50.325Z",
+    "result": "succeeded",
+    "sourceBranch": "refs/heads/master",
+    "sourceVersion": "f19cb81f889d8d29dd21d860df04967fdf5af567",
+    "sourceVersionURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/7278/sources",
+    "startTime": "2019-10-31T20:12:08.267Z",
+    "status": "completed",
+    "timelineURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/7278/Timeline",
+    "repository": {
+      "reponame": "spartan-app",
+      "username": "edaena"
+    }
+  },
+  "7293": {
+    "URL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_build/results?buildId=7293",
+    "author": "Edaena Salinas Jasso",
+    "buildNumber": "20191031.3",
+    "finishTime": "2019-10-31T23:14:12.379Z",
+    "id": 7293,
+    "lastUpdateTime": "2019-10-31T23:14:12.450Z",
+    "queueTime": "2019-10-31T23:08:14.661Z",
+    "result": "succeeded",
+    "sourceBranch": "refs/heads/master",
+    "sourceVersion": "f19cb81f889d8d29dd21d860df04967fdf5af567",
+    "sourceVersionURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/7293/sources",
+    "startTime": "2019-10-31T23:08:27.249Z",
+    "status": "completed",
+    "timelineURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/7293/Timeline",
+    "repository": {
+      "reponame": "spartan-app",
+      "username": "edaena"
+    }
+  },
+  "7296": {
+    "URL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_build/results?buildId=7296",
+    "author": "Edaena Salinas Jasso",
+    "buildNumber": "20191031.4",
+    "finishTime": "2019-10-31T23:34:49.551Z",
+    "id": 7296,
+    "lastUpdateTime": "2019-10-31T23:34:49.633Z",
+    "queueTime": "2019-10-31T23:28:21.138Z",
+    "result": "succeeded",
+    "sourceBranch": "refs/heads/master",
+    "sourceVersion": "f19cb81f889d8d29dd21d860df04967fdf5af567",
+    "sourceVersionURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/7296/sources",
+    "startTime": "2019-10-31T23:28:38.329Z",
+    "status": "completed",
+    "timelineURL": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/build/builds/7296/Timeline",
+    "repository": {
+      "reponame": "spartan-app",
+      "username": "edaena"
+    }
+  }
+}

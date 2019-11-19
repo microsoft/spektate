@@ -1,0 +1,922 @@
+[
+  {
+    "id": 269,
+    "release": {
+      "id": 264,
+      "name": "Release-211",
+      "url": "https://vsrm.dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/Release/releases/264",
+      "artifacts": [
+        {
+          "sourceId": "9434c930-5e01-4866-b700-8a5461e6c698:hellorings.azurecr.io:hellobedrock",
+          "type": "AzureContainerRepository",
+          "alias": "_hellobedrock",
+          "definitionReference": {
+            "connection": {
+              "id": "9434c930-5e01-4866-b700-8a5461e6c698",
+              "name": "hellobedrock_rg"
+            },
+            "definition": {
+              "id": "hellobedrock",
+              "name": "hellobedrock"
+            },
+            "IsTriggeringArtifact": {
+              "id": "True",
+              "name": "True"
+            },
+            "registryurl": {
+              "id": "hellorings.azurecr.io",
+              "name": "hellorings"
+            },
+            "resourcegroup": {
+              "id": "bedrock-rings",
+              "name": "bedrock-rings"
+            },
+            "version": {
+              "id": "hello-bedrock-master-7254",
+              "name": "hello-bedrock-master-7254"
+            }
+          },
+          "isPrimary": true,
+          "isRetained": false
+        }
+      ],
+      "webAccessUri": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_release?releaseId=264&_a=release-summary",
+      "_links": {
+        "self": {
+          "href": "https://vsrm.dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/Release/releases/264"
+        },
+        "web": {
+          "href": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_release?releaseId=264&_a=release-summary"
+        }
+      }
+    },
+    "releaseDefinition": {
+      "id": 1,
+      "name": "hello-bedrock",
+      "path": "\\",
+      "projectReference": {
+        "id": "f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5",
+        "name": null
+      },
+      "url": "https://vsrm.dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/Release/definitions/1",
+      "_links": {
+        "self": {
+          "href": "https://vsrm.dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/Release/definitions/1"
+        },
+        "web": {
+          "href": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_release?definitionId=1"
+        }
+      }
+    },
+    "releaseEnvironment": {
+      "id": 269,
+      "name": "Dev",
+      "url": "https://vsrm.dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/Release/releases/264/environments/269",
+      "_links": {
+        "self": {
+          "href": "https://vsrm.dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/Release/releases/264/environments/269"
+        },
+        "web": {
+          "href": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_release?releaseId=264&_a=release-logs&environmentId=269&releaseEnvironmentId=269"
+        }
+      }
+    },
+    "projectReference": null,
+    "definitionEnvironmentId": 1,
+    "attempt": 1,
+    "reason": "automated",
+    "deploymentStatus": "succeeded",
+    "operationStatus": "Approved",
+    "requestedBy": {
+      "displayName": "Microsoft.VisualStudio.Services.ReleaseManagement",
+      "id": "0000000d-0000-8888-8000-000000000000",
+      "uniqueName": "0000000d-0000-8888-8000-000000000000@2c895908-04e0-4952-89fd-54b0046d6288",
+      "descriptor": "s2s.MDAwMDAwMGQtMDAwMC04ODg4LTgwMDAtMDAwMDAwMDAwMDAwQDJjODk1OTA4LTA0ZTAtNDk1Mi04OWZkLTU0YjAwNDZkNjI4OA"
+    },
+    "requestedFor": {
+      "displayName": "Microsoft.VisualStudio.Services.ReleaseManagement",
+      "id": "0000000d-0000-8888-8000-000000000000",
+      "uniqueName": "0000000d-0000-8888-8000-000000000000@2c895908-04e0-4952-89fd-54b0046d6288",
+      "descriptor": "s2s.MDAwMDAwMGQtMDAwMC04ODg4LTgwMDAtMDAwMDAwMDAwMDAwQDJjODk1OTA4LTA0ZTAtNDk1Mi04OWZkLTU0YjAwNDZkNjI4OA"
+    },
+    "queuedOn": "2019-10-31T18:11:30.41Z",
+    "startedOn": "2019-10-31T18:11:43.297Z",
+    "completedOn": "2019-10-31T18:13:07.6Z",
+    "lastModifiedOn": "2019-10-31T18:13:07.6Z",
+    "lastModifiedBy": {
+      "displayName": "Microsoft.VisualStudio.Services.ReleaseManagement",
+      "id": "0000000d-0000-8888-8000-000000000000",
+      "uniqueName": "0000000d-0000-8888-8000-000000000000@2c895908-04e0-4952-89fd-54b0046d6288",
+      "descriptor": "s2s.MDAwMDAwMGQtMDAwMC04ODg4LTgwMDAtMDAwMDAwMDAwMDAwQDJjODk1OTA4LTA0ZTAtNDk1Mi04OWZkLTU0YjAwNDZkNjI4OA"
+    },
+    "conditions": [
+      {
+        "result": true,
+        "name": "ReleaseStarted",
+        "conditionType": "event",
+        "value": ""
+      }
+    ],
+    "preDeployApprovals": [
+      {
+        "id": 769,
+        "revision": 1,
+        "approvalType": "preDeploy",
+        "createdOn": "2019-10-31T18:11:30.927Z",
+        "modifiedOn": "2019-10-31T18:11:30.933Z",
+        "status": "approved",
+        "comments": "",
+        "isAutomated": true,
+        "isNotificationOn": false,
+        "trialNumber": 1,
+        "attempt": 1,
+        "rank": 1,
+        "release": {
+          "id": 264,
+          "name": "Release-211",
+          "url": "https://vsrm.dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/Release/releases/264",
+          "_links": {
+            "web": {
+              "href": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_release?releaseId=264&_a=release-summary"
+            },
+            "self": {
+              "href": "https://vsrm.dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/Release/releases/264"
+            }
+          }
+        },
+        "releaseDefinition": {
+          "id": 0,
+          "name": "hello-bedrock",
+          "path": "\\",
+          "projectReference": null,
+          "url": "https://vsrm.dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/Release/definitions/0",
+          "_links": {
+            "web": {
+              "href": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_release?definitionId=0"
+            },
+            "self": {
+              "href": "https://vsrm.dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/Release/definitions/0"
+            }
+          }
+        },
+        "releaseEnvironment": {
+          "id": 269,
+          "name": "Dev",
+          "url": "https://vsrm.dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/Release/releases/264/environments/269",
+          "_links": {
+            "self": {
+              "href": "https://vsrm.dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/Release/releases/264/environments/0"
+            }
+          }
+        },
+        "url": "https://vsrm.dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/Release/approvals/769"
+      }
+    ],
+    "postDeployApprovals": [
+      {
+        "id": 771,
+        "revision": 1,
+        "approvalType": "postDeploy",
+        "createdOn": "2019-10-31T18:13:07.38Z",
+        "modifiedOn": "2019-10-31T18:13:07.59Z",
+        "status": "approved",
+        "comments": "",
+        "isAutomated": true,
+        "isNotificationOn": false,
+        "trialNumber": 1,
+        "attempt": 1,
+        "rank": 3,
+        "release": {
+          "id": 264,
+          "name": "Release-211",
+          "url": "https://vsrm.dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/Release/releases/264",
+          "_links": {
+            "web": {
+              "href": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_release?releaseId=264&_a=release-summary"
+            },
+            "self": {
+              "href": "https://vsrm.dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/Release/releases/264"
+            }
+          }
+        },
+        "releaseDefinition": {
+          "id": 0,
+          "name": "hello-bedrock",
+          "path": "\\",
+          "projectReference": null,
+          "url": "https://vsrm.dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/Release/definitions/0",
+          "_links": {
+            "web": {
+              "href": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_release?definitionId=0"
+            },
+            "self": {
+              "href": "https://vsrm.dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/Release/definitions/0"
+            }
+          }
+        },
+        "releaseEnvironment": {
+          "id": 269,
+          "name": "Dev",
+          "url": "https://vsrm.dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/Release/releases/264/environments/269",
+          "_links": {
+            "self": {
+              "href": "https://vsrm.dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/Release/releases/264/environments/0"
+            }
+          }
+        },
+        "url": "https://vsrm.dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/Release/approvals/771"
+      }
+    ],
+    "_links": {}
+  },
+  {
+    "id": 268,
+    "release": {
+      "id": 263,
+      "name": "Release-210",
+      "url": "https://vsrm.dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/Release/releases/263",
+      "artifacts": [
+        {
+          "sourceId": "9434c930-5e01-4866-b700-8a5461e6c698:hellorings.azurecr.io:hellobedrock",
+          "type": "AzureContainerRepository",
+          "alias": "_hellobedrock",
+          "definitionReference": {
+            "connection": {
+              "id": "9434c930-5e01-4866-b700-8a5461e6c698",
+              "name": "hellobedrock_rg"
+            },
+            "definition": {
+              "id": "hellobedrock",
+              "name": "hellobedrock"
+            },
+            "IsTriggeringArtifact": {
+              "id": "True",
+              "name": "True"
+            },
+            "registryurl": {
+              "id": "hellorings.azurecr.io",
+              "name": "hellorings"
+            },
+            "resourcegroup": {
+              "id": "bedrock-rings",
+              "name": "bedrock-rings"
+            },
+            "version": {
+              "id": "hello-bedrock-master-7043",
+              "name": "hello-bedrock-master-7043"
+            }
+          },
+          "isPrimary": true,
+          "isRetained": false
+        }
+      ],
+      "webAccessUri": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_release?releaseId=263&_a=release-summary",
+      "_links": {
+        "self": {
+          "href": "https://vsrm.dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/Release/releases/263"
+        },
+        "web": {
+          "href": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_release?releaseId=263&_a=release-summary"
+        }
+      }
+    },
+    "releaseDefinition": {
+      "id": 1,
+      "name": "hello-bedrock",
+      "path": "\\",
+      "projectReference": {
+        "id": "f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5",
+        "name": null
+      },
+      "url": "https://vsrm.dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/Release/definitions/1",
+      "_links": {
+        "self": {
+          "href": "https://vsrm.dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/Release/definitions/1"
+        },
+        "web": {
+          "href": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_release?definitionId=1"
+        }
+      }
+    },
+    "releaseEnvironment": {
+      "id": 268,
+      "name": "Dev",
+      "url": "https://vsrm.dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/Release/releases/263/environments/268",
+      "_links": {
+        "self": {
+          "href": "https://vsrm.dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/Release/releases/263/environments/268"
+        },
+        "web": {
+          "href": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_release?releaseId=263&_a=release-logs&environmentId=268&releaseEnvironmentId=268"
+        }
+      }
+    },
+    "projectReference": null,
+    "definitionEnvironmentId": 1,
+    "attempt": 1,
+    "reason": "automated",
+    "deploymentStatus": "succeeded",
+    "operationStatus": "Approved",
+    "requestedBy": {
+      "displayName": "Microsoft.VisualStudio.Services.ReleaseManagement",
+      "id": "0000000d-0000-8888-8000-000000000000",
+      "uniqueName": "0000000d-0000-8888-8000-000000000000@2c895908-04e0-4952-89fd-54b0046d6288",
+      "descriptor": "s2s.MDAwMDAwMGQtMDAwMC04ODg4LTgwMDAtMDAwMDAwMDAwMDAwQDJjODk1OTA4LTA0ZTAtNDk1Mi04OWZkLTU0YjAwNDZkNjI4OA"
+    },
+    "requestedFor": {
+      "displayName": "Microsoft.VisualStudio.Services.ReleaseManagement",
+      "id": "0000000d-0000-8888-8000-000000000000",
+      "uniqueName": "0000000d-0000-8888-8000-000000000000@2c895908-04e0-4952-89fd-54b0046d6288",
+      "descriptor": "s2s.MDAwMDAwMGQtMDAwMC04ODg4LTgwMDAtMDAwMDAwMDAwMDAwQDJjODk1OTA4LTA0ZTAtNDk1Mi04OWZkLTU0YjAwNDZkNjI4OA"
+    },
+    "queuedOn": "2019-10-28T23:08:02.913Z",
+    "startedOn": "2019-10-28T23:08:14.49Z",
+    "completedOn": "2019-10-28T23:09:25.937Z",
+    "lastModifiedOn": "2019-10-28T23:09:25.937Z",
+    "lastModifiedBy": {
+      "displayName": "Microsoft.VisualStudio.Services.ReleaseManagement",
+      "id": "0000000d-0000-8888-8000-000000000000",
+      "uniqueName": "0000000d-0000-8888-8000-000000000000@2c895908-04e0-4952-89fd-54b0046d6288",
+      "descriptor": "s2s.MDAwMDAwMGQtMDAwMC04ODg4LTgwMDAtMDAwMDAwMDAwMDAwQDJjODk1OTA4LTA0ZTAtNDk1Mi04OWZkLTU0YjAwNDZkNjI4OA"
+    },
+    "conditions": [
+      {
+        "result": true,
+        "name": "ReleaseStarted",
+        "conditionType": "event",
+        "value": ""
+      }
+    ],
+    "preDeployApprovals": [
+      {
+        "id": 766,
+        "revision": 1,
+        "approvalType": "preDeploy",
+        "createdOn": "2019-10-28T23:08:03.053Z",
+        "modifiedOn": "2019-10-28T23:08:03.063Z",
+        "status": "approved",
+        "comments": "",
+        "isAutomated": true,
+        "isNotificationOn": false,
+        "trialNumber": 1,
+        "attempt": 1,
+        "rank": 1,
+        "release": {
+          "id": 263,
+          "name": "Release-210",
+          "url": "https://vsrm.dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/Release/releases/263",
+          "_links": {
+            "web": {
+              "href": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_release?releaseId=263&_a=release-summary"
+            },
+            "self": {
+              "href": "https://vsrm.dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/Release/releases/263"
+            }
+          }
+        },
+        "releaseDefinition": {
+          "id": 0,
+          "name": "hello-bedrock",
+          "path": "\\",
+          "projectReference": null,
+          "url": "https://vsrm.dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/Release/definitions/0",
+          "_links": {
+            "web": {
+              "href": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_release?definitionId=0"
+            },
+            "self": {
+              "href": "https://vsrm.dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/Release/definitions/0"
+            }
+          }
+        },
+        "releaseEnvironment": {
+          "id": 268,
+          "name": "Dev",
+          "url": "https://vsrm.dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/Release/releases/263/environments/268",
+          "_links": {
+            "self": {
+              "href": "https://vsrm.dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/Release/releases/263/environments/0"
+            }
+          }
+        },
+        "url": "https://vsrm.dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/Release/approvals/766"
+      }
+    ],
+    "postDeployApprovals": [
+      {
+        "id": 768,
+        "revision": 1,
+        "approvalType": "postDeploy",
+        "createdOn": "2019-10-28T23:09:25.917Z",
+        "modifiedOn": "2019-10-28T23:09:25.92Z",
+        "status": "approved",
+        "comments": "",
+        "isAutomated": true,
+        "isNotificationOn": false,
+        "trialNumber": 1,
+        "attempt": 1,
+        "rank": 3,
+        "release": {
+          "id": 263,
+          "name": "Release-210",
+          "url": "https://vsrm.dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/Release/releases/263",
+          "_links": {
+            "web": {
+              "href": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_release?releaseId=263&_a=release-summary"
+            },
+            "self": {
+              "href": "https://vsrm.dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/Release/releases/263"
+            }
+          }
+        },
+        "releaseDefinition": {
+          "id": 0,
+          "name": "hello-bedrock",
+          "path": "\\",
+          "projectReference": null,
+          "url": "https://vsrm.dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/Release/definitions/0",
+          "_links": {
+            "web": {
+              "href": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_release?definitionId=0"
+            },
+            "self": {
+              "href": "https://vsrm.dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/Release/definitions/0"
+            }
+          }
+        },
+        "releaseEnvironment": {
+          "id": 268,
+          "name": "Dev",
+          "url": "https://vsrm.dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/Release/releases/263/environments/268",
+          "_links": {
+            "self": {
+              "href": "https://vsrm.dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/Release/releases/263/environments/0"
+            }
+          }
+        },
+        "url": "https://vsrm.dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/Release/approvals/768"
+      }
+    ],
+    "_links": {}
+  },
+  {
+    "id": 267,
+    "release": {
+      "id": 262,
+      "name": "Release-209",
+      "url": "https://vsrm.dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/Release/releases/262",
+      "artifacts": [
+        {
+          "sourceId": "9434c930-5e01-4866-b700-8a5461e6c698:hellorings.azurecr.io:hellobedrock",
+          "type": "AzureContainerRepository",
+          "alias": "_hellobedrock",
+          "definitionReference": {
+            "connection": {
+              "id": "9434c930-5e01-4866-b700-8a5461e6c698",
+              "name": "hellobedrock_rg"
+            },
+            "definition": {
+              "id": "hellobedrock",
+              "name": "hellobedrock"
+            },
+            "IsTriggeringArtifact": {
+              "id": "True",
+              "name": "True"
+            },
+            "registryurl": {
+              "id": "hellorings.azurecr.io",
+              "name": "hellorings"
+            },
+            "resourcegroup": {
+              "id": "bedrock-rings",
+              "name": "bedrock-rings"
+            },
+            "version": {
+              "id": "hello-bedrock-master-7038",
+              "name": "hello-bedrock-master-7038"
+            }
+          },
+          "isPrimary": true,
+          "isRetained": false
+        }
+      ],
+      "webAccessUri": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_release?releaseId=262&_a=release-summary",
+      "_links": {
+        "self": {
+          "href": "https://vsrm.dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/Release/releases/262"
+        },
+        "web": {
+          "href": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_release?releaseId=262&_a=release-summary"
+        }
+      }
+    },
+    "releaseDefinition": {
+      "id": 1,
+      "name": "hello-bedrock",
+      "path": "\\",
+      "projectReference": {
+        "id": "f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5",
+        "name": null
+      },
+      "url": "https://vsrm.dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/Release/definitions/1",
+      "_links": {
+        "self": {
+          "href": "https://vsrm.dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/Release/definitions/1"
+        },
+        "web": {
+          "href": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_release?definitionId=1"
+        }
+      }
+    },
+    "releaseEnvironment": {
+      "id": 267,
+      "name": "Dev",
+      "url": "https://vsrm.dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/Release/releases/262/environments/267",
+      "_links": {
+        "self": {
+          "href": "https://vsrm.dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/Release/releases/262/environments/267"
+        },
+        "web": {
+          "href": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_release?releaseId=262&_a=release-logs&environmentId=267&releaseEnvironmentId=267"
+        }
+      }
+    },
+    "projectReference": null,
+    "definitionEnvironmentId": 1,
+    "attempt": 1,
+    "reason": "automated",
+    "deploymentStatus": "succeeded",
+    "operationStatus": "Approved",
+    "requestedBy": {
+      "displayName": "Microsoft.VisualStudio.Services.ReleaseManagement",
+      "id": "0000000d-0000-8888-8000-000000000000",
+      "uniqueName": "0000000d-0000-8888-8000-000000000000@2c895908-04e0-4952-89fd-54b0046d6288",
+      "descriptor": "s2s.MDAwMDAwMGQtMDAwMC04ODg4LTgwMDAtMDAwMDAwMDAwMDAwQDJjODk1OTA4LTA0ZTAtNDk1Mi04OWZkLTU0YjAwNDZkNjI4OA"
+    },
+    "requestedFor": {
+      "displayName": "Microsoft.VisualStudio.Services.ReleaseManagement",
+      "id": "0000000d-0000-8888-8000-000000000000",
+      "uniqueName": "0000000d-0000-8888-8000-000000000000@2c895908-04e0-4952-89fd-54b0046d6288",
+      "descriptor": "s2s.MDAwMDAwMGQtMDAwMC04ODg4LTgwMDAtMDAwMDAwMDAwMDAwQDJjODk1OTA4LTA0ZTAtNDk1Mi04OWZkLTU0YjAwNDZkNjI4OA"
+    },
+    "queuedOn": "2019-10-28T22:44:12.58Z",
+    "startedOn": "2019-10-28T22:44:19.173Z",
+    "completedOn": "2019-10-28T22:45:30.567Z",
+    "lastModifiedOn": "2019-10-28T22:45:30.567Z",
+    "lastModifiedBy": {
+      "displayName": "Microsoft.VisualStudio.Services.ReleaseManagement",
+      "id": "0000000d-0000-8888-8000-000000000000",
+      "uniqueName": "0000000d-0000-8888-8000-000000000000@2c895908-04e0-4952-89fd-54b0046d6288",
+      "descriptor": "s2s.MDAwMDAwMGQtMDAwMC04ODg4LTgwMDAtMDAwMDAwMDAwMDAwQDJjODk1OTA4LTA0ZTAtNDk1Mi04OWZkLTU0YjAwNDZkNjI4OA"
+    },
+    "conditions": [
+      {
+        "result": true,
+        "name": "ReleaseStarted",
+        "conditionType": "event",
+        "value": ""
+      }
+    ],
+    "preDeployApprovals": [
+      {
+        "id": 763,
+        "revision": 1,
+        "approvalType": "preDeploy",
+        "createdOn": "2019-10-28T22:44:12.72Z",
+        "modifiedOn": "2019-10-28T22:44:12.727Z",
+        "status": "approved",
+        "comments": "",
+        "isAutomated": true,
+        "isNotificationOn": false,
+        "trialNumber": 1,
+        "attempt": 1,
+        "rank": 1,
+        "release": {
+          "id": 262,
+          "name": "Release-209",
+          "url": "https://vsrm.dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/Release/releases/262",
+          "_links": {
+            "web": {
+              "href": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_release?releaseId=262&_a=release-summary"
+            },
+            "self": {
+              "href": "https://vsrm.dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/Release/releases/262"
+            }
+          }
+        },
+        "releaseDefinition": {
+          "id": 0,
+          "name": "hello-bedrock",
+          "path": "\\",
+          "projectReference": null,
+          "url": "https://vsrm.dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/Release/definitions/0",
+          "_links": {
+            "web": {
+              "href": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_release?definitionId=0"
+            },
+            "self": {
+              "href": "https://vsrm.dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/Release/definitions/0"
+            }
+          }
+        },
+        "releaseEnvironment": {
+          "id": 267,
+          "name": "Dev",
+          "url": "https://vsrm.dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/Release/releases/262/environments/267",
+          "_links": {
+            "self": {
+              "href": "https://vsrm.dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/Release/releases/262/environments/0"
+            }
+          }
+        },
+        "url": "https://vsrm.dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/Release/approvals/763"
+      }
+    ],
+    "postDeployApprovals": [
+      {
+        "id": 765,
+        "revision": 1,
+        "approvalType": "postDeploy",
+        "createdOn": "2019-10-28T22:45:30.547Z",
+        "modifiedOn": "2019-10-28T22:45:30.553Z",
+        "status": "approved",
+        "comments": "",
+        "isAutomated": true,
+        "isNotificationOn": false,
+        "trialNumber": 1,
+        "attempt": 1,
+        "rank": 3,
+        "release": {
+          "id": 262,
+          "name": "Release-209",
+          "url": "https://vsrm.dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/Release/releases/262",
+          "_links": {
+            "web": {
+              "href": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_release?releaseId=262&_a=release-summary"
+            },
+            "self": {
+              "href": "https://vsrm.dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/Release/releases/262"
+            }
+          }
+        },
+        "releaseDefinition": {
+          "id": 0,
+          "name": "hello-bedrock",
+          "path": "\\",
+          "projectReference": null,
+          "url": "https://vsrm.dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/Release/definitions/0",
+          "_links": {
+            "web": {
+              "href": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_release?definitionId=0"
+            },
+            "self": {
+              "href": "https://vsrm.dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/Release/definitions/0"
+            }
+          }
+        },
+        "releaseEnvironment": {
+          "id": 267,
+          "name": "Dev",
+          "url": "https://vsrm.dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/Release/releases/262/environments/267",
+          "_links": {
+            "self": {
+              "href": "https://vsrm.dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/Release/releases/262/environments/0"
+            }
+          }
+        },
+        "url": "https://vsrm.dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/Release/approvals/765"
+      }
+    ],
+    "_links": {}
+  },
+  {
+    "id": 266,
+    "release": {
+      "id": 261,
+      "name": "Release-208",
+      "url": "https://vsrm.dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/Release/releases/261",
+      "artifacts": [
+        {
+          "sourceId": "9434c930-5e01-4866-b700-8a5461e6c698:hellorings.azurecr.io:hellobedrock",
+          "type": "AzureContainerRepository",
+          "alias": "_hellobedrock",
+          "definitionReference": {
+            "connection": {
+              "id": "9434c930-5e01-4866-b700-8a5461e6c698",
+              "name": "hellobedrock_rg"
+            },
+            "definition": {
+              "id": "hellobedrock",
+              "name": "hellobedrock"
+            },
+            "IsTriggeringArtifact": {
+              "id": "True",
+              "name": "True"
+            },
+            "registryurl": {
+              "id": "hellorings.azurecr.io",
+              "name": "hellorings"
+            },
+            "resourcegroup": {
+              "id": "bedrock-rings",
+              "name": "bedrock-rings"
+            },
+            "version": {
+              "id": "hello-bedrock-master-7033",
+              "name": "hello-bedrock-master-7033"
+            }
+          },
+          "isPrimary": true,
+          "isRetained": false
+        }
+      ],
+      "webAccessUri": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_release?releaseId=261&_a=release-summary",
+      "_links": {
+        "self": {
+          "href": "https://vsrm.dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/Release/releases/261"
+        },
+        "web": {
+          "href": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_release?releaseId=261&_a=release-summary"
+        }
+      }
+    },
+    "releaseDefinition": {
+      "id": 1,
+      "name": "hello-bedrock",
+      "path": "\\",
+      "projectReference": {
+        "id": "f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5",
+        "name": null
+      },
+      "url": "https://vsrm.dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/Release/definitions/1",
+      "_links": {
+        "self": {
+          "href": "https://vsrm.dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/Release/definitions/1"
+        },
+        "web": {
+          "href": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_release?definitionId=1"
+        }
+      }
+    },
+    "releaseEnvironment": {
+      "id": 266,
+      "name": "Dev",
+      "url": "https://vsrm.dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/Release/releases/261/environments/266",
+      "_links": {
+        "self": {
+          "href": "https://vsrm.dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/Release/releases/261/environments/266"
+        },
+        "web": {
+          "href": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_release?releaseId=261&_a=release-logs&environmentId=266&releaseEnvironmentId=266"
+        }
+      }
+    },
+    "projectReference": null,
+    "definitionEnvironmentId": 1,
+    "attempt": 1,
+    "reason": "automated",
+    "deploymentStatus": "succeeded",
+    "operationStatus": "Approved",
+    "requestedBy": {
+      "displayName": "Microsoft.VisualStudio.Services.ReleaseManagement",
+      "id": "0000000d-0000-8888-8000-000000000000",
+      "uniqueName": "0000000d-0000-8888-8000-000000000000@2c895908-04e0-4952-89fd-54b0046d6288",
+      "descriptor": "s2s.MDAwMDAwMGQtMDAwMC04ODg4LTgwMDAtMDAwMDAwMDAwMDAwQDJjODk1OTA4LTA0ZTAtNDk1Mi04OWZkLTU0YjAwNDZkNjI4OA"
+    },
+    "requestedFor": {
+      "displayName": "Microsoft.VisualStudio.Services.ReleaseManagement",
+      "id": "0000000d-0000-8888-8000-000000000000",
+      "uniqueName": "0000000d-0000-8888-8000-000000000000@2c895908-04e0-4952-89fd-54b0046d6288",
+      "descriptor": "s2s.MDAwMDAwMGQtMDAwMC04ODg4LTgwMDAtMDAwMDAwMDAwMDAwQDJjODk1OTA4LTA0ZTAtNDk1Mi04OWZkLTU0YjAwNDZkNjI4OA"
+    },
+    "queuedOn": "2019-10-28T22:37:17.63Z",
+    "startedOn": "2019-10-28T22:37:24.837Z",
+    "completedOn": "2019-10-28T22:38:37.017Z",
+    "lastModifiedOn": "2019-10-28T22:38:37.017Z",
+    "lastModifiedBy": {
+      "displayName": "Microsoft.VisualStudio.Services.ReleaseManagement",
+      "id": "0000000d-0000-8888-8000-000000000000",
+      "uniqueName": "0000000d-0000-8888-8000-000000000000@2c895908-04e0-4952-89fd-54b0046d6288",
+      "descriptor": "s2s.MDAwMDAwMGQtMDAwMC04ODg4LTgwMDAtMDAwMDAwMDAwMDAwQDJjODk1OTA4LTA0ZTAtNDk1Mi04OWZkLTU0YjAwNDZkNjI4OA"
+    },
+    "conditions": [
+      {
+        "result": true,
+        "name": "ReleaseStarted",
+        "conditionType": "event",
+        "value": ""
+      }
+    ],
+    "preDeployApprovals": [
+      {
+        "id": 760,
+        "revision": 1,
+        "approvalType": "preDeploy",
+        "createdOn": "2019-10-28T22:37:17.76Z",
+        "modifiedOn": "2019-10-28T22:37:17.767Z",
+        "status": "approved",
+        "comments": "",
+        "isAutomated": true,
+        "isNotificationOn": false,
+        "trialNumber": 1,
+        "attempt": 1,
+        "rank": 1,
+        "release": {
+          "id": 261,
+          "name": "Release-208",
+          "url": "https://vsrm.dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/Release/releases/261",
+          "_links": {
+            "web": {
+              "href": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_release?releaseId=261&_a=release-summary"
+            },
+            "self": {
+              "href": "https://vsrm.dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/Release/releases/261"
+            }
+          }
+        },
+        "releaseDefinition": {
+          "id": 0,
+          "name": "hello-bedrock",
+          "path": "\\",
+          "projectReference": null,
+          "url": "https://vsrm.dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/Release/definitions/0",
+          "_links": {
+            "web": {
+              "href": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_release?definitionId=0"
+            },
+            "self": {
+              "href": "https://vsrm.dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/Release/definitions/0"
+            }
+          }
+        },
+        "releaseEnvironment": {
+          "id": 266,
+          "name": "Dev",
+          "url": "https://vsrm.dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/Release/releases/261/environments/266",
+          "_links": {
+            "self": {
+              "href": "https://vsrm.dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/Release/releases/261/environments/0"
+            }
+          }
+        },
+        "url": "https://vsrm.dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/Release/approvals/760"
+      }
+    ],
+    "postDeployApprovals": [
+      {
+        "id": 762,
+        "revision": 1,
+        "approvalType": "postDeploy",
+        "createdOn": "2019-10-28T22:38:36.997Z",
+        "modifiedOn": "2019-10-28T22:38:37.003Z",
+        "status": "approved",
+        "comments": "",
+        "isAutomated": true,
+        "isNotificationOn": false,
+        "trialNumber": 1,
+        "attempt": 1,
+        "rank": 3,
+        "release": {
+          "id": 261,
+          "name": "Release-208",
+          "url": "https://vsrm.dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/Release/releases/261",
+          "_links": {
+            "web": {
+              "href": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_release?releaseId=261&_a=release-summary"
+            },
+            "self": {
+              "href": "https://vsrm.dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/Release/releases/261"
+            }
+          }
+        },
+        "releaseDefinition": {
+          "id": 0,
+          "name": "hello-bedrock",
+          "path": "\\",
+          "projectReference": null,
+          "url": "https://vsrm.dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/Release/definitions/0",
+          "_links": {
+            "web": {
+              "href": "https://dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_release?definitionId=0"
+            },
+            "self": {
+              "href": "https://vsrm.dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/Release/definitions/0"
+            }
+          }
+        },
+        "releaseEnvironment": {
+          "id": 266,
+          "name": "Dev",
+          "url": "https://vsrm.dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/Release/releases/261/environments/266",
+          "_links": {
+            "self": {
+              "href": "https://vsrm.dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/Release/releases/261/environments/0"
+            }
+          }
+        },
+        "url": "https://vsrm.dev.azure.com/epicstuff/f8a98d9c-8f11-46ef-89e4-07b4a56d1ad5/_apis/Release/approvals/762"
+      }
+    ],
+    "_links": {}
+  }
+]

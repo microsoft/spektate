@@ -20,35 +20,39 @@ export class GitHub implements IRepository {
     this.accessToken = accessToken;
   }
 
-  public async getManifestSyncState() {
-    const data = await HttpHelper.httpGet<any>(
-      manifestSyncTagURL
-        .replace("<owner>", this.username)
-        .replace("<repo>", this.reponame),
-      this.accessToken
-    );
-
-    const tag = data.data;
-    if (tag != null) {
-      const syncStatus = await HttpHelper.httpGet<any>(
-        tag.object.url,
+  public async getManifestSyncState(): Promise<ITag> {
+    return new Promise(async (resolve, reject) => {
+      const data = await HttpHelper.httpGet<any>(
+        manifestSyncTagURL
+          .replace("<owner>", this.username)
+          .replace("<repo>", this.reponame),
         this.accessToken
       );
 
-      if (syncStatus != null) {
-        this.manifestSync = {
-          commit: syncStatus.data.object.sha.substring(0, 7),
-          date: new Date(syncStatus.data.tagger.date),
-          message: syncStatus.data.message,
-          tagger: syncStatus.data.tagger.name
-        };
-        return this.manifestSync;
-      }
-    }
+      const tag = data.data;
+      if (tag != null) {
+        const syncStatus = await HttpHelper.httpGet<any>(
+          tag.object.url,
+          this.accessToken
+        );
 
-    throw new Error(
-      `Unable to sync manifests for Github repo ${this.username}/${this.reponame}`
-    );
+        if (syncStatus != null) {
+          this.manifestSync = {
+            commit: syncStatus.data.object.sha.substring(0, 7),
+            date: new Date(syncStatus.data.tagger.date),
+            message: syncStatus.data.message,
+            tagger: syncStatus.data.tagger.name
+          };
+          resolve(this.manifestSync);
+          return;
+        }
+      }
+
+      console.error(
+        `Unable to sync manifests for Github repo ${this.username}/${this.reponame}`
+      );
+      reject();
+    });
   }
 
   public async getAuthor(commitId: string) {

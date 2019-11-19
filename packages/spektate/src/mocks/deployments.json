@@ -1,0 +1,3975 @@
+{
+  "entries": [
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "01514bd376d3"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-10-24T21:28:43.902Z"
+      },
+      "commitId": {
+        "_": "5b54eb4"
+      },
+      "env": {
+        "_": "dev"
+      },
+      "etag": {
+        "_": "W/\"datetime'2019-10-24T21%3A28%3A34.9425016Z'\""
+      },
+      "hldCommitId": {
+        "_": "d7c9e6a"
+      },
+      "imageTag": {
+        "_": "hello-bedrock-master-6872"
+      },
+      "manifestCommitId": {
+        "_": "49bcd78"
+      },
+      "p1": {
+        "_": "6872"
+      },
+      "p2": {
+        "_": "246"
+      },
+      "p3": {
+        "_": "6876"
+      },
+      "service": {
+        "_": "hello-bedrock"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-10-24T21%3A28%3A43.9029361Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "0252bf463b17"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-09-26T22:11:10.684Z"
+      },
+      "commitId": {
+        "_": "5b54eb4"
+      },
+      "env": {
+        "_": "dev"
+      },
+      "etag": {
+        "_": "W/\"datetime'2019-09-26T22%3A10%3A46.7873622Z'\""
+      },
+      "hldCommitId": {
+        "_": "f803dcc"
+      },
+      "imageTag": {
+        "_": "hello-bedrock-master-6161"
+      },
+      "p1": {
+        "_": "6161"
+      },
+      "p2": {
+        "_": "200"
+      },
+      "p3": {
+        "_": "6169"
+      },
+      "service": {
+        "_": "hello-bedrock"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-09-26T22%3A11%3A10.6844264Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "03f1e8bc7bab"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-10-24T21:40:11.895Z"
+      },
+      "commitId": {
+        "_": "92d6ce1"
+      },
+      "env": {
+        "_": "dev"
+      },
+      "etag": {
+        "_": "W/\"datetime'2019-10-24T21%3A39%3A53.5575327Z'\""
+      },
+      "hldCommitId": {
+        "_": "9e108fd"
+      },
+      "imageTag": {
+        "_": "hello-spektate-master-6881"
+      },
+      "manifestCommitId": {
+        "_": "a12da8c"
+      },
+      "p1": {
+        "_": "6881"
+      },
+      "p2": {
+        "_": "249"
+      },
+      "p3": {
+        "_": "6883"
+      },
+      "service": {
+        "_": "samiyaakhtar/hello-spektate"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-10-24T21%3A40%3A11.8955919Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "0545e7fc7493"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-09-26T22:01:39.969Z"
+      },
+      "commitId": {
+        "_": "a0bca78"
+      },
+      "env": {
+        "_": "dev"
+      },
+      "etag": {
+        "_": "W/\"datetime'2019-09-26T22%3A01%3A28.7232144Z'\""
+      },
+      "hldCommitId": {
+        "_": "7b1b3ca"
+      },
+      "imageTag": {
+        "_": "hello-spektate-master-6148"
+      },
+      "manifestCommitId": {
+        "_": "2c2f5cc"
+      },
+      "p1": {
+        "_": "6148"
+      },
+      "p2": {
+        "_": "193"
+      },
+      "p3": {
+        "_": "6151"
+      },
+      "service": {
+        "_": "samiyaakhtar/hello-spektate"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-09-26T22%3A01%3A39.9691982Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "0a2ad6533269"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-10-24T21:17:00.720Z"
+      },
+      "commitId": {
+        "_": "5b54eb4"
+      },
+      "env": {
+        "_": "dev"
+      },
+      "etag": {
+        "_": "W/\"datetime'2019-10-24T21%3A16%3A48.0488756Z'\""
+      },
+      "hldCommitId": {
+        "_": "7df517d"
+      },
+      "imageTag": {
+        "_": "hello-bedrock-master-6859"
+      },
+      "manifestCommitId": {
+        "_": "eb98f22"
+      },
+      "p1": {
+        "_": "6859"
+      },
+      "p2": {
+        "_": "240"
+      },
+      "p3": {
+        "_": "6861"
+      },
+      "service": {
+        "_": "hello-bedrock"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-10-24T21%3A17%3A00.7209779Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "0bb23e87cd86"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-09-26T21:53:48.181Z"
+      },
+      "commitId": {
+        "_": "5b54eb4"
+      },
+      "env": {
+        "_": "dev"
+      },
+      "etag": {
+        "_": "W/\"datetime'2019-09-26T21%3A53%3A37.0544865Z'\""
+      },
+      "hldCommitId": {
+        "_": "b003f16"
+      },
+      "imageTag": {
+        "_": "hello-bedrock-master-6137"
+      },
+      "manifestCommitId": {
+        "_": "dfc0fb8"
+      },
+      "p1": {
+        "_": "6137"
+      },
+      "p2": {
+        "_": "188"
+      },
+      "p3": {
+        "_": "6143"
+      },
+      "service": {
+        "_": "hello-bedrock"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-09-26T21%3A53%3A48.1814285Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "1070a4f5144e"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-10-24T21:26:18.173Z"
+      },
+      "commitId": {
+        "_": "5b54eb4"
+      },
+      "env": {
+        "_": "dev"
+      },
+      "etag": {
+        "_": "W/\"datetime'2019-10-24T21%3A26%3A05.5622283Z'\""
+      },
+      "hldCommitId": {
+        "_": "ba214d7"
+      },
+      "imageTag": {
+        "_": "hello-bedrock-master-6868"
+      },
+      "manifestCommitId": {
+        "_": "18aeb58"
+      },
+      "p1": {
+        "_": "6868"
+      },
+      "p2": {
+        "_": "243"
+      },
+      "p3": {
+        "_": "6873"
+      },
+      "service": {
+        "_": "hello-bedrock"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-10-24T21%3A26%3A18.1732865Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "13c8a1e4ffe9"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-10-30T21:42:39.180Z"
+      },
+      "p1": {
+        "_": "7188"
+      },
+      "imageTag": {
+        "_": "7188"
+      },
+      "service": {
+        "_": "azure-voting-app-redis"
+      },
+      "commitId": {
+        "_": "23373ba"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-10-30T21%3A42%3A39.1800218Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "14497d87488e"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-10-30T21:52:26.744Z"
+      },
+      "commitId": {
+        "_": "6035a8c"
+      },
+      "env": {
+        "_": "multi-stage"
+      },
+      "hldCommitId": {
+        "_": "8e69bd9"
+      },
+      "imageTag": {
+        "_": "7192"
+      },
+      "manifestCommitId": {
+        "_": "8e69bd9"
+      },
+      "p1": {
+        "_": "7192"
+      },
+      "p2": {
+        "_": "7192"
+      },
+      "p3": {
+        "_": "7195"
+      },
+      "service": {
+        "_": "azure-voting-app-redis"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-10-30T21%3A52%3A26.7446349Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "178fdc0bc226"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-10-09T23:03:32.042Z"
+      },
+      "commitId": {
+        "_": "5b54eb4"
+      },
+      "env": {
+        "_": "dev"
+      },
+      "etag": {
+        "_": "W/\"datetime'2019-10-09T23%3A03%3A22.8934644Z'\""
+      },
+      "hldCommitId": {
+        "_": "99ffcec"
+      },
+      "imageTag": {
+        "_": "hello-bedrock-master-6342"
+      },
+      "manifestCommitId": {
+        "_": "20d199d"
+      },
+      "p1": {
+        "_": "6342"
+      },
+      "p2": {
+        "_": "225"
+      },
+      "p3": {
+        "_": "6343"
+      },
+      "service": {
+        "_": "hello-bedrock"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-10-09T23%3A03%3A32.0420386Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "179c843496bd"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-10-31T18:14:54.997Z"
+      },
+      "commitId": {
+        "_": "37a429f"
+      },
+      "env": {
+        "_": "dev"
+      },
+      "hldCommitId": {
+        "_": "d6f7d7f"
+      },
+      "imageTag": {
+        "_": "hello-bedrock-master-7254"
+      },
+      "manifestCommitId": {
+        "_": "096c952"
+      },
+      "p1": {
+        "_": "7254"
+      },
+      "p2": {
+        "_": "264"
+      },
+      "p3": {
+        "_": "7255"
+      },
+      "service": {
+        "_": "hello-bedrock"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-10-31T18%3A14%3A54.997737Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "1e680e920c27"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-09-26T22:16:16.635Z"
+      },
+      "commitId": {
+        "_": "5b54eb4"
+      },
+      "env": {
+        "_": "dev"
+      },
+      "etag": {
+        "_": "W/\"datetime'2019-09-26T22%3A16%3A07.2527222Z'\""
+      },
+      "hldCommitId": {
+        "_": "bc341e0"
+      },
+      "imageTag": {
+        "_": "hello-bedrock-master-6178"
+      },
+      "manifestCommitId": {
+        "_": "a58001d"
+      },
+      "p1": {
+        "_": "6178"
+      },
+      "p2": {
+        "_": "209"
+      },
+      "p3": {
+        "_": "6182"
+      },
+      "service": {
+        "_": "hello-bedrock"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-09-26T22%3A16%3A16.635384Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "1f1478960bbb"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-10-24T20:12:20.903Z"
+      },
+      "p2": {
+        "_": "239"
+      },
+      "p3": {
+        "_": "6837"
+      },
+      "p1": {
+        "_": "6836"
+      },
+      "service": {
+        "_": "samiyaakhtar/hello-spektate"
+      },
+      "hldCommitId": {
+        "_": "01bec4a"
+      },
+      "commitId": {
+        "_": "92d6ce1"
+      },
+      "imageTag": {
+        "_": "hello-spektate-master-6836"
+      },
+      "etag": {
+        "_": "W/\"datetime'2019-10-24T19%3A40%3A20.6773034Z'\""
+      },
+      "env": {
+        "_": "dev"
+      },
+      "manifestCommitId": {
+        "_": "26f40f3"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-10-24T20%3A12%3A20.903062Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "20e154407790"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-10-30T23:06:57.859Z"
+      },
+      "commitId": {
+        "_": "921e96d"
+      },
+      "env": {
+        "_": "multi-stage"
+      },
+      "hldCommitId": {
+        "_": "aa113f7"
+      },
+      "imageTag": {
+        "_": "7205"
+      },
+      "p1": {
+        "_": "7205"
+      },
+      "p2": {
+        "_": "7205"
+      },
+      "service": {
+        "_": "azure-voting-app-redis"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-10-30T23%3A06%3A57.8595787Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "231f54bddb67"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-09-26T22:01:58.675Z"
+      },
+      "commitId": {
+        "_": "a0bca78"
+      },
+      "env": {
+        "_": "dev"
+      },
+      "etag": {
+        "_": "W/\"datetime'2019-09-26T22%3A01%3A49.3748748Z'\""
+      },
+      "hldCommitId": {
+        "_": "85cb04b"
+      },
+      "imageTag": {
+        "_": "hello-spektate-master-6149"
+      },
+      "manifestCommitId": {
+        "_": "2c2f5cc"
+      },
+      "p1": {
+        "_": "6149"
+      },
+      "p2": {
+        "_": "194"
+      },
+      "p3": {
+        "_": "6152"
+      },
+      "service": {
+        "_": "samiyaakhtar/hello-spektate"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-09-26T22%3A01%3A58.6754784Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "236ee1988925"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-10-28T22:20:52.729Z"
+      },
+      "env": {
+        "_": "dev"
+      },
+      "etag": {
+        "_": "W/\"datetime'2019-10-28T22%3A20%3A41.5091681Z'\""
+      },
+      "hldCommitId": {
+        "_": "2f87b04"
+      },
+      "imageTag": {
+        "_": "hello-bedrock-master-7019"
+      },
+      "manifestCommitId": {
+        "_": "958bc3f"
+      },
+      "p2": {
+        "_": "254"
+      },
+      "p3": {
+        "_": "7022"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-10-28T22%3A20%3A52.7292111Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "265a8ba8f833"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-10-23T17:17:24.879Z"
+      },
+      "commitId": {
+        "_": "3c06584"
+      },
+      "env": {
+        "_": "dev"
+      },
+      "etag": {
+        "_": "W/\"datetime'2019-10-23T17%3A17%3A03.9194185Z'\""
+      },
+      "hldCommitId": {
+        "_": "ba3b5e3"
+      },
+      "imageTag": {
+        "_": "hello-spektate-master-6743"
+      },
+      "manifestCommitId": {
+        "_": "f7c59eb"
+      },
+      "p1": {
+        "_": "6743"
+      },
+      "p2": {
+        "_": "231"
+      },
+      "p3": {
+        "_": "6746"
+      },
+      "service": {
+        "_": "samiyaakhtar/hello-spektate"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-10-23T17%3A17%3A24.8792016Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "27e88c5459a2"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-10-30T23:02:14.422Z"
+      },
+      "p1": {
+        "_": "7204"
+      },
+      "imageTag": {
+        "_": "7204"
+      },
+      "service": {
+        "_": "azure-voting-app-redis"
+      },
+      "commitId": {
+        "_": "6dea6b7"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-10-30T23%3A02%3A14.4223723Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "2866760f21a2"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-09-26T21:48:05.696Z"
+      },
+      "commitId": {
+        "_": "5b54eb4"
+      },
+      "env": {
+        "_": "dev"
+      },
+      "etag": {
+        "_": "W/\"datetime'2019-09-26T21%3A47%3A54.1204568Z'\""
+      },
+      "hldCommitId": {
+        "_": "eefb45a"
+      },
+      "imageTag": {
+        "_": "hello-bedrock-master-6133"
+      },
+      "manifestCommitId": {
+        "_": "45b97a0"
+      },
+      "p1": {
+        "_": "6133"
+      },
+      "p2": {
+        "_": "185"
+      },
+      "p3": {
+        "_": "6134"
+      },
+      "service": {
+        "_": "hello-bedrock"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-09-26T21%3A48%3A05.6966754Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "34ac899e220d"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-10-30T22:03:54.186Z"
+      },
+      "commitId": {
+        "_": "6035a8c"
+      },
+      "env": {
+        "_": "multi-stage"
+      },
+      "hldCommitId": {
+        "_": "774a9bb"
+      },
+      "imageTag": {
+        "_": "7197"
+      },
+      "p1": {
+        "_": "7197"
+      },
+      "p2": {
+        "_": "7197"
+      },
+      "service": {
+        "_": "azure-voting-app-redis"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-10-30T22%3A03%3A54.1864605Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "4099dea7d5ed"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-10-09T21:54:49.333Z"
+      },
+      "commitId": {
+        "_": "5b54eb4"
+      },
+      "env": {
+        "_": "dev"
+      },
+      "etag": {
+        "_": "W/\"datetime'2019-10-09T21%3A54%3A38.690336Z'\""
+      },
+      "hldCommitId": {
+        "_": "333dc79"
+      },
+      "imageTag": {
+        "_": "hello-bedrock-master-6338"
+      },
+      "manifestCommitId": {
+        "_": "e8422e0"
+      },
+      "p1": {
+        "_": "6338"
+      },
+      "p2": {
+        "_": "223"
+      },
+      "p3": {
+        "_": "6339"
+      },
+      "service": {
+        "_": "hello-bedrock"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-10-09T21%3A54%3A49.3339789Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "4151fc687d55"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-10-23T17:21:01.012Z"
+      },
+      "commitId": {
+        "_": "b9ceedb"
+      },
+      "env": {
+        "_": "dev"
+      },
+      "etag": {
+        "_": "W/\"datetime'2019-10-23T17%3A20%3A40.6822962Z'\""
+      },
+      "hldCommitId": {
+        "_": "01f68d4"
+      },
+      "imageTag": {
+        "_": "hello-spektate-master-6747"
+      },
+      "manifestCommitId": {
+        "_": "6bfc4ea"
+      },
+      "p1": {
+        "_": "6747"
+      },
+      "p2": {
+        "_": "232"
+      },
+      "p3": {
+        "_": "6748"
+      },
+      "service": {
+        "_": "samiyaakhtar/hello-spektate"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-10-23T17%3A21%3A01.0126361Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "437e98c40612"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-09-26T22:10:37.442Z"
+      },
+      "commitId": {
+        "_": "5b54eb4"
+      },
+      "env": {
+        "_": "dev"
+      },
+      "etag": {
+        "_": "W/\"datetime'2019-09-26T22%3A10%3A28.3181748Z'\""
+      },
+      "hldCommitId": {
+        "_": "0fae3f3"
+      },
+      "imageTag": {
+        "_": "hello-bedrock-master-6158"
+      },
+      "manifestCommitId": {
+        "_": "d9df2a3"
+      },
+      "p1": {
+        "_": "6158"
+      },
+      "p2": {
+        "_": "198"
+      },
+      "p3": {
+        "_": "6167"
+      },
+      "service": {
+        "_": "hello-bedrock"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-09-26T22%3A10%3A37.4426925Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "44f090ca31a7"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-10-24T21:28:22.118Z"
+      },
+      "commitId": {
+        "_": "5b54eb4"
+      },
+      "env": {
+        "_": "dev"
+      },
+      "etag": {
+        "_": "W/\"datetime'2019-10-24T21%3A28%3A05.9126541Z'\""
+      },
+      "hldCommitId": {
+        "_": "838aa6c"
+      },
+      "imageTag": {
+        "_": "hello-bedrock-master-6871"
+      },
+      "manifestCommitId": {
+        "_": "49bcd78"
+      },
+      "p1": {
+        "_": "6871"
+      },
+      "p2": {
+        "_": "245"
+      },
+      "p3": {
+        "_": "6875"
+      },
+      "service": {
+        "_": "hello-bedrock"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-10-24T21%3A28%3A22.1182909Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "48879be77c31"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-09-26T22:12:06.422Z"
+      },
+      "commitId": {
+        "_": "a0bca78"
+      },
+      "env": {
+        "_": "dev"
+      },
+      "etag": {
+        "_": "W/\"datetime'2019-09-26T22%3A11%3A54.5137217Z'\""
+      },
+      "hldCommitId": {
+        "_": "3c7e4e6"
+      },
+      "imageTag": {
+        "_": "hello-spektate-master-6153"
+      },
+      "manifestCommitId": {
+        "_": "e2b73a1"
+      },
+      "p1": {
+        "_": "6153"
+      },
+      "p2": {
+        "_": "204"
+      },
+      "p3": {
+        "_": "6170"
+      },
+      "service": {
+        "_": "samiyaakhtar/hello-spektate"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-09-26T22%3A12%3A06.4222222Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "49501d5dae97"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-10-28T23:10:53.456Z"
+      },
+      "commitId": {
+        "_": "37a429f"
+      },
+      "env": {
+        "_": "dev"
+      },
+      "hldCommitId": {
+        "_": "6bb99d5"
+      },
+      "imageTag": {
+        "_": "hello-bedrock-master-7043"
+      },
+      "manifestCommitId": {
+        "_": "3f9870e"
+      },
+      "p1": {
+        "_": "7043"
+      },
+      "p2": {
+        "_": "263"
+      },
+      "p3": {
+        "_": "7044"
+      },
+      "service": {
+        "_": "hello-bedrock"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-10-28T23%3A10%3A53.456262Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "4baa92a6fbec"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-09-26T22:09:46.988Z"
+      },
+      "commitId": {
+        "_": "5b54eb4"
+      },
+      "env": {
+        "_": "dev"
+      },
+      "etag": {
+        "_": "W/\"datetime'2019-09-26T22%3A09%3A35.1542166Z'\""
+      },
+      "hldCommitId": {
+        "_": "27d5635"
+      },
+      "imageTag": {
+        "_": "hello-bedrock-master-6160"
+      },
+      "manifestCommitId": {
+        "_": "86e9b6d"
+      },
+      "p1": {
+        "_": "6160"
+      },
+      "p2": {
+        "_": "197"
+      },
+      "p3": {
+        "_": "6165"
+      },
+      "service": {
+        "_": "hello-bedrock"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-09-26T22%3A09%3A46.9886672Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "5a2a0c0f1e58"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-10-28T22:21:30.567Z"
+      },
+      "env": {
+        "_": "dev"
+      },
+      "etag": {
+        "_": "W/\"datetime'2019-10-28T22%3A21%3A19.2592188Z'\""
+      },
+      "hldCommitId": {
+        "_": "2d1e818"
+      },
+      "imageTag": {
+        "_": "hello-bedrock-master-7018"
+      },
+      "manifestCommitId": {
+        "_": "6291f6a"
+      },
+      "p2": {
+        "_": "255"
+      },
+      "p3": {
+        "_": "7023"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-10-28T22%3A21%3A30.567316Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "5be9a4dc024a"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-10-24T23:33:47.870Z"
+      },
+      "commitId": {
+        "_": "92d6ce1"
+      },
+      "env": {
+        "_": "dev"
+      },
+      "etag": {
+        "_": "W/\"datetime'2019-10-24T23%3A33%3A25.2592104Z'\""
+      },
+      "hldCommitId": {
+        "_": "dfb1cd9"
+      },
+      "imageTag": {
+        "_": "hello-spektate-master-6903"
+      },
+      "manifestCommitId": {
+        "_": "93832fa"
+      },
+      "p1": {
+        "_": "6903"
+      },
+      "p2": {
+        "_": "252"
+      },
+      "p3": {
+        "_": "6904"
+      },
+      "service": {
+        "_": "samiyaakhtar/hello-spektate"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-10-24T23%3A33%3A47.8704445Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "5eb09f7dab1b"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-10-24T20:55:23.891Z"
+      },
+      "commitId": {
+        "_": "c01ad17"
+      },
+      "env": {
+        "_": "dev"
+      },
+      "etag": {
+        "_": "W/\"datetime'2019-10-24T20%3A53%3A46.1806977Z'\""
+      },
+      "hldCommitId": {
+        "_": "5d043c9"
+      },
+      "imageTag": {
+        "_": "edaena/spartan-app:20191024.10"
+      },
+      "manifestCommitId": {
+        "_": "5149058"
+      },
+      "p1": {
+        "_": "6854"
+      },
+      "p2": {
+        "_": "6854"
+      },
+      "p3": {
+        "_": "6854"
+      },
+      "service": {
+        "_": "edaena/spartan-app"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-10-24T20%3A55%3A23.8918626Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "603861a8a425"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-09-26T22:11:19.004Z"
+      },
+      "commitId": {
+        "_": "a0bca78"
+      },
+      "env": {
+        "_": "dev"
+      },
+      "etag": {
+        "_": "W/\"datetime'2019-09-26T22%3A11%3A07.3060138Z'\""
+      },
+      "hldCommitId": {
+        "_": "0c743eb"
+      },
+      "imageTag": {
+        "_": "hello-spektate-master-6162"
+      },
+      "manifestCommitId": {
+        "_": "04ff2dd"
+      },
+      "p1": {
+        "_": "6162"
+      },
+      "p2": {
+        "_": "201"
+      },
+      "p3": {
+        "_": "6168"
+      },
+      "service": {
+        "_": "samiyaakhtar/hello-spektate"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-09-26T22%3A11%3A19.004369Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "68371b9b2b0e"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-09-26T22:12:44.768Z"
+      },
+      "commitId": {
+        "_": "5b54eb4"
+      },
+      "env": {
+        "_": "dev"
+      },
+      "etag": {
+        "_": "W/\"datetime'2019-09-26T22%3A12%3A22.5327261Z'\""
+      },
+      "hldCommitId": {
+        "_": "0298ddb"
+      },
+      "imageTag": {
+        "_": "hello-bedrock-master-6157"
+      },
+      "p1": {
+        "_": "6157"
+      },
+      "p2": {
+        "_": "202"
+      },
+      "p3": {
+        "_": "6173"
+      },
+      "service": {
+        "_": "hello-bedrock"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-09-26T22%3A12%3A44.768606Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "6a3a950405f5"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-10-22T17:57:59.602Z"
+      },
+      "commitId": {
+        "_": "f68acf6"
+      },
+      "env": {
+        "_": "dev"
+      },
+      "etag": {
+        "_": "W/\"datetime'2019-10-22T17%3A56%3A22.5148783Z'\""
+      },
+      "hldCommitId": {
+        "_": "0b7c4c9"
+      },
+      "imageTag": {
+        "_": "edaena/spartan-app:20191022.5"
+      },
+      "p1": {
+        "_": "6699"
+      },
+      "p2": {
+        "_": "6699"
+      },
+      "service": {
+        "_": "edaena/spartan-app"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-10-22T17%3A57%3A59.602488Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "6ac26ca9c079"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-10-23T17:44:17.993Z"
+      },
+      "commitId": {
+        "_": "92d6ce1"
+      },
+      "env": {
+        "_": "dev"
+      },
+      "etag": {
+        "_": "W/\"datetime'2019-10-23T17%3A43%3A58.1113008Z'\""
+      },
+      "hldCommitId": {
+        "_": "8451efc"
+      },
+      "imageTag": {
+        "_": "hello-spektate-master-6752"
+      },
+      "manifestCommitId": {
+        "_": "d6ccb9f"
+      },
+      "p1": {
+        "_": "6752"
+      },
+      "p2": {
+        "_": "234"
+      },
+      "p3": {
+        "_": "6753"
+      },
+      "service": {
+        "_": "samiyaakhtar/hello-spektate"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-10-23T17%3A44%3A17.9933247Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "6da30e7b4750"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-10-28T22:00:22.297Z"
+      },
+      "commitId": {
+        "_": "f19cb81"
+      },
+      "env": {
+        "_": "dev"
+      },
+      "etag": {
+        "_": "W/\"datetime'2019-10-28T21%3A58%3A51.9166241Z'\""
+      },
+      "hldCommitId": {
+        "_": "bb15ecd"
+      },
+      "imageTag": {
+        "_": "edaena/spartan-app:20191028.4"
+      },
+      "isMultiStage": {
+        "_": "true"
+      },
+      "manifestCommitId": {
+        "_": "82c921f"
+      },
+      "p1": {
+        "_": "7015"
+      },
+      "p2": {
+        "_": "7015"
+      },
+      "p3": {
+        "_": "7015"
+      },
+      "service": {
+        "_": "edaena/spartan-app"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-10-28T22%3A00%3A22.2973899Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "6edfd1d86ca0"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-10-24T18:29:45.663Z"
+      },
+      "commitId": {
+        "_": "92d6ce1"
+      },
+      "env": {
+        "_": "dev"
+      },
+      "etag": {
+        "_": "W/\"datetime'2019-10-24T18%3A29%3A24.9723608Z'\""
+      },
+      "hldCommitId": {
+        "_": "f81fccc"
+      },
+      "imageTag": {
+        "_": "hello-spektate-master-6827"
+      },
+      "manifestCommitId": {
+        "_": "b19afba"
+      },
+      "p1": {
+        "_": "6827"
+      },
+      "p2": {
+        "_": "235"
+      },
+      "p3": {
+        "_": "6828"
+      },
+      "service": {
+        "_": "samiyaakhtar/hello-spektate"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-10-24T18%3A29%3A45.6632186Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "70b40a717924"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-10-24T21:48:56.586Z"
+      },
+      "commitId": {
+        "_": "c01ad17"
+      },
+      "env": {
+        "_": "dev"
+      },
+      "etag": {
+        "_": "W/\"datetime'2019-10-24T21%3A47%3A22.617396Z'\""
+      },
+      "hldCommitId": {
+        "_": "a4ebc15"
+      },
+      "imageTag": {
+        "_": "edaena/spartan-app:20191024.11"
+      },
+      "manifestCommitId": {
+        "_": "c75bfac"
+      },
+      "p1": {
+        "_": "6885"
+      },
+      "p2": {
+        "_": "6885"
+      },
+      "p3": {
+        "_": "6885"
+      },
+      "service": {
+        "_": "edaena/spartan-app"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-10-24T21%3A48%3A56.5868719Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "72963d194759"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-10-24T20:21:45.587Z"
+      },
+      "p1": {
+        "_": "6846"
+      },
+      "service": {
+        "_": "edaena/spartan-app"
+      },
+      "commitId": {
+        "_": "61ad469"
+      },
+      "imageTag": {
+        "_": "edaena/spartan-app:20191024.6"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-10-24T20%3A21%3A45.5879015Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "72ef228d1b8e"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-09-26T22:12:07.554Z"
+      },
+      "commitId": {
+        "_": "5b54eb4"
+      },
+      "env": {
+        "_": "dev"
+      },
+      "etag": {
+        "_": "W/\"datetime'2019-09-26T22%3A11%3A58.6086427Z'\""
+      },
+      "hldCommitId": {
+        "_": "6b8817d"
+      },
+      "imageTag": {
+        "_": "hello-bedrock-master-6159"
+      },
+      "manifestCommitId": {
+        "_": "e2b73a1"
+      },
+      "p1": {
+        "_": "6159"
+      },
+      "p2": {
+        "_": "199"
+      },
+      "p3": {
+        "_": "6171"
+      },
+      "service": {
+        "_": "hello-bedrock"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-09-26T22%3A12%3A07.5540337Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "738d2c476607"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-10-31T23:35:27.054Z"
+      },
+      "p1": {
+        "_": "7297"
+      },
+      "service": {
+        "_": "edaena/spartan-app"
+      },
+      "commitId": {
+        "_": "f19cb81"
+      },
+      "imageTag": {
+        "_": "edaena/spartan-app:20191031.5"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-10-31T23%3A35%3A27.0546133Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "7870cc2963ad"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-10-30T21:50:54.482Z"
+      },
+      "p3": {
+        "_": "7194"
+      },
+      "hldCommitId": {
+        "_": "7c66b4b"
+      },
+      "manifestCommitId": {
+        "_": "7c66b4b"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-10-30T21%3A50%3A54.4820447Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "7d02730d1c3d"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-10-31T23:34:12.866Z"
+      },
+      "commitId": {
+        "_": "f19cb81"
+      },
+      "env": {
+        "_": "dev"
+      },
+      "etag": {
+        "_": "W/\"datetime'2019-10-31T23%3A32%3A40.536693Z'\""
+      },
+      "hldCommitId": {
+        "_": "cc80c6c"
+      },
+      "imageTag": {
+        "_": "edaena/spartan-app:20191031.4"
+      },
+      "isMultiStage": {
+        "_": "true"
+      },
+      "manifestCommitId": {
+        "_": "9122e81"
+      },
+      "p1": {
+        "_": "7296"
+      },
+      "p2": {
+        "_": "7296"
+      },
+      "p3": {
+        "_": "7296"
+      },
+      "service": {
+        "_": "edaena/spartan-app"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-10-31T23%3A34%3A12.8664217Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "821c5c8495e8"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-10-11T16:40:16.147Z"
+      },
+      "commitId": {
+        "_": "f9e8a1d"
+      },
+      "env": {
+        "_": "dev"
+      },
+      "etag": {
+        "_": "W/\"datetime'2019-10-11T16%3A40%3A07.599597Z'\""
+      },
+      "hldCommitId": {
+        "_": "3d439c2"
+      },
+      "imageTag": {
+        "_": "hello-spektate-master-6367"
+      },
+      "manifestCommitId": {
+        "_": "39104db"
+      },
+      "p1": {
+        "_": "6367"
+      },
+      "p2": {
+        "_": "226"
+      },
+      "p3": {
+        "_": "6370"
+      },
+      "service": {
+        "_": "samiyaakhtar/hello-spektate"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-10-11T16%3A40%3A16.1476655Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "8c9e49d4f12e"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-10-22T18:43:57.296Z"
+      },
+      "commitId": {
+        "_": "252c80f"
+      },
+      "env": {
+        "_": "dev"
+      },
+      "etag": {
+        "_": "W/\"datetime'2019-10-22T18%3A42%3A12.8027724Z'\""
+      },
+      "hldCommitId": {
+        "_": "ff9e08d"
+      },
+      "imageTag": {
+        "_": "edaena/spartan-app:20191022.10"
+      },
+      "p1": {
+        "_": "6707"
+      },
+      "p2": {
+        "_": "6707"
+      },
+      "service": {
+        "_": "edaena/spartan-app"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-10-22T18%3A43%3A57.2963775Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "8cafba7aa355"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-09-26T21:54:14.557Z"
+      },
+      "commitId": {
+        "_": "5b54eb4"
+      },
+      "env": {
+        "_": "dev"
+      },
+      "etag": {
+        "_": "W/\"datetime'2019-09-26T21%3A54%3A05.5918626Z'\""
+      },
+      "hldCommitId": {
+        "_": "417ca96"
+      },
+      "imageTag": {
+        "_": "hello-bedrock-master-6138"
+      },
+      "manifestCommitId": {
+        "_": "dfc0fb8"
+      },
+      "p1": {
+        "_": "6138"
+      },
+      "p2": {
+        "_": "189"
+      },
+      "p3": {
+        "_": "6144"
+      },
+      "service": {
+        "_": "hello-bedrock"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-09-26T21%3A54%3A14.5572606Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "8d6573a30048"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-10-24T21:39:41.458Z"
+      },
+      "commitId": {
+        "_": "5b54eb4"
+      },
+      "env": {
+        "_": "dev"
+      },
+      "etag": {
+        "_": "W/\"datetime'2019-10-24T21%3A39%3A32.4725178Z'\""
+      },
+      "hldCommitId": {
+        "_": "554a79b"
+      },
+      "imageTag": {
+        "_": "hello-bedrock-master-6880"
+      },
+      "manifestCommitId": {
+        "_": "a12da8c"
+      },
+      "p1": {
+        "_": "6880"
+      },
+      "p2": {
+        "_": "248"
+      },
+      "p3": {
+        "_": "6884"
+      },
+      "service": {
+        "_": "hello-bedrock"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-10-24T21%3A39%3A41.4589166Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "907bad6fa805"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-10-22T00:09:02.444Z"
+      },
+      "commitId": {
+        "_": "d162835"
+      },
+      "env": {
+        "_": "dev"
+      },
+      "etag": {
+        "_": "W/\"datetime'2019-10-22T00%3A07%3A22.8395155Z'\""
+      },
+      "hldCommitId": {
+        "_": "308b5b6"
+      },
+      "imageTag": {
+        "_": "edaena/spartan-app:20191022.1"
+      },
+      "p1": {
+        "_": "6680"
+      },
+      "p2": {
+        "_": "6680"
+      },
+      "service": {
+        "_": "edaena/spartan-app"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-10-22T00%3A09%3A02.4446273Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "91304e7b61a7"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-11-06T18:37:44.881Z"
+      },
+      "p1": {
+        "_": "7456"
+      },
+      "imageTag": {
+        "_": "edaena/spartan-app:20191106.2"
+      },
+      "service": {
+        "_": "spartan-app"
+      },
+      "commitId": {
+        "_": "799b4b2"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-11-06T18%3A37%3A44.8810669Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "9221f365b5d1"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-10-28T22:23:37.240Z"
+      },
+      "commitId": {
+        "_": "37a429f"
+      },
+      "env": {
+        "_": "dev"
+      },
+      "etag": {
+        "_": "W/\"datetime'2019-10-28T22%3A23%3A25.9810035Z'\""
+      },
+      "hldCommitId": {
+        "_": "954f321"
+      },
+      "imageTag": {
+        "_": "hello-bedrock-master-7021"
+      },
+      "manifestCommitId": {
+        "_": "de2cad6"
+      },
+      "p1": {
+        "_": "7021"
+      },
+      "p2": {
+        "_": "257"
+      },
+      "p3": {
+        "_": "7025"
+      },
+      "service": {
+        "_": "hello-bedrock"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-10-28T22%3A23%3A37.2400735Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "939dcb6e3464"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-09-26T22:15:16.189Z"
+      },
+      "commitId": {
+        "_": "5b54eb4"
+      },
+      "env": {
+        "_": "dev"
+      },
+      "etag": {
+        "_": "W/\"datetime'2019-09-26T22%3A14%3A52.2754946Z'\""
+      },
+      "hldCommitId": {
+        "_": "f007812"
+      },
+      "imageTag": {
+        "_": "hello-bedrock-master-6177"
+      },
+      "p1": {
+        "_": "6177"
+      },
+      "p2": {
+        "_": "208"
+      },
+      "p3": {
+        "_": "6180"
+      },
+      "service": {
+        "_": "hello-bedrock"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-09-26T22%3A15%3A16.1894719Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "971411f5d311"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-10-28T22:41:35.668Z"
+      },
+      "hldCommitId": {
+        "_": "4f9fff0"
+      },
+      "manifestCommitId": {
+        "_": "e975193"
+      },
+      "p3": {
+        "_": "7035"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-10-28T22%3A41%3A35.6680881Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "99dff54fc904"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-10-24T23:08:12.576Z"
+      },
+      "commitId": {
+        "_": "92d6ce1"
+      },
+      "env": {
+        "_": "dev"
+      },
+      "etag": {
+        "_": "W/\"datetime'2019-10-24T23%3A07%3A52.2218399Z'\""
+      },
+      "hldCommitId": {
+        "_": "d8a1493"
+      },
+      "imageTag": {
+        "_": "hello-spektate-master-6899"
+      },
+      "manifestCommitId": {
+        "_": "44d6c0e"
+      },
+      "p1": {
+        "_": "6899"
+      },
+      "p2": {
+        "_": "251"
+      },
+      "p3": {
+        "_": "6900"
+      },
+      "service": {
+        "_": "samiyaakhtar/hello-spektate"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-10-24T23%3A08%3A12.576335Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "9a2969eb9810"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-09-26T22:15:25.061Z"
+      },
+      "commitId": {
+        "_": "a0bca78"
+      },
+      "env": {
+        "_": "dev"
+      },
+      "etag": {
+        "_": "W/\"datetime'2019-09-26T22%3A15%3A13.0202222Z'\""
+      },
+      "hldCommitId": {
+        "_": "876b14b"
+      },
+      "imageTag": {
+        "_": "hello-spektate-master-6174"
+      },
+      "manifestCommitId": {
+        "_": "c31f1e8"
+      },
+      "p1": {
+        "_": "6174"
+      },
+      "p2": {
+        "_": "206"
+      },
+      "p3": {
+        "_": "6179"
+      },
+      "service": {
+        "_": "samiyaakhtar/hello-spektate"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-09-26T22%3A15%3A25.0617706Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "9a3dce8ef080"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-10-28T22:01:36.894Z"
+      },
+      "commitId": {
+        "_": "f19cb81"
+      },
+      "env": {
+        "_": "dev"
+      },
+      "etag": {
+        "_": "W/\"datetime'2019-10-28T22%3A00%3A17.2317601Z'\""
+      },
+      "hldCommitId": {
+        "_": "bdc0b08"
+      },
+      "imageTag": {
+        "_": "edaena/spartan-app:20191028.5"
+      },
+      "isMultiStage": {
+        "_": "true"
+      },
+      "manifestCommitId": {
+        "_": "82c921f"
+      },
+      "p1": {
+        "_": "7016"
+      },
+      "p2": {
+        "_": "7016"
+      },
+      "p3": {
+        "_": "7016"
+      },
+      "service": {
+        "_": "edaena/spartan-app"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-10-28T22%3A01%3A36.8948433Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "9deb23e91db8"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-10-24T20:46:00.929Z"
+      },
+      "commitId": {
+        "_": "fd93168"
+      },
+      "env": {
+        "_": "dev"
+      },
+      "etag": {
+        "_": "W/\"datetime'2019-10-24T20%3A44%3A27.3990919Z'\""
+      },
+      "hldCommitId": {
+        "_": "cc2fdd5"
+      },
+      "imageTag": {
+        "_": "edaena/spartan-app:20191024.9"
+      },
+      "manifestCommitId": {
+        "_": "3056f17"
+      },
+      "p1": {
+        "_": "6853"
+      },
+      "p2": {
+        "_": "6853"
+      },
+      "p3": {
+        "_": "6853"
+      },
+      "service": {
+        "_": "edaena/spartan-app"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-10-24T20%3A46%3A00.9292714Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "a21e910443a8"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-09-26T22:01:01.759Z"
+      },
+      "commitId": {
+        "_": "a0bca78"
+      },
+      "env": {
+        "_": "dev"
+      },
+      "etag": {
+        "_": "W/\"datetime'2019-09-26T22%3A00%3A49.4443292Z'\""
+      },
+      "hldCommitId": {
+        "_": "d5c3210"
+      },
+      "imageTag": {
+        "_": "hello-spektate-master-6147"
+      },
+      "manifestCommitId": {
+        "_": "9129de1"
+      },
+      "p1": {
+        "_": "6147"
+      },
+      "p2": {
+        "_": "192"
+      },
+      "p3": {
+        "_": "6150"
+      },
+      "service": {
+        "_": "samiyaakhtar/hello-spektate"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-09-26T22%3A01%3A01.7590722Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "a2c9bb4ef220"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-09-26T21:52:53.671Z"
+      },
+      "commitId": {
+        "_": "5b54eb4"
+      },
+      "env": {
+        "_": "dev"
+      },
+      "etag": {
+        "_": "W/\"datetime'2019-09-26T21%3A52%3A42.0902393Z'\""
+      },
+      "hldCommitId": {
+        "_": "9bb2206"
+      },
+      "imageTag": {
+        "_": "hello-bedrock-master-6135"
+      },
+      "manifestCommitId": {
+        "_": "8d2093b"
+      },
+      "p1": {
+        "_": "6135"
+      },
+      "p2": {
+        "_": "186"
+      },
+      "p3": {
+        "_": "6141"
+      },
+      "service": {
+        "_": "hello-bedrock"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-09-26T21%3A52%3A53.6715096Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "a6457ae08eaa"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-10-30T20:02:16.673Z"
+      },
+      "commitId": {
+        "_": "30e425c"
+      },
+      "imageTag": {
+        "_": "edaena/spartan-app:20191021.8"
+      },
+      "p1": {
+        "_": "6676"
+      },
+      "p2": {
+        "_": "6676"
+      },
+      "service": {
+        "_": "edaena/spartan-app"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-10-30T20%3A02%3A16.6733506Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "a7b1f02a7a9b"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-10-28T22:27:14.357Z"
+      },
+      "commitId": {
+        "_": "37a429f"
+      },
+      "env": {
+        "_": "dev"
+      },
+      "etag": {
+        "_": "W/\"datetime'2019-10-28T22%3A23%3A25.9810035Z'\""
+      },
+      "hldCommitId": {
+        "_": "954f321"
+      },
+      "imageTag": {
+        "_": "hello-bedrock-master-7021"
+      },
+      "p1": {
+        "_": "7021"
+      },
+      "p2": {
+        "_": "259"
+      },
+      "service": {
+        "_": "hello-bedrock"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-10-28T22%3A27%3A14.3573481Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "a89c8eb319e0"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-10-24T22:51:52.793Z"
+      },
+      "commitId": {
+        "_": "92d6ce1"
+      },
+      "env": {
+        "_": "dev"
+      },
+      "etag": {
+        "_": "W/\"datetime'2019-10-24T22%3A51%3A31.3905263Z'\""
+      },
+      "hldCommitId": {
+        "_": "d5e6a4d"
+      },
+      "imageTag": {
+        "_": "hello-spektate-master-6894"
+      },
+      "manifestCommitId": {
+        "_": "aeae879"
+      },
+      "p1": {
+        "_": "6894"
+      },
+      "p2": {
+        "_": "250"
+      },
+      "p3": {
+        "_": "6896"
+      },
+      "service": {
+        "_": "samiyaakhtar/hello-spektate"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-10-24T22%3A51%3A52.7938958Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "a902f747d4cc"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-09-26T22:16:14.576Z"
+      },
+      "commitId": {
+        "_": "a0bca78"
+      },
+      "env": {
+        "_": "dev"
+      },
+      "etag": {
+        "_": "W/\"datetime'2019-09-26T22%3A16%3A02.8626071Z'\""
+      },
+      "hldCommitId": {
+        "_": "c15c700"
+      },
+      "imageTag": {
+        "_": "hello-spektate-master-6176"
+      },
+      "manifestCommitId": {
+        "_": "a58001d"
+      },
+      "p1": {
+        "_": "6176"
+      },
+      "p2": {
+        "_": "207"
+      },
+      "p3": {
+        "_": "6181"
+      },
+      "service": {
+        "_": "samiyaakhtar/hello-spektate"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-09-26T22%3A16%3A14.5769225Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "a9423066ed34"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-10-28T22:25:56.421Z"
+      },
+      "p2": {
+        "_": "258"
+      },
+      "p3": {
+        "_": "6904"
+      },
+      "p1": {
+        "_": "6903"
+      },
+      "service": {
+        "_": "samiyaakhtar/hello-spektate"
+      },
+      "hldCommitId": {
+        "_": "dfb1cd9"
+      },
+      "commitId": {
+        "_": "92d6ce1"
+      },
+      "imageTag": {
+        "_": "hello-spektate-master-6903"
+      },
+      "etag": {
+        "_": "W/\"datetime'2019-10-24T23%3A33%3A47.8704445Z'\""
+      },
+      "env": {
+        "_": "dev"
+      },
+      "manifestCommitId": {
+        "_": "93832fa"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-10-28T22%3A25%3A56.421257Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "ab389c795b40"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-10-24T19:40:20.677Z"
+      },
+      "commitId": {
+        "_": "92d6ce1"
+      },
+      "env": {
+        "_": "dev"
+      },
+      "etag": {
+        "_": "W/\"datetime'2019-10-24T19%3A40%3A02.6314518Z'\""
+      },
+      "hldCommitId": {
+        "_": "01bec4a"
+      },
+      "imageTag": {
+        "_": "hello-spektate-master-6836"
+      },
+      "manifestCommitId": {
+        "_": "26f40f3"
+      },
+      "p1": {
+        "_": "6836"
+      },
+      "p2": {
+        "_": "238"
+      },
+      "p3": {
+        "_": "6837"
+      },
+      "service": {
+        "_": "samiyaakhtar/hello-spektate"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-10-24T19%3A40%3A20.6773034Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "ad39c76556ff"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-09-26T22:09:50.561Z"
+      },
+      "commitId": {
+        "_": "a0bca78"
+      },
+      "env": {
+        "_": "dev"
+      },
+      "etag": {
+        "_": "W/\"datetime'2019-09-26T22%3A09%3A41.3226244Z'\""
+      },
+      "hldCommitId": {
+        "_": "c5821cf"
+      },
+      "imageTag": {
+        "_": "hello-spektate-master-6155"
+      },
+      "manifestCommitId": {
+        "_": "86e9b6d"
+      },
+      "p1": {
+        "_": "6155"
+      },
+      "p2": {
+        "_": "195"
+      },
+      "p3": {
+        "_": "6164"
+      },
+      "service": {
+        "_": "samiyaakhtar/hello-spektate"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-09-26T22%3A09%3A50.5612168Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "af900739cff1"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-10-24T18:36:03.631Z"
+      },
+      "commitId": {
+        "_": "92d6ce1"
+      },
+      "env": {
+        "_": "dev"
+      },
+      "etag": {
+        "_": "W/\"datetime'2019-10-24T18%3A35%3A41.9123983Z'\""
+      },
+      "hldCommitId": {
+        "_": "8661626"
+      },
+      "imageTag": {
+        "_": "hello-spektate-master-6829"
+      },
+      "manifestCommitId": {
+        "_": "abc5c58"
+      },
+      "p1": {
+        "_": "6829"
+      },
+      "p2": {
+        "_": "236"
+      },
+      "p3": {
+        "_": "6830"
+      },
+      "service": {
+        "_": "samiyaakhtar/hello-spektate"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-10-24T18%3A36%3A03.6319914Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "afa22a392328"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-09-26T22:12:55.550Z"
+      },
+      "commitId": {
+        "_": "a0bca78"
+      },
+      "env": {
+        "_": "dev"
+      },
+      "etag": {
+        "_": "W/\"datetime'2019-09-26T22%3A12%3A44.4603866Z'\""
+      },
+      "hldCommitId": {
+        "_": "639a83c"
+      },
+      "imageTag": {
+        "_": "hello-spektate-master-6163"
+      },
+      "manifestCommitId": {
+        "_": "57c9374"
+      },
+      "p1": {
+        "_": "6163"
+      },
+      "p2": {
+        "_": "205"
+      },
+      "p3": {
+        "_": "6172"
+      },
+      "service": {
+        "_": "samiyaakhtar/hello-spektate"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-09-26T22%3A12%3A55.5503003Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "b5027b3ba19f"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-10-24T18:41:16.754Z"
+      },
+      "commitId": {
+        "_": "92d6ce1"
+      },
+      "env": {
+        "_": "dev"
+      },
+      "etag": {
+        "_": "W/\"datetime'2019-10-24T18%3A40%3A55.1403249Z'\""
+      },
+      "hldCommitId": {
+        "_": "019a218"
+      },
+      "imageTag": {
+        "_": "hello-spektate-master-6831"
+      },
+      "manifestCommitId": {
+        "_": "55b822e"
+      },
+      "p1": {
+        "_": "6831"
+      },
+      "p2": {
+        "_": "237"
+      },
+      "p3": {
+        "_": "6832"
+      },
+      "service": {
+        "_": "samiyaakhtar/hello-spektate"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-10-24T18%3A41%3A16.754843Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "b7a020bfbdf4"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-10-24T21:39:28.204Z"
+      },
+      "commitId": {
+        "_": "5b54eb4"
+      },
+      "env": {
+        "_": "dev"
+      },
+      "etag": {
+        "_": "W/\"datetime'2019-10-24T21%3A39%3A16.7072893Z'\""
+      },
+      "hldCommitId": {
+        "_": "f2aaae3"
+      },
+      "imageTag": {
+        "_": "hello-bedrock-master-6879"
+      },
+      "manifestCommitId": {
+        "_": "a12da8c"
+      },
+      "p1": {
+        "_": "6879"
+      },
+      "p2": {
+        "_": "247"
+      },
+      "p3": {
+        "_": "6882"
+      },
+      "service": {
+        "_": "hello-bedrock"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-10-24T21%3A39%3A28.2044768Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "b8eec43d2cbf"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-10-11T16:41:13.904Z"
+      },
+      "commitId": {
+        "_": "f9e8a1d"
+      },
+      "env": {
+        "_": "dev"
+      },
+      "etag": {
+        "_": "W/\"datetime'2019-10-11T16%3A40%3A57.2118181Z'\""
+      },
+      "hldCommitId": {
+        "_": "92597a6"
+      },
+      "imageTag": {
+        "_": "hello-spektate-master-6368"
+      },
+      "manifestCommitId": {
+        "_": "39104db"
+      },
+      "p1": {
+        "_": "6368"
+      },
+      "p2": {
+        "_": "227"
+      },
+      "p3": {
+        "_": "6371"
+      },
+      "service": {
+        "_": "samiyaakhtar/hello-spektate"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-10-11T16%3A41%3A13.904668Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "bbd7ccfc074c"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-10-21T23:59:33.784Z"
+      },
+      "p1": {
+        "_": "6678"
+      },
+      "service": {
+        "_": "edaena/spartan-app"
+      },
+      "commitId": {
+        "_": "a5c03f9"
+      },
+      "imageTag": {
+        "_": "edaena/spartan-app:20191021.10"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-10-21T23%3A59%3A33.7846134Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "bc3611593726"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-09-26T22:13:21.576Z"
+      },
+      "commitId": {
+        "_": "5b54eb4"
+      },
+      "env": {
+        "_": "dev"
+      },
+      "etag": {
+        "_": "W/\"datetime'2019-09-26T22%3A13%3A11.9950444Z'\""
+      },
+      "hldCommitId": {
+        "_": "65a7220"
+      },
+      "imageTag": {
+        "_": "hello-bedrock-master-6156"
+      },
+      "manifestCommitId": {
+        "_": "57c9374"
+      },
+      "p1": {
+        "_": "6156"
+      },
+      "p2": {
+        "_": "203"
+      },
+      "p3": {
+        "_": "6175"
+      },
+      "service": {
+        "_": "hello-bedrock"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-09-26T22%3A13%3A21.5768847Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "be1c94128c84"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-10-24T20:03:58.532Z"
+      },
+      "p1": {
+        "_": "6842"
+      },
+      "service": {
+        "_": "edaena/spartan-app"
+      },
+      "commitId": {
+        "_": "355a069"
+      },
+      "imageTag": {
+        "_": "edaena/spartan-app:20191024.4"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-10-24T20%3A03%3A58.5329069Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "c0111aeceee3"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-10-22T17:39:07.260Z"
+      },
+      "commitId": {
+        "_": "1102095"
+      },
+      "env": {
+        "_": "dev"
+      },
+      "etag": {
+        "_": "W/\"datetime'2019-10-22T17%3A37%3A24.8257081Z'\""
+      },
+      "hldCommitId": {
+        "_": "e99eb58"
+      },
+      "imageTag": {
+        "_": "edaena/spartan-app:20191022.4"
+      },
+      "p1": {
+        "_": "6698"
+      },
+      "p2": {
+        "_": "6698"
+      },
+      "service": {
+        "_": "edaena/spartan-app"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-10-22T17%3A39%3A07.260193Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "c3b924be862d"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-10-24T20:28:59.819Z"
+      },
+      "commitId": {
+        "_": "61ad469"
+      },
+      "env": {
+        "_": "dev"
+      },
+      "etag": {
+        "_": "W/\"datetime'2019-10-24T20%3A27%3A25.3196608Z'\""
+      },
+      "hldCommitId": {
+        "_": "0aa3245"
+      },
+      "imageTag": {
+        "_": "edaena/spartan-app:20191024.7"
+      },
+      "p1": {
+        "_": "6847"
+      },
+      "p2": {
+        "_": "6847"
+      },
+      "service": {
+        "_": "edaena/spartan-app"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-10-24T20%3A28%3A59.8195361Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "c44781a376da"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-10-28T22:46:42.128Z"
+      },
+      "commitId": {
+        "_": "37a429f"
+      },
+      "env": {
+        "_": "dev"
+      },
+      "hldCommitId": {
+        "_": "f0a173e"
+      },
+      "imageTag": {
+        "_": "hello-bedrock-master-7038"
+      },
+      "manifestCommitId": {
+        "_": "e94eea3"
+      },
+      "p1": {
+        "_": "7038"
+      },
+      "p2": {
+        "_": "262"
+      },
+      "p3": {
+        "_": "7039"
+      },
+      "service": {
+        "_": "hello-bedrock"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-10-28T22%3A46%3A42.1282525Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "c58dafe73141"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-10-24T21:20:41.184Z"
+      },
+      "commitId": {
+        "_": "5b54eb4"
+      },
+      "env": {
+        "_": "dev"
+      },
+      "etag": {
+        "_": "W/\"datetime'2019-10-24T21%3A20%3A31.201099Z'\""
+      },
+      "hldCommitId": {
+        "_": "346ccde"
+      },
+      "imageTag": {
+        "_": "hello-bedrock-master-6863"
+      },
+      "manifestCommitId": {
+        "_": "7267209"
+      },
+      "p1": {
+        "_": "6863"
+      },
+      "p2": {
+        "_": "242"
+      },
+      "p3": {
+        "_": "6867"
+      },
+      "service": {
+        "_": "hello-bedrock"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-10-24T21%3A20%3A41.1842691Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "c66bab558257"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-10-09T22:10:14.508Z"
+      },
+      "commitId": {
+        "_": "5b54eb4"
+      },
+      "env": {
+        "_": "dev"
+      },
+      "etag": {
+        "_": "W/\"datetime'2019-10-09T22%3A10%3A03.1910848Z'\""
+      },
+      "hldCommitId": {
+        "_": "80033b7"
+      },
+      "imageTag": {
+        "_": "hello-bedrock-master-6340"
+      },
+      "manifestCommitId": {
+        "_": "df32861"
+      },
+      "p1": {
+        "_": "6340"
+      },
+      "p2": {
+        "_": "224"
+      },
+      "p3": {
+        "_": "6341"
+      },
+      "service": {
+        "_": "hello-bedrock"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-10-09T22%3A10%3A14.5082119Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "c716d61d13c8"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-10-24T21:20:11.452Z"
+      },
+      "commitId": {
+        "_": "5b54eb4"
+      },
+      "env": {
+        "_": "dev"
+      },
+      "etag": {
+        "_": "W/\"datetime'2019-10-24T21%3A20%3A00.4560248Z'\""
+      },
+      "hldCommitId": {
+        "_": "7eccac0"
+      },
+      "imageTag": {
+        "_": "hello-bedrock-master-6864"
+      },
+      "manifestCommitId": {
+        "_": "7267209"
+      },
+      "p1": {
+        "_": "6864"
+      },
+      "p2": {
+        "_": "241"
+      },
+      "p3": {
+        "_": "6865"
+      },
+      "service": {
+        "_": "hello-bedrock"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-10-24T21%3A20%3A11.4529162Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "ca00b7f727ec"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-10-24T20:00:11.314Z"
+      },
+      "commitId": {
+        "_": "39e1dba"
+      },
+      "env": {
+        "_": "dev"
+      },
+      "etag": {
+        "_": "W/\"datetime'2019-10-24T19%3A58%3A33.6174214Z'\""
+      },
+      "hldCommitId": {
+        "_": "0aa3245"
+      },
+      "imageTag": {
+        "_": "edaena/spartan-app:20191024.1"
+      },
+      "p1": {
+        "_": "6838"
+      },
+      "p2": {
+        "_": "6838"
+      },
+      "service": {
+        "_": "edaena/spartan-app"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-10-24T20%3A00%3A11.314081Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "cb832cc0b9f9"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-10-19T06:21:51.140Z"
+      },
+      "etag": {
+        "_": "W/\"datetime'2019-10-19T06%3A21%3A32.5003184Z'\""
+      },
+      "hldCommitId": {
+        "_": "5b4bb2a"
+      },
+      "manifestCommitId": {
+        "_": "39104db"
+      },
+      "p3": {
+        "_": "6617"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-10-19T06%3A21%3A51.1405879Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "cd4a33ecc8f3"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-10-24T21:27:54.993Z"
+      },
+      "commitId": {
+        "_": "5b54eb4"
+      },
+      "env": {
+        "_": "dev"
+      },
+      "etag": {
+        "_": "W/\"datetime'2019-10-24T21%3A27%3A43.2443726Z'\""
+      },
+      "hldCommitId": {
+        "_": "21bcc29"
+      },
+      "imageTag": {
+        "_": "hello-bedrock-master-6870"
+      },
+      "manifestCommitId": {
+        "_": "f95dbad"
+      },
+      "p1": {
+        "_": "6870"
+      },
+      "p2": {
+        "_": "244"
+      },
+      "p3": {
+        "_": "6874"
+      },
+      "service": {
+        "_": "hello-bedrock"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-10-24T21%3A27%3A54.9938117Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "d9e037bafc4e"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-10-30T21:04:49.666Z"
+      },
+      "commitId": {
+        "_": "f19cb81"
+      },
+      "env": {
+        "_": "dev"
+      },
+      "etag": {
+        "_": "W/\"datetime'2019-10-30T21%3A03%3A15.8732037Z'\""
+      },
+      "hldCommitId": {
+        "_": "790b8c0"
+      },
+      "imageTag": {
+        "_": "edaena/spartan-app:20191030.1"
+      },
+      "isMultiStage": {
+        "_": "true"
+      },
+      "manifestCommitId": {
+        "_": "65eb78b"
+      },
+      "p1": {
+        "_": "7176"
+      },
+      "p2": {
+        "_": "7176"
+      },
+      "p3": {
+        "_": "7176"
+      },
+      "service": {
+        "_": "edaena/spartan-app"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-10-30T21%3A04%3A49.666771Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "dd57ccb351aa"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-10-28T20:54:08.708Z"
+      },
+      "commitId": {
+        "_": "9001199"
+      },
+      "env": {
+        "_": "dev"
+      },
+      "etag": {
+        "_": "W/\"datetime'2019-10-28T20%3A52%3A33.7038291Z'\""
+      },
+      "hldCommitId": {
+        "_": "18e1da9"
+      },
+      "imageTag": {
+        "_": "edaena/spartan-app:20191028.3"
+      },
+      "manifestCommitId": {
+        "_": "9743a94"
+      },
+      "p1": {
+        "_": "7008"
+      },
+      "p2": {
+        "_": "7008"
+      },
+      "p3": {
+        "_": "7008"
+      },
+      "service": {
+        "_": "edaena/spartan-app"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-10-28T20%3A54%3A08.7089114Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "dee8b640af34"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-10-31T20:04:06.626Z"
+      },
+      "commitId": {
+        "_": "f19cb81"
+      },
+      "env": {
+        "_": "dev"
+      },
+      "etag": {
+        "_": "W/\"datetime'2019-10-31T20%3A02%3A31.0255355Z'\""
+      },
+      "hldCommitId": {
+        "_": "056220b"
+      },
+      "imageTag": {
+        "_": "edaena/spartan-app:20191031.1"
+      },
+      "isMultiStage": {
+        "_": "true"
+      },
+      "manifestCommitId": {
+        "_": "42b7d8d"
+      },
+      "p1": {
+        "_": "7271"
+      },
+      "p2": {
+        "_": "7271"
+      },
+      "p3": {
+        "_": "7271"
+      },
+      "service": {
+        "_": "edaena/spartan-app"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-10-31T20%3A04%3A06.626858Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "e5248b89c9b6"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-09-26T21:55:58.254Z"
+      },
+      "commitId": {
+        "_": "a0bca78"
+      },
+      "env": {
+        "_": "dev"
+      },
+      "etag": {
+        "_": "W/\"datetime'2019-09-26T21%3A55%3A48.3432302Z'\""
+      },
+      "hldCommitId": {
+        "_": "6da9ab4"
+      },
+      "imageTag": {
+        "_": "hello-spektate-master-6140"
+      },
+      "manifestCommitId": {
+        "_": "8785fe4"
+      },
+      "p1": {
+        "_": "6140"
+      },
+      "p2": {
+        "_": "191"
+      },
+      "p3": {
+        "_": "6146"
+      },
+      "service": {
+        "_": "samiyaakhtar/hello-spektate"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-09-26T21%3A55%3A58.2543056Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "e565d56c1f10"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-10-28T22:22:02.188Z"
+      },
+      "env": {
+        "_": "dev"
+      },
+      "etag": {
+        "_": "W/\"datetime'2019-10-28T22%3A21%3A50.6697226Z'\""
+      },
+      "hldCommitId": {
+        "_": "b4a68d6"
+      },
+      "imageTag": {
+        "_": "hello-bedrock-master-7020"
+      },
+      "manifestCommitId": {
+        "_": "11c459d"
+      },
+      "p2": {
+        "_": "256"
+      },
+      "p3": {
+        "_": "7024"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-10-28T22%3A22%3A02.1889721Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "ece6d7c6cd99"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-10-21T23:45:48.340Z"
+      },
+      "p1": {
+        "_": "6677"
+      },
+      "service": {
+        "_": "edaena/spartan-app"
+      },
+      "commitId": {
+        "_": "3c3039a"
+      },
+      "imageTag": {
+        "_": "edaena/spartan-app:20191021.9"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-10-21T23%3A45%3A48.3402113Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "ed62e535584d"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-10-19T06:14:26.390Z"
+      },
+      "p3": {
+        "_": "6616"
+      },
+      "hldCommitId": {
+        "_": "19a2ec7ec37deaf13e22ffc91f7e5b8f42698610"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-10-19T06%3A14%3A26.3904023Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "f10b17373406"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-09-26T21:53:23.984Z"
+      },
+      "commitId": {
+        "_": "5b54eb4"
+      },
+      "env": {
+        "_": "dev"
+      },
+      "etag": {
+        "_": "W/\"datetime'2019-09-26T21%3A53%3A11.961568Z'\""
+      },
+      "hldCommitId": {
+        "_": "6ffa06b"
+      },
+      "imageTag": {
+        "_": "hello-bedrock-master-6136"
+      },
+      "manifestCommitId": {
+        "_": "a458a1a"
+      },
+      "p1": {
+        "_": "6136"
+      },
+      "p2": {
+        "_": "187"
+      },
+      "p3": {
+        "_": "6142"
+      },
+      "service": {
+        "_": "hello-bedrock"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-09-26T21%3A53%3A23.9841534Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "f44221ffce77"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-09-26T21:55:29.499Z"
+      },
+      "commitId": {
+        "_": "a0bca78"
+      },
+      "env": {
+        "_": "dev"
+      },
+      "etag": {
+        "_": "W/\"datetime'2019-09-26T21%3A55%3A18.2537462Z'\""
+      },
+      "hldCommitId": {
+        "_": "de85975"
+      },
+      "imageTag": {
+        "_": "hello-spektate-master-6139"
+      },
+      "manifestCommitId": {
+        "_": "8785fe4"
+      },
+      "p1": {
+        "_": "6139"
+      },
+      "p2": {
+        "_": "190"
+      },
+      "p3": {
+        "_": "6145"
+      },
+      "service": {
+        "_": "samiyaakhtar/hello-spektate"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-09-26T21%3A55%3A29.4997779Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "f8464cf8745f"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-10-21T21:54:05.155Z"
+      },
+      "p1": {
+        "_": "6663"
+      },
+      "service": {
+        "_": "edaena/spartan-app"
+      },
+      "commitId": {
+        "_": "8f94c23"
+      },
+      "imageTag": {
+        "_": "hello-spartan-master-6663"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-10-21T21%3A54%3A05.1556507Z'\""
+      }
+    },
+    {
+      "PartitionKey": {
+        "$": "Edm.String",
+        "_": "hello-bedrock"
+      },
+      "RowKey": {
+        "$": "Edm.String",
+        "_": "fa96294c2051"
+      },
+      "Timestamp": {
+        "$": "Edm.DateTime",
+        "_": "2019-09-26T22:10:32.687Z"
+      },
+      "commitId": {
+        "_": "a0bca78"
+      },
+      "env": {
+        "_": "dev"
+      },
+      "etag": {
+        "_": "W/\"datetime'2019-09-26T22%3A10%3A20.7627806Z'\""
+      },
+      "hldCommitId": {
+        "_": "25cc9e4"
+      },
+      "imageTag": {
+        "_": "hello-spektate-master-6154"
+      },
+      "manifestCommitId": {
+        "_": "d9df2a3"
+      },
+      "p1": {
+        "_": "6154"
+      },
+      "p2": {
+        "_": "196"
+      },
+      "p3": {
+        "_": "6166"
+      },
+      "service": {
+        "_": "samiyaakhtar/hello-spektate"
+      },
+      ".metadata": {
+        "etag": "W/\"datetime'2019-09-26T22%3A10%3A32.6872966Z'\""
+      }
+    }
+  ],
+  "continuationToken": null
+}
