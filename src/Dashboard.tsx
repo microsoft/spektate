@@ -431,7 +431,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
           displayName={tableItem.authorName}
           imageUrl={tableItem.authorURL}
         />
-        <div>&nbsp;</div>
+        <div>&nbsp;&nbsp;&nbsp;</div>
         <div className="flex-row scroll-hidden">
           <Tooltip overflowOnly={true}>
             <span className="text-ellipsis">{tableItem[tableColumn.id]}</span>
