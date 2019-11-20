@@ -57,7 +57,7 @@ export class DeploymentFilter extends React.Component<
               };
             })}
             selection={this.selectionServiceList}
-            placeholder="Service"
+            placeholder="Filter by Service"
             noItemsText="No services found"
           />
 
@@ -72,7 +72,7 @@ export class DeploymentFilter extends React.Component<
               };
             })}
             selection={this.selectionAuthorList}
-            placeholder="Author"
+            placeholder="Filter by Author"
             noItemsText="No authors found"
           />
 
@@ -87,7 +87,7 @@ export class DeploymentFilter extends React.Component<
               };
             })}
             selection={this.selectionEnvList}
-            placeholder="Environment"
+            placeholder="Filter by Environment"
             noItemsText="No environments found"
           />
         </FilterBar>
