@@ -167,7 +167,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         id: "srcBranchName",
         name: "Branch",
         renderCell: this.renderSimpleText,
-        width: new ObservableValue(180)
+        width: new ObservableValue(120)
       },
       {
         id: "environment",
@@ -221,7 +221,10 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
           imageTag: deployment.imageTag,
           srcCommitId: deployment.commitId,
           srcBranchName: deployment.srcToDockerBuild
-            ? deployment.srcToDockerBuild.sourceBranch
+            ? deployment.srcToDockerBuild.sourceBranch.replace(
+                "refs/heads/",
+                ""
+              )
             : "-",
           srcCommitURL: deployment.srcToDockerBuild
             ? deployment.srcToDockerBuild.sourceVersionURL
