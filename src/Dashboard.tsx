@@ -14,6 +14,7 @@ import {
 import { Tooltip } from "azure-devops-ui/TooltipEx";
 import { Filter } from "azure-devops-ui/Utilities/Filter";
 import { ArrayItemProvider } from "azure-devops-ui/Utilities/Provider";
+import { VssPersona } from "azure-devops-ui/VssPersona";
 import * as React from "react";
 import Deployment from "spektate/lib/Deployment";
 import AzureDevOpsPipeline from "spektate/lib/pipeline/AzureDevOpsPipeline";
@@ -166,7 +167,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         id: "srcBranchName",
         name: "Branch",
         renderCell: this.renderSimpleText,
-        width: new ObservableValue(180)
+        width: new ObservableValue(120)
       },
       {
         id: "environment",
@@ -195,7 +196,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       {
         id: "authorName",
         name: "Author",
-        renderCell: this.renderSimpleBoldText,
+        renderCell: this.renderAuthor,
         width: new ObservableValue(200)
       },
       {
@@ -220,7 +221,10 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
           imageTag: deployment.imageTag,
           srcCommitId: deployment.commitId,
           srcBranchName: deployment.srcToDockerBuild
-            ? deployment.srcToDockerBuild.sourceBranch
+            ? deployment.srcToDockerBuild.sourceBranch.replace(
+                "refs/heads/",
+                ""
+              )
             : "-",
           srcCommitURL: deployment.srcToDockerBuild
             ? deployment.srcToDockerBuild.sourceVersionURL
@@ -269,7 +273,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
             : "",
           duration: deployment.duration() + " mins",
           authorName: author ? author.name : "-",
-          authorURL: author ? author.url : "",
+          authorURL: author ? author.imageUrl : "",
           status: deployment.status(),
           clusterSync:
             this.state.manifestSync &&
@@ -405,6 +409,38 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     );
   };
 
+  private renderAuthor = (
+    rowIndex: number,
+    columnIndex: number,
+    tableColumn: ITableColumn<IDeploymentField>,
+    tableItem: IDeploymentField
+  ): JSX.Element => {
+    if (!tableItem[tableColumn.id]) {
+      return (
+        <SimpleTableCell key={"col-" + columnIndex} columnIndex={columnIndex} />
+      );
+    }
+    return (
+      <SimpleTableCell
+        columnIndex={columnIndex}
+        tableColumn={tableColumn}
+        key={"col-" + columnIndex}
+        contentClassName="fontWeightSemiBold font-weight-semibold fontSizeM font-size-m scroll-hidden"
+      >
+        <VssPersona
+          displayName={tableItem.authorName}
+          imageUrl={tableItem.authorURL}
+        />
+        <div>&nbsp;&nbsp;&nbsp;</div>
+        <div className="flex-row scroll-hidden">
+          <Tooltip overflowOnly={true}>
+            <span className="text-ellipsis">{tableItem[tableColumn.id]}</span>
+          </Tooltip>
+        </div>
+      </SimpleTableCell>
+    );
+  };
+
   private renderDeploymentId = (
     rowIndex: number,
     columnIndex: number,
@@ -422,33 +458,6 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         tableColumn={tableColumn}
         key={"col-" + columnIndex}
         contentClassName="monospaced-text fontSize font-size scroll-hidden"
-      >
-        <div className="flex-row scroll-hidden">
-          <Tooltip overflowOnly={true}>
-            <span className="text-ellipsis">{tableItem[tableColumn.id]}</span>
-          </Tooltip>
-        </div>
-      </SimpleTableCell>
-    );
-  };
-
-  private renderSimpleBoldText = (
-    rowIndex: number,
-    columnIndex: number,
-    tableColumn: ITableColumn<IDeploymentField>,
-    tableItem: IDeploymentField
-  ): JSX.Element => {
-    if (!tableItem[tableColumn.id]) {
-      return (
-        <SimpleTableCell key={"col-" + columnIndex} columnIndex={columnIndex} />
-      );
-    }
-    return (
-      <SimpleTableCell
-        columnIndex={columnIndex}
-        tableColumn={tableColumn}
-        key={"col-" + columnIndex}
-        contentClassName="fontWeightSemiBold font-weight-semibold fontSizeM font-size-m scroll-hidden"
       >
         <div className="flex-row scroll-hidden">
           <Tooltip overflowOnly={true}>

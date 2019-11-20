@@ -83,6 +83,7 @@ export class AzureDevOpsRepo implements IRepository {
     const commitInfo = data.data;
     if (commitInfo && commitInfo.author) {
       const author: IAuthor = {
+        imageUrl: commitInfo.author.imageUrl,
         name: commitInfo.author.name,
         url: commitInfo.author.imageUrl,
         username: commitInfo.author.email
