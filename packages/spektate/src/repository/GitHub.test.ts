@@ -43,6 +43,7 @@ describe("GitHub", () => {
       expect(author!.name).toBe("Edaena Salinas");
       expect(author!.url).toBeDefined();
       expect(author!.username).toBe("edaena");
+      expect(author!.imageUrl).toBeTruthy();
     });
   });
 });

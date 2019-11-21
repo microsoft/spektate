@@ -43,6 +43,7 @@ describe("AzureDevOpsRepo", () => {
       expect(author!.name).toBe("Samiya Akhtar");
       expect(author!.url).toBeDefined();
       expect(author!.username).toBe("saakhta@microsoft.com");
+      expect(author!.imageUrl).toBeTruthy();
     });
   });
 });

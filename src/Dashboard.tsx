@@ -22,6 +22,7 @@ import { IAuthor } from "spektate/lib/repository/Author";
 import { AzureDevOpsRepo } from "spektate/lib/repository/AzureDevOpsRepo";
 import { GitHub } from "spektate/lib/repository/GitHub";
 import { IRepository } from "spektate/lib/repository/Repository";
+import { ITag } from "spektate/lib/repository/Tag";
 import { config } from "./config";
 import "./css/dashboard.css";
 import {
@@ -35,6 +36,7 @@ const REFRESH_INTERVAL = 30000;
 class Dashboard<Props> extends React.Component<Props, IDashboardState> {
   private interval: NodeJS.Timeout;
   private filter?: Filter;
+  private clusters?: string[];
 
   constructor(props: Props) {
     super(props);
@@ -113,8 +115,8 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         config.MANIFEST_ACCESS_TOKEN
       );
       // const manifestRepo: Repository = new AzureDevOpsRepo(config.AZURE_ORG, config.AZURE_PROJECT, config.MANIFEST, config.MANIFEST_ACCESS_TOKEN);
-      manifestRepo.getManifestSyncState().then((syncCommit: any) => {
-        this.setState({ manifestSync: syncCommit });
+      manifestRepo.getManifestSyncState().then((syncCommits: any) => {
+        this.setState({ manifestSyncStatuses: syncCommits });
       });
     } else if (config.MANIFEST) {
       const manifestRepo: IRepository = new AzureDevOpsRepo(
@@ -124,7 +126,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         config.AZURE_PIPELINE_ACCESS_TOKEN
       );
       manifestRepo.getManifestSyncState().then((syncCommit: any) => {
-        this.setState({ manifestSync: syncCommit });
+        this.setState({ manifestSyncStatuses: syncCommit });
       });
     }
     Deployment.getDeployments(
@@ -203,7 +205,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         id: "deployedAt",
         name: "Deployed at",
         renderCell: this.renderTime,
-        width: new ObservableValue(180)
+        width: new ObservableValue(120)
       },
       ColumnFill
     ];
@@ -211,6 +213,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     try {
       rows = this.state.filteredDeployments.map(deployment => {
         const author = this.getAuthor(deployment);
+        const tag = this.getClusterSyncStatusForDeployment(deployment);
         return {
           deploymentId: deployment.deploymentId,
           service: deployment.service !== "" ? deployment.service : "-",
@@ -275,17 +278,10 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
           authorName: author ? author.name : "-",
           authorURL: author ? author.imageUrl : "",
           status: deployment.status(),
-          clusterSync:
-            this.state.manifestSync &&
-            deployment.manifestCommitId === this.state.manifestSync.commit &&
-            this.state.manifestSync.commit !== "",
-          clusterSyncDate:
-            this.state.manifestSync &&
-            deployment.manifestCommitId === this.state.manifestSync.commit &&
-            this.state.manifestSync.commit !== ""
-              ? this.state.manifestSync.date
-              : new Date(),
-          endTime: deployment.endTime()
+          clusterSync: tag ? true : false,
+          clusterSyncDate: tag ? tag.date : new Date(),
+          endTime: deployment.endTime(),
+          manifestCommitId: deployment.manifestCommitId
         };
       });
     } catch (err) {
@@ -380,6 +376,20 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     return new Set(
       Array.from(Object.values(this.state.authors)).map(author => author.name)
     );
+  };
+
+  private getClusterSyncStatusForDeployment = (
+    deployment: Deployment
+  ): ITag | undefined => {
+    let clusterSynced;
+    if (this.state.manifestSyncStatuses) {
+      this.state.manifestSyncStatuses.map((tag: ITag) => {
+        if (deployment.manifestCommitId === tag.commit) {
+          clusterSynced = tag;
+        }
+      });
+    }
+    return clusterSynced;
   };
 
   private renderSimpleText = (
@@ -642,6 +652,12 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         <SimpleTableCell key={"col-" + columnIndex} columnIndex={columnIndex} />
       );
     }
+    let clusterNames = "";
+    if (this.clusters) {
+      this.clusters.forEach(cluster => {
+        clusterNames += cluster + ", ";
+      });
+    }
     return (
       <SimpleTableCell
         columnIndex={columnIndex}
@@ -661,7 +677,10 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
           <Tooltip
             overflowOnly={false}
             text={
-              "Cluster synced at " + tableItem.clusterSyncDate!.toLocaleString()
+              "Cluster(s) " +
+              clusterNames +
+              " synced at " +
+              tableItem.clusterSyncDate!.toLocaleString()
             }
           >
             {this.WithIcon({
