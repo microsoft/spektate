@@ -50,10 +50,12 @@ describe("GitHub", () => {
 
 describe("GitHub", () => {
   test("gets manifest sync tag correctly", () => {
-    repo.getManifestSyncState().then((tag: ITag) => {
-      expect(tag.commit).toBe("096c952");
-      expect(tag.tagger).toBeDefined();
-      expect(tag.tagger).toBe("Weave Flux");
+    repo.getManifestSyncState().then((tags: ITag[]) => {
+      expect(tags).toHaveLength(1);
+      expect(tags[0].commit).toBe("096c952");
+      expect(tags[0].tagger).toBeDefined();
+      expect(tags[0].tagger).toBe("Weave Flux");
+      expect(tags[0].name).toBe("flux-sync");
     });
   });
 });

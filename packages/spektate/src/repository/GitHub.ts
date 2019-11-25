@@ -3,8 +3,6 @@ import { IAuthor } from "./Author";
 import { IRepository } from "./Repository";
 import { ITag } from "./Tag";
 
-const manifestSyncTagURL =
-  "https://api.github.com/repos/<owner>/<repo>/git/refs/tags/flux-sync";
 const manifestSyncTagsURL =
   "https://api.github.com/repos/<owner>/<repo>/git/refs/tags";
 const authorInfoURL =

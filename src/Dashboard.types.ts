@@ -13,7 +13,7 @@ export interface IAuthors {
 }
 export interface IDashboardState {
   deployments: Deployment[];
-  manifestSync?: ITag;
+  manifestSyncStatuses?: ITag[];
   authors: IAuthors;
   filteredDeployments: Deployment[];
 }

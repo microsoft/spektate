@@ -50,8 +50,10 @@ describe("AzureDevOpsRepo", () => {
 
 describe("AzureDevOpsRepo", () => {
   test("gets manifest sync tag correctly", () => {
-    repo.getManifestSyncState().then((tag: ITag) => {
-      expect(tag.commit).toBe("ab4c9f1");
+    repo.getManifestSyncState().then((tags: ITag[]) => {
+      expect(tags).toHaveLength(1);
+      expect(tags[0].commit).toBe("ab4c9f1");
+      expect(tags[0].name).toBe("flux-sync");
     });
   });
 });
