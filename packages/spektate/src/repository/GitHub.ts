@@ -12,7 +12,6 @@ export class GitHub implements IRepository {
   public username: string;
   public reponame: string;
   public accessToken?: string;
-  public manifestSync?: ITag;
 
   constructor(username: string, reponame: string, accessToken?: string) {
     this.reponame = reponame;
@@ -47,14 +46,14 @@ export class GitHub implements IRepository {
             );
 
             if (syncStatus != null) {
-              this.manifestSync = {
+              const manifestSync = {
                 commit: syncStatus.data.object.sha.substring(0, 7),
                 date: new Date(syncStatus.data.tagger.date),
                 message: syncStatus.data.message,
                 name: syncStatus.data.tag,
                 tagger: syncStatus.data.tagger.name
               };
-              fluxTags.push(this.manifestSync);
+              fluxTags.push(manifestSync);
             }
           }
         }

@@ -8,6 +8,7 @@ import { ITag } from "./Tag";
 let authorRawResponse = {};
 let syncTagRawResponse = {};
 let manifestSyncTagResponse = {};
+let manifestResponse1 = {};
 const mockDirectory = "src/repository/mocks/";
 const repo = new GitHub("username", "reponame", "some-token");
 
@@ -24,12 +25,17 @@ beforeAll(() => {
       "utf-8"
     )
   );
+  manifestResponse1 = JSON.parse(
+    fs.readFileSync(mockDirectory + "github-sync-response-1.json", "utf-8")
+  );
 });
 jest.spyOn(HttpHelper, "httpGet").mockImplementation(
   <T>(theUrl: string, accessToken?: string): Promise<AxiosResponse<T>> => {
-    if (theUrl.includes("commits")) {
+    if (theUrl.includes("096c95228c786715b14b0269a722a3de887c01bd")) {
+      return getAxiosResponseForObject(manifestResponse1);
+    } else if (theUrl.includes("commits")) {
       return getAxiosResponseForObject(authorRawResponse);
-    } else if (theUrl.includes("flux-sync")) {
+    } else if (theUrl.endsWith("refs/tags")) {
       return getAxiosResponseForObject(syncTagRawResponse);
     }
     return getAxiosResponseForObject(manifestSyncTagResponse);
@@ -51,11 +57,11 @@ describe("GitHub", () => {
 describe("GitHub", () => {
   test("gets manifest sync tag correctly", () => {
     repo.getManifestSyncState().then((tags: ITag[]) => {
-      expect(tags).toHaveLength(1);
-      expect(tags[0].commit).toBe("096c952");
+      expect(tags).toHaveLength(2);
+      expect(tags[0].commit).toBe("57cb69b");
       expect(tags[0].tagger).toBeDefined();
       expect(tags[0].tagger).toBe("Weave Flux");
-      expect(tags[0].name).toBe("flux-sync");
+      expect(tags[0].name).toBe("flux-alaska");
     });
   });
 });

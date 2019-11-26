@@ -1,0 +1,23 @@
+{
+  "node_id": "MDM6VGFnMTkzODU0MjIzOjdkNTdmOTNiY2I1NzJjOGNiYjAyZmU3ZmQxYzRkM2YxNDM3NDZiMWQ=",
+  "sha": "7d57f93bcb572c8cbb02fe7fd1c4d3f143746b1d",
+  "url": "https://api.github.com/repos/samiyaakhtar/hello-bedrock-manifest/git/tags/7d57f93bcb572c8cbb02fe7fd1c4d3f143746b1d",
+  "tagger": {
+    "name": "Weave Flux",
+    "email": "support@weave.works",
+    "date": "2019-11-20T15:34:19Z"
+  },
+  "object": {
+    "sha": "57cb69b0594e45b5f3e2d5e505b42f5412349f76",
+    "type": "commit",
+    "url": "https://api.github.com/repos/samiyaakhtar/hello-bedrock-manifest/git/commits/57cb69b0594e45b5f3e2d5e505b42f5412349f76"
+  },
+  "tag": "flux-alaska",
+  "message": "Sync pointer\n",
+  "verification": {
+    "verified": false,
+    "reason": "unsigned",
+    "signature": null,
+    "payload": null
+  }
+}
