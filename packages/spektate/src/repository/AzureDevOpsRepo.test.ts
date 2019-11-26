@@ -37,24 +37,22 @@ jest.spyOn(HttpHelper, "httpGet").mockImplementation(
 );
 
 describe("AzureDevOpsRepo", () => {
-  test("gets author correctly", () => {
-    repo.getAuthor("commit").then((author: IAuthor | undefined) => {
-      expect(author).toBeDefined();
-      expect(author!.name).toBe("Samiya Akhtar");
-      expect(author!.url).toBeDefined();
-      expect(author!.username).toBe("saakhta@microsoft.com");
-      expect(author!.imageUrl).toBeTruthy();
-    });
+  test("gets author correctly", async () => {
+    const author = await repo.getAuthor("commit");
+    expect(author).toBeDefined();
+    expect(author!.name).toBe("Samiya Akhtar");
+    expect(author!.url).toBeDefined();
+    expect(author!.username).toBe("saakhta@microsoft.com");
+    expect(author!.imageUrl).toBeTruthy();
   });
 });
 
 describe("AzureDevOpsRepo", () => {
-  test("gets manifest sync tag correctly", () => {
-    repo.getManifestSyncState().then((tags: ITag[]) => {
-      expect(tags).toHaveLength(1);
-      expect(tags[0].commit).toBe("ab4c9f1");
-      expect(tags[0].name).toBe("flux-sync");
-    });
+  test("gets manifest sync tag correctly", async () => {
+    const tags = await repo.getManifestSyncState();
+    expect(tags).toHaveLength(1);
+    expect(tags[0].commit).toBe("ab4c9f1");
+    expect(tags[0].name).toBe("flux-sync");
   });
 });
 

@@ -43,26 +43,24 @@ jest.spyOn(HttpHelper, "httpGet").mockImplementation(
 );
 
 describe("GitHub", () => {
-  test("gets author correctly", () => {
-    repo.getAuthor("commit").then((author: IAuthor | undefined) => {
-      expect(author).toBeDefined();
-      expect(author!.name).toBe("Edaena Salinas");
-      expect(author!.url).toBeDefined();
-      expect(author!.username).toBe("edaena");
-      expect(author!.imageUrl).toBeTruthy();
-    });
+  test("gets author correctly", async () => {
+    const author = await repo.getAuthor("commit");
+    expect(author).toBeDefined();
+    expect(author!.name).toBe("Edaena Salinas");
+    expect(author!.url).toBeDefined();
+    expect(author!.username).toBe("edaena");
+    expect(author!.imageUrl).toBeTruthy();
   });
 });
 
 describe("GitHub", () => {
-  test("gets manifest sync tag correctly", () => {
-    repo.getManifestSyncState().then((tags: ITag[]) => {
-      expect(tags).toHaveLength(2);
-      expect(tags[0].commit).toBe("57cb69b");
-      expect(tags[0].tagger).toBeDefined();
-      expect(tags[0].tagger).toBe("Weave Flux");
-      expect(tags[0].name).toBe("flux-alaska");
-    });
+  test("gets manifest sync tag correctly", async () => {
+    const tags = await repo.getManifestSyncState();
+    expect(tags).toHaveLength(2);
+    expect(tags[0].commit).toBe("57cb69b");
+    expect(tags[0].tagger).toBeDefined();
+    expect(tags[0].tagger).toBe("Weave Flux");
+    expect(tags[0].name).toBe("flux-alaska");
   });
 });
 
