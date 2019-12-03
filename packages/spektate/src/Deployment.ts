@@ -201,7 +201,7 @@ export class Deployment {
       if (entry.p1 && entry.p1._ === entry.p2._) {
         p2ReleaseStage = copy(srcPipeline.builds[entry.p2._]);
         // Make the call for details only when the overall pipeline has failed
-        if (p2ReleaseStage.result !== "succeeded") {
+        if (p2ReleaseStage && p2ReleaseStage.result !== "succeeded") {
           const promise = srcPipeline
             .getBuildStages(p2ReleaseStage)
             .then((stages: IPipelineStages) => {
