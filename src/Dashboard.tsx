@@ -389,7 +389,6 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     envFilters: Set<string>
   ) {
     let filteredDeployments: Deployment[] = this.state.deployments;
-    console.log("filter deployments " + filteredDeployments.length);
 
     if (keywordFilter && keywordFilter.length > 0) {
       filteredDeployments = filteredDeployments.filter(deployment => {
@@ -404,24 +403,8 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     }
 
     if (authorFilters.size > 0) {
-      console.log("authorfilters: " + filteredDeployments.length);
-      let entry: Deployment;
-      for (entry of filteredDeployments) {
-        if (entry.author) {
-          console.log("author: " + entry.author!.name);
-        } else {
-          console.log("no author");
-        }
-      }
       filteredDeployments = filteredDeployments.filter(deployment => {
         if (deployment.author) {
-          authorFilters.forEach(item => {
-            console.log(item === deployment.author!.name);
-          });
-          console.log(
-            "has deployment author: " +
-              authorFilters.has(deployment.author!.name)
-          );
           return authorFilters.has(deployment.author!.name);
         }
         return false;
