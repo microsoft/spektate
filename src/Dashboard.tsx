@@ -15,6 +15,7 @@ import { Tooltip } from "azure-devops-ui/TooltipEx";
 import { Filter } from "azure-devops-ui/Utilities/Filter";
 import { ArrayItemProvider } from "azure-devops-ui/Utilities/Provider";
 import { VssPersona } from "azure-devops-ui/VssPersona";
+import * as querystring from "querystring";
 import * as React from "react";
 import Deployment from "spektate/lib/Deployment";
 import AzureDevOpsPipeline from "spektate/lib/pipeline/AzureDevOpsPipeline";
@@ -138,7 +139,8 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       undefined
     ).then((deployments: Deployment[]) => {
       this.setState({ deployments });
-      this.updateFilteredDeployments();
+      // this.updateFilteredDeployments();
+      this.processQueryParams();
       this.getAuthors();
     });
   };
@@ -313,15 +315,9 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
   private updateFilteredDeployments = () => {
     this.setState({ filteredDeployments: this.state.deployments });
     if (this.filter) {
-      let filteredDeployments: Deployment[] = this.state.deployments;
       const keywordFilter: string | undefined = this.filter.getFilterItemValue(
         "keywordFilter"
       );
-      if (keywordFilter && keywordFilter.length > 0) {
-        filteredDeployments = filteredDeployments.filter(deployment => {
-          return JSON.stringify(deployment).includes(keywordFilter);
-        });
-      }
 
       const serviceFilters: Set<string> = new Set(
         this.filter.getFilterItemValue("serviceFilter")
@@ -333,27 +329,164 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         this.filter.getFilterItemValue("envFilter")
       );
 
-      if (serviceFilters.size > 0) {
-        filteredDeployments = filteredDeployments.filter(deployment => {
-          return serviceFilters.has(deployment.service);
-        });
-      }
-      if (authorFilters.size > 0) {
-        filteredDeployments = filteredDeployments.filter(deployment => {
-          if (deployment.author) {
-            return authorFilters.has(deployment.author!.name);
-          }
-          return false;
-        });
-      }
-      if (envFilters.size > 0) {
-        filteredDeployments = filteredDeployments.filter(deployment => {
-          return envFilters.has(deployment.environment);
-        });
-      }
-
-      this.setState({ filteredDeployments });
+      this.updateQueryString(
+        keywordFilter,
+        serviceFilters,
+        authorFilters,
+        envFilters
+      );
+      this.filterDeployments(
+        keywordFilter,
+        serviceFilters,
+        authorFilters,
+        envFilters
+      );
     }
+  };
+
+  private updateQueryString(
+    keywordFilter: string | undefined,
+    serviceFilters: Set<string>,
+    authorFilters: Set<string>,
+    envFilters: Set<string>
+  ) {
+    const query: any = {};
+
+    if (keywordFilter && keywordFilter.length > 0) {
+      query.keyword = keywordFilter;
+    }
+
+    if (serviceFilters.size > 0) {
+      query.service = Array.from(serviceFilters);
+    }
+
+    if (authorFilters.size > 0) {
+      query.author = Array.from(authorFilters);
+    }
+
+    if (envFilters.size > 0) {
+      query.env = Array.from(envFilters);
+    }
+
+    if (history.pushState) {
+      const newurl =
+        window.location.protocol +
+        "//" +
+        window.location.host +
+        window.location.pathname +
+        "?" +
+        querystring.encode(query);
+      window.history.pushState({ path: newurl }, "", newurl);
+    } else {
+      window.location.search = querystring.encode(query);
+    }
+  }
+
+  private filterDeployments(
+    keywordFilter: string | undefined,
+    serviceFilters: Set<string>,
+    authorFilters: Set<string>,
+    envFilters: Set<string>
+  ) {
+    let filteredDeployments: Deployment[] = this.state.deployments;
+    console.log("filter deployments " + filteredDeployments.length);
+
+    if (keywordFilter && keywordFilter.length > 0) {
+      filteredDeployments = filteredDeployments.filter(deployment => {
+        return JSON.stringify(deployment).includes(keywordFilter);
+      });
+    }
+
+    if (serviceFilters.size > 0) {
+      filteredDeployments = filteredDeployments.filter(deployment => {
+        return serviceFilters.has(deployment.service);
+      });
+    }
+
+    if (authorFilters.size > 0) {
+      console.log("authorfilters: " + filteredDeployments.length);
+      let entry: Deployment;
+      for (entry of filteredDeployments) {
+        if (entry.author) {
+          console.log("author: " + entry.author!.name);
+        } else {
+          console.log("no author");
+        }
+      }
+      filteredDeployments = filteredDeployments.filter(deployment => {
+        if (deployment.author) {
+          authorFilters.forEach(item => {
+            console.log(item === deployment.author!.name);
+          });
+          console.log(
+            "has deployment author: " +
+              authorFilters.has(deployment.author!.name)
+          );
+          return authorFilters.has(deployment.author!.name);
+        }
+        return false;
+      });
+    }
+
+    if (envFilters.size > 0) {
+      filteredDeployments = filteredDeployments.filter(deployment => {
+        return envFilters.has(deployment.environment);
+      });
+    }
+
+    this.setState({ filteredDeployments });
+  }
+
+  private processQueryParams = () => {
+    this.setState({ filteredDeployments: this.state.deployments });
+
+    if (window.location.search === "") {
+      return;
+    }
+
+    const filters = querystring.decode(window.location.search.replace("?", ""));
+    let keywordFilter: undefined | string;
+    let authorFilters: Set<string> = new Set<string>();
+    let serviceFilters: Set<string> = new Set<string>();
+    let envFilters: Set<string> = new Set<string>();
+
+    if (filters.keyword && filters.keyword !== "") {
+      keywordFilter = filters.keyword.toString();
+    }
+
+    if (filters.author && filters.author.length > 0) {
+      authorFilters = new Set(filters.author);
+
+      // put this logic in a method
+      if (typeof filters.author === "string") {
+        authorFilters.add(filters.author);
+      } else {
+        authorFilters = new Set(filters.author);
+      }
+    }
+
+    if (filters.service && filters.service.length > 0) {
+      if (typeof filters.service === "string") {
+        serviceFilters.add(filters.service);
+      } else {
+        serviceFilters = new Set(filters.service);
+      }
+    }
+
+    if (filters.env && filters.env.length > 0) {
+      if (typeof filters.env === "string") {
+        envFilters.add(filters.env);
+      } else {
+        envFilters = new Set(filters.env);
+      }
+    }
+
+    this.filterDeployments(
+      keywordFilter,
+      serviceFilters,
+      authorFilters,
+      envFilters
+    );
   };
 
   private getListOfEnvironments = (): string[] => {
