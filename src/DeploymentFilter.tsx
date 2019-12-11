@@ -26,14 +26,12 @@ export class DeploymentFilter extends React.Component<
 
   constructor(props: IDeploymentFilterProps) {
     super(props);
-    console.log("Building filter");
     this.props.filter.subscribe(() => {
       this.currentState.value = JSON.stringify(
         this.props.filter.getState(),
         null,
         4
       );
-      console.log(this.currentState.value);
       this.props.onFiltered(this.props.filter);
     }, FILTER_CHANGE_EVENT);
   }

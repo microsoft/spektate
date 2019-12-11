@@ -158,6 +158,9 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         this.filter.setFilterItemState("envFilter", {
           value: this.filterState.currentlySelectedEnvs
         });
+        this.filter.setFilterItemState("keywordFilter", {
+          value: this.filterState.currentlySelectedKeyword
+        });
       }
     });
   };
@@ -451,8 +454,6 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     }
 
     if (filters.author && filters.author.length > 0) {
-      authorFilters = new Set(filters.author);
-
       // put this logic in a method
       if (typeof filters.author === "string") {
         authorFilters.add(filters.author);
@@ -479,6 +480,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     this.filterState = {
       currentlySelectedAuthors: Array.from(authorFilters),
       currentlySelectedEnvs: Array.from(envFilters),
+      currentlySelectedKeyword: keywordFilter,
       currentlySelectedServices: Array.from(serviceFilters),
       defaultApplied: false
     };

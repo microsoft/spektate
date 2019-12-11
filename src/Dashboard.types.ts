@@ -15,6 +15,7 @@ export interface IDashboardFilterState {
   currentlySelectedServices?: string[];
   currentlySelectedEnvs?: string[];
   currentlySelectedAuthors?: string[];
+  currentlySelectedKeyword?: string;
   defaultApplied: boolean;
 }
 export interface IDashboardState {
