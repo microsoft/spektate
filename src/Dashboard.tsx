@@ -26,6 +26,7 @@ import { IRepository } from "spektate/lib/repository/Repository";
 import { config } from "./config";
 import "./css/dashboard.css";
 import {
+  IDashboardFilterState,
   IDashboardState,
   IDeploymentField,
   IStatusIndicatorData
@@ -35,7 +36,10 @@ import { DeploymentFilter } from "./DeploymentFilter";
 const REFRESH_INTERVAL = 30000;
 class Dashboard<Props> extends React.Component<Props, IDashboardState> {
   private interval: NodeJS.Timeout;
-  private filter?: Filter;
+  private filter: Filter = new Filter();
+  private filterState: IDashboardFilterState = {
+    defaultApplied: false
+  };
 
   constructor(props: Props) {
     super(props);
@@ -65,6 +69,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
           </div>
         </header>
         <DeploymentFilter
+          filter={this.filter}
           onFiltered={this.onDashboardFiltered}
           listOfAuthors={this.getListOfAuthors()}
           listOfEnvironments={this.getListOfEnvironments()}
@@ -139,9 +144,21 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       undefined
     ).then((deployments: Deployment[]) => {
       this.setState({ deployments });
-      // this.updateFilteredDeployments();
+      this.setState({ filteredDeployments: this.state.deployments });
       this.processQueryParams();
+      this.updateFilteredDeployments();
       this.getAuthors();
+      if (!this.filterState.defaultApplied) {
+        this.filter.setFilterItemState("authorFilter", {
+          value: this.filterState.currentlySelectedAuthors
+        });
+        this.filter.setFilterItemState("serviceFilter", {
+          value: this.filterState.currentlySelectedServices
+        });
+        this.filter.setFilterItemState("envFilter", {
+          value: this.filterState.currentlySelectedEnvs
+        });
+      }
     });
   };
 
@@ -307,13 +324,11 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
   };
 
   private onDashboardFiltered = (filterData: Filter) => {
-    // this.setState({ filter: filterData });
     this.filter = filterData;
     this.updateFilteredDeployments();
   };
 
   private updateFilteredDeployments = () => {
-    this.setState({ filteredDeployments: this.state.deployments });
     if (this.filter) {
       const keywordFilter: string | undefined = this.filter.getFilterItemValue(
         "keywordFilter"
@@ -421,8 +436,6 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
   }
 
   private processQueryParams = () => {
-    this.setState({ filteredDeployments: this.state.deployments });
-
     if (window.location.search === "") {
       return;
     }
@@ -463,7 +476,19 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         envFilters = new Set(filters.env);
       }
     }
+    this.filterState = {
+      currentlySelectedAuthors: Array.from(authorFilters),
+      currentlySelectedEnvs: Array.from(envFilters),
+      currentlySelectedServices: Array.from(serviceFilters),
+      defaultApplied: false
+    };
 
+    this.updateQueryString(
+      keywordFilter,
+      serviceFilters,
+      authorFilters,
+      envFilters
+    );
     this.filterDeployments(
       keywordFilter,
       serviceFilters,
@@ -839,25 +864,38 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
   };
 
   private getAuthors = () => {
-    const state = this.state;
-    this.state.deployments.forEach(deployment => {
-      if (
-        deployment.srcToDockerBuild &&
-        !(deployment.srcToDockerBuild.sourceVersion in state.authors)
-      ) {
-        try {
-          deployment.fetchAuthor((author: IAuthor) => {
+    try {
+      const state = this.state;
+      const promises: Array<Promise<IAuthor | undefined>> = [];
+      this.state.deployments.forEach(deployment => {
+        if (
+          deployment.srcToDockerBuild &&
+          !(deployment.srcToDockerBuild.sourceVersion in state.authors)
+        ) {
+          const promise = deployment.fetchAuthor();
+          promise.then((author: IAuthor) => {
             if (author && deployment.srcToDockerBuild) {
               const copy = state.authors;
               copy[deployment.srcToDockerBuild.sourceVersion] = author;
               this.setState({ authors: copy });
+              this.updateFilteredDeployments();
             }
           });
-        } catch (err) {
-          console.error(err);
+          promises.push(promise);
         }
-      }
-    });
+      });
+
+      Promise.all(promises).then(() => {
+        if (!this.filterState.defaultApplied) {
+          this.filter.setFilterItemState("authorFilter", {
+            value: this.filterState.currentlySelectedAuthors
+          });
+          this.filterState.defaultApplied = true;
+        }
+      });
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   private getAuthor = (deployment: Deployment): IAuthor | undefined => {

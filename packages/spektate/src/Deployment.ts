@@ -198,7 +198,11 @@ export class Deployment {
     let service = "";
     const promises = [];
     if (entry.p2 != null) {
-      if (entry.p1 && entry.p1._ === entry.p2._) {
+      if (
+        entry.p1 &&
+        entry.p1._ === entry.p2._ &&
+        srcPipeline.builds[entry.p2._]
+      ) {
         p2ReleaseStage = copy(srcPipeline.builds[entry.p2._]);
         // Make the call for details only when the overall pipeline has failed
         if (p2ReleaseStage && p2ReleaseStage.result !== "succeeded") {
@@ -387,15 +391,22 @@ export class Deployment {
     return "Incomplete";
   }
 
-  public fetchAuthor(callback: (author: IAuthor | undefined) => void): void {
-    if (this.srcToDockerBuild && this.srcToDockerBuild.repository) {
-      this.srcToDockerBuild.repository
-        .getAuthor(this.srcToDockerBuild.sourceVersion)
-        .then((author: IAuthor | undefined) => {
-          this.author = author;
-          callback(author);
-        });
-    }
+  public fetchAuthor(): Promise<IAuthor | undefined> {
+    return new Promise((resolve, reject) => {
+      if (this.srcToDockerBuild && this.srcToDockerBuild.repository) {
+        this.srcToDockerBuild.repository
+          .getAuthor(this.srcToDockerBuild.sourceVersion)
+          .then((author: IAuthor | undefined) => {
+            this.author = author;
+            resolve(author);
+          })
+          .catch(error => {
+            reject(error);
+          });
+      } else {
+        resolve();
+      }
+    });
   }
 }
 

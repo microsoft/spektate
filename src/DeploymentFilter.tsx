@@ -15,25 +15,26 @@ export interface IDeploymentFilterProps {
   listOfAuthors: Set<string>;
   listOfEnvironments: string[];
   onFiltered: (filterData: Filter) => void;
+  filter: Filter;
 }
 
 export class DeploymentFilter extends React.Component<
   IDeploymentFilterProps,
   {}
 > {
-  private filter: Filter;
   private currentState = new ObservableValue("");
-  private selectionServiceList = new DropdownMultiSelection();
-  private selectionAuthorList = new DropdownMultiSelection();
-  private selectionEnvList = new DropdownMultiSelection();
 
   constructor(props: IDeploymentFilterProps) {
     super(props);
-    this.filter = new Filter();
-    this.filter.subscribe(() => {
-      this.currentState.value = JSON.stringify(this.filter.getState(), null, 4);
+    console.log("Building filter");
+    this.props.filter.subscribe(() => {
+      this.currentState.value = JSON.stringify(
+        this.props.filter.getState(),
+        null,
+        4
+      );
       console.log(this.currentState.value);
-      this.props.onFiltered(this.filter);
+      this.props.onFiltered(this.props.filter);
     }, FILTER_CHANGE_EVENT);
   }
 
@@ -44,11 +45,11 @@ export class DeploymentFilter extends React.Component<
   private createFilters = () => {
     return (
       <div className="FilterBar">
-        <FilterBar filter={this.filter}>
+        <FilterBar filter={this.props.filter}>
           <KeywordFilterBarItem filterItemKey="keywordFilter" />
           <DropdownFilterBarItem
             filterItemKey="serviceFilter"
-            filter={this.filter}
+            filter={this.props.filter}
             items={this.props.listOfServices.map(i => {
               return {
                 iconProps: { iconName: "Home" },
@@ -56,14 +57,14 @@ export class DeploymentFilter extends React.Component<
                 text: i
               };
             })}
-            selection={this.selectionServiceList}
+            selection={new DropdownMultiSelection()}
             placeholder="Filter by Service"
             noItemsText="No services found"
           />
 
           <DropdownFilterBarItem
             filterItemKey="authorFilter"
-            filter={this.filter}
+            filter={this.props.filter}
             items={Array.from(this.props.listOfAuthors).map(i => {
               return {
                 iconProps: { iconName: "Contact" },
@@ -71,14 +72,14 @@ export class DeploymentFilter extends React.Component<
                 text: i
               };
             })}
-            selection={this.selectionAuthorList}
+            selection={new DropdownMultiSelection()}
             placeholder="Filter by Author"
             noItemsText="No authors found"
           />
 
           <DropdownFilterBarItem
             filterItemKey="envFilter"
-            filter={this.filter}
+            filter={this.props.filter}
             items={this.props.listOfEnvironments.map(i => {
               return {
                 iconProps: { iconName: "Globe" },
@@ -86,7 +87,7 @@ export class DeploymentFilter extends React.Component<
                 text: i.toUpperCase()
               };
             })}
-            selection={this.selectionEnvList}
+            selection={new DropdownMultiSelection()}
             placeholder="Filter by Environment"
             noItemsText="No environments found"
           />

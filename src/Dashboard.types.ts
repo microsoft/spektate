@@ -1,5 +1,4 @@
 import { IStatusProps } from "azure-devops-ui/Status";
-// import { Filter } from "azure-devops-ui/Utilities/Filter";
 import Deployment from "spektate/lib/Deployment";
 import { IAuthor } from "spektate/lib/repository/Author";
 import { ITag } from "spektate/lib/repository/Tag";
@@ -10,6 +9,13 @@ export interface IStatusIndicatorData {
 }
 export interface IAuthors {
   [commitId: string]: IAuthor;
+}
+
+export interface IDashboardFilterState {
+  currentlySelectedServices?: string[];
+  currentlySelectedEnvs?: string[];
+  currentlySelectedAuthors?: string[];
+  defaultApplied: boolean;
 }
 export interface IDashboardState {
   deployments: Deployment[];
