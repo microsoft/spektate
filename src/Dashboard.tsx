@@ -445,38 +445,14 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
 
     const filters = querystring.decode(window.location.search.replace("?", ""));
     let keywordFilter: undefined | string;
-    let authorFilters: Set<string> = new Set<string>();
-    let serviceFilters: Set<string> = new Set<string>();
-    let envFilters: Set<string> = new Set<string>();
+    const authorFilters: Set<string> = this.getFilterSet("author");
+    const serviceFilters: Set<string> = this.getFilterSet("service");
+    const envFilters: Set<string> = this.getFilterSet("env");
 
     if (filters.keyword && filters.keyword !== "") {
       keywordFilter = filters.keyword.toString();
     }
 
-    if (filters.author && filters.author.length > 0) {
-      // put this logic in a method
-      if (typeof filters.author === "string") {
-        authorFilters.add(filters.author);
-      } else {
-        authorFilters = new Set(filters.author);
-      }
-    }
-
-    if (filters.service && filters.service.length > 0) {
-      if (typeof filters.service === "string") {
-        serviceFilters.add(filters.service);
-      } else {
-        serviceFilters = new Set(filters.service);
-      }
-    }
-
-    if (filters.env && filters.env.length > 0) {
-      if (typeof filters.env === "string") {
-        envFilters.add(filters.env);
-      } else {
-        envFilters = new Set(filters.env);
-      }
-    }
     this.filterState = {
       currentlySelectedAuthors: Array.from(authorFilters),
       currentlySelectedEnvs: Array.from(envFilters),
@@ -497,6 +473,19 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       authorFilters,
       envFilters
     );
+  };
+
+  private getFilterSet = (queryParam: string): Set<string> => {
+    const filters = querystring.decode(window.location.search.replace("?", ""));
+    let filterSet: Set<string> = new Set<string>();
+    if (filters[queryParam] && filters[queryParam].length > 0) {
+      if (typeof filters[queryParam] === "string") {
+        filterSet.add(filters[queryParam] as string);
+      } else {
+        filterSet = new Set(filters[queryParam]);
+      }
+    }
+    return filterSet;
   };
 
   private getListOfEnvironments = (): string[] => {
