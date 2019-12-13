@@ -391,6 +391,9 @@ export class Deployment {
     return "Incomplete";
   }
 
+  /**
+   * Fetches the author for this deployment and returns a promise
+   */
   public fetchAuthor(): Promise<IAuthor | undefined> {
     return new Promise((resolve, reject) => {
       if (this.srcToDockerBuild && this.srcToDockerBuild.repository) {
