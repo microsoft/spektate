@@ -15,6 +15,7 @@ import { Tooltip } from "azure-devops-ui/TooltipEx";
 import { Filter } from "azure-devops-ui/Utilities/Filter";
 import { ArrayItemProvider } from "azure-devops-ui/Utilities/Provider";
 import { VssPersona } from "azure-devops-ui/VssPersona";
+import * as querystring from "querystring";
 import * as React from "react";
 import Deployment from "spektate/lib/Deployment";
 import AzureDevOpsPipeline from "spektate/lib/pipeline/AzureDevOpsPipeline";
@@ -26,6 +27,7 @@ import { ITag } from "spektate/lib/repository/Tag";
 import { config } from "./config";
 import "./css/dashboard.css";
 import {
+  IDashboardFilterState,
   IDashboardState,
   IDeploymentField,
   IStatusIndicatorData
@@ -35,7 +37,10 @@ import { DeploymentFilter } from "./DeploymentFilter";
 const REFRESH_INTERVAL = 30000;
 class Dashboard<Props> extends React.Component<Props, IDashboardState> {
   private interval: NodeJS.Timeout;
-  private filter?: Filter;
+  private filter: Filter = new Filter();
+  private filterState: IDashboardFilterState = {
+    defaultApplied: false
+  };
   private clusters?: string[];
 
   constructor(props: Props) {
@@ -66,6 +71,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
           </div>
         </header>
         <DeploymentFilter
+          filter={this.filter}
           onFiltered={this.onDashboardFiltered}
           listOfAuthors={this.getListOfAuthors()}
           listOfEnvironments={this.getListOfEnvironments()}
@@ -140,8 +146,24 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       undefined
     ).then((deployments: Deployment[]) => {
       this.setState({ deployments });
+      this.setState({ filteredDeployments: this.state.deployments });
+      this.processQueryParams();
       this.updateFilteredDeployments();
       this.getAuthors();
+      if (!this.filterState.defaultApplied) {
+        this.filter.setFilterItemState("authorFilter", {
+          value: this.filterState.currentlySelectedAuthors
+        });
+        this.filter.setFilterItemState("serviceFilter", {
+          value: this.filterState.currentlySelectedServices
+        });
+        this.filter.setFilterItemState("envFilter", {
+          value: this.filterState.currentlySelectedEnvs
+        });
+        this.filter.setFilterItemState("keywordFilter", {
+          value: this.filterState.currentlySelectedKeyword
+        });
+      }
     });
   };
 
@@ -301,23 +323,15 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
   };
 
   private onDashboardFiltered = (filterData: Filter) => {
-    // this.setState({ filter: filterData });
     this.filter = filterData;
     this.updateFilteredDeployments();
   };
 
   private updateFilteredDeployments = () => {
-    this.setState({ filteredDeployments: this.state.deployments });
     if (this.filter) {
-      let filteredDeployments: Deployment[] = this.state.deployments;
       const keywordFilter: string | undefined = this.filter.getFilterItemValue(
         "keywordFilter"
       );
-      if (keywordFilter && keywordFilter.length > 0) {
-        filteredDeployments = filteredDeployments.filter(deployment => {
-          return JSON.stringify(deployment).includes(keywordFilter);
-        });
-      }
 
       const serviceFilters: Set<string> = new Set(
         this.filter.getFilterItemValue("serviceFilter")
@@ -329,27 +343,145 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         this.filter.getFilterItemValue("envFilter")
       );
 
-      if (serviceFilters.size > 0) {
-        filteredDeployments = filteredDeployments.filter(deployment => {
-          return serviceFilters.has(deployment.service);
-        });
-      }
-      if (authorFilters.size > 0) {
-        filteredDeployments = filteredDeployments.filter(deployment => {
-          if (deployment.author) {
-            return authorFilters.has(deployment.author!.name);
-          }
-          return false;
-        });
-      }
-      if (envFilters.size > 0) {
-        filteredDeployments = filteredDeployments.filter(deployment => {
-          return envFilters.has(deployment.environment);
-        });
-      }
-
-      this.setState({ filteredDeployments });
+      this.updateQueryString(
+        keywordFilter,
+        serviceFilters,
+        authorFilters,
+        envFilters
+      );
+      this.filterDeployments(
+        keywordFilter,
+        serviceFilters,
+        authorFilters,
+        envFilters
+      );
     }
+  };
+
+  private updateQueryString(
+    keywordFilter: string | undefined,
+    serviceFilters: Set<string>,
+    authorFilters: Set<string>,
+    envFilters: Set<string>
+  ) {
+    const query: any = {};
+
+    if (keywordFilter && keywordFilter.length > 0) {
+      query.keyword = keywordFilter;
+    }
+
+    if (serviceFilters.size > 0) {
+      query.service = Array.from(serviceFilters);
+    }
+
+    if (authorFilters.size > 0) {
+      query.author = Array.from(authorFilters);
+    }
+
+    if (envFilters.size > 0) {
+      query.env = Array.from(envFilters);
+    }
+
+    if (history.pushState) {
+      const newurl =
+        window.location.protocol +
+        "//" +
+        window.location.host +
+        window.location.pathname +
+        "?" +
+        querystring.encode(query);
+      window.history.pushState({ path: newurl }, "", newurl);
+    } else {
+      window.location.search = querystring.encode(query);
+    }
+  }
+
+  private filterDeployments(
+    keywordFilter: string | undefined,
+    serviceFilters: Set<string>,
+    authorFilters: Set<string>,
+    envFilters: Set<string>
+  ) {
+    let filteredDeployments: Deployment[] = this.state.deployments;
+
+    if (keywordFilter && keywordFilter.length > 0) {
+      filteredDeployments = filteredDeployments.filter(deployment => {
+        return JSON.stringify(deployment).includes(keywordFilter);
+      });
+    }
+
+    if (serviceFilters.size > 0) {
+      filteredDeployments = filteredDeployments.filter(deployment => {
+        return serviceFilters.has(deployment.service);
+      });
+    }
+
+    if (authorFilters.size > 0) {
+      filteredDeployments = filteredDeployments.filter(deployment => {
+        if (deployment.author) {
+          return authorFilters.has(deployment.author!.name);
+        }
+        return false;
+      });
+    }
+
+    if (envFilters.size > 0) {
+      filteredDeployments = filteredDeployments.filter(deployment => {
+        return envFilters.has(deployment.environment);
+      });
+    }
+
+    this.setState({ filteredDeployments });
+  }
+
+  private processQueryParams = () => {
+    if (window.location.search === "") {
+      return;
+    }
+
+    const filters = querystring.decode(window.location.search.replace("?", ""));
+    let keywordFilter: undefined | string;
+    const authorFilters: Set<string> = this.getFilterSet("author");
+    const serviceFilters: Set<string> = this.getFilterSet("service");
+    const envFilters: Set<string> = this.getFilterSet("env");
+
+    if (filters.keyword && filters.keyword !== "") {
+      keywordFilter = filters.keyword.toString();
+    }
+
+    this.filterState = {
+      currentlySelectedAuthors: Array.from(authorFilters),
+      currentlySelectedEnvs: Array.from(envFilters),
+      currentlySelectedKeyword: keywordFilter,
+      currentlySelectedServices: Array.from(serviceFilters),
+      defaultApplied: false
+    };
+
+    this.updateQueryString(
+      keywordFilter,
+      serviceFilters,
+      authorFilters,
+      envFilters
+    );
+    this.filterDeployments(
+      keywordFilter,
+      serviceFilters,
+      authorFilters,
+      envFilters
+    );
+  };
+
+  private getFilterSet = (queryParam: string): Set<string> => {
+    const filters = querystring.decode(window.location.search.replace("?", ""));
+    let filterSet: Set<string> = new Set<string>();
+    if (filters[queryParam] && filters[queryParam].length > 0) {
+      if (typeof filters[queryParam] === "string") {
+        filterSet.add(filters[queryParam] as string);
+      } else {
+        filterSet = new Set(filters[queryParam]);
+      }
+    }
+    return filterSet;
   };
 
   private getListOfEnvironments = (): string[] => {
@@ -742,25 +874,38 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
   };
 
   private getAuthors = () => {
-    const state = this.state;
-    this.state.deployments.forEach(deployment => {
-      if (
-        deployment.srcToDockerBuild &&
-        !(deployment.srcToDockerBuild.sourceVersion in state.authors)
-      ) {
-        try {
-          deployment.fetchAuthor((author: IAuthor) => {
+    try {
+      const state = this.state;
+      const promises: Array<Promise<IAuthor | undefined>> = [];
+      this.state.deployments.forEach(deployment => {
+        if (
+          deployment.srcToDockerBuild &&
+          !(deployment.srcToDockerBuild.sourceVersion in state.authors)
+        ) {
+          const promise = deployment.fetchAuthor();
+          promise.then((author: IAuthor) => {
             if (author && deployment.srcToDockerBuild) {
               const copy = state.authors;
               copy[deployment.srcToDockerBuild.sourceVersion] = author;
               this.setState({ authors: copy });
+              this.updateFilteredDeployments();
             }
           });
-        } catch (err) {
-          console.error(err);
+          promises.push(promise);
         }
-      }
-    });
+      });
+
+      Promise.all(promises).then(() => {
+        if (!this.filterState.defaultApplied) {
+          this.filter.setFilterItemState("authorFilter", {
+            value: this.filterState.currentlySelectedAuthors
+          });
+          this.filterState.defaultApplied = true;
+        }
+      });
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   private getAuthor = (deployment: Deployment): IAuthor | undefined => {
