@@ -20,7 +20,7 @@ export interface IDashboardFilterState {
 }
 export interface IDashboardState {
   deployments: Deployment[];
-  manifestSync?: ITag;
+  manifestSyncStatuses?: ITag[];
   authors: IAuthors;
   filteredDeployments: Deployment[];
 }

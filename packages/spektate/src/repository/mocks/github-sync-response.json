@@ -1,10 +1,22 @@
-{
-  "ref": "refs/tags/flux-sync",
-  "node_id": "MDM6UmVmMTkzODU0MjIzOmZsdXgtc3luYw==",
-  "url": "https://api.github.com/repos/samiyaakhtar/hello-bedrock-manifest/git/refs/tags/flux-sync",
-  "object": {
-    "sha": "1b146d99700834a3c17b47f20e2a9db317bb0032",
-    "type": "tag",
-    "url": "https://api.github.com/repos/samiyaakhtar/hello-bedrock-manifest/git/tags/1b146d99700834a3c17b47f20e2a9db317bb0032"
+[
+  {
+    "ref": "refs/tags/flux-alaska",
+    "node_id": "MDM6UmVmMTkzODU0MjIzOmZsdXgtYWxhc2th",
+    "url": "https://api.github.com/repos/samiyaakhtar/hello-bedrock-manifest/git/refs/tags/flux-alaska",
+    "object": {
+      "sha": "7d57f93bcb572c8cbb02fe7fd1c4d3f143746b1d",
+      "type": "tag",
+      "url": "https://api.github.com/repos/samiyaakhtar/hello-bedrock-manifest/git/tags/7d57f93bcb572c8cbb02fe7fd1c4d3f143746b1d"
+    }
+  },
+  {
+    "ref": "refs/tags/flux-sync",
+    "node_id": "MDM6UmVmMTkzODU0MjIzOmZsdXgtc3luYw==",
+    "url": "https://api.github.com/repos/samiyaakhtar/hello-bedrock-manifest/git/refs/tags/flux-sync",
+    "object": {
+      "sha": "cc4c2f4557efdb94ca379f24c319258d564fc4cf",
+      "type": "tag",
+      "url": "https://api.github.com/repos/samiyaakhtar/hello-bedrock-manifest/git/tags/cc4c2f4557efdb94ca379f24c319258d564fc4cf"
+    }
   }
-}
+]

@@ -3,8 +3,8 @@ import { IAuthor } from "./Author";
 import { IRepository } from "./Repository";
 import { ITag } from "./Tag";
 
-const manifestSyncTagURL =
-  "https://api.github.com/repos/<owner>/<repo>/git/refs/tags/flux-sync";
+const manifestSyncTagsURL =
+  "https://api.github.com/repos/<owner>/<repo>/git/refs/tags";
 const authorInfoURL =
   "https://api.github.com/repos/<owner>/<repo>/commits/<commitId>";
 
@@ -12,7 +12,6 @@ export class GitHub implements IRepository {
   public username: string;
   public reponame: string;
   public accessToken?: string;
-  public manifestSync?: ITag;
 
   constructor(username: string, reponame: string, accessToken?: string) {
     this.reponame = reponame;
@@ -20,32 +19,46 @@ export class GitHub implements IRepository {
     this.accessToken = accessToken;
   }
 
-  public async getManifestSyncState(): Promise<ITag> {
+  public async getManifestSyncState(): Promise<ITag[]> {
     return new Promise(async (resolve, reject) => {
-      const data = await HttpHelper.httpGet<any>(
-        manifestSyncTagURL
+      const allTags = await HttpHelper.httpGet<any>(
+        manifestSyncTagsURL
           .replace("<owner>", this.username)
           .replace("<repo>", this.reponame),
         this.accessToken
       );
+      const tags = allTags.data;
+      if (tags != null && tags.length > 0) {
+        const fluxTags: ITag[] = [];
+        for (const fluxTag of tags) {
+          const data = await HttpHelper.httpGet<any>(
+            fluxTag.url
+              .replace("<owner>", this.username)
+              .replace("<repo>", this.reponame),
+            this.accessToken
+          );
 
-      const tag = data.data;
-      if (tag != null) {
-        const syncStatus = await HttpHelper.httpGet<any>(
-          tag.object.url,
-          this.accessToken
-        );
+          const tag = data.data;
+          if (tag != null) {
+            const syncStatus = await HttpHelper.httpGet<any>(
+              tag.object.url,
+              this.accessToken
+            );
 
-        if (syncStatus != null) {
-          this.manifestSync = {
-            commit: syncStatus.data.object.sha.substring(0, 7),
-            date: new Date(syncStatus.data.tagger.date),
-            message: syncStatus.data.message,
-            tagger: syncStatus.data.tagger.name
-          };
-          resolve(this.manifestSync);
-          return;
+            if (syncStatus != null) {
+              const manifestSync = {
+                commit: syncStatus.data.object.sha.substring(0, 7),
+                date: new Date(syncStatus.data.tagger.date),
+                message: syncStatus.data.message,
+                name: syncStatus.data.tag,
+                tagger: syncStatus.data.tagger.name
+              };
+              fluxTags.push(manifestSync);
+            }
+          }
         }
+        resolve(fluxTags);
+        return;
       }
 
       console.error(

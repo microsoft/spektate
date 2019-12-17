@@ -3,4 +3,5 @@ export interface ITag {
   date: Date;
   tagger?: string;
   message?: string;
+  name: string;
 }

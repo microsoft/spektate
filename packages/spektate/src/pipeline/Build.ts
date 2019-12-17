@@ -20,7 +20,10 @@ export interface IBuild {
   stages?: IPipelineStages;
 }
 
-export const copy = (build: IBuild): IBuild => {
+export const copy = (build: IBuild): IBuild | undefined => {
+  if (!build) {
+    return undefined;
+  }
   const newBuild: IBuild = {
     URL: build.URL,
     author: build.author,

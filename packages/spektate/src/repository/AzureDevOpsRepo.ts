@@ -28,7 +28,8 @@ export class AzureDevOpsRepo implements IRepository {
     this.repo = repo;
     this.accessToken = accessToken;
   }
-  public async getManifestSyncState(): Promise<ITag> {
+
+  public async getManifestSyncState(): Promise<ITag[]> {
     return new Promise(async (resolve, reject) => {
       const data = await HttpHelper.httpGet<any>(
         manifestSyncTagsURL
@@ -39,9 +40,11 @@ export class AzureDevOpsRepo implements IRepository {
       );
 
       const tags = data.data.value;
+      const fluxTags: ITag[] = [];
       if (tags != null && tags.length > 0) {
         for (const tag of tags) {
-          if (tag.name === "refs/tags/flux-sync") {
+          // Check all flux sync tags
+          if (tag.name.includes("refs/tags/flux-")) {
             const syncStatus = await HttpHelper.httpGet<any>(
               manifestSyncTagURL
                 .replace("{organization}", this.org)
@@ -55,13 +58,15 @@ export class AzureDevOpsRepo implements IRepository {
               this.manifestSync = {
                 commit: syncStatus.data.taggedObject.objectId.substring(0, 7),
                 date: new Date(syncStatus.data.taggedBy.date),
+                name: syncStatus.data.name,
                 tagger: syncStatus.data.taggedBy.name
               };
-              resolve(this.manifestSync);
-              return;
+              fluxTags.push(this.manifestSync);
             }
           }
         }
+        resolve(fluxTags);
+        return;
       }
       console.error(
         `Unable to to find flux-sync tag from ${this.org}-${this.project}-${this.repo}`
