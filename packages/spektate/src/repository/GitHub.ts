@@ -80,10 +80,10 @@ export class GitHub implements IRepository {
     const authorInfo = data.data;
     if (authorInfo != null) {
       const author: IAuthor = {
-        imageUrl: authorInfo.author.avatar_url,
+        imageUrl: authorInfo.author ? authorInfo.author.avatar_url : "",
         name: authorInfo.commit.author.name,
-        url: authorInfo.author.html_url,
-        username: authorInfo.committer.login
+        url: authorInfo.author ? authorInfo.author.html_url : "",
+        username: authorInfo.committer ? authorInfo.committer.login : ""
       };
       return author;
     }

@@ -406,6 +406,19 @@ export class Deployment {
           .catch(error => {
             reject(error);
           });
+      } else if (
+        this.hldToManifestBuild &&
+        this.hldToManifestBuild.repository
+      ) {
+        this.hldToManifestBuild.repository
+          .getAuthor(this.hldToManifestBuild.sourceVersion)
+          .then((author: IAuthor | undefined) => {
+            this.author = author;
+            resolve(author);
+          })
+          .catch(error => {
+            reject(error);
+          });
       } else {
         resolve();
       }

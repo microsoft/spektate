@@ -41,7 +41,6 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
   private filterState: IDashboardFilterState = {
     defaultApplied: false
   };
-  private clusters?: string[];
 
   constructor(props: Props) {
     super(props);
@@ -120,7 +119,6 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         config.MANIFEST,
         config.MANIFEST_ACCESS_TOKEN
       );
-      // const manifestRepo: Repository = new AzureDevOpsRepo(config.AZURE_ORG, config.AZURE_PROJECT, config.MANIFEST, config.MANIFEST_ACCESS_TOKEN);
       manifestRepo.getManifestSyncState().then((syncCommits: any) => {
         this.setState({ manifestSyncStatuses: syncCommits });
       });
@@ -200,6 +198,12 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         width: new ObservableValue(100)
       },
       {
+        id: "authorName",
+        name: "Author",
+        renderCell: this.renderAuthor,
+        width: new ObservableValue(200)
+      },
+      {
         id: "srcPipelineId",
         name: "SRC to ACR",
         renderCell: this.renderSrcBuild,
@@ -218,24 +222,37 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         width: new ObservableValue(200)
       },
       {
-        id: "authorName",
-        name: "Author",
-        renderCell: this.renderAuthor,
-        width: new ObservableValue(200)
-      },
-      {
         id: "deployedAt",
-        name: "Deployed at",
+        name: "Last Updated",
         renderCell: this.renderTime,
         width: new ObservableValue(120)
-      },
-      ColumnFill
+      }
     ];
+    if (
+      this.state.manifestSyncStatuses &&
+      this.state.manifestSyncStatuses.length > 0
+    ) {
+      columns.push({
+        id: "clusterName",
+        name: "Cluster",
+        renderCell: this.renderSimpleText,
+        width: new ObservableValue(200)
+      });
+    }
+    columns.push(ColumnFill);
     let rows: IDeploymentField[] = [];
     try {
       rows = this.state.filteredDeployments.map(deployment => {
         const author = this.getAuthor(deployment);
-        const tag = this.getClusterSyncStatusForDeployment(deployment);
+        const tags = this.getClusterSyncStatusForDeployment(deployment);
+        let strClusterSync = "";
+        let tag;
+        if (tags) {
+          tag = tags[0];
+          tags.forEach((itag: ITag) => {
+            strClusterSync += itag.name + ",";
+          });
+        }
         return {
           deploymentId: deployment.deploymentId,
           service: deployment.service !== "" ? deployment.service : "-",
@@ -300,7 +317,8 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
           authorName: author ? author.name : "-",
           authorURL: author ? author.imageUrl : "",
           status: deployment.status(),
-          clusterSync: tag ? true : false,
+          clusterName: tags ? strClusterSync : "",
+          // clusterSync: tags ? true : false,
           clusterSyncDate: tag ? tag.date : new Date(),
           endTime: deployment.endTime(),
           manifestCommitId: deployment.manifestCommitId
@@ -512,16 +530,16 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
 
   private getClusterSyncStatusForDeployment = (
     deployment: Deployment
-  ): ITag | undefined => {
-    let clusterSynced;
+  ): ITag[] | undefined => {
+    const clusterSyncs: ITag[] = [];
     if (this.state.manifestSyncStatuses) {
       this.state.manifestSyncStatuses.map((tag: ITag) => {
         if (deployment.manifestCommitId === tag.commit) {
-          clusterSynced = tag;
+          clusterSyncs.push(tag);
         }
       });
     }
-    return clusterSynced;
+    return clusterSyncs;
   };
 
   private renderSimpleText = (
@@ -784,12 +802,6 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         <SimpleTableCell key={"col-" + columnIndex} columnIndex={columnIndex} />
       );
     }
-    let clusterNames = "";
-    if (this.clusters) {
-      this.clusters.forEach(cluster => {
-        clusterNames += cluster + ", ";
-      });
-    }
     return (
       <SimpleTableCell
         columnIndex={columnIndex}
@@ -805,22 +817,6 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
           className="icon-large-margin"
           size={StatusSize.l}
         />
-        {tableItem.clusterSync && (
-          <Tooltip
-            overflowOnly={false}
-            text={
-              "Cluster(s) " +
-              clusterNames +
-              " synced at " +
-              tableItem.clusterSyncDate!.toLocaleString()
-            }
-          >
-            {this.WithIcon({
-              className: "fontSizeM font-size-m",
-              iconProps: { iconName: "CloudUpload" }
-            })}
-          </Tooltip>
-        )}
       </SimpleTableCell>
     );
   };
@@ -878,21 +874,23 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       const state = this.state;
       const promises: Array<Promise<IAuthor | undefined>> = [];
       this.state.deployments.forEach(deployment => {
-        if (
-          deployment.srcToDockerBuild &&
-          !(deployment.srcToDockerBuild.sourceVersion in state.authors)
-        ) {
-          const promise = deployment.fetchAuthor();
-          promise.then((author: IAuthor) => {
-            if (author && deployment.srcToDockerBuild) {
-              const copy = state.authors;
-              copy[deployment.srcToDockerBuild.sourceVersion] = author;
-              this.setState({ authors: copy });
-              this.updateFilteredDeployments();
-            }
-          });
-          promises.push(promise);
-        }
+        const promise = deployment.fetchAuthor();
+        promise.then((author: IAuthor) => {
+          if (author && deployment.srcToDockerBuild) {
+            const copy = state.authors;
+            copy[deployment.srcToDockerBuild.sourceVersion] = author;
+            this.setState({ authors: copy });
+            this.updateFilteredDeployments();
+          } else if (author && deployment.hldToManifestBuild) {
+            const copy = state.authors;
+            copy[deployment.hldToManifestBuild.sourceVersion] = author;
+            this.setState({ authors: copy });
+            this.updateFilteredDeployments();
+            console.log("Got author for hld build: ");
+            console.log(author);
+          }
+        });
+        promises.push(promise);
       });
 
       Promise.all(promises).then(() => {
@@ -917,6 +915,14 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         deployment.srcToDockerBuild.sourceVersion
       ];
       return this.state.authors[deployment.srcToDockerBuild.sourceVersion];
+    } else if (
+      deployment.hldToManifestBuild &&
+      deployment.hldToManifestBuild.sourceVersion in this.state.authors
+    ) {
+      deployment.author = this.state.authors[
+        deployment.hldToManifestBuild.sourceVersion
+      ];
+      return this.state.authors[deployment.hldToManifestBuild.sourceVersion];
     }
     return undefined;
   };
