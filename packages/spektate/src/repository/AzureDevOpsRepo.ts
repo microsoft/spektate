@@ -29,6 +29,18 @@ export class AzureDevOpsRepo implements IRepository {
     this.accessToken = accessToken;
   }
 
+  public getReleasesURL(): string {
+    return (
+      "https://dev.azure.com/" +
+      this.org +
+      "/" +
+      this.project +
+      "/_git/" +
+      this.repo +
+      "/tags"
+    );
+  }
+
   public async getManifestSyncState(): Promise<ITag[]> {
     return new Promise(async (resolve, reject) => {
       const data = await HttpHelper.httpGet<any>(
@@ -55,10 +67,14 @@ export class AzureDevOpsRepo implements IRepository {
             );
 
             if (syncStatus != null) {
+              const clusterName: string = syncStatus.data.name.replace(
+                "flux-",
+                ""
+              );
               this.manifestSync = {
                 commit: syncStatus.data.taggedObject.objectId.substring(0, 7),
                 date: new Date(syncStatus.data.taggedBy.date),
-                name: syncStatus.data.name,
+                name: clusterName.toUpperCase(),
                 tagger: syncStatus.data.taggedBy.name
               };
               fluxTags.push(this.manifestSync);

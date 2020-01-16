@@ -41,6 +41,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
   private filterState: IDashboardFilterState = {
     defaultApplied: false
   };
+  private manifestRepo?: IRepository;
 
   constructor(props: Props) {
     super(props);
@@ -114,22 +115,22 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       config.AZURE_PIPELINE_ACCESS_TOKEN
     );
     if (config.MANIFEST && config.GITHUB_MANIFEST_USERNAME) {
-      const manifestRepo: IRepository = new GitHub(
+      this.manifestRepo = new GitHub(
         config.GITHUB_MANIFEST_USERNAME,
         config.MANIFEST,
         config.MANIFEST_ACCESS_TOKEN
       );
-      manifestRepo.getManifestSyncState().then((syncCommits: any) => {
+      this.manifestRepo.getManifestSyncState().then((syncCommits: any) => {
         this.setState({ manifestSyncStatuses: syncCommits });
       });
     } else if (config.MANIFEST) {
-      const manifestRepo: IRepository = new AzureDevOpsRepo(
+      this.manifestRepo = new AzureDevOpsRepo(
         config.AZURE_ORG,
         config.AZURE_PROJECT,
         config.MANIFEST,
         config.AZURE_PIPELINE_ACCESS_TOKEN
       );
-      manifestRepo.getManifestSyncState().then((syncCommit: any) => {
+      this.manifestRepo.getManifestSyncState().then((syncCommit: any) => {
         this.setState({ manifestSyncStatuses: syncCommit });
       });
     }
@@ -235,7 +236,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       columns.push({
         id: "clusterName",
         name: "Cluster",
-        renderCell: this.renderSimpleText,
+        renderCell: this.renderClusters,
         width: new ObservableValue(200)
       });
     }
@@ -246,11 +247,13 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         const author = this.getAuthor(deployment);
         const tags = this.getClusterSyncStatusForDeployment(deployment);
         let strClusterSync = "";
+        const clusters: string[] = [];
         let tag;
         if (tags) {
           tag = tags[0];
           tags.forEach((itag: ITag) => {
             strClusterSync += itag.name + ",";
+            clusters.push(itag.name);
           });
         }
         return {
@@ -317,7 +320,8 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
           authorName: author ? author.name : "-",
           authorURL: author ? author.imageUrl : "",
           status: deployment.status(),
-          clusterName: tags ? strClusterSync : "",
+          clusterNames: tags ? strClusterSync : "",
+          clusters,
           // clusterSync: tags ? true : false,
           clusterSyncDate: tag ? tag.date : new Date(),
           endTime: deployment.endTime(),
@@ -723,6 +727,62 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     );
   };
 
+  private renderClusters = (
+    rowIndex: number,
+    columnIndex: number,
+    tableColumn: ITableColumn<IDeploymentField>,
+    tableItem: IDeploymentField
+  ): JSX.Element => {
+    if (!tableItem.clusters || tableItem.clusters.length === 0) {
+      return (
+        <SimpleTableCell key={"col-" + columnIndex} columnIndex={columnIndex}>
+          -
+        </SimpleTableCell>
+      );
+    }
+
+    let strClusters = "";
+    tableItem.clusters.forEach(cluster => {
+      strClusters += cluster + ", ";
+    });
+    strClusters = strClusters.substr(0, strClusters.length - 2);
+    if (tableItem.clusters.length > 2) {
+      return (
+        <TwoLineTableCell
+          className="first-row no-cell-top-border bolt-table-cell-content-with-inline-link no-v-padding"
+          key={"col-" + columnIndex}
+          columnIndex={columnIndex}
+          tableColumn={tableColumn}
+          line1={
+            <span className="fontWeightSemiBold font-weight-semibold fontSizeM font-size-m scroll-hidden">
+              {tableItem.clusters[0] + ", " + tableItem.clusters[1]}
+            </span>
+          }
+          line2={
+            <Tooltip text={strClusters} overflowOnly={false}>
+              <Link
+                className="fontWeightSemiBold font-weight-semibold fontSizeM font-size-m "
+                href={
+                  this.manifestRepo ? this.manifestRepo.getReleasesURL() : ""
+                }
+              >
+                {"and " + (tableItem.clusters.length - 2) + " more..."}
+              </Link>
+            </Tooltip>
+          }
+        />
+      );
+    }
+    return (
+      <SimpleTableCell
+        columnIndex={columnIndex}
+        className="fontWeightSemiBold font-weight-semibold fontSizeM font-size-m scroll-hidden"
+      >
+        {strClusters}
+      </SimpleTableCell>
+    );
+  };
+
   private renderBuild = (
     rowIndex: number,
     columnIndex: number,
@@ -886,8 +946,6 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
             copy[deployment.hldToManifestBuild.sourceVersion] = author;
             this.setState({ authors: copy });
             this.updateFilteredDeployments();
-            console.log("Got author for hld build: ");
-            console.log(author);
           }
         });
         promises.push(promise);

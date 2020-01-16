@@ -47,6 +47,7 @@ export interface IDeploymentField {
   duration: string;
   status: string;
   clusterSync?: boolean;
+  clusters?: string[];
   clusterSyncDate?: Date;
   endTime?: Date;
   authorName?: string;
