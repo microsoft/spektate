@@ -229,6 +229,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         width: new ObservableValue(120)
       }
     ];
+    // Display the cluster column only if there is information to show in the table
     if (
       this.state.manifestSyncStatuses &&
       this.state.manifestSyncStatuses.length > 0
@@ -246,13 +247,9 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       rows = this.state.filteredDeployments.map(deployment => {
         const author = this.getAuthor(deployment);
         const tags = this.getClusterSyncStatusForDeployment(deployment);
-        let strClusterSync = "";
         const clusters: string[] = [];
-        let tag;
         if (tags) {
-          tag = tags[0];
           tags.forEach((itag: ITag) => {
-            strClusterSync += itag.name + ",";
             clusters.push(itag.name);
           });
         }
@@ -320,10 +317,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
           authorName: author ? author.name : "-",
           authorURL: author ? author.imageUrl : "",
           status: deployment.status(),
-          clusterNames: tags ? strClusterSync : "",
           clusters,
-          // clusterSync: tags ? true : false,
-          clusterSyncDate: tag ? tag.date : new Date(),
           endTime: deployment.endTime(),
           manifestCommitId: deployment.manifestCommitId
         };
@@ -870,10 +864,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         contentClassName="fontWeightSemiBold font-weight-semibold fontSizeM font-size-m scroll-hidden"
       >
         <Status
-          {...this.getStatusIndicatorData(
-            tableItem.status,
-            tableItem.clusterSync
-          ).statusProps}
+          {...this.getStatusIndicatorData(tableItem.status).statusProps}
           className="icon-large-margin"
           size={StatusSize.l}
         />
@@ -894,10 +885,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     );
   };
 
-  private getStatusIndicatorData = (
-    status: string,
-    clusterSync?: boolean
-  ): IStatusIndicatorData => {
+  private getStatusIndicatorData = (status: string): IStatusIndicatorData => {
     status = status || "";
     status = status.toLowerCase();
     const indicatorData: IStatusIndicatorData = {
