@@ -753,20 +753,11 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
             </span>
           }
           line2={
-            // tslint:disable-next-line: jsx-no-lambda
             <Tooltip
-              renderContent={() => {
-                const tooltip: React.ReactNode[] = [];
-                tableItem.clusters!.forEach(cluster => {
-                  tooltip.push(
-                    <span>
-                      {cluster}
-                      <br />
-                    </span>
-                  );
-                });
-                return <span>{tooltip}</span>;
-              }}
+              // tslint:disable-next-line: jsx-no-lambda
+              renderContent={() =>
+                this.renderCustomClusterTooltip(tableItem.clusters!)
+              }
               overflowOnly={false}
             >
               <Link
@@ -790,6 +781,19 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         {strClusters}
       </SimpleTableCell>
     );
+  };
+
+  private renderCustomClusterTooltip = (clusters: string[]) => {
+    const tooltip: React.ReactNode[] = [];
+    clusters.forEach(cluster => {
+      tooltip.push(
+        <span>
+          {cluster}
+          <br />
+        </span>
+      );
+    });
+    return <span>{tooltip}</span>;
   };
 
   private renderBuild = (
