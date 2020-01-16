@@ -52,7 +52,14 @@ describe("AzureDevOpsRepo", () => {
     const tags = await repo.getManifestSyncState();
     expect(tags).toHaveLength(1);
     expect(tags[0].commit).toBe("ab4c9f1");
-    expect(tags[0].name).toBe("flux-sync");
+    expect(tags[0].name).toBe("SYNC");
+  });
+});
+
+describe("GitHub", () => {
+  test("gets releases URL correctly", async () => {
+    const releaseUrl = repo.getReleasesURL();
+    expect(releaseUrl).toBe("https://dev.azure.com/org/project/_git/repo/tags");
   });
 });
 
