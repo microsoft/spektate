@@ -236,7 +236,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     ) {
       columns.push({
         id: "clusterName",
-        name: "Cluster",
+        name: "Synced Cluster",
         renderCell: this.renderClusters,
         width: new ObservableValue(200)
       });
