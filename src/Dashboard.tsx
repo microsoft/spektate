@@ -753,7 +753,22 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
             </span>
           }
           line2={
-            <Tooltip text={strClusters} overflowOnly={false}>
+            // tslint:disable-next-line: jsx-no-lambda
+            <Tooltip
+              renderContent={() => {
+                const tooltip: React.ReactNode[] = [];
+                tableItem.clusters!.forEach(cluster => {
+                  tooltip.push(
+                    <span>
+                      {cluster}
+                      <br />
+                    </span>
+                  );
+                });
+                return <span>{tooltip}</span>;
+              }}
+              overflowOnly={false}
+            >
               <Link
                 className="fontWeightSemiBold font-weight-semibold fontSizeM font-size-m "
                 href={
