@@ -54,6 +54,19 @@ jest.spyOn(Deployment, "getDeployments").mockImplementation(
   }
 );
 
+jest
+  .spyOn(Deployment, "cleanUpDeploymentsFromDB")
+  .mockImplementation(
+    (
+      batch: azure.TableBatch,
+      storageAccount: string,
+      storageAccountKey: string,
+      storageAccountTable: string
+    ) => {
+      console.log("Mocking out db cleanup");
+    }
+  );
+
 beforeAll(() => {
   rawDeployments = JSON.parse(
     fs.readFileSync(mockDirectory + "deployments.json", "utf-8")
@@ -78,6 +91,9 @@ describe("Deployment", () => {
         srcPipeline,
         hldPipeline,
         clusterPipeline,
+        "",
+        "",
+        "",
         resolve
       );
     }).then(value => {
