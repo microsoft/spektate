@@ -777,6 +777,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       <SimpleTableCell
         columnIndex={columnIndex}
         className="fontWeightSemiBold font-weight-semibold fontSizeM font-size-m scroll-hidden"
+        key={"col-" + columnIndex}
       >
         {strClusters}
       </SimpleTableCell>
