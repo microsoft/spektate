@@ -175,12 +175,6 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         width: new ObservableValue(70)
       },
       {
-        id: "deploymentId",
-        name: "Deployment ID",
-        renderCell: this.renderDeploymentId,
-        width: new ObservableValue(140)
-      },
-      {
         id: "service",
         name: "Service",
         renderCell: this.renderSimpleText,
