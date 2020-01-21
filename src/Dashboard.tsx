@@ -749,11 +749,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       );
     }
     return (
-      <SimpleTableCell
-        columnIndex={columnIndex}
-        className="fontWeightSemiBold font-weight-semibold fontSizeM font-size-m scroll-hidden"
-        key={"col-" + columnIndex}
-      >
+      <SimpleTableCell columnIndex={columnIndex} key={"col-" + columnIndex}>
         {this.renderCluster(strClusters, tableItem.clusters!)}
       </SimpleTableCell>
     );
