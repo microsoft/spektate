@@ -247,12 +247,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       rows = this.state.filteredDeployments.map(deployment => {
         const author = this.getAuthor(deployment);
         const tags = this.getClusterSyncStatusForDeployment(deployment);
-        const clusters: string[] = [];
-        if (tags) {
-          tags.forEach((itag: ITag) => {
-            clusters.push(itag.name);
-          });
-        }
+        const clusters: string[] = tags ? tags.map(itag => itag.name) : [];
         return {
           deploymentId: deployment.deploymentId,
           service: deployment.service !== "" ? deployment.service : "-",
@@ -531,7 +526,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
   ): ITag[] | undefined => {
     const clusterSyncs: ITag[] = [];
     if (this.state.manifestSyncStatuses) {
-      this.state.manifestSyncStatuses.map((tag: ITag) => {
+      this.state.manifestSyncStatuses.forEach((tag: ITag) => {
         if (deployment.manifestCommitId === tag.commit) {
           clusterSyncs.push(tag);
         }
@@ -734,12 +729,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         </SimpleTableCell>
       );
     }
-
-    let strClusters = "";
-    tableItem.clusters.forEach(cluster => {
-      strClusters += cluster + ", ";
-    });
-    strClusters = strClusters.substr(0, strClusters.length - 2);
+    const strClusters = tableItem.clusters.join(", ");
     if (tableItem.clusters.length > 2) {
       return (
         <TwoLineTableCell
