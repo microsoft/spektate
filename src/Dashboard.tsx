@@ -588,33 +588,6 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     );
   };
 
-  private renderDeploymentId = (
-    rowIndex: number,
-    columnIndex: number,
-    tableColumn: ITableColumn<IDeploymentField>,
-    tableItem: IDeploymentField
-  ): JSX.Element => {
-    if (!tableItem[tableColumn.id]) {
-      return (
-        <SimpleTableCell key={"col-" + columnIndex} columnIndex={columnIndex} />
-      );
-    }
-    return (
-      <SimpleTableCell
-        columnIndex={columnIndex}
-        tableColumn={tableColumn}
-        key={"col-" + columnIndex}
-        contentClassName="monospaced-text fontSize font-size scroll-hidden"
-      >
-        <div className="flex-row scroll-hidden">
-          <Tooltip overflowOnly={true}>
-            <span className="text-ellipsis">{tableItem[tableColumn.id]}</span>
-          </Tooltip>
-        </div>
-      </SimpleTableCell>
-    );
-  };
-
   private renderTime = (
     rowIndex: number,
     columnIndex: number,
