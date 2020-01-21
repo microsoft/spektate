@@ -578,7 +578,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         columnIndex={columnIndex}
         tableColumn={tableColumn}
         key={"col-" + columnIndex}
-        contentClassName="fontWeightSemiBold font-weight-semibold fontSizeM font-size-m scroll-hidden"
+        contentClassName="font-size-m text-ellipsis bolt-table-link bolt-table-inline-link"
       >
         <VssPersona
           displayName={tableItem.authorName}
@@ -737,29 +737,14 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
           key={"col-" + columnIndex}
           columnIndex={columnIndex}
           tableColumn={tableColumn}
-          line1={
-            <span className="fontWeightSemiBold font-weight-semibold fontSizeM font-size-m scroll-hidden">
-              {tableItem.clusters[0] + ", " + tableItem.clusters[1]}
-            </span>
-          }
-          line2={
-            <Tooltip
-              // tslint:disable-next-line: jsx-no-lambda
-              renderContent={() =>
-                this.renderCustomClusterTooltip(tableItem.clusters!)
-              }
-              overflowOnly={false}
-            >
-              <Link
-                className="fontWeightSemiBold font-weight-semibold fontSizeM font-size-m "
-                href={
-                  this.manifestRepo ? this.manifestRepo.getReleasesURL() : ""
-                }
-              >
-                {"and " + (tableItem.clusters.length - 2) + " more..."}
-              </Link>
-            </Tooltip>
-          }
+          line1={this.renderCluster(
+            tableItem.clusters[0] + ", " + tableItem.clusters[1],
+            tableItem.clusters!
+          )}
+          line2={this.renderCluster(
+            "and " + (tableItem.clusters.length - 2) + " more...",
+            tableItem.clusters!
+          )}
         />
       );
     }
@@ -769,8 +754,29 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         className="fontWeightSemiBold font-weight-semibold fontSizeM font-size-m scroll-hidden"
         key={"col-" + columnIndex}
       >
-        {strClusters}
+        {this.renderCluster(strClusters, tableItem.clusters!)}
       </SimpleTableCell>
+    );
+  };
+
+  private renderCluster = (
+    text: string,
+    allClusters: string[]
+  ): React.ReactNode => {
+    return (
+      <Tooltip
+        // tslint:disable-next-line: jsx-no-lambda
+        renderContent={() => this.renderCustomClusterTooltip(allClusters)}
+        overflowOnly={false}
+      >
+        <Link
+          className="font-size-m text-ellipsis bolt-table-link bolt-table-inline-link"
+          href={this.manifestRepo ? this.manifestRepo.getReleasesURL() : ""}
+          subtle={true}
+        >
+          {text}
+        </Link>
+      </Tooltip>
     );
   };
 
