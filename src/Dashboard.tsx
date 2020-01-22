@@ -175,12 +175,6 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         width: new ObservableValue(70)
       },
       {
-        id: "deploymentId",
-        name: "Deployment ID",
-        renderCell: this.renderDeploymentId,
-        width: new ObservableValue(140)
-      },
-      {
         id: "service",
         name: "Service",
         renderCell: this.renderSimpleText,
@@ -247,12 +241,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       rows = this.state.filteredDeployments.map(deployment => {
         const author = this.getAuthor(deployment);
         const tags = this.getClusterSyncStatusForDeployment(deployment);
-        const clusters: string[] = [];
-        if (tags) {
-          tags.forEach((itag: ITag) => {
-            clusters.push(itag.name);
-          });
-        }
+        const clusters: string[] = tags ? tags.map(itag => itag.name) : [];
         return {
           deploymentId: deployment.deploymentId,
           service: deployment.service !== "" ? deployment.service : "-",
@@ -531,7 +520,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
   ): ITag[] | undefined => {
     const clusterSyncs: ITag[] = [];
     if (this.state.manifestSyncStatuses) {
-      this.state.manifestSyncStatuses.map((tag: ITag) => {
+      this.state.manifestSyncStatuses.forEach((tag: ITag) => {
         if (deployment.manifestCommitId === tag.commit) {
           clusterSyncs.push(tag);
         }
@@ -583,40 +572,13 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         columnIndex={columnIndex}
         tableColumn={tableColumn}
         key={"col-" + columnIndex}
-        contentClassName="fontWeightSemiBold font-weight-semibold fontSizeM font-size-m scroll-hidden"
+        contentClassName="font-size-m text-ellipsis bolt-table-link bolt-table-inline-link"
       >
         <VssPersona
           displayName={tableItem.authorName}
           imageUrl={tableItem.authorURL}
         />
         <div>&nbsp;&nbsp;&nbsp;</div>
-        <div className="flex-row scroll-hidden">
-          <Tooltip overflowOnly={true}>
-            <span className="text-ellipsis">{tableItem[tableColumn.id]}</span>
-          </Tooltip>
-        </div>
-      </SimpleTableCell>
-    );
-  };
-
-  private renderDeploymentId = (
-    rowIndex: number,
-    columnIndex: number,
-    tableColumn: ITableColumn<IDeploymentField>,
-    tableItem: IDeploymentField
-  ): JSX.Element => {
-    if (!tableItem[tableColumn.id]) {
-      return (
-        <SimpleTableCell key={"col-" + columnIndex} columnIndex={columnIndex} />
-      );
-    }
-    return (
-      <SimpleTableCell
-        columnIndex={columnIndex}
-        tableColumn={tableColumn}
-        key={"col-" + columnIndex}
-        contentClassName="monospaced-text fontSize font-size scroll-hidden"
-      >
         <div className="flex-row scroll-hidden">
           <Tooltip overflowOnly={true}>
             <span className="text-ellipsis">{tableItem[tableColumn.id]}</span>
@@ -734,12 +696,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         </SimpleTableCell>
       );
     }
-
-    let strClusters = "";
-    tableItem.clusters.forEach(cluster => {
-      strClusters += cluster + ", ";
-    });
-    strClusters = strClusters.substr(0, strClusters.length - 2);
+    const strClusters = tableItem.clusters.join(", ");
     if (tableItem.clusters.length > 2) {
       return (
         <TwoLineTableCell
@@ -747,39 +704,42 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
           key={"col-" + columnIndex}
           columnIndex={columnIndex}
           tableColumn={tableColumn}
-          line1={
-            <span className="fontWeightSemiBold font-weight-semibold fontSizeM font-size-m scroll-hidden">
-              {tableItem.clusters[0] + ", " + tableItem.clusters[1]}
-            </span>
-          }
-          line2={
-            <Tooltip
-              // tslint:disable-next-line: jsx-no-lambda
-              renderContent={() =>
-                this.renderCustomClusterTooltip(tableItem.clusters!)
-              }
-              overflowOnly={false}
-            >
-              <Link
-                className="fontWeightSemiBold font-weight-semibold fontSizeM font-size-m "
-                href={
-                  this.manifestRepo ? this.manifestRepo.getReleasesURL() : ""
-                }
-              >
-                {"and " + (tableItem.clusters.length - 2) + " more..."}
-              </Link>
-            </Tooltip>
-          }
+          line1={this.renderCluster(
+            tableItem.clusters[0] + ", " + tableItem.clusters[1],
+            tableItem.clusters!
+          )}
+          line2={this.renderCluster(
+            "and " + (tableItem.clusters.length - 2) + " more...",
+            tableItem.clusters!
+          )}
         />
       );
     }
     return (
-      <SimpleTableCell
-        columnIndex={columnIndex}
-        className="fontWeightSemiBold font-weight-semibold fontSizeM font-size-m scroll-hidden"
-      >
-        {strClusters}
+      <SimpleTableCell columnIndex={columnIndex} key={"col-" + columnIndex}>
+        {this.renderCluster(strClusters, tableItem.clusters!)}
       </SimpleTableCell>
+    );
+  };
+
+  private renderCluster = (
+    text: string,
+    allClusters: string[]
+  ): React.ReactNode => {
+    return (
+      <Tooltip
+        // tslint:disable-next-line: jsx-no-lambda
+        renderContent={() => this.renderCustomClusterTooltip(allClusters)}
+        overflowOnly={false}
+      >
+        <Link
+          className="font-size-m text-ellipsis bolt-table-link bolt-table-inline-link"
+          href={this.manifestRepo ? this.manifestRepo.getReleasesURL() : ""}
+          subtle={true}
+        >
+          {text}
+        </Link>
+      </Tooltip>
     );
   };
 
