@@ -50,7 +50,6 @@ describe("Pipeline", () => {
     currentRawResponse = JSON.parse(
       fs.readFileSync(mockDirectory + "raw-build-stages.json", "utf-8")
     );
-    // console.log(currentRawResponse);
     await buildPipeline.getBuildStages(buildPipeline.builds["7271"]);
     expect(buildPipeline.builds["7271"].stages).toBeDefined();
   });

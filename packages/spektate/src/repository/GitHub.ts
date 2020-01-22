@@ -19,6 +19,12 @@ export class GitHub implements IRepository {
     this.accessToken = accessToken;
   }
 
+  public getReleasesURL(): string {
+    return (
+      "https://github.com/" + this.username + "/" + this.reponame + "/releases"
+    );
+  }
+
   public async getManifestSyncState(): Promise<ITag[]> {
     return new Promise(async (resolve, reject) => {
       const allTags = await HttpHelper.httpGet<any>(
@@ -46,11 +52,12 @@ export class GitHub implements IRepository {
             );
 
             if (syncStatus != null) {
+              const clusterName = syncStatus.data.tag.replace("flux-", "");
               const manifestSync = {
                 commit: syncStatus.data.object.sha.substring(0, 7),
                 date: new Date(syncStatus.data.tagger.date),
                 message: syncStatus.data.message,
-                name: syncStatus.data.tag,
+                name: clusterName.toUpperCase(),
                 tagger: syncStatus.data.tagger.name
               };
               fluxTags.push(manifestSync);
@@ -80,10 +87,10 @@ export class GitHub implements IRepository {
     const authorInfo = data.data;
     if (authorInfo != null) {
       const author: IAuthor = {
-        imageUrl: authorInfo.author.avatar_url,
+        imageUrl: authorInfo.author ? authorInfo.author.avatar_url : "",
         name: authorInfo.commit.author.name,
-        url: authorInfo.author.html_url,
-        username: authorInfo.committer.login
+        url: authorInfo.author ? authorInfo.author.html_url : "",
+        username: authorInfo.committer ? authorInfo.committer.login : ""
       };
       return author;
     }

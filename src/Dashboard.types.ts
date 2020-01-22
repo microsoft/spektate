@@ -46,8 +46,7 @@ export interface IDeploymentField {
   hldPipelineResult?: string;
   duration: string;
   status: string;
-  clusterSync?: boolean;
-  clusterSyncDate?: Date;
+  clusters?: string[];
   endTime?: Date;
   authorName?: string;
   authorURL?: string;
