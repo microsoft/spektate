@@ -93,6 +93,9 @@ export class Deployment {
               srcPipeline,
               hldPipeline,
               manifestPipeline,
+              storageAccount,
+              storageAccountKey,
+              storageTableName,
               resolve
             );
           }
@@ -117,6 +120,9 @@ export class Deployment {
     srcPipeline: IPipeline,
     hldPipeline: IPipeline,
     manifestPipeline: IPipeline,
+    storageAccount: string,
+    storageAccountKey: string,
+    storageTableName: string,
     resolve: (
       value?: Deployment[] | PromiseLike<Deployment[]> | undefined
     ) => void
@@ -146,6 +152,7 @@ export class Deployment {
     // Wait for all three pipelines to load their respective builds before we instantiate deployments
     Promise.all([p1, p2, p3])
       .then(async () => {
+        const batch = new azure.TableBatch();
         for (const entry of result.entries) {
           const dep = await Deployment.getDeploymentFromDBEntry(
             entry,
@@ -156,19 +163,48 @@ export class Deployment {
           if (
             dep.srcToDockerBuild ||
             dep.dockerToHldRelease ||
-            dep.hldToManifestBuild
+            dep.hldToManifestBuild ||
+            dep.dockerToHldReleaseStage
           ) {
             deployments.push(dep);
+          } else {
+            // Remove this deployment from db since its builds/releases have expired
+            batch.deleteEntity(entry);
           }
         }
         deployments.sort(Deployment.compare);
         resolve(deployments);
+        Deployment.cleanUpDeploymentsFromDB(
+          batch,
+          storageAccount,
+          storageAccountKey,
+          storageTableName
+        );
       })
       .catch(err => {
         console.error(err);
         resolve([]);
       });
   };
+
+  public static cleanUpDeploymentsFromDB(
+    batch: azure.TableBatch,
+    storageAccount: string,
+    storageAccountKey: string,
+    storageAccountTable: string
+  ) {
+    if (batch.size() > 0) {
+      const tableService = azure.createTableService(
+        storageAccount,
+        storageAccountKey
+      );
+      tableService.executeBatch(storageAccountTable, batch, (error, result) => {
+        if (!error) {
+          console.log("Deleted {0} entities", batch.size());
+        }
+      });
+    }
+  }
 
   // TODO: Look into cleaning up the parsing code below (avoid parsing underscores).
   private static getDeploymentFromDBEntry = async (

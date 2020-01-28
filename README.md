@@ -8,9 +8,11 @@ This is an initiative to visualize [Project Bedrock](https://github.com/microsof
 
 Currently, Spektate consists of a command line interface and a simple dashboard prototype. The instructions to use both are below.
 
+Note: Spektate dashboard will delete deployments when their corresponding builds/releases have expired in Azure DevOps.
+
 ## Onboard a Bedrock project to use Spektate
 
-Follow the steps in this [guide](https://github.com/CatalystCode/spk/blob/master/docs/service-introspection-onboarding.md) to onboard a project to use Spektate.  
+Follow the steps in this [guide](https://github.com/CatalystCode/spk/blob/master/docs/service-introspection-onboarding.md) to onboard a project to use Spektate.
 
 ## Dashboard prototype
 
