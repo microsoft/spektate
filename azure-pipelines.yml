@@ -11,7 +11,7 @@ steps:
     displayName: "Install Node.js"
 
   - script: |
-      yarn install --ignore-optional
+      yarn install --ignore-engines
     workingDirectory: "./"
     displayName: "yarn"
 
