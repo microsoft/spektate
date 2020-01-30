@@ -12,8 +12,6 @@ steps:
 
   - script: |
       yarn
-      npm install -g ts-node
-      npm install -g pkg
     workingDirectory: "./"
     displayName: "yarn"
 
