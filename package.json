@@ -18,9 +18,6 @@
     "start": "react-scripts-ts start",
     "build": "react-scripts-ts build",
     "eject": "react-scripts-ts eject",
-    "start-cli": "nodemon --watch 'src/cli/**/*.ts' --exec 'ts-node' src/cli/spex.ts",
-    "create-cli": "npm run build-cli",
-    "build-cli": "sh release-cli.sh",
     "lint": "tslint -p tsconfig.json -c tslint.json src/**/*.ts",
     "refresh": "rm -rf ./node_modules ./package-lock.json && npm install"
   },
@@ -33,7 +30,6 @@
     "chai": "^4.2.0",
     "husky": "^3.0.4",
     "lint-staged": "^9.2.5",
-    "nodemon": "^1.19.1",
     "prettier": "^1.18.2",
     "ts-jest": "^24.0.2",
     "ts-node": "^8.3.0",
@@ -65,5 +61,11 @@
       "prettier --write",
       "git add"
     ]
+  },
+  "resolutions": {
+    "react-scripts-ts/ts-jest/cpx/chokidar/fsevents": "1.2.11",
+    "react-scripts-ts/jest/jest-cli/jest-haste-map/sane/fsevents": "1.2.11",
+    "chokidar/fsevents": "1.2.11",
+    "react-scripts-ts/fsevents": "1.2.11"
   }
 }
