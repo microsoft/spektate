@@ -62,11 +62,5 @@
       "prettier --write",
       "git add"
     ]
-  },
-  "resolutions": {
-    "react-scripts-ts/ts-jest/cpx/chokidar/fsevents": "2.1.2",
-    "react-scripts-ts/jest/jest-cli/jest-haste-map/sane/fsevents": "2.1.2",
-    "chokidar/fsevents": "2.1.2",
-    "react-scripts-ts/fsevents": "2.1.2"
   }
 }
