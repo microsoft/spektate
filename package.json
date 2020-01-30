@@ -64,9 +64,9 @@
     ]
   },
   "resolutions": {
-    "react-scripts-ts/ts-jest/cpx/chokidar/fsevents": "1.2.11",
-    "react-scripts-ts/jest/jest-cli/jest-haste-map/sane/fsevents": "1.2.11",
-    "chokidar/fsevents": "1.2.11",
-    "react-scripts-ts/fsevents": "1.2.11"
+    "react-scripts-ts/ts-jest/cpx/chokidar/fsevents": "2.1.2",
+    "react-scripts-ts/jest/jest-cli/jest-haste-map/sane/fsevents": "2.1.2",
+    "chokidar/fsevents": "2.1.2",
+    "react-scripts-ts/fsevents": "2.1.2"
   }
 }
