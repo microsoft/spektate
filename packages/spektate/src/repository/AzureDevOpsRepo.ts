@@ -1,5 +1,6 @@
 import { HttpHelper } from "../HttpHelper";
 import { IAuthor } from "./Author";
+import { IPullRequest } from "./PullRequest";
 import { IRepository } from "./Repository";
 import { ITag } from "./Tag";
 
@@ -9,6 +10,10 @@ const manifestSyncTagsURL =
   "https://dev.azure.com/{organization}/{project}/_apis/git/repositories/{repositoryId}/refs?filter=tags&api-version=4.1";
 const manifestSyncTagURL =
   "https://dev.azure.com/{organization}/{project}/_apis/git/repositories/{repositoryId}/annotatedtags/{objectId}?api-version=4.1-preview.1";
+const pullRequestURL =
+  "https://dev.azure.com/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullrequests/{pullRequestId}?api-version=5.1";
+const pullRequestHTMLURL =
+  "https://dev.azure.com/{organization}/{project}/_git/{repositoryId}/pullrequest/{pullRequestId}";
 
 export class AzureDevOpsRepo implements IRepository {
   public org: string;
@@ -40,6 +45,40 @@ export class AzureDevOpsRepo implements IRepository {
       "/tags"
     );
   }
+
+  public getPullRequest = async (
+    prId: string
+  ): Promise<IPullRequest | undefined> => {
+    return new Promise(async (resolve, reject) => {
+      const data = await HttpHelper.httpGet<any>(
+        pullRequestURL
+          .replace("{organization}", this.org)
+          .replace("{project}", this.project)
+          .replace("{repositoryId}", this.repo)
+          .replace("{pullRequestId}", prId),
+        this.accessToken
+      );
+
+      if (data && data.data) {
+        const pr: IPullRequest = {
+          URL: pullRequestHTMLURL
+            .replace("{organization}", this.org)
+            .replace("{project}", this.project)
+            .replace("{repositoryId}", this.repo)
+            .replace("{pullRequestId}", prId),
+          date: new Date(data.data.creationDate),
+          description: data.data.description,
+          id: data.data.pullRequestId,
+          status: data.data.status,
+          title: data.data.title
+        };
+        resolve(pr);
+        console.log(pr);
+      } else {
+        reject();
+      }
+    });
+  };
 
   public async getManifestSyncState(): Promise<ITag[]> {
     return new Promise(async (resolve, reject) => {

@@ -283,6 +283,10 @@ export class Deployment {
         service = service.split("/")[1];
       }
     }
+    let pr;
+    if (entry.pr != null) {
+      pr = entry.pr._;
+    }
     await Promise.all(promises);
     const deployment = new Deployment(
       entry.RowKey._,
@@ -296,7 +300,8 @@ export class Deployment {
       p1,
       p2,
       p3,
-      p2ReleaseStage
+      p2ReleaseStage,
+      pr
     );
     return deployment;
   };
@@ -314,6 +319,7 @@ export class Deployment {
   public author?: IAuthor;
   public environment: string;
   public service: string;
+  public pr?: string;
 
   constructor(
     deploymentId: string,
@@ -327,7 +333,8 @@ export class Deployment {
     srcToDockerBuild?: IBuild,
     dockerToHldRelease?: IRelease,
     hldToManifestBuild?: IBuild,
-    dockerToHldReleaseStage?: IBuild
+    dockerToHldReleaseStage?: IBuild,
+    pr?: string
   ) {
     this.srcToDockerBuild = srcToDockerBuild;
     this.hldToManifestBuild = hldToManifestBuild;
@@ -341,6 +348,7 @@ export class Deployment {
     this.manifestCommitId = manifestCommitId;
     this.environment = environment;
     this.service = service;
+    this.pr = pr;
   }
 
   public duration(): string {

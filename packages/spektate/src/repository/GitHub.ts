@@ -1,5 +1,6 @@
 import { HttpHelper } from "../HttpHelper";
 import { IAuthor } from "./Author";
+import { IPullRequest } from "./PullRequest";
 import { IRepository } from "./Repository";
 import { ITag } from "./Tag";
 
@@ -7,6 +8,8 @@ const manifestSyncTagsURL =
   "https://api.github.com/repos/<owner>/<repo>/git/refs/tags";
 const authorInfoURL =
   "https://api.github.com/repos/<owner>/<repo>/commits/<commitId>";
+const pullRequestURL =
+  "https://api.github.com/repos/<owner>/<repo>/pulls/<pullRequestId>";
 
 export class GitHub implements IRepository {
   public username: string;
@@ -24,6 +27,35 @@ export class GitHub implements IRepository {
       "https://github.com/" + this.username + "/" + this.reponame + "/releases"
     );
   }
+
+  public getPullRequest = async (
+    prId: string
+  ): Promise<IPullRequest | undefined> => {
+    return new Promise(async (resolve, reject) => {
+      const data = await HttpHelper.httpGet<any>(
+        pullRequestURL
+          .replace("<owner>", this.username)
+          .replace("<repo>", this.reponame)
+          .replace("<pullRequestId>", prId),
+        this.accessToken
+      );
+
+      if (data && data.data) {
+        const pr: IPullRequest = {
+          URL: data.data.html_url,
+          date: new Date(data.data.created_at),
+          description: data.data.body,
+          id: data.data.number,
+          status: data.data.state,
+          title: data.data.title
+        };
+        resolve(pr);
+        console.log(pr);
+      } else {
+        reject();
+      }
+    });
+  };
 
   public async getManifestSyncState(): Promise<ITag[]> {
     return new Promise(async (resolve, reject) => {
