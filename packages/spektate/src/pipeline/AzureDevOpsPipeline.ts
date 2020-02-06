@@ -70,7 +70,7 @@ export class AzureDevOpsPipeline implements IPipeline {
           row.repository.id.split("/")[1],
           this.repoAccessToken
         );
-      } else if (row.repository.type === "TfsGit") {
+      } else if (row.repository.type === "TfsGit" && row.repository.url) {
         const reposityUrlSplit = row.repository.url.split("/");
         build.sourceVersionURL =
           row.repository.url + "/commit/" + row.sourceVersion;
