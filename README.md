@@ -2,7 +2,11 @@
 
 # Spektate
 
-This is an initiative to visualize [Project Bedrock](https://github.com/microsoft/bedrock). Here's a high level diagram describing the Spektate workflow:
+This is an initiative to visualize [Project Bedrock](https://github.com/microsoft/bedrock). Spektate ties in information from the repositories API, the pipelines API and information stored in an Azure Table to display the dashboard with the following components:
+
+![](./images/spektate-pieces-diagram.png)
+
+Here's a detailed diagram describing the Spektate workflow. Each pipeline is responsible for sending a unique set of data to the storage, which is used to connect all the pieces together:
 
 ![](./images/spektate-workflow.png)
 
