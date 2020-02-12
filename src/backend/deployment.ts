@@ -1,7 +1,8 @@
 import { Request, Response } from "express";
-import * as config from "./config";
 import Deployment from "spektate/lib/Deployment";
 import AzureDevOpsPipeline from "spektate/lib/pipeline/AzureDevOpsPipeline";
+import { IAuthor } from "spektate/lib/repository/Author";
+import * as config from "./config";
 
 const createSourcePipeline = () => {
   return new AzureDevOpsPipeline(
@@ -47,6 +48,22 @@ export const get = async (req: Request, res: Response) => {
       clusterPipeline,
       undefined
     );
+
+    await Promise.all(
+      deployments.map(d => {
+        return new Promise(resolve => {
+          d.fetchAuthor()
+            .then((author: IAuthor) => {
+              resolve();
+            })
+            .catch(e => {
+              console.log(e);
+              resolve();
+            });
+        });
+      })
+    );
+
     res.json(deployments);
   } else {
     res.status(500).send("Server is not setup correctly");
