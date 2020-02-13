@@ -4,6 +4,12 @@ import AzureDevOpsPipeline from "spektate/lib/pipeline/AzureDevOpsPipeline";
 import { IAuthor } from "spektate/lib/repository/Author";
 import * as config from "./config";
 
+export interface IDeploymentEx extends Deployment {
+  durationInMins?: string;
+  statusString?: string;
+  endTimestamp?: string;
+}
+
 const createSourcePipeline = () => {
   return new AzureDevOpsPipeline(
     config.AZURE_ORG,
@@ -33,12 +39,13 @@ const createClusterPipeline = () => {
 };
 
 export const get = async (req: Request, res: Response) => {
+  res.header("Access-Control-Allow-Origin", "*");
   if (config.isValuesValid()) {
     const srcPipeline = createSourcePipeline();
     const hldPipeline = createHLDPipeline();
     const clusterPipeline = createClusterPipeline();
 
-    const deployments: Deployment[] = await Deployment.getDeployments(
+    const deployments: IDeploymentEx[] = await Deployment.getDeployments(
       config.STORAGE_ACCOUNT_NAME,
       config.STORAGE_ACCOUNT_KEY,
       config.STORAGE_TABLE_NAME,
@@ -48,6 +55,12 @@ export const get = async (req: Request, res: Response) => {
       clusterPipeline,
       undefined
     );
+
+    deployments.forEach(d => {
+      d.durationInMins = d.duration();
+      d.statusString = d.status();
+      d.endTimestamp = d.endTime().toUTCString();
+    });
 
     await Promise.all(
       deployments.map(d => {

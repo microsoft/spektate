@@ -39,6 +39,7 @@ const getManifestRepoSyncState = (): Promise<ITag[]> => {
 };
 
 export const get = async (req: Request, res: Response) => {
+  res.header("Access-Control-Allow-Origin", "*");
   if (config.isValuesValid()) {
     const status = await getManifestRepoSyncState();
     res.json(status || {});
