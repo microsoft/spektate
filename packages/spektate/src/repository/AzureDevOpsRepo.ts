@@ -43,51 +43,53 @@ export class AzureDevOpsRepo implements IRepository {
 
   public async getManifestSyncState(): Promise<ITag[]> {
     return new Promise(async (resolve, reject) => {
-      const data = await HttpHelper.httpGet<any>(
-        manifestSyncTagsURL
-          .replace("{organization}", this.org)
-          .replace("{project}", this.project)
-          .replace("{repositoryId}", this.repo),
-        this.accessToken
-      );
+      try {
+        const data = await HttpHelper.httpGet<any>(
+          manifestSyncTagsURL
+            .replace("{organization}", this.org)
+            .replace("{project}", this.project)
+            .replace("{repositoryId}", this.repo),
+          this.accessToken
+        );
 
-      const tags = data.data.value;
-      const fluxTags: ITag[] = [];
-      if (tags != null && tags.length > 0) {
-        for (const tag of tags) {
-          // Check all flux sync tags
-          if (tag.name.includes("refs/tags/flux-")) {
-            const syncStatus = await HttpHelper.httpGet<any>(
-              manifestSyncTagURL
-                .replace("{organization}", this.org)
-                .replace("{project}", this.project)
-                .replace("{repositoryId}", this.repo)
-                .replace("{objectId}", tag.objectId),
-              this.accessToken
-            );
-
-            if (syncStatus != null) {
-              const clusterName: string = syncStatus.data.name.replace(
-                "flux-",
-                ""
+        const tags = data.data.value;
+        const fluxTags: ITag[] = [];
+        if (tags != null && tags.length > 0) {
+          for (const tag of tags) {
+            // Check all flux sync tags
+            if (tag.name.includes("refs/tags/flux-")) {
+              const syncStatus = await HttpHelper.httpGet<any>(
+                manifestSyncTagURL
+                  .replace("{organization}", this.org)
+                  .replace("{project}", this.project)
+                  .replace("{repositoryId}", this.repo)
+                  .replace("{objectId}", tag.objectId),
+                this.accessToken
               );
-              this.manifestSync = {
-                commit: syncStatus.data.taggedObject.objectId.substring(0, 7),
-                date: new Date(syncStatus.data.taggedBy.date),
-                name: clusterName.toUpperCase(),
-                tagger: syncStatus.data.taggedBy.name
-              };
-              fluxTags.push(this.manifestSync);
+
+              if (syncStatus != null) {
+                const clusterName: string = syncStatus.data.name.replace(
+                  "flux-",
+                  ""
+                );
+                this.manifestSync = {
+                  commit: syncStatus.data.taggedObject.objectId.substring(0, 7),
+                  date: new Date(syncStatus.data.taggedBy.date),
+                  name: clusterName.toUpperCase(),
+                  tagger: syncStatus.data.taggedBy.name
+                };
+                fluxTags.push(this.manifestSync);
+              }
             }
           }
+          resolve(fluxTags);
+          return;
         }
-        resolve(fluxTags);
-        return;
+        // No tags were found. 
+        resolve([]);
+      } catch (err) {
+        reject(err);
       }
-      console.error(
-        `Unable to to find flux-sync tag from ${this.org}-${this.project}-${this.repo}`
-      );
-      reject();
     });
   }
 
