@@ -29,6 +29,7 @@
     "webpack",
     "src/setupTests.ts",
     "pipeline-scripts",
-    "packages"
+    "packages",
+    "backend"
   ]
 }

@@ -7,7 +7,7 @@ const app = express();
 app.get("/deployments", (req: express.Request, res: express.Response) => {
   deploymentGet(req, res);
 });
-app.get("/manifestRepo", (req: express.Request, res: express.Response) => {
+app.get("/clustersync", (req: express.Request, res: express.Response) => {
   manifestRepoGet(req, res);
 });
 

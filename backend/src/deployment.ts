@@ -1,22 +1,19 @@
 import { Request, Response } from "express";
-import Deployment from "spektate/lib/Deployment";
+import {
+  fetchAuthor,
+  getDeployments,
+  IDeployment
+} from "spektate/lib/IDeployment";
 import AzureDevOpsPipeline from "spektate/lib/pipeline/AzureDevOpsPipeline";
 import { IAuthor } from "spektate/lib/repository/Author";
 import * as config from "./config";
-
-export interface IDeploymentEx extends Deployment {
-  durationInMins?: string;
-  statusString?: string;
-  endTimestamp?: string;
-}
 
 const createSourcePipeline = () => {
   return new AzureDevOpsPipeline(
     config.AZURE_ORG,
     config.AZURE_PROJECT,
     false,
-    config.AZURE_PIPELINE_ACCESS_TOKEN,
-    config.SOURCE_REPO_ACCESS_TOKEN || config.AZURE_PIPELINE_ACCESS_TOKEN
+    config.AZURE_PIPELINE_ACCESS_TOKEN
   );
 };
 
@@ -45,7 +42,7 @@ export const get = async (req: Request, res: Response) => {
     const hldPipeline = createHLDPipeline();
     const clusterPipeline = createClusterPipeline();
 
-    const deployments: IDeploymentEx[] = await Deployment.getDeployments(
+    const deployments: IDeployment[] = await getDeployments(
       config.STORAGE_ACCOUNT_NAME,
       config.STORAGE_ACCOUNT_KEY,
       config.STORAGE_TABLE_NAME,
@@ -56,21 +53,22 @@ export const get = async (req: Request, res: Response) => {
       undefined
     );
 
-    deployments.forEach(d => {
-      d.durationInMins = d.duration();
-      d.statusString = d.status();
-      d.endTimestamp = d.endTime().toUTCString();
-    });
-
     await Promise.all(
       deployments.map(d => {
         return new Promise(resolve => {
-          d.fetchAuthor()
+          fetchAuthor(
+            d,
+            config.SOURCE_REPO_ACCESS_TOKEN ||
+              config.AZURE_PIPELINE_ACCESS_TOKEN
+          )
             .then((author: IAuthor) => {
-              resolve();
+              resolve(author);
+              d.author = author;
+              console.log("Got author again");
+              console.log(d.author);
             })
             .catch(e => {
-              console.log(e);
+              console.error(e);
               resolve();
             });
         });
@@ -79,6 +77,10 @@ export const get = async (req: Request, res: Response) => {
 
     res.json(deployments);
   } else {
-    res.status(500).send("Server is not setup correctly");
+    res
+      .status(500)
+      .send(
+        "Environment variables need to be exported for Spektate configuration"
+      );
   }
 };

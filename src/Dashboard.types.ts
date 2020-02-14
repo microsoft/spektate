@@ -1,5 +1,5 @@
 import { IStatusProps } from "azure-devops-ui/Status";
-import Deployment from "spektate/lib/Deployment";
+import { IDeployment } from "spektate/lib/IDeployment";
 import { IAuthor } from "spektate/lib/repository/Author";
 import { ITag } from "spektate/lib/repository/Tag";
 
@@ -19,10 +19,10 @@ export interface IDashboardFilterState {
   defaultApplied: boolean;
 }
 export interface IDashboardState {
-  deployments: Deployment[];
+  deployments: IDeployment[];
   manifestSyncStatuses?: ITag[];
   authors: IAuthors;
-  filteredDeployments: Deployment[];
+  filteredDeployments: IDeployment[];
 }
 export interface IDeploymentField {
   deploymentId: string;

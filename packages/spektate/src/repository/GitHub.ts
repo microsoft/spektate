@@ -11,12 +11,10 @@ const authorInfoURL =
 export class GitHub implements IRepository {
   public username: string;
   public reponame: string;
-  public accessToken?: string;
 
-  constructor(username: string, reponame: string, accessToken?: string) {
+  constructor(username: string, reponame: string) {
     this.reponame = reponame;
     this.username = username;
-    this.accessToken = accessToken;
   }
 
   public getReleasesURL(): string {
@@ -25,63 +23,65 @@ export class GitHub implements IRepository {
     );
   }
 
-  public async getManifestSyncState(): Promise<ITag[]> {
+  public async getManifestSyncState(accessToken?: string): Promise<ITag[]> {
     return new Promise(async (resolve, reject) => {
-      const allTags = await HttpHelper.httpGet<any>(
-        manifestSyncTagsURL
-          .replace("<owner>", this.username)
-          .replace("<repo>", this.reponame),
-        this.accessToken
-      );
-      const tags = allTags.data;
-      if (tags != null && tags.length > 0) {
-        const fluxTags: ITag[] = [];
-        for (const fluxTag of tags) {
-          const data = await HttpHelper.httpGet<any>(
-            fluxTag.url
-              .replace("<owner>", this.username)
-              .replace("<repo>", this.reponame),
-            this.accessToken
-          );
-
-          const tag = data.data;
-          if (tag != null) {
-            const syncStatus = await HttpHelper.httpGet<any>(
-              tag.object.url,
-              this.accessToken
+      try {
+        const allTags = await HttpHelper.httpGet<any>(
+          manifestSyncTagsURL
+            .replace("<owner>", this.username)
+            .replace("<repo>", this.reponame),
+          accessToken
+        );
+        const tags = allTags.data;
+        if (tags != null && tags.length > 0) {
+          const fluxTags: ITag[] = [];
+          for (const fluxTag of tags) {
+            const data = await HttpHelper.httpGet<any>(
+              fluxTag.url
+                .replace("<owner>", this.username)
+                .replace("<repo>", this.reponame),
+              accessToken
             );
 
-            if (syncStatus != null) {
-              const clusterName = syncStatus.data.tag.replace("flux-", "");
-              const manifestSync = {
-                commit: syncStatus.data.object.sha.substring(0, 7),
-                date: new Date(syncStatus.data.tagger.date),
-                message: syncStatus.data.message,
-                name: clusterName.toUpperCase(),
-                tagger: syncStatus.data.tagger.name
-              };
-              fluxTags.push(manifestSync);
+            const tag = data.data;
+            if (tag != null) {
+              const syncStatus = await HttpHelper.httpGet<any>(
+                tag.object.url,
+                accessToken
+              );
+
+              if (syncStatus != null) {
+                const clusterName = syncStatus.data.tag.replace("flux-", "");
+                const manifestSync = {
+                  commit: syncStatus.data.object.sha.substring(0, 7),
+                  date: new Date(syncStatus.data.tagger.date),
+                  message: syncStatus.data.message,
+                  name: clusterName.toUpperCase(),
+                  tagger: syncStatus.data.tagger.name
+                };
+                fluxTags.push(manifestSync);
+              }
             }
           }
+          resolve(fluxTags);
+          return;
         }
-        resolve(fluxTags);
-        return;
-      }
 
-      console.error(
-        `Unable to sync manifests for Github repo ${this.username}/${this.reponame}`
-      );
-      reject();
+        // No tags were found.
+        resolve([]);
+      } catch (err) {
+        reject(err);
+      }
     });
   }
 
-  public async getAuthor(commitId: string) {
+  public async getAuthor(commitId: string, accessToken?: string) {
     const data = await HttpHelper.httpGet<any>(
       authorInfoURL
         .replace("<owner>", this.username)
         .replace("<repo>", this.reponame)
         .replace("<commitId>", commitId),
-      this.accessToken
+      accessToken
     );
 
     const authorInfo = data.data;

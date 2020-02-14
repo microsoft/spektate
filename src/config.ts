@@ -12,6 +12,10 @@ export let config: { [id: string]: string | undefined } = {
     browser.ENV && browser.ENV.REACT_APP_PIPELINE_PROJECT !== undefined
       ? browser.ENV.REACT_APP_PIPELINE_PROJECT
       : process.env.REACT_APP_PIPELINE_PROJECT,
+  BACKEND_URL:
+    browser.ENV && browser.ENV.REACT_APP_BACKEND_URL !== undefined
+      ? browser.ENV.REACT_APP_BACKEND_URL
+      : process.env.REACT_APP_BACKEND_URL,
   GITHUB_MANIFEST_USERNAME:
     browser.ENV && browser.ENV.REACT_APP_GITHUB_MANIFEST_USERNAME !== undefined
       ? browser.ENV.REACT_APP_GITHUB_MANIFEST_USERNAME
