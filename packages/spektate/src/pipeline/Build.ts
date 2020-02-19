@@ -1,6 +1,5 @@
 import { IAzureDevOpsRepo } from "../repository/IAzureDevOpsRepo";
 import { IGitHub } from "../repository/IGitHub";
-import { IRepository } from "../repository/Repository";
 import { IPipelineStages } from "./PipelineStage";
 
 export interface IBuild {

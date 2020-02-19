@@ -1,6 +1,5 @@
 import { HttpHelper } from "../HttpHelper";
 import { IAuthor } from "./Author";
-import { IRepository } from "./Repository";
 import { ITag } from "./Tag";
 
 const authorInfoURL =
@@ -10,7 +9,7 @@ const manifestSyncTagsURL =
 const manifestSyncTagURL =
   "https://dev.azure.com/{organization}/{project}/_apis/git/repositories/{repositoryId}/annotatedtags/{objectId}?api-version=4.1-preview.1";
 
-export interface IAzureDevOpsRepo extends IRepository {
+export interface IAzureDevOpsRepo {
   org: string;
   project: string;
   repo: string;
@@ -62,13 +61,13 @@ export const getManifestSyncState = async (
                 "flux-",
                 ""
               );
-              repository.manifestSync = {
+              const manifestSync = {
                 commit: syncStatus.data.taggedObject.objectId.substring(0, 7),
                 date: new Date(syncStatus.data.taggedBy.date),
                 name: clusterName.toUpperCase(),
                 tagger: syncStatus.data.taggedBy.name
               };
-              fluxTags.push(repository.manifestSync);
+              fluxTags.push(manifestSync);
             }
           }
         }

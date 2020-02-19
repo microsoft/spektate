@@ -1,6 +1,5 @@
 import { HttpHelper } from "../HttpHelper";
 import { IAuthor } from "./Author";
-import { IRepository } from "./Repository";
 import { ITag } from "./Tag";
 
 const manifestSyncTagsURL =
@@ -8,7 +7,7 @@ const manifestSyncTagsURL =
 const authorInfoURL =
   "https://api.github.com/repos/<owner>/<repo>/commits/<commitId>";
 
-export interface IGitHub extends IRepository {
+export interface IGitHub {
   username: string;
   reponame: string;
 }
