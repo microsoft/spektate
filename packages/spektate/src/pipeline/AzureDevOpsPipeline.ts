@@ -62,19 +62,19 @@ export class AzureDevOpsPipeline implements IPipeline {
         timelineURL: row._links.timeline.href
       };
       if (row.repository.type === "GitHub") {
-        build.repository = new GitHub(
-          row.repository.id.split("/")[0],
-          row.repository.id.split("/")[1]
-        );
+        build.repository = {
+          reponame: row.repository.id.split("/")[1],
+          username: row.repository.id.split("/")[0]
+        };
       } else if (row.repository.type === "TfsGit" && row.repository.url) {
         const reposityUrlSplit = row.repository.url.split("/");
         build.sourceVersionURL =
           row.repository.url + "/commit/" + row.sourceVersion;
-        build.repository = new AzureDevOpsRepo(
-          reposityUrlSplit[3],
-          reposityUrlSplit[4],
-          reposityUrlSplit[6]
-        );
+        build.repository = {
+          org: reposityUrlSplit[3],
+          project: reposityUrlSplit[4],
+          repo: reposityUrlSplit[6]
+        };
       }
       builds.push(build);
 

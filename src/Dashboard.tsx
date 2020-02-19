@@ -19,11 +19,14 @@ import * as querystring from "querystring";
 import * as React from "react";
 import { HttpHelper } from "spektate/lib/HttpHelper";
 import { endTime, IDeployment, status } from "spektate/lib/IDeployment";
+import { IAuthor } from "spektate/lib/repository/Author";
+// import { IAzureDevOpsRepo } from 'spektate/lib/repository/IAzureDevOpsRepo';
+// import { IGitHub } from 'spektate/lib/repository/IGitHub';
 // import AzureDevOpsPipeline from "spektate/lib/pipeline/AzureDevOpsPipeline";
 // import { IAuthor } from "spektate/lib/repository/Author";
 // import { AzureDevOpsRepo } from "spektate/lib/repository/AzureDevOpsRepo";
 // import { GitHub } from "spektate/lib/repository/GitHub";
-import { IRepository } from "spektate/lib/repository/Repository";
+// import { IRepository } from "spektate/lib/repository/Repository";
 import { ITag } from "spektate/lib/repository/Tag";
 import { config } from "./config";
 import "./css/dashboard.css";
@@ -42,7 +45,8 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
   private filterState: IDashboardFilterState = {
     defaultApplied: false
   };
-  private manifestRepo?: IRepository;
+  // private manifestRepo?: IGitHub | IAzureDevOpsRepo;
+  private releasesUrl?: string;
 
   constructor(props: Props) {
     super(props);
@@ -119,7 +123,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     this.setState({ filteredDeployments: this.state.deployments });
     this.processQueryParams();
     this.updateFilteredDeployments();
-    // this.getAuthors();
+    this.getAuthors();
     if (!this.filterState.defaultApplied) {
       this.filter.setFilterItemState("authorFilter", {
         value: this.filterState.currentlySelectedAuthors
@@ -133,13 +137,19 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       this.filter.setFilterItemState("keywordFilter", {
         value: this.filterState.currentlySelectedKeyword
       });
-    } else {
-      throw Error(`Back end is not configured`);
     }
-    HttpHelper.httpGet(config.BACKEND_URL + "/clustersync").then(syncData => {
-      console.log(syncData);
-      this.setState({ manifestSyncStatuses: syncData.data as ITag[] });
-    });
+    // else {
+    //   throw Error(`Back end is not configured`);
+    // }
+    HttpHelper.httpGet(config.BACKEND_URL + "/clustersync").then(
+      (syncData: any) => {
+        console.log(syncData);
+        if (syncData.data && syncData.data.tags && syncData.data.releasesURL) {
+          this.setState({ manifestSyncStatuses: syncData.data.tags as ITag[] });
+          this.releasesUrl = syncData.data.releasesURL;
+        }
+      }
+    );
   };
 
   // private updateDeployments = () => {
@@ -299,8 +309,8 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     let rows: IDeploymentField[] = [];
     try {
       rows = this.state.filteredDeployments.map(deployment => {
-        // const author = this.getAuthor(deployment);
-        const author = deployment.author;
+        const author = this.getAuthor(deployment);
+        // const author = deployment.author;
         const tags = this.getClusterSyncStatusForDeployment(deployment);
         const clusters: string[] = tags ? tags.map(itag => itag.name) : [];
         const statusStr = status(deployment);
@@ -797,7 +807,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       >
         <Link
           className="font-size-m text-ellipsis bolt-table-link bolt-table-inline-link"
-          href={this.manifestRepo ? this.manifestRepo.getReleasesURL() : ""}
+          href={this.releasesUrl}
           subtle={true}
         >
           {text}
@@ -868,17 +878,16 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         line2={
           <Tooltip overflowOnly={true}>
             <span className="fontSize font-size secondary-text flex-row flex-center text-ellipsis">
-              {commitId &&
-                commitURL && commitURL !== "" && (
-                  <Link
-                    className="monospaced-text text-ellipsis flex-row flex-center bolt-table-link bolt-table-inline-link"
-                    href={commitURL}
-                    // tslint:disable-next-line: jsx-no-lambda
-                    onClick={() => (parent.window.location.href = commitURL)}
-                  >
-                    {commitCell}
-                  </Link>
-                )}
+              {commitId && commitURL && commitURL !== "" && (
+                <Link
+                  className="monospaced-text text-ellipsis flex-row flex-center bolt-table-link bolt-table-inline-link"
+                  href={commitURL}
+                  // tslint:disable-next-line: jsx-no-lambda
+                  onClick={() => (parent.window.location.href = commitURL)}
+                >
+                  {commitCell}
+                </Link>
+              )}
               {commitId && commitURL === "" && commitCell}
             </span>
           </Tooltip>
@@ -961,61 +970,67 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     return indicatorData;
   };
 
-  // private getAuthors = () => {
-  //   try {
-  //     const state = this.state;
-  //     const promises: Array<Promise<IAuthor | undefined>> = [];
-  //     this.state.deployments.forEach(deployment => {
-  //       const promise = fetchAuthor(deployment);
-  //       promise.then((author: IAuthor) => {
-  //         if (author && deployment.srcToDockerBuild) {
-  //           const copy = state.authors;
-  //           copy[deployment.srcToDockerBuild.sourceVersion] = author;
-  //           this.setState({ authors: copy });
-  //           this.updateFilteredDeployments();
-  //         } else if (author && deployment.hldToManifestBuild) {
-  //           const copy = state.authors;
-  //           copy[deployment.hldToManifestBuild.sourceVersion] = author;
-  //           this.setState({ authors: copy });
-  //           this.updateFilteredDeployments();
-  //         }
-  //       });
-  //       promises.push(promise);
-  //     });
+  private getAuthors = () => {
+    try {
+      const state = this.state;
+      const promises: Array<Promise<any>> = [];
+      this.state.deployments.forEach(deployment => {
+        // const promise = fetchAuthor(deployment);
+        console.log("Posting %j", JSON.stringify(deployment));
+        const promise = HttpHelper.httpPost(
+          config.BACKEND_URL + "/author",
+          JSON.stringify(deployment)
+        );
+        promise.then(data => {
+          const author = data.data as IAuthor;
+          if (author && deployment.srcToDockerBuild) {
+            const copy = state.authors;
+            copy[deployment.srcToDockerBuild.sourceVersion] = author;
+            this.setState({ authors: copy });
+            this.updateFilteredDeployments();
+          } else if (author && deployment.hldToManifestBuild) {
+            const copy = state.authors;
+            copy[deployment.hldToManifestBuild.sourceVersion] = author;
+            this.setState({ authors: copy });
+            this.updateFilteredDeployments();
+          }
+        });
+        promises.push(promise);
+      });
 
-  //     Promise.all(promises).then(() => {
-  //       if (!this.filterState.defaultApplied) {
-  //         this.filter.setFilterItemState("authorFilter", {
-  //           value: this.filterState.currentlySelectedAuthors
-  //         });
-  //         this.filterState.defaultApplied = true;
-  //       }
-  //     });
-  //   } catch (err) {
-  //     console.error(err);
-  //   }
-  // };
+      Promise.all(promises).then(() => {
+        if (!this.filterState.defaultApplied) {
+          this.filter.setFilterItemState("authorFilter", {
+            value: this.filterState.currentlySelectedAuthors
+          });
+          this.filterState.defaultApplied = true;
+        }
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
-  // private getAuthor = (deployment: IDeployment): IAuthor | undefined => {
-  //   if (
-  //     deployment.srcToDockerBuild &&
-  //     deployment.srcToDockerBuild.sourceVersion in this.state.authors
-  //   ) {
-  //     deployment.author = this.state.authors[
-  //       deployment.srcToDockerBuild.sourceVersion
-  //     ];
-  //     return this.state.authors[deployment.srcToDockerBuild.sourceVersion];
-  //   } else if (
-  //     deployment.hldToManifestBuild &&
-  //     deployment.hldToManifestBuild.sourceVersion in this.state.authors
-  //   ) {
-  //     deployment.author = this.state.authors[
-  //       deployment.hldToManifestBuild.sourceVersion
-  //     ];
-  //     return this.state.authors[deployment.hldToManifestBuild.sourceVersion];
-  //   }
-  //   return undefined;
-  // };
+  private getAuthor = (deployment: IDeployment): IAuthor | undefined => {
+    if (
+      deployment.srcToDockerBuild &&
+      deployment.srcToDockerBuild.sourceVersion in this.state.authors
+    ) {
+      deployment.author = this.state.authors[
+        deployment.srcToDockerBuild.sourceVersion
+      ];
+      return this.state.authors[deployment.srcToDockerBuild.sourceVersion];
+    } else if (
+      deployment.hldToManifestBuild &&
+      deployment.hldToManifestBuild.sourceVersion in this.state.authors
+    ) {
+      deployment.author = this.state.authors[
+        deployment.hldToManifestBuild.sourceVersion
+      ];
+      return this.state.authors[deployment.hldToManifestBuild.sourceVersion];
+    }
+    return undefined;
+  };
 
   private getIcon(statusStr?: string): IIconProps {
     if (statusStr === "succeeded") {

@@ -2,14 +2,23 @@ import { AxiosResponse } from "axios";
 import * as fs from "fs";
 import { HttpHelper } from "../HttpHelper";
 import { IAuthor } from "./Author";
-import { AzureDevOpsRepo } from "./AzureDevOpsRepo";
+import {
+  getAuthor,
+  getManifestSyncState,
+  getReleasesURL,
+  IAzureDevOpsRepo
+} from "./IAzureDevOpsRepo";
 import { ITag } from "./Tag";
 
 let authorRawResponse = {};
 let syncTagRawResponse = {};
 let manifestSyncTagResponse = {};
 const mockDirectory = "src/repository/mocks/";
-const repo = new AzureDevOpsRepo("org", "project", "repo");
+const repo: IAzureDevOpsRepo = {
+  org: "org",
+  project: "project",
+  repo: "repo"
+};
 
 beforeAll(() => {
   authorRawResponse = JSON.parse(
@@ -38,7 +47,7 @@ jest.spyOn(HttpHelper, "httpGet").mockImplementation(
 
 describe("AzureDevOpsRepo", () => {
   test("gets author correctly", async () => {
-    const author = await repo.getAuthor("commit");
+    const author = await getAuthor(repo, "commit");
     expect(author).toBeDefined();
     expect(author!.name).toBe("Samiya Akhtar");
     expect(author!.url).toBeDefined();
@@ -49,7 +58,7 @@ describe("AzureDevOpsRepo", () => {
 
 describe("AzureDevOpsRepo", () => {
   test("gets manifest sync tag correctly", async () => {
-    const tags = await repo.getManifestSyncState();
+    const tags = await getManifestSyncState(repo);
     expect(tags).toHaveLength(1);
     expect(tags[0].commit).toBe("ab4c9f1");
     expect(tags[0].name).toBe("SYNC");
@@ -58,7 +67,7 @@ describe("AzureDevOpsRepo", () => {
 
 describe("GitHub", () => {
   test("gets releases URL correctly", async () => {
-    const releaseUrl = repo.getReleasesURL();
+    const releaseUrl = getReleasesURL(repo);
     expect(releaseUrl).toBe("https://dev.azure.com/org/project/_git/repo/tags");
   });
 });

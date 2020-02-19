@@ -5,3 +5,8 @@ export interface ITag {
   message?: string;
   name: string;
 }
+
+export interface IClusterSync {
+  releasesURL?: string;
+  tags?: ITag[];
+}

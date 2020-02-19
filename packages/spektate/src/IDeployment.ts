@@ -4,6 +4,11 @@ import IPipeline from "./pipeline/Pipeline";
 import { IPipelineStages } from "./pipeline/PipelineStage";
 import { IRelease } from "./pipeline/Release";
 import { IAuthor } from "./repository/Author";
+import {
+  getAuthor as adoGetAuthor,
+  IAzureDevOpsRepo
+} from "./repository/IAzureDevOpsRepo";
+import { getAuthor as gitHubGetAuthor, IGitHub } from "./repository/IGitHub";
 
 export interface IDeployment {
   deploymentId: string;
@@ -424,39 +429,112 @@ export const status = (deployment: IDeployment): string => {
   return "Incomplete";
 };
 
-/**
- * Fetches the author for this deployment and returns a promise
- */
 export const fetchAuthor = (
   deployment: IDeployment,
   accessToken?: string
 ): Promise<IAuthor | undefined> => {
   return new Promise((resolve, reject) => {
     if (deployment.srcToDockerBuild && deployment.srcToDockerBuild.repository) {
-      deployment.srcToDockerBuild.repository
-        .getAuthor(deployment.srcToDockerBuild.sourceVersion, accessToken)
-        .then((author: IAuthor | undefined) => {
-          deployment.author = author;
-          resolve(author);
-        })
-        .catch(error => {
-          reject(error);
-        });
+      if ("username" in deployment.srcToDockerBuild.repository) {
+        gitHubGetAuthor(
+          deployment.srcToDockerBuild.repository,
+          deployment.srcToDockerBuild.sourceVersion,
+          accessToken
+        )
+          .then((author: IAuthor | undefined) => {
+            deployment.author = author;
+            resolve(author);
+          })
+          .catch(error => {
+            reject(error);
+          });
+      } else if (
+        deployment.srcToDockerBuild &&
+        deployment.srcToDockerBuild.repository
+      ) {
+        adoGetAuthor(
+          deployment.srcToDockerBuild.repository as IAzureDevOpsRepo,
+          deployment.srcToDockerBuild.sourceVersion,
+          accessToken
+        )
+          .then((author: IAuthor | undefined) => {
+            deployment.author = author;
+            resolve(author);
+          })
+          .catch(error => {
+            reject(error);
+          });
+      }
     } else if (
       deployment.hldToManifestBuild &&
       deployment.hldToManifestBuild.repository
     ) {
-      deployment.hldToManifestBuild.repository
-        .getAuthor(deployment.hldToManifestBuild.sourceVersion, accessToken)
-        .then((author: IAuthor | undefined) => {
-          deployment.author = author;
-          resolve(author);
-        })
-        .catch(error => {
-          reject(error);
-        });
+      if ("username" in deployment.hldToManifestBuild.repository) {
+        gitHubGetAuthor(
+          deployment.hldToManifestBuild.repository,
+          deployment.hldToManifestBuild.sourceVersion,
+          accessToken
+        )
+          .then((author: IAuthor | undefined) => {
+            deployment.author = author;
+            resolve(author);
+          })
+          .catch(error => {
+            reject(error);
+          });
+      } else {
+        adoGetAuthor(
+          deployment.hldToManifestBuild.repository as IAzureDevOpsRepo,
+          deployment.hldToManifestBuild.sourceVersion,
+          accessToken
+        )
+          .then((author: IAuthor | undefined) => {
+            deployment.author = author;
+            resolve(author);
+          })
+          .catch(error => {
+            reject(error);
+          });
+      }
     } else {
       resolve();
     }
   });
 };
+
+/**
+ * Fetches the author for this deployment and returns a promise
+ */
+// export const fetchAuthor = (
+//   deployment: IDeployment,
+//   accessToken?: string
+// ): Promise<IAuthor | undefined> => {
+//   return new Promise((resolve, reject) => {
+//     if (deployment.srcToDockerBuild && deployment.srcToDockerBuild.repository) {
+//       deployment.srcToDockerBuild.repository
+//         .getAuthor(deployment.srcToDockerBuild.sourceVersion, accessToken)
+//         .then((author: IAuthor | undefined) => {
+//           deployment.author = author;
+//           resolve(author);
+//         })
+//         .catch(error => {
+//           reject(error);
+//         });
+//     } else if (
+//       deployment.hldToManifestBuild &&
+//       deployment.hldToManifestBuild.repository
+//     ) {
+//       deployment.hldToManifestBuild.repository
+//         .getAuthor(deployment.hldToManifestBuild.sourceVersion, accessToken)
+//         .then((author: IAuthor | undefined) => {
+//           deployment.author = author;
+//           resolve(author);
+//         })
+//         .catch(error => {
+//           reject(error);
+//         });
+//     } else {
+//       resolve();
+//     }
+//   });
+// };

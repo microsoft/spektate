@@ -8,7 +8,7 @@ const manifestSyncTagsURL =
 const authorInfoURL =
   "https://api.github.com/repos/<owner>/<repo>/commits/<commitId>";
 
-export class GitHub implements IRepository {
+export class GitHub {
   public username: string;
   public reponame: string;
 

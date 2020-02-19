@@ -1,11 +1,11 @@
 import { Request, Response } from "express";
 import {
-  fetchAuthor,
+  // fetchAuthor,
   getDeployments,
   IDeployment
 } from "spektate/lib/IDeployment";
 import AzureDevOpsPipeline from "spektate/lib/pipeline/AzureDevOpsPipeline";
-import { IAuthor } from "spektate/lib/repository/Author";
+// import { IAuthor } from "spektate/lib/repository/Author";
 import * as config from "./config";
 
 const createSourcePipeline = () => {
@@ -56,21 +56,22 @@ export const get = async (req: Request, res: Response) => {
     await Promise.all(
       deployments.map(d => {
         return new Promise(resolve => {
-          fetchAuthor(
-            d,
-            config.SOURCE_REPO_ACCESS_TOKEN ||
-              config.AZURE_PIPELINE_ACCESS_TOKEN
-          )
-            .then((author: IAuthor) => {
-              resolve(author);
-              d.author = author;
-              console.log("Got author again");
-              console.log(d.author);
-            })
-            .catch(e => {
-              console.error(e);
-              resolve();
-            });
+          // fetchAuthor(
+          //   d,
+          //   config.SOURCE_REPO_ACCESS_TOKEN ||
+          //     config.AZURE_PIPELINE_ACCESS_TOKEN
+          // )
+          //   .then((author: IAuthor) => {
+          //     resolve(author);
+          //     d.author = author;
+          //     console.log("Got author again");
+          //     console.log(d.author);
+          //   })
+          //   .catch(e => {
+          //     console.error(e);
+          //     resolve();
+          //   });
+          resolve();
         });
       })
     );
