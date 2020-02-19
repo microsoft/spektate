@@ -29,34 +29,4 @@ export class HttpHelper {
         throw error;
       });
   }
-  public static httpPost<T>(
-    theUrl: string,
-    body: string,
-    accessToken?: string
-  ) {
-    return axios
-      .post<T>(
-        theUrl,
-        body,
-        accessToken
-          ? {
-              data: body,
-              headers: {
-                Authorization:
-                  "Basic " + Buffer.from(":" + accessToken).toString("base64"),
-                "Content-Type": "application/json"
-              }
-            }
-          : {
-              data: body,
-              headers: {
-                "Content-Type": "application/json"
-              }
-            }
-      )
-      .catch(error => {
-        console.error(error);
-        throw error;
-      });
-  }
 }
