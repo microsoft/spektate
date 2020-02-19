@@ -1,12 +1,18 @@
 import { Request, Response } from "express";
-import { fetchAuthor, IDeployment } from "spektate/lib/IDeployment";
+import { fetchAuthor } from "spektate/lib/IDeployment";
 import { IAuthor } from "spektate/lib/repository/Author";
+import { IAzureDevOpsRepo } from "spektate/lib/repository/IAzureDevOpsRepo";
+import { IGitHub } from "spektate/lib/repository/IGitHub";
 import * as config from "./config";
 
-const getAuthor = (deployment: IDeployment): Promise<IAuthor | undefined> => {
+const getAuthor = (
+  commitId: string,
+  repository: IGitHub | IAzureDevOpsRepo
+): Promise<IAuthor | undefined> => {
   return new Promise((resolve, reject) => {
     fetchAuthor(
-      deployment,
+      repository,
+      commitId,
       config.SOURCE_REPO_ACCESS_TOKEN || config.AZURE_PIPELINE_ACCESS_TOKEN
     )
       .then((author: IAuthor | undefined) => {
@@ -19,21 +25,34 @@ const getAuthor = (deployment: IDeployment): Promise<IAuthor | undefined> => {
   });
 };
 
-export const post = async (req: Request, res: Response) => {
+export const get = async (req: Request, res: Response) => {
   res.header("Access-Control-Allow-Origin", "*");
-  // res.header("Access-Control-Allow-Origin", "localhost");
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, Content-Type, X-Auth-Token"
-  );
-  res.header("Access-Control-Allow-Methods", "GET, POST");
   if (config.isValuesValid()) {
-    // console.dir(req.body as IDeployment);
-    console.log(req.headers);
-    const author = await getAuthor(req.body as IDeployment);
-    res.json(author || {});
-    console.log("Returning ", author);
-    // res.json({});
+    if (
+      req.query.org &&
+      req.query.project &&
+      req.query.repo &&
+      req.query.commit
+    ) {
+      console.log("Calling for ADO");
+      const author = await getAuthor(req.query.commit, {
+        org: req.query.org,
+        project: req.query.project,
+        repo: req.query.repo
+      });
+      res.json(author || {});
+      console.log("Returning ", author);
+    } else if (req.query.username && req.query.reponame && req.query.commit) {
+      console.log("Calling for github");
+      const author = await getAuthor(req.query.commit, {
+        reponame: req.query.reponame,
+        username: req.query.username
+      });
+      res.json(author || {});
+      console.log("Returning ", author);
+    } else {
+      res.json({});
+    }
   } else {
     res
       .status(500)

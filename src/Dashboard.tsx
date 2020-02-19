@@ -20,6 +20,9 @@ import * as React from "react";
 import { HttpHelper } from "spektate/lib/HttpHelper";
 import { endTime, IDeployment, status } from "spektate/lib/IDeployment";
 import { IAuthor } from "spektate/lib/repository/Author";
+import { IAzureDevOpsRepo } from "spektate/lib/repository/IAzureDevOpsRepo";
+import { IGitHub } from "spektate/lib/repository/IGitHub";
+// import { IRepository } from 'spektate/lib/repository/Repository';
 // import { IAzureDevOpsRepo } from 'spektate/lib/repository/IAzureDevOpsRepo';
 // import { IGitHub } from 'spektate/lib/repository/IGitHub';
 // import AzureDevOpsPipeline from "spektate/lib/pipeline/AzureDevOpsPipeline";
@@ -970,17 +973,45 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     return indicatorData;
   };
 
+  private getAuthorRequestParams = (deployment: IDeployment) => {
+    const query: any = {};
+    const commit =
+      deployment.srcToDockerBuild?.sourceVersion ||
+      deployment.hldToManifestBuild?.sourceVersion;
+    const repo: IAzureDevOpsRepo | IGitHub | undefined =
+      deployment.srcToDockerBuild?.repository ||
+      deployment.hldToManifestBuild?.repository;
+    if (repo && "username" in repo) {
+      query.username = repo.username;
+      query.reponame = repo.reponame;
+      query.commit = commit;
+    } else if (repo && "org" in repo) {
+      query.org = repo.org;
+      query.project = repo.project;
+      query.repo = repo.repo;
+      query.commit = commit;
+    }
+    let str = "";
+    // tslint:disable-next-line: forin
+    for (const key in query) {
+      if (str !== "") {
+        str += "&";
+      }
+      str += key + "=" + encodeURIComponent(query[key]);
+    }
+    return str;
+  };
+
   private getAuthors = () => {
     try {
       const state = this.state;
       const promises: Array<Promise<any>> = [];
       this.state.deployments.forEach(deployment => {
-        // const promise = fetchAuthor(deployment);
-        console.log("Posting %j", JSON.stringify(deployment));
-        const promise = HttpHelper.httpPost(
-          config.BACKEND_URL + "/author",
-          JSON.stringify(deployment)
+        const queryParams = this.getAuthorRequestParams(deployment);
+        const promise = HttpHelper.httpGet(
+          config.BACKEND_URL + "/author?" + queryParams
         );
+
         promise.then(data => {
           const author = data.data as IAuthor;
           if (author && deployment.srcToDockerBuild) {
