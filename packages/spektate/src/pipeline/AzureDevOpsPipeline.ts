@@ -1,6 +1,4 @@
 import { HttpHelper } from "../HttpHelper";
-import { AzureDevOpsRepo } from "../repository/AzureDevOpsRepo";
-import { GitHub } from "../repository/GitHub";
 import { IBuild } from "./Build";
 import IPipeline from "./Pipeline";
 import { IPipelineStage, IPipelineStages } from "./PipelineStage";

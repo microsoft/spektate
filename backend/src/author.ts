@@ -34,22 +34,18 @@ export const get = async (req: Request, res: Response) => {
       req.query.repo &&
       req.query.commit
     ) {
-      console.log("Calling for ADO");
       const author = await getAuthor(req.query.commit, {
         org: req.query.org,
         project: req.query.project,
         repo: req.query.repo
       });
       res.json(author || {});
-      console.log("Returning ", author);
     } else if (req.query.username && req.query.reponame && req.query.commit) {
-      console.log("Calling for github");
       const author = await getAuthor(req.query.commit, {
         reponame: req.query.reponame,
         username: req.query.username
       });
       res.json(author || {});
-      console.log("Returning ", author);
     } else {
       res.json({});
     }

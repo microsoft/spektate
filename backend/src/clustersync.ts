@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-import { AzureDevOpsRepo } from "spektate/lib/repository/AzureDevOpsRepo";
 import {
   getManifestSyncState as getADOClusterSync,
   getReleasesURL as getADOReleasesURL,
@@ -45,11 +44,11 @@ const getManifestRepoSyncState = (): Promise<IClusterSync | undefined> => {
         });
     });
   } else if (config.MANIFEST) {
-    manifestRepo = new AzureDevOpsRepo(
-      config.AZURE_ORG,
-      config.AZURE_PROJECT,
-      config.MANIFEST
-    );
+    manifestRepo = {
+      org: config.AZURE_ORG,
+      project: config.AZURE_PROJECT,
+      repo: config.MANIFEST
+    };
     releasesURL = getADOReleasesURL(manifestRepo);
     return new Promise((resolve, reject) => {
       getADOClusterSync(

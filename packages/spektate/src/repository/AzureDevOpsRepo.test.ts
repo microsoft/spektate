@@ -56,7 +56,7 @@ describe("AzureDevOpsRepo", () => {
   });
 });
 
-describe("GitHub", () => {
+describe("AzureDevOpsRepo", () => {
   test("gets releases URL correctly", async () => {
     const releaseUrl = repo.getReleasesURL();
     expect(releaseUrl).toBe("https://dev.azure.com/org/project/_git/repo/tags");

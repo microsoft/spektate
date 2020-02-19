@@ -1,15 +1,12 @@
 import { AxiosResponse } from "axios";
 import * as fs from "fs";
 import { HttpHelper } from "../HttpHelper";
-import { IAuthor } from "./Author";
 import {
   getAuthor,
   getManifestSyncState,
   getReleasesURL,
   IGitHub
 } from "./IGitHub";
-import { IRepository } from "./Repository";
-import { ITag } from "./Tag";
 
 let authorRawResponse = {};
 let syncTagRawResponse = {};
@@ -51,7 +48,7 @@ jest.spyOn(HttpHelper, "httpGet").mockImplementation(
   }
 );
 
-describe("GitHub", () => {
+describe("IGitHub", () => {
   test("gets author correctly", async () => {
     const author = await getAuthor(repo, "commit");
     expect(author).toBeDefined();
@@ -62,7 +59,7 @@ describe("GitHub", () => {
   });
 });
 
-describe("GitHub", () => {
+describe("IGitHub", () => {
   test("gets manifest sync tag correctly", async () => {
     const tags = await getManifestSyncState(repo);
     expect(tags).toHaveLength(2);
@@ -73,7 +70,7 @@ describe("GitHub", () => {
   });
 });
 
-describe("GitHub", () => {
+describe("IGitHub", () => {
   test("gets releases URL correctly", async () => {
     const releaseUrl = getReleasesURL(repo);
     expect(releaseUrl).toBe("https://github.com/username/reponame/releases");

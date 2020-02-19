@@ -1,5 +1,5 @@
 export * from "./Author";
-export * from "./AzureDevOpsRepo";
-export * from "./GitHub";
+// export * from "./IAzureDevOpsRepo";
+// export * from "./IGitHub";
 export * from "./Repository";
 export * from "./Tag";

@@ -22,14 +22,6 @@ import { endTime, IDeployment, status } from "spektate/lib/IDeployment";
 import { IAuthor } from "spektate/lib/repository/Author";
 import { IAzureDevOpsRepo } from "spektate/lib/repository/IAzureDevOpsRepo";
 import { IGitHub } from "spektate/lib/repository/IGitHub";
-// import { IRepository } from 'spektate/lib/repository/Repository';
-// import { IAzureDevOpsRepo } from 'spektate/lib/repository/IAzureDevOpsRepo';
-// import { IGitHub } from 'spektate/lib/repository/IGitHub';
-// import AzureDevOpsPipeline from "spektate/lib/pipeline/AzureDevOpsPipeline";
-// import { IAuthor } from "spektate/lib/repository/Author";
-// import { AzureDevOpsRepo } from "spektate/lib/repository/AzureDevOpsRepo";
-// import { GitHub } from "spektate/lib/repository/GitHub";
-// import { IRepository } from "spektate/lib/repository/Repository";
 import { ITag } from "spektate/lib/repository/Tag";
 import { config } from "./config";
 import "./css/dashboard.css";
@@ -98,9 +90,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     const deps = await HttpHelper.httpGet<any>(
       config.BACKEND_URL + "/deployments"
     );
-    // console.log(deps);
     const ideps: IDeployment[] = deps.data as IDeployment[];
-    // console.log(deployments);
     this.processQueryParams();
 
     const deployments: IDeployment[] = ideps.map(dep => {
@@ -141,9 +131,6 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         value: this.filterState.currentlySelectedKeyword
       });
     }
-    // else {
-    //   throw Error(`Back end is not configured`);
-    // }
     HttpHelper.httpGet(config.BACKEND_URL + "/clustersync").then(
       (syncData: any) => {
         console.log(syncData);
@@ -154,90 +141,6 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       }
     );
   };
-
-  // private updateDeployments = () => {
-  //   if (
-  //     !config.AZURE_ORG ||
-  //     !config.AZURE_PROJECT ||
-  //     !config.STORAGE_ACCOUNT_NAME ||
-  //     !config.STORAGE_ACCOUNT_KEY ||
-  //     !config.STORAGE_TABLE_NAME ||
-  //     !config.STORAGE_PARTITION_KEY
-  //   ) {
-  //     return;
-  //   }
-  //   const srcPipeline = new AzureDevOpsPipeline(
-  //     config.AZURE_ORG,
-  //     config.AZURE_PROJECT,
-  //     false,
-  //     config.AZURE_PIPELINE_ACCESS_TOKEN,
-  //     config.SOURCE_REPO_ACCESS_TOKEN
-  //       ? config.SOURCE_REPO_ACCESS_TOKEN
-  //       : config.AZURE_PIPELINE_ACCESS_TOKEN
-  //   );
-  //   const hldPipeline = new AzureDevOpsPipeline(
-  //     config.AZURE_ORG,
-  //     config.AZURE_PROJECT,
-  //     true,
-  //     config.AZURE_PIPELINE_ACCESS_TOKEN
-  //   );
-  //   const clusterPipeline = new AzureDevOpsPipeline(
-  //     config.AZURE_ORG,
-  //     config.AZURE_PROJECT,
-  //     false,
-  //     config.AZURE_PIPELINE_ACCESS_TOKEN
-  //   );
-  //   if (config.MANIFEST && config.GITHUB_MANIFEST_USERNAME) {
-  //     this.manifestRepo = new GitHub(
-  //       config.GITHUB_MANIFEST_USERNAME,
-  //       config.MANIFEST,
-  //       config.MANIFEST_ACCESS_TOKEN
-  //     );
-  //     this.manifestRepo.getManifestSyncState().then((syncCommits: any) => {
-  //       this.setState({ manifestSyncStatuses: syncCommits });
-  //     });
-  //   } else if (config.MANIFEST) {
-  //     this.manifestRepo = new AzureDevOpsRepo(
-  //       config.AZURE_ORG,
-  //       config.AZURE_PROJECT,
-  //       config.MANIFEST,
-  //       config.AZURE_PIPELINE_ACCESS_TOKEN
-  //     );
-  //     this.manifestRepo.getManifestSyncState().then((syncCommit: any) => {
-  //       this.setState({ manifestSyncStatuses: syncCommit });
-  //     });
-  //   }
-  //   Deployment.getDeployments(
-  //     config.STORAGE_ACCOUNT_NAME,
-  //     config.STORAGE_ACCOUNT_KEY,
-  //     config.STORAGE_TABLE_NAME,
-  //     config.STORAGE_PARTITION_KEY,
-  //     srcPipeline,
-  //     hldPipeline,
-  //     clusterPipeline,
-  //     undefined
-  //   ).then((deployments: Deployment[]) => {
-  //     this.setState({ deployments });
-  //     this.setState({ filteredDeployments: this.state.deployments });
-  //     this.processQueryParams();
-  //     this.updateFilteredDeployments();
-  //     this.getAuthors();
-  //     if (!this.filterState.defaultApplied) {
-  //       this.filter.setFilterItemState("authorFilter", {
-  //         value: this.filterState.currentlySelectedAuthors
-  //       });
-  //       this.filter.setFilterItemState("serviceFilter", {
-  //         value: this.filterState.currentlySelectedServices
-  //       });
-  //       this.filter.setFilterItemState("envFilter", {
-  //         value: this.filterState.currentlySelectedEnvs
-  //       });
-  //       this.filter.setFilterItemState("keywordFilter", {
-  //         value: this.filterState.currentlySelectedKeyword
-  //       });
-  //     }
-  //   });
-  // };
 
   private renderPrototypeTable = () => {
     const columns: Array<ITableColumn<IDeploymentField>> = [

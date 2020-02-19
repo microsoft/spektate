@@ -45,7 +45,7 @@ jest.spyOn(HttpHelper, "httpGet").mockImplementation(
   }
 );
 
-describe("AzureDevOpsRepo", () => {
+describe("IAzureDevOpsRepo", () => {
   test("gets author correctly", async () => {
     const author = await getAuthor(repo, "commit");
     expect(author).toBeDefined();
@@ -56,7 +56,7 @@ describe("AzureDevOpsRepo", () => {
   });
 });
 
-describe("AzureDevOpsRepo", () => {
+describe("IAzureDevOpsRepo", () => {
   test("gets manifest sync tag correctly", async () => {
     const tags = await getManifestSyncState(repo);
     expect(tags).toHaveLength(1);
@@ -65,7 +65,7 @@ describe("AzureDevOpsRepo", () => {
   });
 });
 
-describe("GitHub", () => {
+describe("IAzureDevOpsRepo", () => {
   test("gets releases URL correctly", async () => {
     const releaseUrl = getReleasesURL(repo);
     expect(releaseUrl).toBe("https://dev.azure.com/org/project/_git/repo/tags");
