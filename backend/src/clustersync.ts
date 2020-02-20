@@ -73,15 +73,8 @@ const getManifestRepoSyncState = (): Promise<IClusterSync | undefined> => {
 };
 
 export const get = async (req: Request, res: Response) => {
-  res.header("Access-Control-Allow-Origin", "*");
-  if (config.isValuesValid()) {
+  if (config.isValuesValid(res)) {
     const status = await getManifestRepoSyncState();
     res.json(status || {});
-  } else {
-    res
-      .status(500)
-      .send(
-        "Environment variables need to be exported for Spektate configuration"
-      );
   }
 };

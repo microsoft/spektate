@@ -31,8 +31,7 @@ const createClusterPipeline = () => {
 };
 
 export const get = async (req: Request, res: Response) => {
-  res.header("Access-Control-Allow-Origin", "*");
-  if (config.isValuesValid()) {
+  if (config.isValuesValid(res)) {
     const srcPipeline = createSourcePipeline();
     const hldPipeline = createHLDPipeline();
     const clusterPipeline = createClusterPipeline();
@@ -49,11 +48,5 @@ export const get = async (req: Request, res: Response) => {
     );
 
     res.json(deployments);
-  } else {
-    res
-      .status(500)
-      .send(
-        "Environment variables need to be exported for Spektate configuration"
-      );
   }
 };

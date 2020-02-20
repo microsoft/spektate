@@ -26,8 +26,7 @@ const getAuthor = (
 };
 
 export const get = async (req: Request, res: Response) => {
-  res.header("Access-Control-Allow-Origin", "*");
-  if (config.isValuesValid()) {
+  if (config.isValuesValid(res)) {
     if (
       req.query.org &&
       req.query.project &&
@@ -49,11 +48,5 @@ export const get = async (req: Request, res: Response) => {
     } else {
       res.json({});
     }
-  } else {
-    res
-      .status(500)
-      .send(
-        "Environment variables need to be exported for Spektate configuration"
-      );
   }
 };
