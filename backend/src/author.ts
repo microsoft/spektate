@@ -27,26 +27,30 @@ const getAuthor = (
 
 export const get = async (req: Request, res: Response) => {
   if (config.isValuesValid(res)) {
-    if (
-      req.query.org &&
-      req.query.project &&
-      req.query.repo &&
-      req.query.commit
-    ) {
-      const author = await getAuthor(req.query.commit, {
-        org: req.query.org,
-        project: req.query.project,
-        repo: req.query.repo
-      });
-      res.json(author || {});
-    } else if (req.query.username && req.query.reponame && req.query.commit) {
-      const author = await getAuthor(req.query.commit, {
-        reponame: req.query.reponame,
-        username: req.query.username
-      });
-      res.json(author || {});
+    if (!req.query.commit) {
+      res.status(400).send("commit query parameter was missing");
     } else {
-      res.json({});
+      try {
+        if (req.query.org && req.query.project && req.query.repo) {
+          const author = await getAuthor(req.query.commit, {
+            org: req.query.org,
+            project: req.query.project,
+            repo: req.query.repo
+          });
+          res.json(author || {});
+        } else if (req.query.username && req.query.reponame) {
+          const author = await getAuthor(req.query.commit, {
+            reponame: req.query.reponame,
+            username: req.query.username
+          });
+          res.json(author || {});
+        } else {
+          res.status(400).send("required query parameters were missing");
+        }
+      } catch (err) {
+        console.log(err);
+        res.status(500);
+      }
     }
   }
 };

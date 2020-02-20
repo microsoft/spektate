@@ -39,8 +39,7 @@ const getManifestRepoSyncState = (): Promise<IClusterSync | undefined> => {
           });
         })
         .catch(err => {
-          console.log(err);
-          reject(undefined);
+          reject(err);
         });
     });
   } else if (config.MANIFEST) {
@@ -62,8 +61,7 @@ const getManifestRepoSyncState = (): Promise<IClusterSync | undefined> => {
           });
         })
         .catch(err => {
-          console.log(err);
-          reject(undefined);
+          reject(err);
         });
     });
   }
@@ -74,7 +72,12 @@ const getManifestRepoSyncState = (): Promise<IClusterSync | undefined> => {
 
 export const get = async (req: Request, res: Response) => {
   if (config.isValuesValid(res)) {
-    const status = await getManifestRepoSyncState();
-    res.json(status || {});
+    try {
+      const status = await getManifestRepoSyncState();
+      res.json(status || {});
+    } catch (err) {
+      console.log(err);
+      res.send(500);
+    }
   }
 };

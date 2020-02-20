@@ -32,21 +32,26 @@ const createClusterPipeline = () => {
 
 export const get = async (req: Request, res: Response) => {
   if (config.isValuesValid(res)) {
-    const srcPipeline = createSourcePipeline();
-    const hldPipeline = createHLDPipeline();
-    const clusterPipeline = createClusterPipeline();
+    try {
+      const srcPipeline = createSourcePipeline();
+      const hldPipeline = createHLDPipeline();
+      const clusterPipeline = createClusterPipeline();
 
-    const deployments: IDeployment[] = await getDeployments(
-      config.STORAGE_ACCOUNT_NAME,
-      config.STORAGE_ACCOUNT_KEY,
-      config.STORAGE_TABLE_NAME,
-      config.STORAGE_PARTITION_KEY,
-      srcPipeline,
-      hldPipeline,
-      clusterPipeline,
-      undefined
-    );
+      const deployments: IDeployment[] = await getDeployments(
+        config.STORAGE_ACCOUNT_NAME,
+        config.STORAGE_ACCOUNT_KEY,
+        config.STORAGE_TABLE_NAME,
+        config.STORAGE_PARTITION_KEY,
+        srcPipeline,
+        hldPipeline,
+        clusterPipeline,
+        undefined
+      );
 
-    res.json(deployments);
+      res.json(deployments);
+    } catch (err) {
+      console.log(err);
+      res.send(500);
+    }
   }
 };
