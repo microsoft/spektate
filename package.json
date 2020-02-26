@@ -19,7 +19,7 @@
   "scripts": {
     "start-backend": "ts-node src/backend/index.ts",
     "start": "react-scripts-ts start",
-    "build": "react-scripts-ts build && tsc src/backend/** --outDir build/backend/",
+    "build": "react-scripts-ts build && tsc src/backend/** --outDir build/api/ && tsc src/index.ts --outDir build/",
     "eject": "react-scripts-ts eject",
     "lint": "tslint -p tsconfig.json -c tslint.json src/**/*.ts",
     "refresh": "rm -rf ./node_modules ./package-lock.json && npm install"

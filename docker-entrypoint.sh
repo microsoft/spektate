@@ -9,6 +9,6 @@ do
     mainstring="$mainstring $pair,"
 done
 mainstring="$mainstring}"
-ESCAPED_ENV_JSON=$(echo $mainstring | sed 's/\"/\\\"/g' | sed 's/\//\\\//g' | tr -d '\n' | tr -d '[[:blank:]]')
-sed -i 's/%REACT_APP_ENV%/'"$ESCAPED_ENV_JSON"'/g' /usr/share/nginx/html/index.html
-exec "$@"
+# ESCAPED_ENV_JSON=$(echo $mainstring | sed 's/\"/\\\"/g' | sed 's/\//\\\//g' | tr -d '\n' | tr -d '[[:blank:]]')
+# sed -i 's/%REACT_APP_ENV%/'"$ESCAPED_ENV_JSON"'/g' /usr/share/nginx/html/index.html
+# exec "$@"
