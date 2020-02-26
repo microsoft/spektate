@@ -3,7 +3,7 @@
     "baseUrl": ".",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "outDir": "build/dist",
+    "outDir": "build",
     "module": "commonjs",
     "target": "es6",
     "lib": ["es2017", "es2015", "dom", "es6"],
@@ -26,9 +26,7 @@
     "scripts",
     "acceptance-tests",
     "webpack",
-    "src/setupTests.ts",
     "pipeline-scripts",
-    "packages",
-    "backend"
+    "packages"
   ]
 }

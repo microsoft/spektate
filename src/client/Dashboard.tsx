@@ -83,10 +83,10 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
   }
 
   private updateDeployments = async () => {
-    if (!config.BACKEND_URL) {
-      console.error(`Back end URL is not configured.`);
-      return;
-    }
+    // if (!config.BACKEND_URL) {
+    //   console.error(`Back end URL is not configured.`);
+    //   return;
+    // }
     const deps = await HttpHelper.httpGet<any>(
       config.BACKEND_URL + "/deployments"
     );
