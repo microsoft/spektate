@@ -33,32 +33,7 @@ steps:
       Dockerfile: "**/Dockerfile"
       tags: "spektate-$(Build.SourceBranchName)-$(Build.BuildId)"
     condition: ne(variables['Build.Reason'], 'PullRequest')
-    displayName: Build docker image for front end
-
-  - script: |
-      yarn install
-    workingDirectory: "./backend"
-    displayName: "backend - yarn"
-
-  - script: |
-      yarn lint
-    workingDirectory: "./backend"
-    displayName: "backend - tslint"
-
-  - script: |
-      yarn build
-    workingDirectory: "./backend"
-    displayName: "backend - Build"
-
-  - task: Docker@2
-    inputs:
-      containerRegistry: "spektateacrconnection"
-      repository: "spektate"
-      command: "buildAndPush"
-      Dockerfile: "**/backend/Dockerfile"
-      tags: "spektate-backend-$(Build.SourceBranchName)-$(Build.BuildId)"
-    condition: ne(variables['Build.Reason'], 'PullRequest')
-    displayName: Build docker image for back end
+    displayName: Build docker image
 
   - script: |
       cd packages/spektate
