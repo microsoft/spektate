@@ -15,4 +15,4 @@ EXPOSE 80
 
 COPY docker-entrypoint.sh /
 ENTRYPOINT ["/docker-entrypoint.sh"]
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["ts-node", "index.js"]
