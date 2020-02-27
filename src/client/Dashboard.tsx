@@ -83,12 +83,8 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
   }
 
   private updateDeployments = async () => {
-    // if (!config.BACKEND_URL) {
-    //   console.error(`Back end URL is not configured.`);
-    //   return;
-    // }
     const deps = await HttpHelper.httpGet<any>(
-      config.BACKEND_URL + "/deployments"
+      config.BACKEND_URL + "/api/deployments"
     );
     const ideps: IDeployment[] = deps.data as IDeployment[];
     this.processQueryParams();
@@ -110,7 +106,6 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         timeStamp: dep.timeStamp
       };
     });
-    console.log(deployments);
 
     this.setState({ deployments });
     this.setState({ filteredDeployments: this.state.deployments });
@@ -131,9 +126,8 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         value: this.filterState.currentlySelectedKeyword
       });
     }
-    HttpHelper.httpGet(config.BACKEND_URL + "/clustersync").then(
+    HttpHelper.httpGet(config.BACKEND_URL + "/api/clustersync").then(
       (syncData: any) => {
-        console.log(syncData);
         if (syncData.data && syncData.data.tags && syncData.data.releasesURL) {
           this.setState({ manifestSyncStatuses: syncData.data.tags as ITag[] });
           this.releasesUrl = syncData.data.releasesURL;
@@ -912,7 +906,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       this.state.deployments.forEach(deployment => {
         const queryParams = this.getAuthorRequestParams(deployment);
         const promise = HttpHelper.httpGet(
-          config.BACKEND_URL + "/author?" + queryParams
+          config.BACKEND_URL + "/api/author?" + queryParams
         );
 
         promise.then(data => {

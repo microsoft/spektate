@@ -7,7 +7,7 @@ import { get as deploymentGet } from "./backend/deployment";
 const app = express();
 
 // Serve static files from the React app
-app.use(express.static(path.join(__dirname, "static")));
+app.use(express.static(path.join(__dirname)));
 
 app.get("/api/deployments", (req: express.Request, res: express.Response) => {
   deploymentGet(req, res);
@@ -18,6 +18,7 @@ app.get("/api/clustersync", (req: express.Request, res: express.Response) => {
 app.get("/api/author", (req: express.Request, res: express.Response) => {
   authorGet(req, res);
 });
+
 // The "catchall" handler: for any request that doesn't
 // match one above, send back React's index.html file.
 app.get("*", (req, res) => {

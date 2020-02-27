@@ -15,4 +15,5 @@ EXPOSE 80
 
 COPY docker-entrypoint.sh /
 ENTRYPOINT ["/docker-entrypoint.sh"]
-CMD ["ts-node", "index.js"]
+EXPOSE 5000
+CMD [ "node", "server.js" ]
