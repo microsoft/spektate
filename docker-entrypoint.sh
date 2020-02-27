@@ -6,12 +6,10 @@ do
     key=${word%%=*}
     value=${word#*=}
     pair=$(echo "\"$key\":\"$value\"")
-    echo "\"$key\":\"$value\""
+    # echo "\"$key\":\"$value\""
     # mainstring="$mainstring $pair,"
     export $key=$value
 done
 
 # ts-node index.js
-ls
-pwd
 node server.js
