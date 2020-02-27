@@ -8,7 +8,10 @@ RUN yarn install --ignore-optional --silent
 RUN yarn global add ts-node --silent
 COPY . .
 RUN yarn build
+RUN ls
 
 EXPOSE 5000
-RUN cd build
-CMD [ "node", "server.js" ]
+# COPY docker-entrypoint.sh /app
+# ENTRYPOINT ["/app/docker-entrypoint.sh"]
+WORKDIR /app/build
+CMD node server.js
