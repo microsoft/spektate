@@ -14,4 +14,3 @@ EXPOSE 5000
 COPY docker-entrypoint.sh /app
 WORKDIR /app/build
 ENTRYPOINT ["/app/docker-entrypoint.sh"]
-# CMD node server.js
