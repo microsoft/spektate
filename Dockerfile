@@ -11,7 +11,7 @@ RUN yarn build
 RUN ls
 
 EXPOSE 5000
-# COPY docker-entrypoint.sh /app
-# ENTRYPOINT ["/app/docker-entrypoint.sh"]
+COPY docker-entrypoint.sh /app
 WORKDIR /app/build
-CMD node server.js
+ENTRYPOINT ["/app/docker-entrypoint.sh"]
+# CMD node server.js

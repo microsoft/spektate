@@ -12,3 +12,6 @@ do
 done
 
 # ts-node index.js
+ls
+pwd
+node server.js
