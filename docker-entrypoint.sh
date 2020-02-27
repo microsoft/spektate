@@ -11,4 +11,4 @@ do
     export $key=$value
 done
 
-ts-node index.js
+# ts-node index.js
