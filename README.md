@@ -1,4 +1,5 @@
 [![Build Status](https://dev.azure.com/epicstuff/bedrock/_apis/build/status/microsoft.spektate?branchName=master)](https://dev.azure.com/epicstuff/bedrock/_build/latest?definitionId=124&branchName=master)
+![Azure DevOps coverage](https://img.shields.io/azure-devops/coverage/epicstuff/bedrock/124/master)
 
 # Spektate
 
@@ -10,7 +11,7 @@ Currently, Spektate consists of a command line interface and a simple dashboard 
 
 ## Onboard a Bedrock project to use Spektate
 
-Follow the steps in this [guide](https://github.com/CatalystCode/spk/blob/master/docs/service-introspection-onboarding.md) to onboard a project to use Spektate.  
+Follow the steps in this [guide](https://github.com/CatalystCode/spk/blob/master/docs/service-introspection-onboarding.md) to onboard a project to use Spektate.
 
 ## Dashboard prototype
 
