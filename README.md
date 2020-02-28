@@ -21,18 +21,19 @@ Follow the steps in this [guide](https://github.com/CatalystCode/spk/blob/master
 ## Dashboard prototype
 
 1. Clone this repository, and run `yarn`.
-2. Add a .env file that contains the following variables:
+2. Add the following env variables to your shell:
 
-   ```
-   REACT_APP_STORAGE_ACCESS_KEY=
-   REACT_APP_STORAGE_TABLE_NAME=
-   REACT_APP_STORAGE_PARTITION_KEY=
-   REACT_APP_STORAGE_ACCOUNT_NAME=
-   REACT_APP_PIPELINE_PROJECT=
-   REACT_APP_PIPELINE_ORG=
-   REACT_APP_PIPELINE_ACCESS_TOKEN=
-   REACT_APP_MANIFEST=
-   REACT_APP_MANIFEST_ACCESS_TOKEN=
+   ```bash
+   export REACT_APP_STORAGE_ACCESS_KEY=
+   export REACT_APP_STORAGE_TABLE_NAME=
+   export REACT_APP_STORAGE_PARTITION_KEY=
+   export REACT_APP_STORAGE_ACCOUNT_NAME=
+   export REACT_APP_PIPELINE_PROJECT=
+   export REACT_APP_PIPELINE_ORG=
+   export REACT_APP_PIPELINE_ACCESS_TOKEN=
+   export REACT_APP_MANIFEST=
+   export REACT_APP_MANIFEST_ACCESS_TOKEN=
+   export REACT_APP_SOURCE_REPO_ACCESS_TOKEN=
    ```
 
    - `REACT_APP_STORAGE_ACCESS_KEY`: Access key for the storage account
@@ -44,7 +45,8 @@ Follow the steps in this [guide](https://github.com/CatalystCode/spk/blob/master
    - `REACT_APP_PIPELINE_ACCESS_TOKEN`: Access token for pipelines in Azure DevOps
    - `REACT_APP_MANIFEST`: Manifest repository name
    - `REACT_APP_MANIFEST_ACCESS_TOKEN`: Access token for the manifest repository
-   - If you're using GitHub, add `REACT_APP_GITHUB_MANIFEST_USERNAME`: Account name under which the manifest repository resides.
+   - `REACT_APP_SOURCE_REPO_ACCESS_TOKEN`: Access token for the source repository
+   - **Note**: If you're using GitHub, add `REACT_APP_GITHUB_MANIFEST_USERNAME`: Account name under which the manifest repository resides.
 
 3. Then run `yarn start` to view the dashboard for the hello world deployment screen.
 

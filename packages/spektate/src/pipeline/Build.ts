@@ -1,4 +1,5 @@
-import { IRepository } from "../repository/Repository";
+import { IAzureDevOpsRepo } from "../repository/IAzureDevOpsRepo";
+import { IGitHub } from "../repository/IGitHub";
 import { IPipelineStages } from "./PipelineStage";
 
 export interface IBuild {
@@ -14,7 +15,7 @@ export interface IBuild {
   startTime: Date;
   finishTime: Date;
   URL: string;
-  repository?: IRepository;
+  repository?: IGitHub | IAzureDevOpsRepo;
   lastUpdateTime?: Date;
   timelineURL: string;
   stages?: IPipelineStages;

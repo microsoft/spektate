@@ -22,6 +22,7 @@ steps:
 
   - script: |
       yarn build
+    workingDirectory: "./"
     displayName: "Build"
 
   - task: Docker@2
@@ -32,6 +33,7 @@ steps:
       Dockerfile: "**/Dockerfile"
       tags: "spektate-$(Build.SourceBranchName)-$(Build.BuildId)"
     condition: ne(variables['Build.Reason'], 'PullRequest')
+    displayName: Build docker image
 
   - script: |
       cd packages/spektate

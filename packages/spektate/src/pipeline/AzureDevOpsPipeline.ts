@@ -1,6 +1,4 @@
 import { HttpHelper } from "../HttpHelper";
-import { AzureDevOpsRepo } from "../repository/AzureDevOpsRepo";
-import { GitHub } from "../repository/GitHub";
 import { IBuild } from "./Build";
 import IPipeline from "./Pipeline";
 import { IPipelineStage, IPipelineStages } from "./PipelineStage";
@@ -23,20 +21,17 @@ export class AzureDevOpsPipeline implements IPipeline {
   public pipelineAccessToken?: string;
   public builds: { [id: string]: IBuild } = {};
   public releases: { [id: string]: IRelease } = {};
-  public repoAccessToken?: string;
 
   constructor(
     org: string,
     project: string,
     isRelease?: boolean,
-    pipelineAccessToken?: string,
-    repoAccessToken?: string
+    pipelineAccessToken?: string
   ) {
     this.org = org;
     this.project = project;
     this.isRelease = isRelease;
     this.pipelineAccessToken = pipelineAccessToken;
-    this.repoAccessToken = repoAccessToken;
   }
 
   public async getListOfBuilds(buildIds?: Set<string>) {
@@ -65,21 +60,19 @@ export class AzureDevOpsPipeline implements IPipeline {
         timelineURL: row._links.timeline.href
       };
       if (row.repository.type === "GitHub") {
-        build.repository = new GitHub(
-          row.repository.id.split("/")[0],
-          row.repository.id.split("/")[1],
-          this.repoAccessToken
-        );
+        build.repository = {
+          reponame: row.repository.id.split("/")[1],
+          username: row.repository.id.split("/")[0]
+        };
       } else if (row.repository.type === "TfsGit" && row.repository.url) {
         const reposityUrlSplit = row.repository.url.split("/");
         build.sourceVersionURL =
           row.repository.url + "/commit/" + row.sourceVersion;
-        build.repository = new AzureDevOpsRepo(
-          reposityUrlSplit[3],
-          reposityUrlSplit[4],
-          reposityUrlSplit[6],
-          this.repoAccessToken
-        );
+        build.repository = {
+          org: reposityUrlSplit[3],
+          project: reposityUrlSplit[4],
+          repo: reposityUrlSplit[6]
+        };
       }
       builds.push(build);
 
