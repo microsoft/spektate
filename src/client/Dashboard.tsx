@@ -23,7 +23,6 @@ import { IAuthor } from "spektate/lib/repository/Author";
 import { IAzureDevOpsRepo } from "spektate/lib/repository/IAzureDevOpsRepo";
 import { IGitHub } from "spektate/lib/repository/IGitHub";
 import { ITag } from "spektate/lib/repository/Tag";
-import { config } from "./config";
 import "./css/dashboard.css";
 import {
   IDashboardFilterState,
@@ -83,9 +82,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
   }
 
   private updateDeployments = async () => {
-    const deps = await HttpHelper.httpGet<any>(
-      config.BACKEND_URL + "/api/deployments"
-    );
+    const deps = await HttpHelper.httpGet<any>("/api/deployments");
     const ideps: IDeployment[] = deps.data as IDeployment[];
     this.processQueryParams();
 
@@ -126,14 +123,12 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         value: this.filterState.currentlySelectedKeyword
       });
     }
-    HttpHelper.httpGet(config.BACKEND_URL + "/api/clustersync").then(
-      (syncData: any) => {
-        if (syncData.data && syncData.data.tags && syncData.data.releasesURL) {
-          this.setState({ manifestSyncStatuses: syncData.data.tags as ITag[] });
-          this.releasesUrl = syncData.data.releasesURL;
-        }
+    HttpHelper.httpGet("/api/clustersync").then((syncData: any) => {
+      if (syncData.data && syncData.data.tags && syncData.data.releasesURL) {
+        this.setState({ manifestSyncStatuses: syncData.data.tags as ITag[] });
+        this.releasesUrl = syncData.data.releasesURL;
       }
-    );
+    });
   };
 
   private renderPrototypeTable = () => {
@@ -905,9 +900,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       const promises: Array<Promise<any>> = [];
       this.state.deployments.forEach(deployment => {
         const queryParams = this.getAuthorRequestParams(deployment);
-        const promise = HttpHelper.httpGet(
-          config.BACKEND_URL + "/api/author?" + queryParams
-        );
+        const promise = HttpHelper.httpGet("/api/author?" + queryParams);
 
         promise.then(data => {
           const author = data.data as IAuthor;

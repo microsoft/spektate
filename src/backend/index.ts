@@ -26,12 +26,12 @@ app.listen(port, () => {
   console.log(`server started at http://localhost:${port}`);
 });
 
-app.get("/deployments", (req: express.Request, res: express.Response) => {
+app.get("/api/deployments", (req: express.Request, res: express.Response) => {
   deploymentGet(req, res);
 });
-app.get("/clustersync", (req: express.Request, res: express.Response) => {
+app.get("/api/clustersync", (req: express.Request, res: express.Response) => {
   clusterSyncGet(req, res);
 });
-app.get("/author", (req: express.Request, res: express.Response) => {
+app.get("/api/author", (req: express.Request, res: express.Response) => {
   authorGet(req, res);
 });
