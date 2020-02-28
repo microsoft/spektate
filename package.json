@@ -3,7 +3,9 @@
   "version": "0.1.0",
   "main": "build/dist/index.js",
   "types": "build/dist/index.d.ts",
+  "proxy": "http://localhost:8001",
   "dependencies": {
+    "@types/express": "^4.17.0",
     "azure-devops-ui": "^1.155.0",
     "cli-table": "^0.3.1",
     "commander": "^2.20.0",
@@ -12,15 +14,14 @@
     "react": "^16.8.5",
     "react-dom": "^16.8.5",
     "react-scripts-ts": "^4.0.8",
-    "spektate": "^0.1.16"
+    "spektate": "^1.0.0",
+    "body-parser": "^1.19.0"
   },
   "scripts": {
+    "start-backend": "ts-node src/backend/index.ts",
     "start": "react-scripts-ts start",
-    "build": "react-scripts-ts build",
+    "build": "react-scripts-ts build && tsc src/backend/** --outDir build/backend/ && tsc src/server.ts --outDir build/",
     "eject": "react-scripts-ts eject",
-    "start-cli": "nodemon --watch 'src/cli/**/*.ts' --exec 'ts-node' src/cli/spex.ts",
-    "create-cli": "npm run build-cli",
-    "build-cli": "sh release-cli.sh",
     "lint": "tslint -p tsconfig.json -c tslint.json src/**/*.ts",
     "refresh": "rm -rf ./node_modules ./package-lock.json && npm install"
   },
@@ -33,11 +34,11 @@
     "chai": "^4.2.0",
     "husky": "^3.0.4",
     "lint-staged": "^9.2.5",
-    "nodemon": "^1.19.1",
+    "pkg": "^4.4.0",
     "prettier": "^1.18.2",
     "ts-jest": "^24.0.2",
-    "ts-node": "^8.3.0",
-    "tslint": "^5.19.0",
+    "ts-node": "^8.5.4",
+    "tslint": "^5.20.0",
     "tslint-config-prettier": "^1.18.0",
     "typescript": "^3.5.3"
   },
@@ -65,5 +66,10 @@
       "prettier --write",
       "git add"
     ]
+  },
+  "resolutions": {
+    "**/*/serialize-javascript": ">=2.1.1",
+    "**/*/mem": ">=4.0.0",
+    "**/*/braces": ">=2.3.1"
   }
 }

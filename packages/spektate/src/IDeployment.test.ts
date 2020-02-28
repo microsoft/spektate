@@ -1,12 +1,21 @@
 import * as azure from "azure-storage";
 import * as fs from "fs";
-import { Deployment } from "./Deployment";
+import { IDeployment } from "./IDeployment";
+import * as Deployment from "./IDeployment";
+import {
+  compare,
+  duration,
+  endTime,
+  getDeploymentsBasedOnFilters,
+  parseDeploymentsFromDB,
+  status
+} from "./IDeployment";
 import { AzureDevOpsPipeline } from "./pipeline/AzureDevOpsPipeline";
 import IPipeline, { IBuilds, IReleases } from "./pipeline/Pipeline";
 import { IAuthor } from "./repository/Author";
 
 const mockDirectory = "src/mocks/";
-let rawDeployments: Deployment[];
+let rawDeployments: IDeployment[];
 let query: azure.TableQuery | undefined;
 
 // Declare these with a test name since response is mocked
@@ -46,13 +55,26 @@ jest.spyOn(Deployment, "getDeployments").mockImplementation(
     hldPipeline1: IPipeline,
     manifestPipeline: IPipeline,
     query1?: azure.TableQuery
-  ): Promise<Deployment[]> => {
+  ): Promise<IDeployment[]> => {
     query = query1;
     return new Promise(resolve => {
       resolve(rawDeployments);
     });
   }
 );
+
+jest
+  .spyOn(Deployment, "cleanUpDeploymentsFromDB")
+  .mockImplementation(
+    (
+      batch: azure.TableBatch,
+      storageAccount: string,
+      storageAccountKey: string,
+      storageAccountTable: string
+    ) => {
+      console.log("Mocking out db cleanup");
+    }
+  );
 
 beforeAll(() => {
   rawDeployments = JSON.parse(
@@ -73,42 +95,45 @@ beforeAll(() => {
 describe("Deployment", () => {
   test("Deployments parsing is working as expected", () => {
     new Promise(resolve => {
-      Deployment.parseDeploymentsFromDB(
+      parseDeploymentsFromDB(
         rawDeployments,
         srcPipeline,
         hldPipeline,
         clusterPipeline,
+        "",
+        "",
+        "",
         resolve
       );
     }).then(value => {
       expect(value).toHaveLength(62);
-      const deps = value as Deployment[];
+      const deps = value as IDeployment[];
       let verified = false;
       deps.forEach(dep => {
         if (dep.deploymentId === "179c843496bd") {
-          expect(dep.status()).toBe("Complete");
-          expect(dep.endTime().getTime()).toBe(
+          expect(status(dep)).toBe("Complete");
+          expect(endTime(dep).getTime()).toBe(
             new Date("2019-10-31T18:15:53.767Z").getTime()
           );
-          expect(dep.duration()).toBe("9.24");
+          expect(duration(dep)).toBe("9.24");
           verified = true;
         }
       });
       expect(verified).toBe(true);
 
-      deps.sort(Deployment.compare);
+      deps.sort(compare);
       expect(deps).toHaveLength(62);
-      expect(deps[61].endTime().getTime() < deps[0].endTime().getTime()).toBe(
+      expect(endTime(deps[61]).getTime() < endTime(deps[0]).getTime()).toBe(
         true
       );
-      expect(deps[1].endTime().getTime() < deps[0].endTime().getTime());
+      expect(endTime(deps[1]).getTime() < endTime(deps[0]).getTime());
     });
   });
 });
 
 describe("Deployment", () => {
   test("Query string is built correctly to pull from storage", () => {
-    Deployment.getDeploymentsBasedOnFilters(
+    getDeploymentsBasedOnFilters(
       "",
       "",
       "",
@@ -121,7 +146,7 @@ describe("Deployment", () => {
     );
     let queryString = JSON.stringify(query);
     expect(queryString.includes("env eq 'dev'")).toBe(true);
-    Deployment.getDeploymentsBasedOnFilters(
+    getDeploymentsBasedOnFilters(
       "",
       "",
       "",

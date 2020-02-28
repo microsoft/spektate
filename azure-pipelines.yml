@@ -11,19 +11,18 @@ steps:
     displayName: "Install Node.js"
 
   - script: |
-      npm install
-      npm install -g ts-node
-      npm install -g pkg
+      yarn install
     workingDirectory: "./"
-    displayName: "npm install"
+    displayName: "yarn"
 
   - script: |
-      npm run lint
+      yarn lint
     workingDirectory: "./"
     displayName: "tslint"
 
   - script: |
-      npm run build
+      yarn build
+    workingDirectory: "./"
     displayName: "Build"
 
   - task: Docker@2
@@ -34,13 +33,14 @@ steps:
       Dockerfile: "**/Dockerfile"
       tags: "spektate-$(Build.SourceBranchName)-$(Build.BuildId)"
     condition: ne(variables['Build.Reason'], 'PullRequest')
+    displayName: Build docker image
 
   - script: |
       cd packages/spektate
-      npm install 
-      npm run build
-      npm run test
-    displayName: "npm package build and test"
+      yarn
+      yarn build
+      yarn test
+    displayName: "package build and test"
 
   - task: PublishCodeCoverageResults@1
     inputs:

@@ -1,4 +1,4 @@
-export * from "./Deployment";
+export * from "./IDeployment";
 export * from "./HttpHelper";
 export * from "./pipeline";
 export * from "./repository";

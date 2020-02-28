@@ -1,16 +1,22 @@
 import { AxiosResponse } from "axios";
 import * as fs from "fs";
 import { HttpHelper } from "../HttpHelper";
-import { IAuthor } from "./Author";
-import { GitHub } from "./GitHub";
-import { ITag } from "./Tag";
+import {
+  getAuthor,
+  getManifestSyncState,
+  getReleasesURL,
+  IGitHub
+} from "./IGitHub";
 
 let authorRawResponse = {};
 let syncTagRawResponse = {};
 let manifestSyncTagResponse = {};
 let manifestResponse1 = {};
 const mockDirectory = "src/repository/mocks/";
-const repo = new GitHub("username", "reponame", "some-token");
+const repo: IGitHub = {
+  reponame: "reponame",
+  username: "username"
+};
 
 beforeAll(() => {
   authorRawResponse = JSON.parse(
@@ -42,9 +48,9 @@ jest.spyOn(HttpHelper, "httpGet").mockImplementation(
   }
 );
 
-describe("GitHub", () => {
+describe("IGitHub", () => {
   test("gets author correctly", async () => {
-    const author = await repo.getAuthor("commit");
+    const author = await getAuthor(repo, "commit");
     expect(author).toBeDefined();
     expect(author!.name).toBe("Edaena Salinas");
     expect(author!.url).toBeDefined();
@@ -53,14 +59,21 @@ describe("GitHub", () => {
   });
 });
 
-describe("GitHub", () => {
+describe("IGitHub", () => {
   test("gets manifest sync tag correctly", async () => {
-    const tags = await repo.getManifestSyncState();
+    const tags = await getManifestSyncState(repo);
     expect(tags).toHaveLength(2);
     expect(tags[0].commit).toBe("57cb69b");
     expect(tags[0].tagger).toBeDefined();
     expect(tags[0].tagger).toBe("Weave Flux");
-    expect(tags[0].name).toBe("flux-alaska");
+    expect(tags[0].name).toBe("ALASKA");
+  });
+});
+
+describe("IGitHub", () => {
+  test("gets releases URL correctly", async () => {
+    const releaseUrl = getReleasesURL(repo);
+    expect(releaseUrl).toBe("https://github.com/username/reponame/releases");
   });
 });
 
