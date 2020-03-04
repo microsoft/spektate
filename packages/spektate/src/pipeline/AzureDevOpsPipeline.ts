@@ -36,7 +36,7 @@ export class AzureDevOpsPipeline implements IPipeline {
 
   public async getListOfBuilds(buildIds?: Set<string>) {
     if (buildIds && buildIds!.size === 0) {
-      return {};
+      return this.builds;
     }
     const buildUrl = this.getBuildUrl(buildIds);
     const json = await HttpHelper.httpGet<any>(
@@ -127,7 +127,7 @@ export class AzureDevOpsPipeline implements IPipeline {
   // improve the code below, and use the variable releaseIds
   public async getListOfReleases(releaseIds?: Set<string>) {
     if (releaseIds && releaseIds!.size === 0) {
-      return {};
+      return this.releases;
     }
     const json = await HttpHelper.httpGet<any>(
       this.getReleaseUrl(releaseIds),

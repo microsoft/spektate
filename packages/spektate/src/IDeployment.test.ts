@@ -11,10 +11,10 @@ import {
   status
 } from "./IDeployment";
 import { AzureDevOpsPipeline } from "./pipeline/AzureDevOpsPipeline";
-import IPipeline, { IBuilds, IReleases } from "./pipeline/Pipeline";
-import { IAuthor } from "./repository/Author";
 import { IBuild } from "./pipeline/Build";
+import IPipeline, { IBuilds, IReleases } from "./pipeline/Pipeline";
 import { IPipelineStages } from "./pipeline/PipelineStage";
+import { IAuthor } from "./repository/Author";
 
 const mockDirectory = "src/mocks/";
 let rawDeployments: IDeployment[];
@@ -81,7 +81,9 @@ jest
       storageAccount: string,
       storageAccountKey: string,
       storageAccountTable: string
-    ) => {}
+    ) => {
+      // no-op
+    }
   );
 
 beforeAll(() => {
