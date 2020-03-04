@@ -35,6 +35,9 @@ export class AzureDevOpsPipeline implements IPipeline {
   }
 
   public async getListOfBuilds(buildIds?: Set<string>) {
+    if (buildIds && buildIds!.size === 0) {
+      return {};
+    }
     const buildUrl = this.getBuildUrl(buildIds);
     const json = await HttpHelper.httpGet<any>(
       buildUrl,
