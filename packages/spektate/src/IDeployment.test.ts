@@ -13,6 +13,8 @@ import {
 import { AzureDevOpsPipeline } from "./pipeline/AzureDevOpsPipeline";
 import IPipeline, { IBuilds, IReleases } from "./pipeline/Pipeline";
 import { IAuthor } from "./repository/Author";
+import { IBuild } from "./pipeline/Build";
+import { IPipelineStages } from "./pipeline/PipelineStage";
 
 const mockDirectory = "src/mocks/";
 let rawDeployments: IDeployment[];
@@ -45,6 +47,14 @@ jest
     }
   );
 
+jest.spyOn(AzureDevOpsPipeline.prototype, "getBuildStages").mockImplementation(
+  (build: IBuild): Promise<IPipelineStages> => {
+    return new Promise<IPipelineStages>(resolve => {
+      resolve({});
+    });
+  }
+);
+
 jest.spyOn(Deployment, "getDeployments").mockImplementation(
   (
     storageAccount: string,
@@ -71,9 +81,7 @@ jest
       storageAccount: string,
       storageAccountKey: string,
       storageAccountTable: string
-    ) => {
-      console.log("Mocking out db cleanup");
-    }
+    ) => {}
   );
 
 beforeAll(() => {
