@@ -11,10 +11,7 @@ import {
   status
 } from "./IDeployment";
 import { AzureDevOpsPipeline } from "./pipeline/AzureDevOpsPipeline";
-import { IBuild } from "./pipeline/Build";
-import IPipeline, { IBuilds, IReleases } from "./pipeline/Pipeline";
-import { IPipelineStages } from "./pipeline/PipelineStage";
-import { IAuthor } from "./repository/Author";
+import IPipeline from "./pipeline/Pipeline";
 
 const mockDirectory = "src/mocks/";
 let rawDeployments: IDeployment[];
@@ -29,31 +26,15 @@ const clusterPipeline = new AzureDevOpsPipeline(
   false
 );
 
-jest.spyOn(AzureDevOpsPipeline.prototype, "getListOfBuilds").mockImplementation(
-  (buildIds?: Set<string>): Promise<IBuilds> => {
-    return new Promise<IBuilds>(resolve => {
-      resolve({});
-    });
-  }
-);
-
+jest
+  .spyOn(AzureDevOpsPipeline.prototype, "getBuildStages")
+  .mockReturnValue(Promise.resolve({}));
 jest
   .spyOn(AzureDevOpsPipeline.prototype, "getListOfReleases")
-  .mockImplementation(
-    (releaseIds?: Set<string>): Promise<IReleases> => {
-      return new Promise<IReleases>(resolve => {
-        resolve({});
-      });
-    }
-  );
-
-jest.spyOn(AzureDevOpsPipeline.prototype, "getBuildStages").mockImplementation(
-  (build: IBuild): Promise<IPipelineStages> => {
-    return new Promise<IPipelineStages>(resolve => {
-      resolve({});
-    });
-  }
-);
+  .mockReturnValue(Promise.resolve({}));
+jest
+  .spyOn(AzureDevOpsPipeline.prototype, "getListOfBuilds")
+  .mockReturnValue(Promise.resolve({}));
 
 jest.spyOn(Deployment, "getDeployments").mockImplementation(
   (
