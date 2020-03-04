@@ -1,4 +1,5 @@
 [![Build Status](https://dev.azure.com/epicstuff/bedrock/_apis/build/status/microsoft.spektate?branchName=master)](https://dev.azure.com/epicstuff/bedrock/_build/latest?definitionId=124&branchName=master)
+![Azure DevOps coverage](https://img.shields.io/azure-devops/coverage/epicstuff/bedrock/124/master)
 
 # Spektate
 
