@@ -35,6 +35,9 @@ export class AzureDevOpsPipeline implements IPipeline {
   }
 
   public async getListOfBuilds(buildIds?: Set<string>) {
+    if (buildIds && buildIds!.size === 0) {
+      return {};
+    }
     const buildUrl = this.getBuildUrl(buildIds);
     const json = await HttpHelper.httpGet<any>(
       buildUrl,
@@ -59,12 +62,15 @@ export class AzureDevOpsPipeline implements IPipeline {
         status: row.status,
         timelineURL: row._links.timeline.href
       };
-      if (row.repository.type === "GitHub") {
+      if (row.repository.type.toLowerCase() === "github") {
         build.repository = {
           reponame: row.repository.id.split("/")[1],
           username: row.repository.id.split("/")[0]
         };
-      } else if (row.repository.type === "TfsGit" && row.repository.url) {
+      } else if (
+        row.repository.type.toLowerCase() === "tfsgit" &&
+        row.repository.url
+      ) {
         const reposityUrlSplit = row.repository.url.split("/");
         build.sourceVersionURL =
           row.repository.url + "/commit/" + row.sourceVersion;
@@ -120,6 +126,9 @@ export class AzureDevOpsPipeline implements IPipeline {
   // TODO: Once the bug with release API is fixed (regarding returning only top 50 rows),
   // improve the code below, and use the variable releaseIds
   public async getListOfReleases(releaseIds?: Set<string>) {
+    if (releaseIds && releaseIds!.size === 0) {
+      return {};
+    }
     const json = await HttpHelper.httpGet<any>(
       this.getReleaseUrl(releaseIds),
       this.pipelineAccessToken
