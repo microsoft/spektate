@@ -38,10 +38,6 @@ jest
   .spyOn(AzureDevOpsPipeline.prototype, "getListOfBuilds")
   .mockReturnValue(Promise.resolve({}));
 
-jest
-  .spyOn(AzureDevOpsPipeline.prototype, "getBuildStages")
-  .mockReturnValue(Promise.resolve({}));
-
 jest.spyOn(Deployment, "getDeployments").mockImplementation(
   (
     storageAccount: string,
