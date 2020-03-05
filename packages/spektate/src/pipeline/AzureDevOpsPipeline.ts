@@ -1,6 +1,6 @@
 import { HttpHelper } from "../HttpHelper";
 import { IBuild } from "./Build";
-import IPipeline from "./Pipeline";
+import { IBuilds, IPipeline, IReleases } from "./Pipeline";
 import { IPipelineStage, IPipelineStages } from "./PipelineStage";
 import { IRelease } from "./Release";
 
@@ -19,8 +19,8 @@ export class AzureDevOpsPipeline implements IPipeline {
   public project: string;
   public isRelease?: boolean;
   public pipelineAccessToken?: string;
-  public builds: { [id: string]: IBuild } = {};
-  public releases: { [id: string]: IRelease } = {};
+  public builds: IBuilds = {};
+  public releases: IReleases = {};
 
   constructor(
     org: string,
@@ -34,9 +34,7 @@ export class AzureDevOpsPipeline implements IPipeline {
     this.pipelineAccessToken = pipelineAccessToken;
   }
 
-  public async getListOfBuilds(
-    buildIds?: Set<string>
-  ): Promise<{ [id: string]: IBuild }> {
+  public async getListOfBuilds(buildIds?: Set<string>): Promise<IBuilds> {
     if (buildIds && buildIds!.size === 0) {
       return this.builds;
     }
@@ -128,9 +126,7 @@ export class AzureDevOpsPipeline implements IPipeline {
 
   // TODO: Once the bug with release API is fixed (regarding returning only top 50 rows),
   // improve the code below, and use the variable releaseIds
-  public async getListOfReleases(
-    releaseIds?: Set<string>
-  ): Promise<{ [id: string]: IRelease }> {
+  public async getListOfReleases(releaseIds?: Set<string>): Promise<IReleases> {
     if (releaseIds && releaseIds!.size === 0) {
       return this.releases;
     }
