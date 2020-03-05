@@ -11,8 +11,7 @@ import {
   status
 } from "./IDeployment";
 import { AzureDevOpsPipeline } from "./pipeline/AzureDevOpsPipeline";
-import IPipeline, { IBuilds, IReleases } from "./pipeline/Pipeline";
-import { IAuthor } from "./repository/Author";
+import IPipeline from "./pipeline/Pipeline";
 
 const mockDirectory = "src/mocks/";
 let rawDeployments: IDeployment[];
@@ -27,23 +26,15 @@ const clusterPipeline = new AzureDevOpsPipeline(
   false
 );
 
-jest.spyOn(AzureDevOpsPipeline.prototype, "getListOfBuilds").mockImplementation(
-  (buildIds?: Set<string>): Promise<IBuilds> => {
-    return new Promise<IBuilds>(resolve => {
-      resolve({});
-    });
-  }
-);
-
+jest
+  .spyOn(AzureDevOpsPipeline.prototype, "getBuildStages")
+  .mockReturnValue(Promise.resolve({}));
 jest
   .spyOn(AzureDevOpsPipeline.prototype, "getListOfReleases")
-  .mockImplementation(
-    (releaseIds?: Set<string>): Promise<IReleases> => {
-      return new Promise<IReleases>(resolve => {
-        resolve({});
-      });
-    }
-  );
+  .mockReturnValue(Promise.resolve({}));
+jest
+  .spyOn(AzureDevOpsPipeline.prototype, "getListOfBuilds")
+  .mockReturnValue(Promise.resolve({}));
 
 jest.spyOn(Deployment, "getDeployments").mockImplementation(
   (
@@ -72,7 +63,7 @@ jest
       storageAccountKey: string,
       storageAccountTable: string
     ) => {
-      console.log("Mocking out db cleanup");
+      // no-op
     }
   );
 
