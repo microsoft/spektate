@@ -11,7 +11,9 @@ import {
   status
 } from "./IDeployment";
 import { AzureDevOpsPipeline } from "./pipeline/AzureDevOpsPipeline";
+import { IBuild } from "./pipeline/Build";
 import IPipeline from "./pipeline/Pipeline";
+import { IRelease } from "./pipeline/Release";
 
 const mockDirectory = "src/mocks/";
 let rawDeployments: IDeployment[];
@@ -34,6 +36,10 @@ jest
   .mockReturnValue(Promise.resolve({}));
 jest
   .spyOn(AzureDevOpsPipeline.prototype, "getListOfBuilds")
+  .mockReturnValue(Promise.resolve({}));
+
+jest
+  .spyOn(AzureDevOpsPipeline.prototype, "getBuildStages")
   .mockReturnValue(Promise.resolve({}));
 
 jest.spyOn(Deployment, "getDeployments").mockImplementation(
@@ -84,41 +90,40 @@ beforeAll(() => {
 });
 
 describe("Deployment", () => {
-  test("Deployments parsing is working as expected", () => {
-    new Promise(resolve => {
-      parseDeploymentsFromDB(
-        rawDeployments,
-        srcPipeline,
-        hldPipeline,
-        clusterPipeline,
-        "",
-        "",
-        "",
-        resolve
-      );
-    }).then(value => {
-      expect(value).toHaveLength(62);
-      const deps = value as IDeployment[];
-      let verified = false;
-      deps.forEach(dep => {
-        if (dep.deploymentId === "179c843496bd") {
-          expect(status(dep)).toBe("Complete");
-          expect(endTime(dep).getTime()).toBe(
-            new Date("2019-10-31T18:15:53.767Z").getTime()
-          );
-          expect(duration(dep)).toBe("9.24");
-          verified = true;
-        }
-      });
-      expect(verified).toBe(true);
+  test("Deployments parsing is working as expected", async done => {
+    parseDeploymentsFromDB(
+      rawDeployments,
+      srcPipeline,
+      hldPipeline,
+      clusterPipeline,
+      "",
+      "",
+      "",
+      value => {
+        expect(value).toHaveLength(62);
+        const deps = value as IDeployment[];
+        let verified = false;
+        deps.forEach(dep => {
+          if (dep.deploymentId === "179c843496bd") {
+            expect(status(dep)).toBe("Complete");
+            expect(endTime(dep).getTime()).toBe(
+              new Date("2019-10-31T18:15:53.767Z").getTime()
+            );
+            expect(duration(dep)).toBe("9.24");
+            verified = true;
+          }
+        });
+        expect(verified).toBe(true);
 
-      deps.sort(compare);
-      expect(deps).toHaveLength(62);
-      expect(endTime(deps[61]).getTime() < endTime(deps[0]).getTime()).toBe(
-        true
-      );
-      expect(endTime(deps[1]).getTime() < endTime(deps[0]).getTime());
-    });
+        deps.sort(compare);
+        expect(deps).toHaveLength(62);
+        expect(endTime(deps[61]).getTime() < endTime(deps[0]).getTime()).toBe(
+          true
+        );
+        expect(endTime(deps[1]).getTime() < endTime(deps[0]).getTime());
+        done();
+      }
+    );
   });
 });
 
@@ -161,60 +166,25 @@ describe("Deployment", () => {
   });
 });
 
+const updateDatesOnPipeline = (oBuilds: {
+  [id: string]: IBuild | IRelease;
+}) => {
+  for (const id in oBuilds) {
+    if (id) {
+      const item = oBuilds[id];
+      item.finishTime = new Date(item.finishTime);
+      item.startTime = new Date(item.startTime);
+      item.queueTime = new Date(item.queueTime);
+      if (item.lastUpdateTime) {
+        item.lastUpdateTime = new Date(item.lastUpdateTime);
+      }
+    }
+  }
+};
+
 // Since pipelines are coming from mock json, they need to be converted to date formats
 const updatePipelineDates = () => {
-  for (const build in srcPipeline.builds) {
-    if (build) {
-      srcPipeline.builds[build].finishTime = new Date(
-        srcPipeline.builds[build].finishTime
-      );
-      srcPipeline.builds[build].startTime = new Date(
-        srcPipeline.builds[build].startTime
-      );
-      srcPipeline.builds[build].queueTime = new Date(
-        srcPipeline.builds[build].queueTime
-      );
-      if (srcPipeline.builds[build].lastUpdateTime) {
-        srcPipeline.builds[build].lastUpdateTime = new Date(
-          srcPipeline.builds[build].lastUpdateTime!
-        );
-      }
-    }
-  }
-  for (const build in hldPipeline.releases) {
-    if (build) {
-      hldPipeline.releases[build].finishTime = new Date(
-        hldPipeline.releases[build].finishTime
-      );
-      hldPipeline.releases[build].startTime = new Date(
-        hldPipeline.releases[build].startTime
-      );
-      hldPipeline.releases[build].queueTime = new Date(
-        hldPipeline.releases[build].queueTime
-      );
-      if (hldPipeline.releases[build].lastUpdateTime) {
-        hldPipeline.releases[build].lastUpdateTime = new Date(
-          hldPipeline.releases[build].lastUpdateTime!
-        );
-      }
-    }
-  }
-  for (const build in clusterPipeline.builds) {
-    if (build) {
-      clusterPipeline.builds[build].finishTime = new Date(
-        clusterPipeline.builds[build].finishTime
-      );
-      clusterPipeline.builds[build].startTime = new Date(
-        clusterPipeline.builds[build].startTime
-      );
-      clusterPipeline.builds[build].queueTime = new Date(
-        clusterPipeline.builds[build].queueTime
-      );
-      if (clusterPipeline.builds[build].lastUpdateTime) {
-        clusterPipeline.builds[build].lastUpdateTime = new Date(
-          clusterPipeline.builds[build].lastUpdateTime!
-        );
-      }
-    }
-  }
+  updateDatesOnPipeline(srcPipeline.builds);
+  updateDatesOnPipeline(hldPipeline.releases);
+  updateDatesOnPipeline(clusterPipeline.builds);
 };

@@ -34,7 +34,9 @@ export class AzureDevOpsPipeline implements IPipeline {
     this.pipelineAccessToken = pipelineAccessToken;
   }
 
-  public async getListOfBuilds(buildIds?: Set<string>) {
+  public async getListOfBuilds(
+    buildIds?: Set<string>
+  ): Promise<{ [id: string]: IBuild }> {
     if (buildIds && buildIds!.size === 0) {
       return this.builds;
     }
@@ -62,15 +64,16 @@ export class AzureDevOpsPipeline implements IPipeline {
         status: row.status,
         timelineURL: row._links.timeline.href
       };
-      if (row.repository.type.toLowerCase() === "github") {
+
+      const lcType = row.repository.type.toLowerCase();
+
+      if (lcType === "github") {
+        const idSplit = row.repository.id.split("/");
         build.repository = {
-          reponame: row.repository.id.split("/")[1],
-          username: row.repository.id.split("/")[0]
+          reponame: idSplit[1],
+          username: idSplit[0]
         };
-      } else if (
-        row.repository.type.toLowerCase() === "tfsgit" &&
-        row.repository.url
-      ) {
+      } else if (lcType === "tfsgit" && row.repository.url) {
         const reposityUrlSplit = row.repository.url.split("/");
         build.sourceVersionURL =
           row.repository.url + "/commit/" + row.sourceVersion;
@@ -97,11 +100,11 @@ export class AzureDevOpsPipeline implements IPipeline {
       this.pipelineAccessToken
     );
 
-    if (json.data && json.data.records.length === 0) {
-      return {};
-    }
-
     build.stages = {};
+
+    if (json.data && json.data.records.length === 0) {
+      return build.stages;
+    }
 
     for (const record of json.data.records) {
       let recordType: string = record.type;
@@ -125,7 +128,9 @@ export class AzureDevOpsPipeline implements IPipeline {
 
   // TODO: Once the bug with release API is fixed (regarding returning only top 50 rows),
   // improve the code below, and use the variable releaseIds
-  public async getListOfReleases(releaseIds?: Set<string>) {
+  public async getListOfReleases(
+    releaseIds?: Set<string>
+  ): Promise<{ [id: string]: IRelease }> {
     if (releaseIds && releaseIds!.size === 0) {
       return this.releases;
     }
@@ -146,16 +151,16 @@ export class AzureDevOpsPipeline implements IPipeline {
         startTime: new Date(row.startedOn),
         status: row.deploymentStatus
       };
+
       if (row.release.artifacts.length > 0) {
-        release.imageVersion =
-          row.release.artifacts[0].definitionReference.version.id;
-        if (row.release.artifacts[0].definitionReference.registryurl) {
-          release.registryURL =
-            row.release.artifacts[0].definitionReference.registryurl.id;
+        const defRef = row.release.artifacts[0].definitionReference;
+        release.imageVersion = defRef.version.id;
+
+        if (defRef.registryurl) {
+          release.registryURL = defRef.registryurl.id;
         }
-        if (row.release.artifacts[0].definitionReference.resourcegroup) {
-          release.registryResourceGroup =
-            row.release.artifacts[0].definitionReference.resourcegroup.id;
+        if (defRef.resourcegroup) {
+          release.registryResourceGroup = defRef.resourcegroup.id;
         }
       }
       releases.push(release);
@@ -165,12 +170,9 @@ export class AzureDevOpsPipeline implements IPipeline {
     return this.releases;
   }
 
-  private getBuildUrl(buildIds?: Set<string>) {
+  private getBuildUrl(buildIds?: Set<string>): string {
     if (buildIds) {
-      let strBuildIds = "";
-      buildIds.forEach(buildId => {
-        strBuildIds += buildId + ",";
-      });
+      const strBuildIds = Array.from(buildIds.values()).join(",");
       return buildFilterUrl
         .replace("{buildIds}", strBuildIds)
         .replace("{organization}", this.org)
@@ -181,14 +183,11 @@ export class AzureDevOpsPipeline implements IPipeline {
       .replace("{organization}", this.org)
       .replace("{project}", this.project);
   }
-  private getReleaseUrl(releaseIds?: Set<string>) {
+  private getReleaseUrl(releaseIds?: Set<string>): string {
     if (releaseIds) {
-      let strBuildIds = "";
-      releaseIds.forEach(releaseId => {
-        strBuildIds += releaseId + ",";
-      });
+      const strReleaseIds = Array.from(releaseIds.values()).join(",");
       return releaseFilterUrl
-        .replace("{releaseIds}", strBuildIds)
+        .replace("{releaseIds}", strReleaseIds)
         .replace("{organization}", this.org)
         .replace("{project}", this.project);
     }
