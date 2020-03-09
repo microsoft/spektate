@@ -104,13 +104,21 @@ export const getDeployments = async (
     );
   }
 
-  return new Promise<IDeployment[]>(resolve => {
+  return new Promise<IDeployment[]>((resolve, reject) => {
     tableService.queryEntities(
       storageTableName,
       query!,
       nextContinuationToken,
       (error: any, result: any) => {
-        if (!error) {
+        if (error) {
+          if (error.code === "AuthenticationFailed") {
+            reject(
+              `Authentication failed for storage account '${storageAccount}'.`
+            );
+          } else {
+            reject(error.message);
+          }
+        } else {
           parseDeploymentsFromDB(
             result,
             srcPipeline,
