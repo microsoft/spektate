@@ -29,6 +29,18 @@ export interface IDeployment {
   endTime?: Date;
 }
 
+interface IDeploymentDBItemResponse {
+  p1: {
+    _: string;
+  };
+  p2: {
+    _: string;
+  };
+  p3: {
+    _: string;
+  };
+}
+
 export const getDeploymentsBasedOnFilters = async (
   storageAccount: string,
   storageAccountKey: string,
@@ -109,7 +121,12 @@ export const getDeployments = async (
       storageTableName,
       query!,
       nextContinuationToken,
-      (error: Error, result: any) => {
+      (
+        error: Error,
+        result: azure.TableService.QueryEntitiesResult<
+          IDeploymentDBItemResponse
+        >
+      ) => {
         if (!error) {
           parseDeploymentsFromDB(
             result,
@@ -134,7 +151,7 @@ export const compare = (a: IDeployment, b: IDeployment): number => {
 };
 
 export const parseDeploymentsFromDB = (
-  result: any,
+  result: azure.TableService.QueryEntitiesResult<IDeploymentDBItemResponse>,
   srcPipeline: IPipeline,
   hldPipeline: IPipeline,
   manifestPipeline: IPipeline,
@@ -150,7 +167,7 @@ export const parseDeploymentsFromDB = (
   const manifestBuildIds: Set<string> = new Set<string>();
   const releaseIds: Set<string> = new Set<string>();
 
-  for (const entry of result.entries) {
+  (result.entries || []).forEach(entry => {
     if (entry.p1) {
       srcBuildIds.add(entry.p1._);
     }
@@ -161,7 +178,7 @@ export const parseDeploymentsFromDB = (
       // Assumption: build pipelines are multi stage if the ids of p1 and p2 are the same
       releaseIds.add(entry.p2._);
     }
-  }
+  });
 
   const p1 = srcPipeline.getListOfBuilds(srcBuildIds);
   const p2 = hldPipeline.getListOfReleases(releaseIds);
