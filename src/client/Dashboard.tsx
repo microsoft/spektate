@@ -32,6 +32,17 @@ import {
 } from "./Dashboard.types";
 import { DeploymentFilter } from "./DeploymentFilter";
 
+interface IAuthorResponse {
+  data: IAuthor;
+}
+
+interface IClusterSyncResponse {
+  data?: {
+    tags?: ITag[];
+    releasesURL?: string;
+  };
+}
+
 const REFRESH_INTERVAL = 30000;
 class Dashboard<Props> extends React.Component<Props, IDashboardState> {
   private interval: NodeJS.Timeout;
@@ -83,7 +94,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
 
   private updateDeployments = async () => {
     const deps = await HttpHelper.httpGet<any>("/api/deployments");
-    const ideps: IDeployment[] = deps.data as IDeployment[];
+    const ideps = deps.data as IDeployment[];
     this.processQueryParams();
 
     const deployments: IDeployment[] = ideps.map(dep => {
@@ -123,9 +134,10 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         value: this.filterState.currentlySelectedKeyword
       });
     }
-    HttpHelper.httpGet("/api/clustersync").then((syncData: any) => {
+    HttpHelper.httpGet("/api/clustersync").then((response: unknown) => {
+      const syncData = response as IClusterSyncResponse;
       if (syncData.data && syncData.data.tags && syncData.data.releasesURL) {
-        this.setState({ manifestSyncStatuses: syncData.data.tags as ITag[] });
+        this.setState({ manifestSyncStatuses: syncData.data.tags });
         this.releasesUrl = syncData.data.releasesURL;
       }
     });
@@ -337,7 +349,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     authorFilters: Set<string>,
     envFilters: Set<string>
   ) {
-    const query: any = {};
+    const query: querystring.ParsedUrlQueryInput = {};
 
     if (keywordFilter && keywordFilter.length > 0) {
       query.keyword = keywordFilter;
@@ -413,14 +425,14 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     }
 
     const filters = querystring.decode(window.location.search.replace("?", ""));
-    let keywordFilter: undefined | string;
-    const authorFilters: Set<string> = this.getFilterSet("author");
-    const serviceFilters: Set<string> = this.getFilterSet("service");
-    const envFilters: Set<string> = this.getFilterSet("env");
+    const authorFilters = this.getFilterSet("author");
+    const serviceFilters = this.getFilterSet("service");
+    const envFilters = this.getFilterSet("env");
 
-    if (filters.keyword && filters.keyword !== "") {
-      keywordFilter = filters.keyword.toString();
-    }
+    const keywordFilter =
+      filters.keyword && filters.keyword !== ""
+        ? filters.keyword.toString()
+        : undefined;
 
     // this.filterState = {
     //   currentlySelectedAuthors: Array.from(authorFilters),
@@ -485,16 +497,10 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
 
   private getClusterSyncStatusForDeployment = (
     deployment: IDeployment
-  ): ITag[] | undefined => {
-    const clusterSyncs: ITag[] = [];
-    if (this.state.manifestSyncStatuses) {
-      this.state.manifestSyncStatuses.forEach((tag: ITag) => {
-        if (deployment.manifestCommitId === tag.commit) {
-          clusterSyncs.push(tag);
-        }
-      });
-    }
-    return clusterSyncs;
+  ): ITag[] => {
+    return (this.state.manifestSyncStatuses || []).filter(
+      tag => deployment.manifestCommitId === tag.commit
+    );
   };
 
   private renderSimpleText = (
@@ -858,7 +864,6 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
           ariaLabel: "Incomplete"
         };
         indicatorData.label = "Incomplete";
-
         break;
     }
 
@@ -866,44 +871,62 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
   };
 
   private getAuthorRequestParams = (deployment: IDeployment) => {
-    const query: any = {};
+    const query: querystring.ParsedUrlQueryInput = {};
     const commit =
       deployment.srcToDockerBuild?.sourceVersion ||
       deployment.hldToManifestBuild?.sourceVersion;
     const repo: IAzureDevOpsRepo | IGitHub | undefined =
       deployment.srcToDockerBuild?.repository ||
       deployment.hldToManifestBuild?.repository;
-    if (repo && "username" in repo) {
+
+    if (!repo) {
+      return "";
+    }
+
+    if ("username" in repo) {
       query.username = repo.username;
       query.reponame = repo.reponame;
-      query.commit = commit;
-    } else if (repo && "org" in repo) {
+      if (commit) {
+        query.commit = commit;
+      }
+    } else if ("org" in repo) {
       query.org = repo.org;
       query.project = repo.project;
       query.repo = repo.repo;
-      query.commit = commit;
-    }
-    let str = "";
-    // tslint:disable-next-line: forin
-    for (const key in query) {
-      if (str !== "") {
-        str += "&";
+      if (commit) {
+        query.commit = commit;
       }
-      str += key + "=" + encodeURIComponent(query[key]);
     }
-    return str;
+
+    return querystring.encode(query);
   };
 
   private getAuthors = () => {
     try {
       const state = this.state;
-      const promises: Array<Promise<any>> = [];
-      this.state.deployments.forEach(deployment => {
-        const queryParams = this.getAuthorRequestParams(deployment);
-        const promise = HttpHelper.httpGet("/api/author?" + queryParams);
+      const promises: Array<Promise<IAuthorResponse>> = [];
+
+      const queries = this.state.deployments
+        .map(deployment => {
+          return {
+            deployment,
+            queryParams: this.getAuthorRequestParams(deployment)
+          };
+        })
+        .filter(
+          // filter out empty query parameters string
+          // backend api cannot take empty query parameters
+          item => item.queryParams !== ""
+        );
+
+      queries.forEach(item => {
+        const deployment = item.deployment;
+        const promise = HttpHelper.httpGet(
+          "/api/author?" + item.queryParams
+        ) as Promise<IAuthorResponse>;
 
         promise.then(data => {
-          const author = data.data as IAuthor;
+          const author = data.data;
           if (author && deployment.srcToDockerBuild) {
             const copy = state.authors;
             copy[deployment.srcToDockerBuild.sourceVersion] = author;
@@ -940,7 +963,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       deployment.author = this.state.authors[
         deployment.srcToDockerBuild.sourceVersion
       ];
-      return this.state.authors[deployment.srcToDockerBuild.sourceVersion];
+      return deployment.author;
     } else if (
       deployment.hldToManifestBuild &&
       deployment.hldToManifestBuild.sourceVersion in this.state.authors
@@ -948,7 +971,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       deployment.author = this.state.authors[
         deployment.hldToManifestBuild.sourceVersion
       ];
-      return this.state.authors[deployment.hldToManifestBuild.sourceVersion];
+      return deployment.author;
     }
     return undefined;
   };

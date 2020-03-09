@@ -94,9 +94,9 @@ export const getDeployments = async (
   );
   // Disabling ts-lint on line below, to get around issue https://github.com/Azure/azure-storage-node/issues/545
   // tslint:disable-next-line
-  let nextContinuationToken: azure.TableService.TableContinuationToken = <any>(
-    null
-  );
+  const nextContinuationToken: azure.TableService.TableContinuationToken = <
+    any
+  >null;
 
   if (!query) {
     query = new azure.TableQuery().where(
@@ -109,7 +109,7 @@ export const getDeployments = async (
       storageTableName,
       query!,
       nextContinuationToken,
-      (error: any, result: any) => {
+      (error: Error, result: any) => {
         if (!error) {
           parseDeploymentsFromDB(
             result,
@@ -366,7 +366,9 @@ export const endTime = (deployment: IDeployment): Date => {
   );
 };
 
-export const extractLastUpdateTime = (field: any): Date | undefined => {
+export const extractLastUpdateTime = (
+  field: IBuild | IRelease | undefined
+): Date | undefined => {
   if (field && field.lastUpdateTime) {
     const date = new Date(field.lastUpdateTime);
     if (!isNaN(date.getTime())) {
