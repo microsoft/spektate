@@ -30,6 +30,24 @@ export interface IDeployment {
 }
 
 interface IDeploymentDBItemResponse {
+  RowKey: {
+    _: string;
+  };
+  commitId: {
+    _: string;
+  };
+  env: {
+    _: string;
+  };
+  hldCommitId: {
+    _: string;
+  };
+  imageTag: {
+    _: string;
+  };
+  manifestCommitId: {
+    _: string;
+  };
   p1: {
     _: string;
   };
@@ -37,6 +55,12 @@ interface IDeploymentDBItemResponse {
     _: string;
   };
   p3: {
+    _: string;
+  };
+  service: {
+    _: string;
+  };
+  Timestamp: {
     _: string;
   };
 }
@@ -243,30 +267,20 @@ export const cleanUpDeploymentsFromDB = (
 
 // TODO: Look into cleaning up the parsing code below (avoid parsing underscores).
 export const getDeploymentFromDBEntry = async (
-  entry: any,
+  entry: IDeploymentDBItemResponse,
   srcPipeline: IPipeline,
   hldPipeline: IPipeline,
   manifestPipeline: IPipeline
 ) => {
-  let p1: IBuild | undefined;
-  let imageTag = "";
-  let commitId = "";
-  if (entry.p1 != null) {
-    p1 = srcPipeline.builds[entry.p1._];
-  }
-  if (entry.commitId != null) {
-    commitId = entry.commitId._;
-  }
-  if (entry.imageTag != null) {
-    imageTag = entry.imageTag._;
-  }
+  const p1: IBuild | undefined = entry.p1
+    ? srcPipeline.builds[entry.p1._]
+    : undefined;
+  const commitId = entry.commitId ? entry.commitId._ : "";
+  const imageTag = entry.imageTag ? entry.imageTag._ : "";
 
   let p2: IRelease | undefined;
   let p2ReleaseStage: IBuild | undefined;
-  let hldCommitId = "";
-  let manifestCommitId = "";
-  let env = "";
-  let service = "";
+
   const promises = [];
   if (entry.p2 != null) {
     if (
@@ -302,17 +316,13 @@ export const getDeploymentFromDBEntry = async (
   if (entry.p3 != null) {
     p3 = manifestPipeline.builds[entry.p3._];
   }
-  if (entry.hldCommitId != null) {
-    hldCommitId = entry.hldCommitId._;
-  }
-  if (entry.manifestCommitId != null) {
-    manifestCommitId = entry.manifestCommitId._;
-  }
-
-  if (entry.env != null) {
-    env = entry.env._;
-  }
-  if (entry.service != null) {
+  const hldCommitId = entry.hldCommitId ? entry.hldCommitId._ : "";
+  const manifestCommitId = entry.manifestCommitId
+    ? entry.manifestCommitId._
+    : "";
+  const env = entry.env ? entry.env._ : "";
+  let service = "";
+  if (entry.service) {
     service = entry.service._;
     if (service.split("/").length === 2) {
       service = service.split("/")[1];
