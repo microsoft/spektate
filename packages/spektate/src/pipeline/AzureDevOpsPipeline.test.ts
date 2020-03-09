@@ -41,6 +41,11 @@ describe("Pipeline", () => {
         fs.readFileSync(mockDirectory + "raw-builds.json", "utf-8")
       )
     };
+
+    // empty set
+    const result = await buildPipeline.getListOfBuilds(new Set());
+    expect(result).toStrictEqual({});
+
     await buildPipeline.getListOfBuilds(new Set(["7271", "7176"]));
     expect(Object.keys(buildPipeline.builds)).toHaveLength(2);
 
@@ -50,6 +55,7 @@ describe("Pipeline", () => {
     currentRawResponse = JSON.parse(
       fs.readFileSync(mockDirectory + "raw-build-stages.json", "utf-8")
     );
+
     await buildPipeline.getBuildStages(buildPipeline.builds["7271"]);
     expect(buildPipeline.builds["7271"].stages).toBeDefined();
   });
@@ -62,6 +68,9 @@ describe("Pipeline", () => {
         fs.readFileSync(mockDirectory + "raw-releases.json", "utf-8")
       )
     };
+    const result = await releasePipeline.getListOfReleases(new Set());
+    expect(result).toStrictEqual({});
+
     await releasePipeline.getListOfReleases(
       new Set(["261", "262", "263", "264"])
     );
