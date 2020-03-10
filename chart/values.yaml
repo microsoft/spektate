@@ -1,0 +1,35 @@
+# Default values for chart.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+storageAccessKey:
+storageTableName:
+storagePartitionKey:
+storageAccountName:
+pipelineProject:
+pipelineOrg:
+pipelineAccessToken:
+manifest:
+manifestAccessToken:
+githubManifestUsername:
+sourceRepoAccessToken:
+
+replicaCount: 2
+image:
+  repository: samiyaakhtar/spektate
+  tag: prod
+  pullSecret:
+  pullPolicy: IfNotPresent
+service:
+  name: web
+  type: NodePort
+  externalPort: 80
+  internalPort: 5000
+ingress:
+  enabled: false
+  # Used to create an Ingress record.
+  hosts:
+    - chart-example.local
+  annotations:
+  tls:
+resources: {}

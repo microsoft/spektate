@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "fullname" . }}
+  labels:
+    app: {{ template "name" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ template "name" . }}
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "name" . }}
+        release: {{ .Release.Name }}
+    spec:
+      imagePullSecrets:
+        - name: {{ .Values.image.pullSecret }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+          - name: REACT_APP_STORAGE_ACCESS_KEY
+            value: {{ .Values.storageAccessKey }}
+          - name: REACT_APP_STORAGE_TABLE_NAME
+            value: {{ .Values.storageTableName }}
+          - name: REACT_APP_STORAGE_PARTITION_KEY
+            value: {{ .Values.storagePartitionKey }}
+          - name: REACT_APP_STORAGE_ACCOUNT_NAME
+            value: {{ .Values.storageAccountName }}
+          - name: REACT_APP_PIPELINE_PROJECT
+            value: {{ .Values.pipelineProject }}
+          - name: REACT_APP_PIPELINE_ORG
+            value: {{ .Values.pipelineOrg }}
+          - name: REACT_APP_PIPELINE_ACCESS_TOKEN
+            value: {{ .Values.pipelineAccessToken }}
+          - name: REACT_APP_MANIFEST
+            value: {{ .Values.manifest }}
+          - name: REACT_APP_MANIFEST_ACCESS_TOKEN
+            value: {{ .Values.manifestAccessToken }}
+          - name: REACT_APP_GITHUB_MANIFEST_USERNAME
+            value: {{ .Values.githubManifestUsername }}
+          - name: REACT_APP_SOURCE_REPO_ACCESS_TOKEN
+            value: {{ .Values.sourceRepoAccessToken }}
+          ports:
+            - containerPort: {{ .Values.service.internalPort }}
+          livenessProbe:
+            httpGet:
+              path: /
+              port: {{ .Values.service.internalPort }}
+          readinessProbe:
+            httpGet:
+              path: /
+              port: {{ .Values.service.internalPort }}
+          resources:
+{{ toYaml .Values.resources | indent 12 }}
+    {{- if .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml .Values.nodeSelector | indent 8 }}
+    {{- end }}
