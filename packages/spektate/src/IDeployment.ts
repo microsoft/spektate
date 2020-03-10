@@ -127,15 +127,10 @@ export const getDeployments = async (
   });
 };
 
-export const compare = (a: IDeployment, b: IDeployment) => {
-  let aInt = 0;
-  let bInt = 0;
-  aInt = endTime(a).getTime();
-  bInt = endTime(b).getTime();
-  if (aInt < bInt) {
-    return 1;
-  }
-  return -1;
+export const compare = (a: IDeployment, b: IDeployment): number => {
+  const aInt = endTime(a).getTime();
+  const bInt = endTime(b).getTime();
+  return aInt < bInt ? 1 : -1;
 };
 
 export const parseDeploymentsFromDB = (
