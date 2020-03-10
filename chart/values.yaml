@@ -14,7 +14,7 @@ manifestAccessToken:
 githubManifestUsername:
 sourceRepoAccessToken:
 
-replicaCount: 2
+replicaCount: 1
 image:
   repository: samiyaakhtar/spektate
   tag: prod
