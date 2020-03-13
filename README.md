@@ -45,7 +45,7 @@ helm install . --name spektate --set storageAccessKey=<storageAccessKey> --set s
 If you're not using an external IP, use port-forwarding to access the dashboard:
 
 1. Copy pod name from `kubectl get pods`
-2. `kubectl port-forward pod/spektate-spektate-6f6cb98f58-l5gw4 2200:5000` or change `2200` to a port of your choice
+2. `kubectl port-forward pod/<pod-name> 2200:5000` or change `2200` to a port of your choice
 3. Navigate to http://localhost:2200 or change `2200` to a port of your choice
 
 ## Dashboard dev mode
