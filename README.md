@@ -40,7 +40,13 @@ helm install . --name spektate --set storageAccessKey=<storageAccessKey> --set s
 - `manifestRepoName`: Manifest repository name
 - `manifestAccessToken`: Access token for the manifest repository
 - `sourceRepoAccessToken`: Access token for the source repository
-- **Note**: If you're using GitHub, add `githubManifestUsername`: Account name under which the manifest repository resides.
+- **Note**: If you're using GitHub, add `githubManifestUsername`: Account name or organization name under which the manifest repository resides.
+
+If you're not using an external IP, use port-forwarding to access the dashboard:
+
+1. Copy pod name from `kubectl get pods`
+2. `kubectl port-forward pod/spektate-spektate-6f6cb98f58-l5gw4 2200:5000` or change `2200` to a port of your choice
+3. Navigate to http://localhost:2200 or change `2200` to a port of your choice
 
 ## Dashboard dev mode
 
@@ -70,7 +76,7 @@ helm install . --name spektate --set storageAccessKey=<storageAccessKey> --set s
    - `REACT_APP_MANIFEST`: Manifest repository name
    - `REACT_APP_MANIFEST_ACCESS_TOKEN`: Access token for the manifest repository
    - `REACT_APP_SOURCE_REPO_ACCESS_TOKEN`: Access token for the source repository
-   - **Note**: If you're using GitHub, add `REACT_APP_GITHUB_MANIFEST_USERNAME`: Account name under which the manifest repository resides.
+   - **Note**: If you're using GitHub, add `REACT_APP_GITHUB_MANIFEST_USERNAME`: Account name or organization name under which the manifest repository resides.
 
 3. Then run `yarn start-backend` in one window to start the backend server, and `yarn start` in another to start the front end to view the dashboard for the hello world deployment screen!
 
