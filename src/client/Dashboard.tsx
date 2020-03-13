@@ -355,7 +355,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       query.env = Array.from(envFilters);
     }
 
-    if (history.pushState) {
+    if (history.replaceState) {
       const newurl =
         window.location.protocol +
         "//" +
@@ -363,7 +363,8 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         window.location.pathname +
         "?" +
         querystring.encode(query);
-      window.history.pushState({ path: newurl }, "", newurl);
+
+      window.history.replaceState({ path: newurl }, "", newurl);
     } else {
       window.location.search = querystring.encode(query);
     }
@@ -900,23 +901,25 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       const promises: Array<Promise<any>> = [];
       this.state.deployments.forEach(deployment => {
         const queryParams = this.getAuthorRequestParams(deployment);
-        const promise = HttpHelper.httpGet("/api/author?" + queryParams);
+        if (queryParams !== "") {
+          const promise = HttpHelper.httpGet("/api/author?" + queryParams);
 
-        promise.then(data => {
-          const author = data.data as IAuthor;
-          if (author && deployment.srcToDockerBuild) {
-            const copy = state.authors;
-            copy[deployment.srcToDockerBuild.sourceVersion] = author;
-            this.setState({ authors: copy });
-            this.updateFilteredDeployments();
-          } else if (author && deployment.hldToManifestBuild) {
-            const copy = state.authors;
-            copy[deployment.hldToManifestBuild.sourceVersion] = author;
-            this.setState({ authors: copy });
-            this.updateFilteredDeployments();
-          }
-        });
-        promises.push(promise);
+          promise.then(data => {
+            const author = data.data as IAuthor;
+            if (author && deployment.srcToDockerBuild) {
+              const copy = state.authors;
+              copy[deployment.srcToDockerBuild.sourceVersion] = author;
+              this.setState({ authors: copy });
+              this.updateFilteredDeployments();
+            } else if (author && deployment.hldToManifestBuild) {
+              const copy = state.authors;
+              copy[deployment.hldToManifestBuild.sourceVersion] = author;
+              this.setState({ authors: copy });
+              this.updateFilteredDeployments();
+            }
+          });
+          promises.push(promise);
+        }
       });
 
       Promise.all(promises).then(() => {
