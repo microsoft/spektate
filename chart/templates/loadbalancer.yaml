@@ -1,0 +1,13 @@
+{{- if .Values.externalIP -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: loadbalancer
+spec:
+  selector:
+    app: {{ template "name" . }}
+  ports:
+    - port: {{ .Values.service.externalPort }}
+      targetPort: {{ .Values.service.internalPort }}
+  type: LoadBalancer
+{{- end -}}
