@@ -6,9 +6,15 @@ import { IRelease } from "./pipeline/Release";
 import { IAuthor } from "./repository/Author";
 import {
   getAuthor as adoGetAuthor,
+  getPullRequest as adoGetPR,
   IAzureDevOpsRepo
 } from "./repository/IAzureDevOpsRepo";
-import { getAuthor as gitHubGetAuthor, IGitHub } from "./repository/IGitHub";
+import {
+  getAuthor as gitHubGetAuthor,
+  getPullRequest as githubGetPR,
+  IGitHub
+} from "./repository/IGitHub";
+import { IPullRequest } from "./repository/IPullRequest";
 
 export interface IDeployment {
   deploymentId: string;
@@ -27,6 +33,10 @@ export interface IDeployment {
   duration?: string;
   status?: string;
   endTime?: Date;
+  pr?: string;
+  sourceRepo?: string;
+  hldRepo?: string;
+  manifestRepo?: string;
 }
 
 export const getDeploymentsBasedOnFilters = async (
@@ -225,8 +235,8 @@ export const cleanUpDeploymentsFromDB = (
       storageAccountKey
     );
     tableService.executeBatch(storageAccountTable, batch, (error, result) => {
-      if (!error) {
-        console.log("Deleted {0} entities", batch.size());
+      if (error) {
+        console.error("Failed to clean up db: ", error);
       }
     });
   }
@@ -317,10 +327,14 @@ export const getDeploymentFromDBEntry = async (
     dockerToHldReleaseStage: p2ReleaseStage,
     environment: env,
     hldCommitId,
+    hldRepo: entry.hldRepo ? entry.hldRepo._ : undefined,
     hldToManifestBuild: p3,
     imageTag,
     manifestCommitId,
+    manifestRepo: entry.manifestRepo ? entry.manifestRepo._ : undefined,
+    pr: entry.pr ? entry.pr._ : undefined,
     service,
+    sourceRepo: entry.sourceRepo ? entry.sourceRepo._ : undefined,
     srcToDockerBuild: p1,
     timeStamp: entry.Timestamp._
   };
@@ -422,6 +436,32 @@ export const fetchAuthor = (
       adoGetAuthor(repository, commitId, accessToken)
         .then((author: IAuthor | undefined) => {
           resolve(author);
+        })
+        .catch(error => {
+          reject(error);
+        });
+    }
+  });
+};
+
+export const fetchPR = (
+  repository: IGitHub | IAzureDevOpsRepo,
+  prId: string,
+  accessToken?: string
+): Promise<IPullRequest | undefined> => {
+  return new Promise((resolve, reject) => {
+    if ("username" in repository) {
+      githubGetPR(repository, prId, accessToken)
+        .then((pr: IPullRequest | undefined) => {
+          resolve(pr);
+        })
+        .catch(error => {
+          reject(error);
+        });
+    } else if ("org" in repository) {
+      adoGetPR(repository, prId, accessToken)
+        .then((pr: IPullRequest | undefined) => {
+          resolve(pr);
         })
         .catch(error => {
           reject(error);

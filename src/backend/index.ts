@@ -2,6 +2,7 @@ import * as express from "express";
 import { get as authorGet } from "./author";
 import { get as clusterSyncGet } from "./clustersync";
 import { get as deploymentGet } from "./deployment";
+import { get as prGet } from "./pullrequest";
 const app = express();
 
 app.use((req, res, next) => {
@@ -27,4 +28,7 @@ app.get("/api/clustersync", (req: express.Request, res: express.Response) => {
 });
 app.get("/api/author", (req: express.Request, res: express.Response) => {
   authorGet(req, res);
+});
+app.get("/api/pr", (req: express.Request, res: express.Response) => {
+  prGet(req, res);
 });

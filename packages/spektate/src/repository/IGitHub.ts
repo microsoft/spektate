@@ -1,11 +1,15 @@
 import { HttpHelper } from "../HttpHelper";
 import { IAuthor } from "./Author";
+import { IPullRequest } from "./IPullRequest";
 import { ITag } from "./Tag";
 
 const manifestSyncTagsURL =
   "https://api.github.com/repos/<owner>/<repo>/git/refs/tags";
 const authorInfoURL =
   "https://api.github.com/repos/<owner>/<repo>/commits/<commitId>";
+
+const prURL =
+  "https://api.github.com/repos/<owner>/<repo>/pulls/<pullRequestId>";
 
 export interface IGitHub {
   username: string;
@@ -75,6 +79,50 @@ export const getReleasesURL = (repository: IGitHub): string => {
     repository.reponame +
     "/releases"
   );
+};
+
+export const getPullRequest = async (
+  repository: IGitHub,
+  pullRequestId: string,
+  accessToken?: string
+): Promise<IPullRequest> => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const data = await HttpHelper.httpGet<any>(
+        prURL
+          .replace("<owner>", repository.username)
+          .replace("<repo>", repository.reponame)
+          .replace("<pullRequestId>", pullRequestId),
+        accessToken
+      );
+      if (data.data) {
+        const pr = data.data;
+        resolve({
+          approvedBy: pr.merged_by
+            ? {
+                imageUrl: pr.merged_by.avatar_url
+                  ? pr.merged_by.avatar_url
+                  : "",
+                name: pr.merged_by.login ? pr.merged_by.login : "",
+                url: pr.merged_by.url ? pr.merged_by.html_url : "",
+                username: pr.merged_by.login ? pr.merged_by.login : ""
+              }
+            : undefined,
+          description: pr.body,
+          id: pr.number,
+          sourceBranch: pr.head.ref,
+          targetBranch: pr.base.ref,
+          title: pr.title,
+          url: pr.url
+        });
+        return;
+      } else {
+        reject("No PR was found for " + pullRequestId);
+      }
+    } catch (e) {
+      reject(e);
+    }
+  });
 };
 
 export const getAuthor = async (
