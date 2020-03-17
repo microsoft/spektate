@@ -36,11 +36,13 @@ steps:
     displayName: Build docker image
 
   - script: |
+      set -e
       cd packages/spektate
       yarn
       yarn build
+      yarn lint
       yarn test
-    displayName: "package build and test"
+    displayName: "package build, lint and test"
 
   - task: PublishCodeCoverageResults@1
     inputs:
