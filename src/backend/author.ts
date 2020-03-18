@@ -48,8 +48,7 @@ export const get = async (req: Request, res: Response) => {
           res.status(400).send("required query parameters were missing");
         }
       } catch (err) {
-        console.log(err);
-        res.status(500);
+        res.status(500).send(err);
       }
     }
   }
