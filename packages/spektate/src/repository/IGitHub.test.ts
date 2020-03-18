@@ -71,11 +71,11 @@ describe("IGitHub", () => {
   test("gets PR correctly", async () => {
     const pr = await getPullRequest(repo, "prid");
     expect(pr).toBeDefined();
-    expect(pr.approvedBy).toBeDefined();
-    expect(pr!.approvedBy!.name).toBe("bnookala");
-    expect(pr!.approvedBy!.username).toBe("bnookala");
-    expect(pr!.approvedBy!.url).toBeDefined();
-    expect(pr!.approvedBy!.imageUrl).toBeDefined();
+    expect(pr.mergedBy).toBeDefined();
+    expect(pr!.mergedBy!.name).toBe("bnookala");
+    expect(pr!.mergedBy!.username).toBe("bnookala");
+    expect(pr!.mergedBy!.url).toBeDefined();
+    expect(pr!.mergedBy!.imageUrl).toBeDefined();
     expect(pr!.url).toBeDefined();
     expect(pr!.title).toBe(
       "Updating all other pipelines to install helm2 prior to runnin steps"

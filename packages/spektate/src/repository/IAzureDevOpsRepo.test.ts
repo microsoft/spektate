@@ -68,11 +68,11 @@ describe("IAzureDevOpsRepo", () => {
   test("gets PR correctly", async () => {
     const pr = await getPullRequest(repo, "prid");
     expect(pr).toBeDefined();
-    expect(pr.approvedBy).toBeDefined();
-    expect(pr!.approvedBy!.name).toBe("Samiya Akhtar");
-    expect(pr!.approvedBy!.username).toBe("saakhta@microsoft.com");
-    expect(pr!.approvedBy!.url).toBeDefined();
-    expect(pr!.approvedBy!.imageUrl).toBeDefined();
+    expect(pr.mergedBy).toBeDefined();
+    expect(pr!.mergedBy!.name).toBe("Samiya Akhtar");
+    expect(pr!.mergedBy!.username).toBe("saakhta@microsoft.com");
+    expect(pr!.mergedBy!.url).toBeDefined();
+    expect(pr!.mergedBy!.imageUrl).toBeDefined();
     expect(pr!.url).toBeDefined();
     expect(pr!.title).toBe(
       "Updating samiya.frontend image tag to master-20200317.12."

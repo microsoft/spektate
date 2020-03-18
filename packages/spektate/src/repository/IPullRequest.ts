@@ -6,6 +6,6 @@ export interface IPullRequest {
   sourceBranch: string;
   targetBranch: string;
   description: string;
-  approvedBy?: IAuthor;
+  mergedBy?: IAuthor;
   url: string;
 }

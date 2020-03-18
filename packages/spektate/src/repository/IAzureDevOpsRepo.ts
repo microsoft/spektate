@@ -48,7 +48,9 @@ export const getPullRequest = (
       if (data.data) {
         const pr = data.data;
         resolve({
-          approvedBy: pr.closedBy
+          description: pr.description,
+          id: pr.pullRequestId,
+          mergedBy: pr.closedBy
             ? {
                 imageUrl: pr.closedBy.imageUrl,
                 name: pr.closedBy.displayName,
@@ -56,12 +58,13 @@ export const getPullRequest = (
                 username: pr.closedBy.uniqueName
               }
             : undefined,
-          description: pr.description,
-          id: pr.pullRequestId,
           sourceBranch: pr.sourceRefName.replace("refs/heads/", ""),
           targetBranch: pr.targetRefName.replace("refs/heads/", ""),
           title: pr.title,
-          url: pr.url
+          url:
+            pr.repository && pr.repository.webUrl
+              ? pr.repository.webUrl + "/pullrequest/" + pr.pullRequestId
+              : pr.url
         });
       } else {
         reject("No PR was found for " + pullRequestId);

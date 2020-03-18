@@ -98,7 +98,9 @@ export const getPullRequest = (
       if (data.data) {
         const pr = data.data;
         resolve({
-          approvedBy: pr.merged_by
+          description: pr.body,
+          id: pr.number,
+          mergedBy: pr.merged_by
             ? {
                 imageUrl: pr.merged_by.avatar_url
                   ? pr.merged_by.avatar_url
@@ -108,8 +110,6 @@ export const getPullRequest = (
                 username: pr.merged_by.login ? pr.merged_by.login : ""
               }
             : undefined,
-          description: pr.body,
-          id: pr.number,
           sourceBranch: pr.head.ref,
           targetBranch: pr.base.ref,
           title: pr.title,

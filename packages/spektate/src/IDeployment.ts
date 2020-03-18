@@ -33,7 +33,7 @@ export interface IDeployment {
   duration?: string;
   status?: string;
   endTime?: Date;
-  pr?: string;
+  pr?: number;
   sourceRepo?: string;
   hldRepo?: string;
   manifestRepo?: string;
@@ -470,4 +470,23 @@ export const fetchPR = (
       reject("Repository could not be recognized.");
     }
   });
+};
+
+export const getRepositoryFromURL = (
+  repository: string
+): IAzureDevOpsRepo | IGitHub | undefined => {
+  repository = repository.toLowerCase();
+  const repoSplit = repository.split("/");
+  if (repository.includes("github")) {
+    return {
+      reponame: repoSplit[repoSplit.length - 1],
+      username: repoSplit[repoSplit.length - 2]
+    };
+  } else if (repository.includes("azure")) {
+    return {
+      org: repoSplit[1],
+      project: repoSplit[2],
+      repo: repoSplit[4]
+    };
+  }
 };
