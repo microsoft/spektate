@@ -475,7 +475,10 @@ export const fetchPR = (
 export const getRepositoryFromURL = (
   repository: string
 ): IAzureDevOpsRepo | IGitHub | undefined => {
-  repository = repository.toLowerCase();
+  repository = repository
+    .replace("https://", "")
+    .replace("http://", "")
+    .toLowerCase();
   const repoSplit = repository.split("/");
   if (repository.includes("github")) {
     return {

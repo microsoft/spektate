@@ -25,19 +25,19 @@ const repo: IAzureDevOpsRepo = {
 
 beforeAll(() => {
   authorRawResponse = JSON.parse(
-    fs.readFileSync(mockDirectory + "azdo-author-response.json", "utf-8")
+    fs.readFileSync(mockDirectory + "/azdo-author-response.json", "utf-8")
   );
   syncTagRawResponse = JSON.parse(
-    fs.readFileSync(mockDirectory + "azdo-sync-response.json", "utf-8")
+    fs.readFileSync(mockDirectory + "/azdo-sync-response.json", "utf-8")
   );
   manifestSyncTagResponse = JSON.parse(
     fs.readFileSync(
-      mockDirectory + "azdo-manifest-sync-tag-response.json",
+      mockDirectory + "/azdo-manifest-sync-tag-response.json",
       "utf-8"
     )
   );
   prRawResponse = JSON.parse(
-    fs.readFileSync(mockDirectory + "azdo-pr-response.json", "utf-8")
+    fs.readFileSync(mockDirectory + "/azdo-pr-response.json", "utf-8")
   );
 });
 jest.spyOn(HttpHelper, "httpGet").mockImplementation(

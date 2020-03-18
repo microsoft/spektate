@@ -23,22 +23,22 @@ const repo: IGitHub = {
 
 beforeAll(() => {
   authorRawResponse = JSON.parse(
-    fs.readFileSync(mockDirectory + "github-author-response.json", "utf-8")
+    fs.readFileSync(mockDirectory + "/github-author-response.json", "utf-8")
   );
   syncTagRawResponse = JSON.parse(
-    fs.readFileSync(mockDirectory + "github-sync-response.json", "utf-8")
+    fs.readFileSync(mockDirectory + "/github-sync-response.json", "utf-8")
   );
   manifestSyncTagResponse = JSON.parse(
     fs.readFileSync(
-      mockDirectory + "github-manifest-sync-tag-response.json",
+      mockDirectory + "/github-manifest-sync-tag-response.json",
       "utf-8"
     )
   );
   manifestResponse1 = JSON.parse(
-    fs.readFileSync(mockDirectory + "github-sync-response-1.json", "utf-8")
+    fs.readFileSync(mockDirectory + "/github-sync-response-1.json", "utf-8")
   );
   prRawResponse = JSON.parse(
-    fs.readFileSync(mockDirectory + "github-pr-response.json", "utf-8")
+    fs.readFileSync(mockDirectory + "/github-pr-response.json", "utf-8")
   );
 });
 jest.spyOn(HttpHelper, "httpGet").mockImplementation(
