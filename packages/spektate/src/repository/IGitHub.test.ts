@@ -1,5 +1,6 @@
 import { AxiosResponse } from "axios";
 import * as fs from "fs";
+import * as path from "path";
 import { HttpHelper } from "../HttpHelper";
 import {
   getAuthor,
@@ -14,7 +15,7 @@ let syncTagRawResponse = {};
 let manifestSyncTagResponse = {};
 let manifestResponse1 = {};
 let prRawResponse = {};
-const mockDirectory = "src/repository/mocks/";
+const mockDirectory = path.join("src", "repository", "mocks");
 const repo: IGitHub = {
   reponame: "reponame",
   username: "username"

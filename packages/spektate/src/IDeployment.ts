@@ -466,6 +466,8 @@ export const fetchPR = (
         .catch(error => {
           reject(error);
         });
+    } else {
+      reject("Repository could not be recognized.");
     }
   });
 };

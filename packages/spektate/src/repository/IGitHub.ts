@@ -81,7 +81,7 @@ export const getReleasesURL = (repository: IGitHub): string => {
   );
 };
 
-export const getPullRequest = async (
+export const getPullRequest = (
   repository: IGitHub,
   pullRequestId: string,
   accessToken?: string
@@ -115,7 +115,6 @@ export const getPullRequest = async (
           title: pr.title,
           url: pr.url
         });
-        return;
       } else {
         reject("No PR was found for " + pullRequestId);
       }
