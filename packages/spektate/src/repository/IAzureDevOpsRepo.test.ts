@@ -5,6 +5,7 @@ import { IAuthor } from "./Author";
 import {
   getAuthor,
   getManifestSyncState,
+  getPullRequest,
   getReleasesURL,
   IAzureDevOpsRepo
 } from "./IAzureDevOpsRepo";
@@ -13,6 +14,7 @@ import { ITag } from "./Tag";
 let authorRawResponse = {};
 let syncTagRawResponse = {};
 let manifestSyncTagResponse = {};
+let prRawResponse = {};
 const mockDirectory = "src/repository/mocks/";
 const repo: IAzureDevOpsRepo = {
   org: "org",
@@ -33,6 +35,9 @@ beforeAll(() => {
       "utf-8"
     )
   );
+  prRawResponse = JSON.parse(
+    fs.readFileSync(mockDirectory + "azdo-pr-response.json", "utf-8")
+  );
 });
 jest.spyOn(HttpHelper, "httpGet").mockImplementation(
   <T>(theUrl: string, accessToken?: string): Promise<AxiosResponse<T>> => {
@@ -40,6 +45,8 @@ jest.spyOn(HttpHelper, "httpGet").mockImplementation(
       return getAxiosResponseForObject(authorRawResponse);
     } else if (theUrl.includes("annotatedtags")) {
       return getAxiosResponseForObject(manifestSyncTagResponse);
+    } else if (theUrl.includes("pullrequests")) {
+      return getAxiosResponseForObject(prRawResponse);
     }
     return getAxiosResponseForObject(syncTagRawResponse);
   }
@@ -53,6 +60,28 @@ describe("IAzureDevOpsRepo", () => {
     expect(author!.url).toBeDefined();
     expect(author!.username).toBe("saakhta@microsoft.com");
     expect(author!.imageUrl).toBeTruthy();
+  });
+});
+
+describe("IAzureDevOpsRepo", () => {
+  test("gets PR correctly", async () => {
+    const pr = await getPullRequest(repo, "prid");
+    expect(pr).toBeDefined();
+    expect(pr.approvedBy).toBeDefined();
+    expect(pr!.approvedBy!.name).toBe("Samiya Akhtar");
+    expect(pr!.approvedBy!.username).toBe("saakhta@microsoft.com");
+    expect(pr!.approvedBy!.url).toBeDefined();
+    expect(pr!.approvedBy!.imageUrl).toBeDefined();
+    expect(pr!.url).toBeDefined();
+    expect(pr!.title).toBe(
+      "Updating samiya.frontend image tag to master-20200317.12."
+    );
+    expect(pr!.sourceBranch).toBe(
+      "DEPLOY/samiya2019-samiya.frontend-master-20200317.12"
+    );
+    expect(pr!.targetBranch).toBe("master");
+    expect(pr!.id).toBe(1354);
+    expect(pr!.description).toBeDefined();
   });
 });
 
