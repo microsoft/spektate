@@ -18,10 +18,16 @@ import { VssPersona } from "azure-devops-ui/VssPersona";
 import * as querystring from "querystring";
 import * as React from "react";
 import { HttpHelper } from "spektate/lib/HttpHelper";
-import { endTime, IDeployment, status } from "spektate/lib/IDeployment";
+import {
+  endTime,
+  getRepositoryFromURL,
+  IDeployment,
+  status
+} from "spektate/lib/IDeployment";
 import { IAuthor } from "spektate/lib/repository/Author";
 import { IAzureDevOpsRepo } from "spektate/lib/repository/IAzureDevOpsRepo";
 import { IGitHub } from "spektate/lib/repository/IGitHub";
+import { IPullRequest } from "spektate/lib/repository/IPullRequest";
 import { ITag } from "spektate/lib/repository/Tag";
 import "./css/dashboard.css";
 import {
@@ -47,7 +53,8 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     this.state = {
       authors: {},
       deployments: [],
-      filteredDeployments: []
+      filteredDeployments: [],
+      prs: {}
     };
   }
 
@@ -95,10 +102,14 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         dockerToHldReleaseStage: dep.dockerToHldReleaseStage,
         environment: dep.environment,
         hldCommitId: dep.hldCommitId,
+        hldRepo: dep.hldRepo,
         hldToManifestBuild: dep.hldToManifestBuild,
         imageTag: dep.imageTag,
         manifestCommitId: dep.manifestCommitId,
+        manifestRepo: dep.manifestRepo,
+        pr: dep.pr,
         service: dep.service,
+        sourceRepo: dep.sourceRepo,
         srcToDockerBuild: dep.srcToDockerBuild,
         timeStamp: dep.timeStamp
       };
@@ -109,6 +120,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     this.processQueryParams();
     this.updateFilteredDeployments();
     this.getAuthors();
+    this.getPRs();
     if (!this.filterState.defaultApplied) {
       this.filter.setFilterItemState("authorFilter", {
         value: this.filterState.currentlySelectedAuthors
@@ -145,12 +157,12 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         renderCell: this.renderSimpleText,
         width: new ObservableValue(200)
       },
-      {
-        id: "srcBranchName",
-        name: "Branch",
-        renderCell: this.renderSimpleText,
-        width: new ObservableValue(120)
-      },
+      // {
+      //   id: "srcBranchName",
+      //   name: "Branch",
+      //   renderCell: this.renderSimpleText,
+      //   width: new ObservableValue(120)
+      // },
       {
         id: "environment",
         name: "Environment",
@@ -174,6 +186,18 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         name: "ACR to HLD",
         renderCell: this.renderDockerRelease,
         width: new ObservableValue(250)
+      },
+      {
+        id: "pr",
+        name: "Pull Request",
+        renderCell: this.renderPR,
+        width: new ObservableValue(250)
+      },
+      {
+        id: "mergedByName",
+        name: "Merged By",
+        renderCell: this.renderMergedBy,
+        width: new ObservableValue(200)
       },
       {
         id: "hldPipelineId",
@@ -205,7 +229,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     try {
       rows = this.state.filteredDeployments.map(deployment => {
         const author = this.getAuthor(deployment);
-        // const author = deployment.author;
+        const pr = this.getPR(deployment);
         const tags = this.getClusterSyncStatusForDeployment(deployment);
         const clusters: string[] = tags ? tags.map(itag => itag.name) : [];
         const statusStr = status(deployment);
@@ -276,7 +300,20 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
           status: statusStr,
           clusters,
           endTime: endtime,
-          manifestCommitId: deployment.manifestCommitId
+          manifestCommitId: deployment.manifestCommitId,
+          pr: pr ? pr.id : undefined,
+          prURL: pr ? pr.url : undefined,
+          prSourceBranch: pr ? pr.sourceBranch : undefined,
+          mergedByName: pr
+            ? pr.mergedBy
+              ? pr.mergedBy.name
+              : undefined
+            : undefined,
+          mergedByImageURL: pr
+            ? pr.mergedBy
+              ? pr.mergedBy.imageUrl
+              : undefined
+            : undefined
         };
       });
     } catch (err) {
@@ -525,11 +562,13 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     );
   };
 
-  private renderAuthor = (
+  private renderPersona = (
     rowIndex: number,
     columnIndex: number,
     tableColumn: ITableColumn<IDeploymentField>,
-    tableItem: IDeploymentField
+    tableItem: IDeploymentField,
+    name: string,
+    imageUrl?: string
   ): JSX.Element => {
     if (!tableItem[tableColumn.id]) {
       return (
@@ -543,10 +582,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         key={"col-" + columnIndex}
         contentClassName="font-size-m text-ellipsis bolt-table-link bolt-table-inline-link"
       >
-        <VssPersona
-          displayName={tableItem.authorName}
-          imageUrl={tableItem.authorURL}
-        />
+        <VssPersona displayName={name} imageUrl={imageUrl} />
         <div>&nbsp;&nbsp;&nbsp;</div>
         <div className="flex-row scroll-hidden">
           <Tooltip overflowOnly={true}>
@@ -649,6 +685,80 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       tableItem.imageTag,
       "",
       "Product"
+    );
+  };
+
+  private renderPR = (
+    rowIndex: number,
+    columnIndex: number,
+    tableColumn: ITableColumn<IDeploymentField>,
+    tableItem: IDeploymentField
+  ): JSX.Element => {
+    if (tableItem.pr) {
+      return this.renderBuild(
+        rowIndex,
+        columnIndex,
+        tableColumn,
+        tableItem,
+        tableItem.mergedByName ? "succeeded" : "warning",
+        tableItem.pr.toString(),
+        tableItem.prURL,
+        tableItem.prSourceBranch,
+        "",
+        "BranchPullRequest"
+      );
+    } else {
+      return (
+        <SimpleTableCell key={"col-" + columnIndex} columnIndex={columnIndex}>
+          -
+        </SimpleTableCell>
+      );
+    }
+  };
+
+  private renderAuthor = (
+    rowIndex: number,
+    columnIndex: number,
+    tableColumn: ITableColumn<IDeploymentField>,
+    tableItem: IDeploymentField
+  ): JSX.Element => {
+    if (tableItem.authorName && tableItem.authorURL) {
+      return this.renderPersona(
+        rowIndex,
+        columnIndex,
+        tableColumn,
+        tableItem,
+        tableItem.authorName,
+        tableItem.authorURL
+      );
+    }
+    return (
+      <SimpleTableCell key={"col-" + columnIndex} columnIndex={columnIndex}>
+        -
+      </SimpleTableCell>
+    );
+  };
+
+  private renderMergedBy = (
+    rowIndex: number,
+    columnIndex: number,
+    tableColumn: ITableColumn<IDeploymentField>,
+    tableItem: IDeploymentField
+  ): JSX.Element => {
+    if (tableItem.pr && tableItem.mergedByName) {
+      return this.renderPersona(
+        rowIndex,
+        columnIndex,
+        tableColumn,
+        tableItem,
+        tableItem.mergedByName,
+        tableItem.mergedByImageURL
+      );
+    }
+    return (
+      <SimpleTableCell key={"col-" + columnIndex} columnIndex={columnIndex}>
+        -
+      </SimpleTableCell>
     );
   };
 
@@ -871,9 +981,18 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     const commit =
       deployment.srcToDockerBuild?.sourceVersion ||
       deployment.hldToManifestBuild?.sourceVersion;
-    const repo: IAzureDevOpsRepo | IGitHub | undefined =
+    let repo: IAzureDevOpsRepo | IGitHub | undefined =
       deployment.srcToDockerBuild?.repository ||
-      deployment.hldToManifestBuild?.repository;
+      (deployment.sourceRepo
+        ? getRepositoryFromURL(deployment.sourceRepo)
+        : undefined);
+    if (!repo && (deployment.hldToManifestBuild || deployment.hldRepo)) {
+      repo =
+        deployment.hldToManifestBuild!.repository ||
+        (deployment.hldRepo
+          ? getRepositoryFromURL(deployment.hldRepo)
+          : undefined);
+    }
     if (repo && "username" in repo) {
       query.username = repo.username;
       query.reponame = repo.reponame;
@@ -883,6 +1002,10 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       query.project = repo.project;
       query.repo = repo.repo;
       query.commit = commit;
+    }
+    if (query.repo === "samiya-hld") {
+      console.log(deployment);
+      console.log(query);
     }
     let str = "";
     // tslint:disable-next-line: forin
@@ -895,6 +1018,60 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     return str;
   };
 
+  private getPRRequestParams = (deployment: IDeployment) => {
+    const query: any = {};
+    if (!deployment.hldRepo) {
+      return "";
+    }
+    const repo: IAzureDevOpsRepo | IGitHub | undefined = getRepositoryFromURL(
+      deployment.hldRepo
+    );
+    if (repo && "username" in repo) {
+      query.username = repo.username;
+      query.reponame = repo.reponame;
+      query.pr = deployment.pr;
+    } else if (repo && "org" in repo) {
+      query.org = repo.org;
+      query.project = repo.project;
+      query.repo = repo.repo;
+      query.pr = deployment.pr;
+    }
+    let str = "";
+    // tslint:disable-next-line: forin
+    for (const key in query) {
+      if (str !== "") {
+        str += "&";
+      }
+      str += key + "=" + encodeURIComponent(query[key]);
+    }
+    return str;
+  };
+
+  private getPRs = () => {
+    try {
+      const state = this.state;
+      this.state.deployments.forEach(deployment => {
+        if (deployment.pr) {
+          const queryParams = this.getPRRequestParams(deployment);
+          if (queryParams !== "") {
+            HttpHelper.httpGet("/api/pr?" + queryParams).then((data: any) => {
+              const pr = data.data as IPullRequest;
+              if (pr && deployment.pr) {
+                const copy = state.prs;
+                // console.log(pr);
+                copy[deployment.pr] = pr;
+                this.setState({ prs: copy });
+                this.updateFilteredDeployments();
+              }
+            });
+          }
+        }
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   private getAuthors = () => {
     try {
       const state = this.state;
@@ -904,7 +1081,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         if (queryParams !== "") {
           const promise = HttpHelper.httpGet("/api/author?" + queryParams);
 
-          promise.then(data => {
+          promise.then((data: any) => {
             const author = data.data as IAuthor;
             if (author && deployment.srcToDockerBuild) {
               const copy = state.authors;
@@ -956,6 +1133,13 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     return undefined;
   };
 
+  private getPR = (deployment: IDeployment): IPullRequest | undefined => {
+    if (deployment.pr && deployment.pr in this.state.prs) {
+      return this.state.prs[deployment.pr];
+    }
+    return undefined;
+  };
+
   private getIcon(statusStr?: string): IIconProps {
     if (statusStr === "succeeded") {
       return { iconName: "SkypeCircleCheck", style: { color: "green" } };
@@ -963,6 +1147,8 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       return { iconName: "ProgressRingDots", style: { color: "blue" } }; // SyncStatusSolid
     } else if (statusStr === "canceled") {
       return { iconName: "SkypeCircleSlash", style: { color: "gray" } };
+    } else if (statusStr === "warning") {
+      return { iconName: "AwayStatus", style: { color: "orange" } };
     }
     return { iconName: "SkypeCircleMinus", style: { color: "red" } };
   }
