@@ -1,5 +1,6 @@
 import { HttpHelper } from "../HttpHelper";
 import { IAuthor } from "./Author";
+import { IPullRequest } from "./IPullRequest";
 import { ITag } from "./Tag";
 
 const authorInfoURL =
@@ -8,6 +9,8 @@ const manifestSyncTagsURL =
   "https://dev.azure.com/{organization}/{project}/_apis/git/repositories/{repositoryId}/refs?filter=tags&api-version=4.1";
 const manifestSyncTagURL =
   "https://dev.azure.com/{organization}/{project}/_apis/git/repositories/{repositoryId}/annotatedtags/{objectId}?api-version=4.1-preview.1";
+const pullRequestURL =
+  "https://dev.azure.com/{organization}/{project}/_apis/git/repositories/{repositoryId}/pullrequests/{pullRequestId}?api-version=5.1";
 
 export interface IAzureDevOpsRepo {
   org: string;
@@ -25,6 +28,51 @@ export const getReleasesURL = (repository: IAzureDevOpsRepo): string => {
     repository.repo +
     "/tags"
   );
+};
+
+export const getPullRequest = (
+  repository: IAzureDevOpsRepo,
+  pullRequestId: string,
+  accessToken?: string
+): Promise<IPullRequest> => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const data = await HttpHelper.httpGet<any>(
+        pullRequestURL
+          .replace("{organization}", repository.org)
+          .replace("{project}", repository.project)
+          .replace("{repositoryId}", repository.repo)
+          .replace("{pullRequestId}", pullRequestId),
+        accessToken
+      );
+      if (data.data) {
+        const pr = data.data;
+        resolve({
+          description: pr.description,
+          id: pr.pullRequestId,
+          mergedBy: pr.closedBy
+            ? {
+                imageUrl: pr.closedBy.imageUrl,
+                name: pr.closedBy.displayName,
+                url: pr.url,
+                username: pr.closedBy.uniqueName
+              }
+            : undefined,
+          sourceBranch: pr.sourceRefName.replace("refs/heads/", ""),
+          targetBranch: pr.targetRefName.replace("refs/heads/", ""),
+          title: pr.title,
+          url:
+            pr.repository && pr.repository.webUrl
+              ? pr.repository.webUrl + "/pullrequest/" + pr.pullRequestId
+              : pr.url
+        });
+      } else {
+        reject("No PR was found for " + pullRequestId);
+      }
+    } catch (e) {
+      reject(e);
+    }
+  });
 };
 
 export const getManifestSyncState = async (

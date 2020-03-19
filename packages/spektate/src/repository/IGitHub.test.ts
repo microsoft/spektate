@@ -1,9 +1,11 @@
 import { AxiosResponse } from "axios";
 import * as fs from "fs";
+import * as path from "path";
 import { HttpHelper } from "../HttpHelper";
 import {
   getAuthor,
   getManifestSyncState,
+  getPullRequest,
   getReleasesURL,
   IGitHub
 } from "./IGitHub";
@@ -12,7 +14,8 @@ let authorRawResponse = {};
 let syncTagRawResponse = {};
 let manifestSyncTagResponse = {};
 let manifestResponse1 = {};
-const mockDirectory = "src/repository/mocks/";
+let prRawResponse = {};
+const mockDirectory = path.join("src", "repository", "mocks");
 const repo: IGitHub = {
   reponame: "reponame",
   username: "username"
@@ -20,19 +23,22 @@ const repo: IGitHub = {
 
 beforeAll(() => {
   authorRawResponse = JSON.parse(
-    fs.readFileSync(mockDirectory + "github-author-response.json", "utf-8")
+    fs.readFileSync(mockDirectory + "/github-author-response.json", "utf-8")
   );
   syncTagRawResponse = JSON.parse(
-    fs.readFileSync(mockDirectory + "github-sync-response.json", "utf-8")
+    fs.readFileSync(mockDirectory + "/github-sync-response.json", "utf-8")
   );
   manifestSyncTagResponse = JSON.parse(
     fs.readFileSync(
-      mockDirectory + "github-manifest-sync-tag-response.json",
+      mockDirectory + "/github-manifest-sync-tag-response.json",
       "utf-8"
     )
   );
   manifestResponse1 = JSON.parse(
-    fs.readFileSync(mockDirectory + "github-sync-response-1.json", "utf-8")
+    fs.readFileSync(mockDirectory + "/github-sync-response-1.json", "utf-8")
+  );
+  prRawResponse = JSON.parse(
+    fs.readFileSync(mockDirectory + "/github-pr-response.json", "utf-8")
   );
 });
 jest.spyOn(HttpHelper, "httpGet").mockImplementation(
@@ -43,6 +49,8 @@ jest.spyOn(HttpHelper, "httpGet").mockImplementation(
       return getAxiosResponseForObject(authorRawResponse);
     } else if (theUrl.endsWith("refs/tags")) {
       return getAxiosResponseForObject(syncTagRawResponse);
+    } else if (theUrl.includes("pulls")) {
+      return getAxiosResponseForObject(prRawResponse);
     }
     return getAxiosResponseForObject(manifestSyncTagResponse);
   }
@@ -56,6 +64,26 @@ describe("IGitHub", () => {
     expect(author!.url).toBeDefined();
     expect(author!.username).toBe("edaena");
     expect(author!.imageUrl).toBeTruthy();
+  });
+});
+
+describe("IGitHub", () => {
+  test("gets PR correctly", async () => {
+    const pr = await getPullRequest(repo, "prid");
+    expect(pr).toBeDefined();
+    expect(pr.mergedBy).toBeDefined();
+    expect(pr!.mergedBy!.name).toBe("bnookala");
+    expect(pr!.mergedBy!.username).toBe("bnookala");
+    expect(pr!.mergedBy!.url).toBeDefined();
+    expect(pr!.mergedBy!.imageUrl).toBeDefined();
+    expect(pr!.url).toBeDefined();
+    expect(pr!.title).toBe(
+      "Updating all other pipelines to install helm2 prior to runnin steps"
+    );
+    expect(pr!.sourceBranch).toBe("helm-2-pipelines");
+    expect(pr!.targetBranch).toBe("master");
+    expect(pr!.id).toBe(408);
+    expect(pr!.description).toBeDefined();
   });
 });
 

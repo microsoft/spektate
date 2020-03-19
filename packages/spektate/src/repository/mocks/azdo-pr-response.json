@@ -1,0 +1,130 @@
+{
+  "repository": {
+    "id": "a491cdad-443c-4419-9726-95e7619673ae",
+    "name": "samiya-hld",
+    "url": "https://dev.azure.com/epicstuff/e7236bd9-a6f9-4554-8dce-ad81ae94faf6/_apis/git/repositories/a491cdad-443c-4419-9726-95e7619673ae",
+    "project": {
+      "id": "e7236bd9-a6f9-4554-8dce-ad81ae94faf6",
+      "name": "hellobedrockprivate",
+      "description": "Private Hello Bedrock!",
+      "url": "https://dev.azure.com/epicstuff/_apis/projects/e7236bd9-a6f9-4554-8dce-ad81ae94faf6",
+      "state": "wellFormed",
+      "revision": 354,
+      "visibility": "private",
+      "lastUpdateTime": "2019-10-18T18:39:18.97Z"
+    },
+    "size": 1415,
+    "remoteUrl": "https://epicstuff@dev.azure.com/epicstuff/hellobedrockprivate/_git/samiya-hld",
+    "sshUrl": "git@ssh.dev.azure.com:v3/epicstuff/hellobedrockprivate/samiya-hld",
+    "webUrl": "https://dev.azure.com/epicstuff/hellobedrockprivate/_git/samiya-hld"
+  },
+  "pullRequestId": 1354,
+  "codeReviewId": 1354,
+  "status": "completed",
+  "createdBy": {
+    "displayName": "Samiya Akhtar",
+    "url": "https://spsprodcus1.vssps.visualstudio.com/A5ba215af-08b5-44cc-8587-9f8b80f7799a/_apis/Identities/e8900b94-217f-4a51-9d86-6bbf5d82b6fb",
+    "_links": {
+      "avatar": {
+        "href": "https://dev.azure.com/epicstuff/_apis/GraphProfile/MemberAvatars/aad.NDcwNGNkNGUtMjA0Yi03MDcxLWJiYWEtOTQzY2Y5ZmE1NTYz"
+      }
+    },
+    "id": "e8900b94-217f-4a51-9d86-6bbf5d82b6fb",
+    "uniqueName": "saakhta@microsoft.com",
+    "imageUrl": "https://dev.azure.com/epicstuff/_api/_common/identityImage?id=e8900b94-217f-4a51-9d86-6bbf5d82b6fb",
+    "descriptor": "aad.NDcwNGNkNGUtMjA0Yi03MDcxLWJiYWEtOTQzY2Y5ZmE1NTYz"
+  },
+  "creationDate": "2020-03-17T21:15:08.6021956Z",
+  "closedDate": "2020-03-17T21:16:24.8681489Z",
+  "title": "Updating samiya.frontend image tag to master-20200317.12.",
+  "description": "Updating samiya.frontend to master-20200317.12.\nPR created by: samiya2019 with buildId: 14690 and buildNumber: 20200317.12",
+  "sourceRefName": "refs/heads/DEPLOY/samiya2019-samiya.frontend-master-20200317.12",
+  "targetRefName": "refs/heads/master",
+  "mergeStatus": "succeeded",
+  "isDraft": false,
+  "mergeId": "cd5b6aef-67a8-427e-a4d7-687617660505",
+  "lastMergeSourceCommit": {
+    "commitId": "c3e9904bde5aba657866beeb76b10ef09fdec707",
+    "url": "https://dev.azure.com/epicstuff/e7236bd9-a6f9-4554-8dce-ad81ae94faf6/_apis/git/repositories/a491cdad-443c-4419-9726-95e7619673ae/commits/c3e9904bde5aba657866beeb76b10ef09fdec707"
+  },
+  "lastMergeTargetCommit": {
+    "commitId": "d0ef4611181724a37ef78756d6e49abbbae5677f",
+    "url": "https://dev.azure.com/epicstuff/e7236bd9-a6f9-4554-8dce-ad81ae94faf6/_apis/git/repositories/a491cdad-443c-4419-9726-95e7619673ae/commits/d0ef4611181724a37ef78756d6e49abbbae5677f"
+  },
+  "lastMergeCommit": {
+    "commitId": "bfeb93f3c76fd32bc29d40de65db488a27cc26de",
+    "author": {
+      "name": "Samiya Akhtar",
+      "email": "saakhta@microsoft.com",
+      "date": "2020-03-17T21:16:24Z"
+    },
+    "committer": {
+      "name": "Samiya Akhtar",
+      "email": "saakhta@microsoft.com",
+      "date": "2020-03-17T21:16:24Z"
+    },
+    "comment": "Merged PR 1354: Updating samiya.frontend image tag to master-20200317.12.",
+    "commentTruncated": true,
+    "url": "https://dev.azure.com/epicstuff/e7236bd9-a6f9-4554-8dce-ad81ae94faf6/_apis/git/repositories/a491cdad-443c-4419-9726-95e7619673ae/commits/bfeb93f3c76fd32bc29d40de65db488a27cc26de"
+  },
+  "reviewers": [],
+  "url": "https://dev.azure.com/epicstuff/e7236bd9-a6f9-4554-8dce-ad81ae94faf6/_apis/git/repositories/a491cdad-443c-4419-9726-95e7619673ae/pullRequests/1354",
+  "_links": {
+    "self": {
+      "href": "https://dev.azure.com/epicstuff/e7236bd9-a6f9-4554-8dce-ad81ae94faf6/_apis/git/repositories/a491cdad-443c-4419-9726-95e7619673ae/pullRequests/1354"
+    },
+    "repository": {
+      "href": "https://dev.azure.com/epicstuff/e7236bd9-a6f9-4554-8dce-ad81ae94faf6/_apis/git/repositories/a491cdad-443c-4419-9726-95e7619673ae"
+    },
+    "workItems": {
+      "href": "https://dev.azure.com/epicstuff/e7236bd9-a6f9-4554-8dce-ad81ae94faf6/_apis/git/repositories/a491cdad-443c-4419-9726-95e7619673ae/pullRequests/1354/workitems"
+    },
+    "sourceBranch": {
+      "href": "https://dev.azure.com/epicstuff/e7236bd9-a6f9-4554-8dce-ad81ae94faf6/_apis/git/repositories/a491cdad-443c-4419-9726-95e7619673ae/refs/heads/DEPLOY/samiya2019-samiya.frontend-master-20200317.12"
+    },
+    "targetBranch": {
+      "href": "https://dev.azure.com/epicstuff/e7236bd9-a6f9-4554-8dce-ad81ae94faf6/_apis/git/repositories/a491cdad-443c-4419-9726-95e7619673ae/refs/heads/master"
+    },
+    "statuses": {
+      "href": "https://dev.azure.com/epicstuff/e7236bd9-a6f9-4554-8dce-ad81ae94faf6/_apis/git/repositories/a491cdad-443c-4419-9726-95e7619673ae/pullRequests/1354/statuses"
+    },
+    "sourceCommit": {
+      "href": "https://dev.azure.com/epicstuff/e7236bd9-a6f9-4554-8dce-ad81ae94faf6/_apis/git/repositories/a491cdad-443c-4419-9726-95e7619673ae/commits/c3e9904bde5aba657866beeb76b10ef09fdec707"
+    },
+    "targetCommit": {
+      "href": "https://dev.azure.com/epicstuff/e7236bd9-a6f9-4554-8dce-ad81ae94faf6/_apis/git/repositories/a491cdad-443c-4419-9726-95e7619673ae/commits/d0ef4611181724a37ef78756d6e49abbbae5677f"
+    },
+    "mergeCommit": {
+      "href": "https://dev.azure.com/epicstuff/e7236bd9-a6f9-4554-8dce-ad81ae94faf6/_apis/git/repositories/a491cdad-443c-4419-9726-95e7619673ae/commits/bfeb93f3c76fd32bc29d40de65db488a27cc26de"
+    },
+    "createdBy": {
+      "href": "https://spsprodcus1.vssps.visualstudio.com/A5ba215af-08b5-44cc-8587-9f8b80f7799a/_apis/Identities/e8900b94-217f-4a51-9d86-6bbf5d82b6fb"
+    },
+    "iterations": {
+      "href": "https://dev.azure.com/epicstuff/e7236bd9-a6f9-4554-8dce-ad81ae94faf6/_apis/git/repositories/a491cdad-443c-4419-9726-95e7619673ae/pullRequests/1354/iterations"
+    }
+  },
+  "completionOptions": {
+    "mergeCommitMessage": "Merged PR 1354: Updating samiya.frontend image tag to master-20200317.12.\n\nUpdating samiya.frontend to master-20200317.12.\nPR created by: samiya2019 with buildId: 14690 and buildNumber: 20200317.12",
+    "squashMerge": true,
+    "mergeStrategy": "squash",
+    "bypassReason": "",
+    "transitionWorkItems": true
+  },
+  "supportsIterations": true,
+  "completionQueueTime": "2020-03-17T21:16:23.5386687Z",
+  "closedBy": {
+    "displayName": "Samiya Akhtar",
+    "url": "https://spsprodcus1.vssps.visualstudio.com/A5ba215af-08b5-44cc-8587-9f8b80f7799a/_apis/Identities/e8900b94-217f-4a51-9d86-6bbf5d82b6fb",
+    "_links": {
+      "avatar": {
+        "href": "https://dev.azure.com/epicstuff/_apis/GraphProfile/MemberAvatars/aad.NDcwNGNkNGUtMjA0Yi03MDcxLWJiYWEtOTQzY2Y5ZmE1NTYz"
+      }
+    },
+    "id": "e8900b94-217f-4a51-9d86-6bbf5d82b6fb",
+    "uniqueName": "saakhta@microsoft.com",
+    "imageUrl": "https://dev.azure.com/epicstuff/_api/_common/identityImage?id=e8900b94-217f-4a51-9d86-6bbf5d82b6fb",
+    "descriptor": "aad.NDcwNGNkNGUtMjA0Yi03MDcxLWJiYWEtOTQzY2Y5ZmE1NTYz"
+  },
+  "artifactId": "vstfs:///Git/PullRequestId/e7236bd9-a6f9-4554-8dce-ad81ae94faf6%2fa491cdad-443c-4419-9726-95e7619673ae%2f1354"
+}

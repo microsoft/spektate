@@ -1,5 +1,6 @@
 import * as azure from "azure-storage";
 import * as fs from "fs";
+import { HttpHelper } from "./HttpHelper";
 import { IDeployment } from "./IDeployment";
 import * as Deployment from "./IDeployment";
 import {
@@ -7,6 +8,7 @@ import {
   duration,
   endTime,
   getDeploymentsBasedOnFilters,
+  getRepositoryFromURL,
   parseDeploymentsFromDB,
   status
 } from "./IDeployment";
@@ -14,6 +16,12 @@ import { AzureDevOpsPipeline } from "./pipeline/AzureDevOpsPipeline";
 import { IBuild } from "./pipeline/Build";
 import IPipeline from "./pipeline/Pipeline";
 import { IRelease } from "./pipeline/Release";
+import { IAuthor } from "./repository/Author";
+import { IAzureDevOpsRepo } from "./repository/IAzureDevOpsRepo";
+import * as AzureDevOpsRepo from "./repository/IAzureDevOpsRepo";
+import { IGitHub } from "./repository/IGitHub";
+import * as GitHub from "./repository/IGitHub";
+import { IPullRequest } from "./repository/IPullRequest";
 
 const mockDirectory = "src/mocks/";
 let rawDeployments: IDeployment[];
@@ -27,6 +35,20 @@ const clusterPipeline = new AzureDevOpsPipeline(
   "test-project",
   false
 );
+const dummyAuthor = {
+  imageUrl: "",
+  name: "",
+  url: "",
+  username: ""
+};
+const dummyPR = {
+  description: "",
+  id: 0,
+  sourceBranch: "",
+  targetBranch: "",
+  title: "",
+  url: ""
+};
 
 jest
   .spyOn(AzureDevOpsPipeline.prototype, "getBuildStages")
@@ -37,6 +59,14 @@ jest
 jest
   .spyOn(AzureDevOpsPipeline.prototype, "getListOfBuilds")
   .mockReturnValue(Promise.resolve({}));
+jest.spyOn(GitHub, "getAuthor").mockReturnValue(Promise.resolve(dummyAuthor));
+jest
+  .spyOn(AzureDevOpsRepo, "getAuthor")
+  .mockReturnValue(Promise.resolve(dummyAuthor));
+jest.spyOn(GitHub, "getPullRequest").mockReturnValue(Promise.resolve(dummyPR));
+jest
+  .spyOn(AzureDevOpsRepo, "getPullRequest")
+  .mockReturnValue(Promise.resolve(dummyPR));
 
 jest.spyOn(Deployment, "getDeployments").mockImplementation(
   (
@@ -159,6 +189,61 @@ describe("Deployment", () => {
     expect(queryString.includes("commitId eq 'abcdefg'")).toBe(true);
     expect(queryString.includes("service eq 'service'")).toBe(true);
     expect(queryString.includes("RowKey eq 'depid'")).toBe(true);
+  });
+});
+
+describe("Deployment", () => {
+  test("get Repository from URL works", () => {
+    let repoURL = "https://github.com/username/reponame";
+    let repo = getRepositoryFromURL(repoURL);
+    expect((repo as IGitHub).username).toBe("username");
+    expect((repo as IGitHub).reponame).toBe("reponame");
+    repoURL = "https://dev.azure.com/epicstuff/project/_git/reponame";
+    repo = getRepositoryFromURL(repoURL);
+    expect((repo as IAzureDevOpsRepo).org).toBe("epicstuff");
+    expect((repo as IAzureDevOpsRepo).project).toBe("project");
+    expect((repo as IAzureDevOpsRepo).repo).toBe("reponame");
+    const sameRepoURL = "dev.azure.com/epicstuff/project/_git/reponame";
+    const sameRepo = getRepositoryFromURL(sameRepoURL);
+    expect(sameRepo).toEqual(repo);
+  });
+});
+
+describe("Deployment", () => {
+  test("fetch Author", () => {
+    let repoURL = "https://github.com/username/reponame";
+    let repo = getRepositoryFromURL(repoURL);
+    Deployment.fetchAuthor(repo!, "commit", "token").then(
+      (author: IAuthor | undefined) => {
+        repoURL = "https://dev.azure.com/epicstuff/project/_git/reponame";
+        repo = getRepositoryFromURL(repoURL);
+        expect(author).toBe(dummyAuthor);
+        Deployment.fetchAuthor(repo!, "commit", "token").then(
+          (authorAgain: IAuthor | undefined) => {
+            expect(author).toBe(dummyAuthor);
+          }
+        );
+      }
+    );
+  });
+});
+
+describe("Deployment", () => {
+  test("fetch PR", () => {
+    let repoURL = "https://github.com/username/reponame";
+    let repo = getRepositoryFromURL(repoURL);
+    Deployment.fetchPR(repo!, "commit", "token").then(
+      (pr: IPullRequest | undefined) => {
+        repoURL = "https://dev.azure.com/epicstuff/project/_git/reponame";
+        repo = getRepositoryFromURL(repoURL);
+        expect(pr).toBe(dummyPR);
+        Deployment.fetchPR(repo!, "commit", "token").then(
+          (prAgain: IPullRequest | undefined) => {
+            expect(prAgain).toBe(dummyPR);
+          }
+        );
+      }
+    );
   });
 });
 
