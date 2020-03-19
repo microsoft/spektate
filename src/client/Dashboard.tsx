@@ -1001,10 +1001,6 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       query.repo = repo.repo;
       query.commit = commit;
     }
-    if (query.repo === "samiya-hld") {
-      console.log(deployment);
-      console.log(query);
-    }
     let str = "";
     // tslint:disable-next-line: forin
     for (const key in query) {
