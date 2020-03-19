@@ -25,7 +25,6 @@ export class HttpHelper {
             }
       )
       .catch(error => {
-        console.error(error);
         throw error;
       });
   }

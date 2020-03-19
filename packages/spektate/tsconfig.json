@@ -11,5 +11,5 @@
   "typeAcquisition": {
     "include": ["jest"]
   },
-  "exclude": ["**/*.test.ts", "node_modules", "lib"]
+  "exclude": ["node_modules", "lib"]
 }

@@ -1,6 +1,6 @@
 {
   "name": "spektate",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Visualization tool backend for microsoft/bedrock",
   "main": "lib/spektate.js",
   "types": "lib/src/index.d.ts",
@@ -8,6 +8,7 @@
     "build": "shx rm -rf lib && tsc -p . && webpack",
     "change": "beachball change",
     "check": "beachball check",
+    "lint": "tslint -p tsconfig.json -c tslint.json src/**/*.ts",
     "publish": "beachball publish",
     "test": "jest --coverage --coverageReporters=cobertura --coverageReporters=html",
     "test-watch": "jest --watchAll"
@@ -29,6 +30,7 @@
     "jest": "^25.1.0",
     "jest-when": "^2.7.0",
     "shx": "^0.3.2",
+    "tslint": "^5.20.0",
     "ts-jest": "^25.2.1",
     "ts-loader": "^6.0.4",
     "typescript": "^3.6.2",
