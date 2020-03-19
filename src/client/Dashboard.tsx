@@ -158,12 +158,6 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         renderCell: this.renderSimpleText,
         width: new ObservableValue(180)
       },
-      // {
-      //   id: "srcBranchName",
-      //   name: "Branch",
-      //   renderCell: this.renderSimpleText,
-      //   width: new ObservableValue(120)
-      // },
       {
         id: "environment",
         name: "Ring",
