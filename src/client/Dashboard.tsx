@@ -1053,7 +1053,6 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
               if (pr && deployment.pr) {
                 this.showPRsColumn = true;
                 const copy = state.prs;
-                // console.log(pr);
                 copy[deployment.pr] = pr;
                 this.setState({ prs: copy });
                 this.updateFilteredDeployments();
