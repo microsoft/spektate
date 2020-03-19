@@ -47,6 +47,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
   };
   // private manifestRepo?: IGitHub | IAzureDevOpsRepo;
   private releasesUrl?: string;
+  private showPRsColumn: boolean = false;
 
   constructor(props: Props) {
     super(props);
@@ -155,7 +156,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         id: "service",
         name: "Service",
         renderCell: this.renderSimpleText,
-        width: new ObservableValue(200)
+        width: new ObservableValue(180)
       },
       // {
       //   id: "srcBranchName",
@@ -165,15 +166,15 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       // },
       {
         id: "environment",
-        name: "Environment",
+        name: "Ring",
         renderCell: this.renderSimpleText,
-        width: new ObservableValue(100)
+        width: new ObservableValue(220)
       },
       {
         id: "authorName",
         name: "Author",
         renderCell: this.renderAuthor,
-        width: new ObservableValue(200)
+        width: new ObservableValue(180)
       },
       {
         id: "srcPipelineId",
@@ -186,32 +187,35 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         name: "ACR to HLD",
         renderCell: this.renderDockerRelease,
         width: new ObservableValue(250)
-      },
-      {
+      }
+    ];
+    if (this.showPRsColumn) {
+      columns.push({
         id: "pr",
         name: "Pull Request",
         renderCell: this.renderPR,
         width: new ObservableValue(250)
-      },
-      {
+      });
+      columns.push({
         id: "mergedByName",
         name: "Merged By",
         renderCell: this.renderMergedBy,
-        width: new ObservableValue(200)
-      },
-      {
-        id: "hldPipelineId",
-        name: "HLD to Manifest",
-        renderCell: this.renderHldBuild,
-        width: new ObservableValue(200)
-      },
-      {
-        id: "deployedAt",
-        name: "Last Updated",
-        renderCell: this.renderTime,
-        width: new ObservableValue(120)
-      }
-    ];
+        width: new ObservableValue(180)
+      });
+    }
+    columns.push({
+      id: "hldPipelineId",
+      name: "HLD to Manifest",
+      renderCell: this.renderHldBuild,
+      width: new ObservableValue(200)
+    });
+    columns.push({
+      id: "deployedAt",
+      name: "Last Updated",
+      renderCell: this.renderTime,
+      width: new ObservableValue(120)
+    });
+
     // Display the cluster column only if there is information to show in the table
     if (
       this.state.manifestSyncStatuses &&
@@ -640,7 +644,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       tableColumn,
       tableItem,
       tableItem.srcPipelineResult,
-      "#" + tableItem.srcPipelineId,
+      tableItem.srcPipelineId,
       tableItem.srcPipelineURL,
       tableItem.srcCommitId,
       tableItem.srcCommitURL,
@@ -660,7 +664,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       tableColumn,
       tableItem,
       tableItem.hldPipelineResult,
-      "#" + tableItem.hldPipelineId,
+      tableItem.hldPipelineId,
       tableItem.hldPipelineURL,
       tableItem.hldCommitId,
       tableItem.hldCommitURL,
@@ -1057,6 +1061,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
             HttpHelper.httpGet("/api/pr?" + queryParams).then((data: any) => {
               const pr = data.data as IPullRequest;
               if (pr && deployment.pr) {
+                this.showPRsColumn = true;
                 const copy = state.prs;
                 // console.log(pr);
                 copy[deployment.pr] = pr;
@@ -1144,7 +1149,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     if (statusStr === "succeeded") {
       return { iconName: "SkypeCircleCheck", style: { color: "green" } };
     } else if (statusStr === undefined || statusStr === "inProgress") {
-      return { iconName: "ProgressRingDots", style: { color: "blue" } }; // SyncStatusSolid
+      return { iconName: "AwayStatus", style: { color: "#0079d5" } }; // SyncStatusSolid
     } else if (statusStr === "canceled") {
       return { iconName: "SkypeCircleSlash", style: { color: "gray" } };
     } else if (statusStr === "warning") {
