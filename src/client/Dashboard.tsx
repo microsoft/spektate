@@ -168,7 +168,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         id: "authorName",
         name: "Author",
         renderCell: this.renderAuthor,
-        width: new ObservableValue(180)
+        width: new ObservableValue(200)
       },
       {
         id: "srcPipelineId",
@@ -186,7 +186,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     if (this.showPRsColumn) {
       columns.push({
         id: "pr",
-        name: "Pull Request",
+        name: "Approval Pull Request",
         renderCell: this.renderPR,
         width: new ObservableValue(250)
       });
@@ -194,7 +194,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         id: "mergedByName",
         name: "Merged By",
         renderCell: this.renderMergedBy,
-        width: new ObservableValue(180)
+        width: new ObservableValue(200)
       });
     }
     columns.push({
