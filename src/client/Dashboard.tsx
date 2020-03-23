@@ -81,7 +81,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     );
   }
 
-  private updateDeployments = async () => {
+  public updateDeployments = async () => {
     const deps = await HttpHelper.httpGet<any>("/api/deployments");
     const ideps: IDeployment[] = deps.data as IDeployment[];
     this.processQueryParams();
@@ -131,7 +131,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     });
   };
 
-  private renderPrototypeTable = () => {
+  public renderPrototypeTable = () => {
     const columns: Array<ITableColumn<IDeploymentField>> = [
       {
         id: "status",
@@ -295,12 +295,12 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     );
   };
 
-  private onDashboardFiltered = (filterData: Filter) => {
+  public onDashboardFiltered = (filterData: Filter) => {
     this.filter = filterData;
     this.updateFilteredDeployments();
   };
 
-  private updateFilteredDeployments = () => {
+  public updateFilteredDeployments = () => {
     if (this.filter) {
       const keywordFilter: string | undefined = this.filter.getFilterItemValue(
         "keywordFilter"
@@ -331,7 +331,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     }
   };
 
-  private updateQueryString(
+  public updateQueryString(
     keywordFilter: string | undefined,
     serviceFilters: Set<string>,
     authorFilters: Set<string>,
@@ -370,7 +370,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     }
   }
 
-  private filterDeployments(
+  public filterDeployments(
     keywordFilter: string | undefined,
     serviceFilters: Set<string>,
     authorFilters: Set<string>,
@@ -408,7 +408,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     this.setState({ filteredDeployments });
   }
 
-  private processQueryParams = () => {
+  public processQueryParams = () => {
     if (window.location.search === "") {
       return;
     }
@@ -445,7 +445,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     );
   };
 
-  private getFilterSet = (queryParam: string): Set<string> => {
+  public getFilterSet = (queryParam: string): Set<string> => {
     const filters = querystring.decode(window.location.search.replace("?", ""));
     let filterSet: Set<string> = new Set<string>();
     if (filters[queryParam] && filters[queryParam].length > 0) {
@@ -458,7 +458,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     return filterSet;
   };
 
-  private getListOfEnvironments = (): string[] => {
+  public getListOfEnvironments = (): string[] => {
     const envs: { [id: string]: boolean } = {};
     this.state.deployments.forEach((deployment: IDeployment) => {
       if (deployment.environment !== "" && !(deployment.environment in envs)) {
@@ -468,7 +468,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     return Array.from(Object.keys(envs));
   };
 
-  private getListOfServices = (): string[] => {
+  public getListOfServices = (): string[] => {
     const services: { [id: string]: boolean } = {};
     this.state.deployments.forEach((deployment: IDeployment) => {
       if (deployment.service !== "" && !(deployment.service in services)) {
@@ -478,13 +478,13 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     return Array.from(Object.keys(services));
   };
 
-  private getListOfAuthors = (): Set<string> => {
+  public getListOfAuthors = (): Set<string> => {
     return new Set(
       Array.from(Object.values(this.state.authors)).map(author => author.name)
     );
   };
 
-  private getClusterSyncStatusForDeployment = (
+  public getClusterSyncStatusForDeployment = (
     deployment: IDeployment
   ): ITag[] | undefined => {
     const clusterSyncs: ITag[] = [];
@@ -498,7 +498,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     return clusterSyncs;
   };
 
-  private renderSimpleText = (
+  public renderSimpleText = (
     rowIndex: number,
     columnIndex: number,
     tableColumn: ITableColumn<IDeploymentField>,
@@ -525,7 +525,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     );
   };
 
-  private renderAuthor = (
+  public renderAuthor = (
     rowIndex: number,
     columnIndex: number,
     tableColumn: ITableColumn<IDeploymentField>,
@@ -557,7 +557,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     );
   };
 
-  private renderTime = (
+  public renderTime = (
     rowIndex: number,
     columnIndex: number,
     tableColumn: ITableColumn<IDeploymentField>,
@@ -592,7 +592,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     );
   };
 
-  private renderSrcBuild = (
+  public renderSrcBuild = (
     rowIndex: number,
     columnIndex: number,
     tableColumn: ITableColumn<IDeploymentField>,
@@ -612,7 +612,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     );
   };
 
-  private renderHldBuild = (
+  public renderHldBuild = (
     rowIndex: number,
     columnIndex: number,
     tableColumn: ITableColumn<IDeploymentField>,
@@ -632,7 +632,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     );
   };
 
-  private renderDockerRelease = (
+  public renderDockerRelease = (
     rowIndex: number,
     columnIndex: number,
     tableColumn: ITableColumn<IDeploymentField>,
@@ -652,7 +652,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     );
   };
 
-  private renderClusters = (
+  public renderClusters = (
     rowIndex: number,
     columnIndex: number,
     tableColumn: ITableColumn<IDeploymentField>,
@@ -691,7 +691,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     );
   };
 
-  private renderCluster = (
+  public renderCluster = (
     text: string,
     allClusters: string[]
   ): React.ReactNode => {
@@ -712,7 +712,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     );
   };
 
-  private renderCustomClusterTooltip = (clusters: string[]) => {
+  public renderCustomClusterTooltip = (clusters: string[]) => {
     const tooltip: React.ReactNode[] = [];
     clusters.forEach(cluster => {
       tooltip.push(
@@ -725,7 +725,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     return <span>{tooltip}</span>;
   };
 
-  private renderBuild = (
+  public renderBuild = (
     rowIndex: number,
     columnIndex: number,
     tableColumn: ITableColumn<IDeploymentField>,
@@ -792,7 +792,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     );
   };
 
-  private renderDeploymentStatus = (
+  public renderDeploymentStatus = (
     rowIndex: number,
     columnIndex: number,
     tableColumn: ITableColumn<IDeploymentField>,
@@ -819,7 +819,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     );
   };
 
-  private WithIcon = (props: {
+  public WithIcon = (props: {
     className?: string;
     iconProps: IIconProps;
     children?: React.ReactNode;
@@ -832,9 +832,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     );
   };
 
-  private getStatusIndicatorData = (
-    statusStr: string
-  ): IStatusIndicatorData => {
+  public getStatusIndicatorData = (statusStr: string): IStatusIndicatorData => {
     statusStr = statusStr || "";
     statusStr = statusStr.toLowerCase();
     const indicatorData: IStatusIndicatorData = {
@@ -866,7 +864,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     return indicatorData;
   };
 
-  private getAuthorRequestParams = (deployment: IDeployment) => {
+  public getAuthorRequestParams = (deployment: IDeployment) => {
     const query: any = {};
     const commit =
       deployment.srcToDockerBuild?.sourceVersion ||
@@ -895,7 +893,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     return str;
   };
 
-  private getAuthors = () => {
+  public getAuthors = () => {
     try {
       const state = this.state;
       const promises: Array<Promise<any>> = [];
@@ -935,7 +933,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     }
   };
 
-  private getAuthor = (deployment: IDeployment): IAuthor | undefined => {
+  public getAuthor = (deployment: IDeployment): IAuthor | undefined => {
     if (
       deployment.srcToDockerBuild &&
       deployment.srcToDockerBuild.sourceVersion in this.state.authors
@@ -956,7 +954,8 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     return undefined;
   };
 
-  private getIcon(statusStr?: string): IIconProps {
+  public getIcon(statusStr?: string): IIconProps {
+    statusStr = statusStr?.toLowerCase();
     if (statusStr === "succeeded") {
       return { iconName: "SkypeCircleCheck", style: { color: "green" } };
     } else if (statusStr === undefined || statusStr === "inProgress") {
