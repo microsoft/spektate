@@ -975,7 +975,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
   };
 
   private getAuthorRequestParams = (deployment: IDeployment) => {
-    const query: any = {};
+    const query: { [key: string]: string } = {};
     const commit =
       deployment.srcToDockerBuild?.sourceVersion ||
       deployment.hldToManifestBuild?.sourceVersion;
@@ -991,54 +991,43 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
           ? getRepositoryFromURL(deployment.hldRepo)
           : undefined);
     }
-    if (repo && "username" in repo) {
+    if (repo && "username" in repo && commit) {
       query.username = repo.username;
       query.reponame = repo.reponame;
       query.commit = commit;
-    } else if (repo && "org" in repo) {
+    } else if (repo && "org" in repo && commit) {
       query.org = repo.org;
       query.project = repo.project;
       query.repo = repo.repo;
       query.commit = commit;
     }
-    let str = "";
-    // tslint:disable-next-line: forin
-    for (const key in query) {
-      if (str !== "") {
-        str += "&";
-      }
-      str += key + "=" + encodeURIComponent(query[key]);
-    }
-    return str;
+    return Object.keys(query)
+      .map(k => `${k}=${encodeURIComponent(query[k])}`)
+      .join("&");
   };
 
   private getPRRequestParams = (deployment: IDeployment) => {
-    const query: any = {};
+    const query: { [key: string]: string } = {};
     if (!deployment.hldRepo) {
       return "";
     }
     const repo: IAzureDevOpsRepo | IGitHub | undefined = getRepositoryFromURL(
       deployment.hldRepo
     );
-    if (repo && "username" in repo) {
+    if (repo && "username" in repo && deployment.pr) {
       query.username = repo.username;
       query.reponame = repo.reponame;
-      query.pr = deployment.pr;
-    } else if (repo && "org" in repo) {
+      query.pr = deployment.pr!.toString();
+    } else if (repo && "org" in repo && deployment.pr) {
       query.org = repo.org;
       query.project = repo.project;
       query.repo = repo.repo;
-      query.pr = deployment.pr;
+      query.pr = deployment.pr!.toString();
     }
-    let str = "";
-    // tslint:disable-next-line: forin
-    for (const key in query) {
-      if (str !== "") {
-        str += "&";
-      }
-      str += key + "=" + encodeURIComponent(query[key]);
-    }
-    return str;
+
+    return Object.keys(query)
+      .map(k => `${k}=${encodeURIComponent(query[k])}`)
+      .join("&");
   };
 
   private getPRs = () => {
@@ -1048,7 +1037,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         if (deployment.pr) {
           const queryParams = this.getPRRequestParams(deployment);
           if (queryParams !== "") {
-            HttpHelper.httpGet("/api/pr?" + queryParams).then((data: any) => {
+            HttpHelper.httpGet("/api/pr?" + queryParams).then(data => {
               const pr = data.data as IPullRequest;
               if (pr && deployment.pr) {
                 this.showPRsColumn = true;
@@ -1075,7 +1064,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         if (queryParams !== "") {
           const promise = HttpHelper.httpGet("/api/author?" + queryParams);
 
-          promise.then((data: any) => {
+          promise.then(data => {
             const author = data.data as IAuthor;
             if (author && deployment.srcToDockerBuild) {
               const copy = state.authors;
