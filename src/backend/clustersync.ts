@@ -77,7 +77,7 @@ export const get = async (req: Request, res: Response) => {
       res.json(status || {});
     } catch (err) {
       console.log(err);
-      res.send(500);
+      res.sendStatus(500);
     }
   }
 };
