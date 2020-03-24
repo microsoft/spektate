@@ -864,7 +864,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         key={"col-" + columnIndex}
         columnIndex={columnIndex}
         tableColumn={tableColumn}
-        iconProps={this.getIcon(pipelineResult)}
+        iconProps={getIcon(pipelineResult)}
         line1={
           <Tooltip text={pipelineId} overflowOnly={true}>
             {pipelineURL && (
@@ -1126,19 +1126,19 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     }
     return undefined;
   };
-
-  public getIcon(statusStr?: string): IIconProps {
-    if (statusStr === "succeeded") {
-      return { iconName: "SkypeCircleCheck", style: { color: "green" } };
-    } else if (statusStr === undefined || statusStr === "inProgress") {
-      return { iconName: "AwayStatus", style: { color: "#0079d5" } }; // SyncStatusSolid
-    } else if (statusStr === "canceled") {
-      return { iconName: "SkypeCircleSlash", style: { color: "gray" } };
-    } else if (statusStr === "warning") {
-      return { iconName: "AwayStatus", style: { color: "orange" } };
-    }
-    return { iconName: "SkypeCircleMinus", style: { color: "red" } };
-  }
 }
+
+export const getIcon = (statusStr?: string): IIconProps => {
+  if (statusStr === "succeeded") {
+    return { iconName: "SkypeCircleCheck", style: { color: "green" } };
+  } else if (statusStr === undefined || statusStr === "inProgress") {
+    return { iconName: "AwayStatus", style: { color: "#0079d5" } }; // SyncStatusSolid
+  } else if (statusStr === "canceled") {
+    return { iconName: "SkypeCircleSlash", style: { color: "gray" } };
+  } else if (statusStr === "warning") {
+    return { iconName: "AwayStatus", style: { color: "orange" } };
+  }
+  return { iconName: "SkypeCircleMinus", style: { color: "red" } };
+};
 
 export default Dashboard;

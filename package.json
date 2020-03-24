@@ -31,12 +31,16 @@
     "test:watch": "jest --watch"
   },
   "devDependencies": {
+    "@types/enzyme": "^3.10.5",
     "@types/jest": "^25.1.4",
     "@types/jest-when": "^2.7.0",
     "@types/node": "^12.6.8",
     "@types/react": "^16.8.10",
     "@types/react-dom": "^16.8.3",
     "chai": "^4.2.0",
+    "enzyme": "^3.11.0",
+    "enzyme-adapter-react-16": "^1.15.2",
+    "enzyme-to-json": "^3.4.4",
     "husky": "^3.0.4",
     "lint-staged": "^9.2.5",
     "pkg": "^4.4.0",
