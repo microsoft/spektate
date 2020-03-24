@@ -1,6 +1,7 @@
 import { IStatusProps } from "azure-devops-ui/Status";
 import { IDeployment } from "spektate/lib/IDeployment";
 import { IAuthor } from "spektate/lib/repository/Author";
+import { IPullRequest } from "spektate/lib/repository/IPullRequest";
 import { ITag } from "spektate/lib/repository/Tag";
 
 export interface IStatusIndicatorData {
@@ -9,6 +10,9 @@ export interface IStatusIndicatorData {
 }
 export interface IAuthors {
   [commitId: string]: IAuthor;
+}
+export interface IPRs {
+  [pr: string]: IPullRequest;
 }
 
 export interface IDashboardFilterState {
@@ -23,6 +27,7 @@ export interface IDashboardState {
   manifestSyncStatuses?: ITag[];
   authors: IAuthors;
   filteredDeployments: IDeployment[];
+  prs: IPRs;
 }
 export interface IDeploymentField {
   deploymentId: string;
@@ -50,4 +55,9 @@ export interface IDeploymentField {
   endTime?: Date;
   authorName?: string;
   authorURL?: string;
+  pr?: number;
+  prURL?: string;
+  prSourceBranch?: string;
+  mergedByName?: string;
+  mergedByImageURL?: string;
 }

@@ -18,10 +18,16 @@ import { VssPersona } from "azure-devops-ui/VssPersona";
 import * as querystring from "querystring";
 import * as React from "react";
 import { HttpHelper } from "spektate/lib/HttpHelper";
-import { endTime, IDeployment, status } from "spektate/lib/IDeployment";
+import {
+  endTime,
+  getRepositoryFromURL,
+  IDeployment,
+  status
+} from "spektate/lib/IDeployment";
 import { IAuthor } from "spektate/lib/repository/Author";
 import { IAzureDevOpsRepo } from "spektate/lib/repository/IAzureDevOpsRepo";
 import { IGitHub } from "spektate/lib/repository/IGitHub";
+import { IPullRequest } from "spektate/lib/repository/IPullRequest";
 import { ITag } from "spektate/lib/repository/Tag";
 import "./css/dashboard.css";
 import {
@@ -41,13 +47,15 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
   };
   // private manifestRepo?: IGitHub | IAzureDevOpsRepo;
   private releasesUrl?: string;
+  private showPRsColumn: boolean = false;
 
   constructor(props: Props) {
     super(props);
     this.state = {
       authors: {},
       deployments: [],
-      filteredDeployments: []
+      filteredDeployments: [],
+      prs: {}
     };
   }
 
@@ -95,10 +103,14 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         dockerToHldReleaseStage: dep.dockerToHldReleaseStage,
         environment: dep.environment,
         hldCommitId: dep.hldCommitId,
+        hldRepo: dep.hldRepo,
         hldToManifestBuild: dep.hldToManifestBuild,
         imageTag: dep.imageTag,
         manifestCommitId: dep.manifestCommitId,
+        manifestRepo: dep.manifestRepo,
+        pr: dep.pr,
         service: dep.service,
+        sourceRepo: dep.sourceRepo,
         srcToDockerBuild: dep.srcToDockerBuild,
         timeStamp: dep.timeStamp
       };
@@ -109,6 +121,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     this.processQueryParams();
     this.updateFilteredDeployments();
     this.getAuthors();
+    this.getPRs();
     if (!this.filterState.defaultApplied) {
       this.filter.setFilterItemState("authorFilter", {
         value: this.filterState.currentlySelectedAuthors
@@ -143,19 +156,13 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         id: "service",
         name: "Service",
         renderCell: this.renderSimpleText,
-        width: new ObservableValue(200)
-      },
-      {
-        id: "srcBranchName",
-        name: "Branch",
-        renderCell: this.renderSimpleText,
-        width: new ObservableValue(120)
+        width: new ObservableValue(180)
       },
       {
         id: "environment",
-        name: "Environment",
+        name: "Ring",
         renderCell: this.renderSimpleText,
-        width: new ObservableValue(100)
+        width: new ObservableValue(220)
       },
       {
         id: "authorName",
@@ -174,20 +181,35 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         name: "ACR to HLD",
         renderCell: this.renderDockerRelease,
         width: new ObservableValue(250)
-      },
-      {
-        id: "hldPipelineId",
-        name: "HLD to Manifest",
-        renderCell: this.renderHldBuild,
-        width: new ObservableValue(200)
-      },
-      {
-        id: "deployedAt",
-        name: "Last Updated",
-        renderCell: this.renderTime,
-        width: new ObservableValue(120)
       }
     ];
+    if (this.showPRsColumn) {
+      columns.push({
+        id: "pr",
+        name: "Approval Pull Request",
+        renderCell: this.renderPR,
+        width: new ObservableValue(250)
+      });
+      columns.push({
+        id: "mergedByName",
+        name: "Merged By",
+        renderCell: this.renderMergedBy,
+        width: new ObservableValue(200)
+      });
+    }
+    columns.push({
+      id: "hldPipelineId",
+      name: "HLD to Manifest",
+      renderCell: this.renderHldBuild,
+      width: new ObservableValue(200)
+    });
+    columns.push({
+      id: "deployedAt",
+      name: "Last Updated",
+      renderCell: this.renderTime,
+      width: new ObservableValue(120)
+    });
+
     // Display the cluster column only if there is information to show in the table
     if (
       this.state.manifestSyncStatuses &&
@@ -205,7 +227,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     try {
       rows = this.state.filteredDeployments.map(deployment => {
         const author = this.getAuthor(deployment);
-        // const author = deployment.author;
+        const pr = this.getPR(deployment);
         const tags = this.getClusterSyncStatusForDeployment(deployment);
         const clusters: string[] = tags ? tags.map(itag => itag.name) : [];
         const statusStr = status(deployment);
@@ -273,10 +295,23 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
           duration: deployment.duration ? deployment.duration + " mins" : "",
           authorName: author ? author.name : "-",
           authorURL: author ? author.imageUrl : "",
-          status: statusStr,
+          status: pr && !pr.mergedBy ? "waiting" : statusStr,
           clusters,
           endTime: endtime,
-          manifestCommitId: deployment.manifestCommitId
+          manifestCommitId: deployment.manifestCommitId,
+          pr: pr ? pr.id : undefined,
+          prURL: pr ? pr.url : undefined,
+          prSourceBranch: pr ? pr.sourceBranch : undefined,
+          mergedByName: pr
+            ? pr.mergedBy
+              ? pr.mergedBy.name
+              : undefined
+            : undefined,
+          mergedByImageURL: pr
+            ? pr.mergedBy
+              ? pr.mergedBy.imageUrl
+              : undefined
+            : undefined
         };
       });
     } catch (err) {
@@ -525,11 +560,13 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     );
   };
 
-  public renderAuthor = (
+  public renderPersona = (
     rowIndex: number,
     columnIndex: number,
     tableColumn: ITableColumn<IDeploymentField>,
-    tableItem: IDeploymentField
+    tableItem: IDeploymentField,
+    name: string,
+    imageUrl?: string
   ): JSX.Element => {
     if (!tableItem[tableColumn.id]) {
       return (
@@ -543,10 +580,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         key={"col-" + columnIndex}
         contentClassName="font-size-m text-ellipsis bolt-table-link bolt-table-inline-link"
       >
-        <VssPersona
-          displayName={tableItem.authorName}
-          imageUrl={tableItem.authorURL}
-        />
+        <VssPersona displayName={name} imageUrl={imageUrl} />
         <div>&nbsp;&nbsp;&nbsp;</div>
         <div className="flex-row scroll-hidden">
           <Tooltip overflowOnly={true}>
@@ -604,7 +638,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       tableColumn,
       tableItem,
       tableItem.srcPipelineResult,
-      "#" + tableItem.srcPipelineId,
+      tableItem.srcPipelineId,
       tableItem.srcPipelineURL,
       tableItem.srcCommitId,
       tableItem.srcCommitURL,
@@ -624,7 +658,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       tableColumn,
       tableItem,
       tableItem.hldPipelineResult,
-      "#" + tableItem.hldPipelineId,
+      tableItem.hldPipelineId,
       tableItem.hldPipelineURL,
       tableItem.hldCommitId,
       tableItem.hldCommitURL,
@@ -649,6 +683,80 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       tableItem.imageTag,
       "",
       "Product"
+    );
+  };
+
+  public renderPR = (
+    rowIndex: number,
+    columnIndex: number,
+    tableColumn: ITableColumn<IDeploymentField>,
+    tableItem: IDeploymentField
+  ): JSX.Element => {
+    if (tableItem.pr) {
+      return this.renderBuild(
+        rowIndex,
+        columnIndex,
+        tableColumn,
+        tableItem,
+        tableItem.mergedByName ? "succeeded" : "warning",
+        tableItem.pr.toString(),
+        tableItem.prURL,
+        tableItem.prSourceBranch,
+        "",
+        "BranchPullRequest"
+      );
+    } else {
+      return (
+        <SimpleTableCell key={"col-" + columnIndex} columnIndex={columnIndex}>
+          -
+        </SimpleTableCell>
+      );
+    }
+  };
+
+  public renderAuthor = (
+    rowIndex: number,
+    columnIndex: number,
+    tableColumn: ITableColumn<IDeploymentField>,
+    tableItem: IDeploymentField
+  ): JSX.Element => {
+    if (tableItem.authorName && tableItem.authorURL) {
+      return this.renderPersona(
+        rowIndex,
+        columnIndex,
+        tableColumn,
+        tableItem,
+        tableItem.authorName,
+        tableItem.authorURL
+      );
+    }
+    return (
+      <SimpleTableCell key={"col-" + columnIndex} columnIndex={columnIndex}>
+        -
+      </SimpleTableCell>
+    );
+  };
+
+  public renderMergedBy = (
+    rowIndex: number,
+    columnIndex: number,
+    tableColumn: ITableColumn<IDeploymentField>,
+    tableItem: IDeploymentField
+  ): JSX.Element => {
+    if (tableItem.pr && tableItem.mergedByName) {
+      return this.renderPersona(
+        rowIndex,
+        columnIndex,
+        tableColumn,
+        tableItem,
+        tableItem.mergedByName,
+        tableItem.mergedByImageURL
+      );
+    }
+    return (
+      <SimpleTableCell key={"col-" + columnIndex} columnIndex={columnIndex}>
+        -
+      </SimpleTableCell>
     );
   };
 
@@ -851,6 +959,13 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         };
         indicatorData.label = "Running";
         break;
+      case "waiting":
+        indicatorData.statusProps = {
+          ...Statuses.Waiting,
+          ariaLabel: "Waiting"
+        };
+        indicatorData.label = "Waiting";
+        break;
       case "incomplete":
         indicatorData.statusProps = {
           ...Statuses.Warning,
@@ -860,37 +975,88 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
 
         break;
     }
-
     return indicatorData;
   };
 
   public getAuthorRequestParams = (deployment: IDeployment) => {
-    const query: any = {};
+    const query: { [key: string]: string } = {};
     const commit =
       deployment.srcToDockerBuild?.sourceVersion ||
       deployment.hldToManifestBuild?.sourceVersion;
-    const repo: IAzureDevOpsRepo | IGitHub | undefined =
+    let repo: IAzureDevOpsRepo | IGitHub | undefined =
       deployment.srcToDockerBuild?.repository ||
-      deployment.hldToManifestBuild?.repository;
-    if (repo && "username" in repo) {
+      (deployment.sourceRepo
+        ? getRepositoryFromURL(deployment.sourceRepo)
+        : undefined);
+    if (!repo && (deployment.hldToManifestBuild || deployment.hldRepo)) {
+      repo =
+        deployment.hldToManifestBuild!.repository ||
+        (deployment.hldRepo
+          ? getRepositoryFromURL(deployment.hldRepo)
+          : undefined);
+    }
+    if (repo && "username" in repo && commit) {
       query.username = repo.username;
       query.reponame = repo.reponame;
       query.commit = commit;
-    } else if (repo && "org" in repo) {
+    } else if (repo && "org" in repo && commit) {
       query.org = repo.org;
       query.project = repo.project;
       query.repo = repo.repo;
       query.commit = commit;
     }
-    let str = "";
-    // tslint:disable-next-line: forin
-    for (const key in query) {
-      if (str !== "") {
-        str += "&";
-      }
-      str += key + "=" + encodeURIComponent(query[key]);
+    return Object.keys(query)
+      .map(k => `${k}=${encodeURIComponent(query[k])}`)
+      .join("&");
+  };
+
+  public getPRRequestParams = (deployment: IDeployment) => {
+    const query: { [key: string]: string } = {};
+    if (!deployment.hldRepo) {
+      return "";
     }
-    return str;
+    const repo: IAzureDevOpsRepo | IGitHub | undefined = getRepositoryFromURL(
+      deployment.hldRepo
+    );
+    if (repo && "username" in repo && deployment.pr) {
+      query.username = repo.username;
+      query.reponame = repo.reponame;
+      query.pr = deployment.pr!.toString();
+    } else if (repo && "org" in repo && deployment.pr) {
+      query.org = repo.org;
+      query.project = repo.project;
+      query.repo = repo.repo;
+      query.pr = deployment.pr!.toString();
+    }
+
+    return Object.keys(query)
+      .map(k => `${k}=${encodeURIComponent(query[k])}`)
+      .join("&");
+  };
+
+  public getPRs = () => {
+    try {
+      const state = this.state;
+      this.state.deployments.forEach(deployment => {
+        if (deployment.pr) {
+          const queryParams = this.getPRRequestParams(deployment);
+          if (queryParams !== "") {
+            HttpHelper.httpGet("/api/pr?" + queryParams).then(data => {
+              const pr = data.data as IPullRequest;
+              if (pr && deployment.pr) {
+                this.showPRsColumn = true;
+                const copy = state.prs;
+                copy[deployment.pr] = pr;
+                this.setState({ prs: copy });
+                this.updateFilteredDeployments();
+              }
+            });
+          }
+        }
+      });
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   public getAuthors = () => {
@@ -954,14 +1120,22 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     return undefined;
   };
 
+  public getPR = (deployment: IDeployment): IPullRequest | undefined => {
+    if (deployment.pr && deployment.pr in this.state.prs) {
+      return this.state.prs[deployment.pr];
+    }
+    return undefined;
+  };
+
   public getIcon(statusStr?: string): IIconProps {
-    statusStr = statusStr?.toLowerCase();
     if (statusStr === "succeeded") {
       return { iconName: "SkypeCircleCheck", style: { color: "green" } };
     } else if (statusStr === undefined || statusStr === "inProgress") {
-      return { iconName: "ProgressRingDots", style: { color: "blue" } }; // SyncStatusSolid
+      return { iconName: "AwayStatus", style: { color: "#0079d5" } }; // SyncStatusSolid
     } else if (statusStr === "canceled") {
       return { iconName: "SkypeCircleSlash", style: { color: "gray" } };
+    } else if (statusStr === "warning") {
+      return { iconName: "AwayStatus", style: { color: "orange" } };
     }
     return { iconName: "SkypeCircleMinus", style: { color: "red" } };
   }
