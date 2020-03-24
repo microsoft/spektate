@@ -400,7 +400,8 @@ export const extractLastUpdateTime = (field: any): Date | undefined => {
 export const status = (deployment: IDeployment): string => {
   if (
     deployment.hldToManifestBuild &&
-    deployment.hldToManifestBuild.status === "completed"
+    deployment.hldToManifestBuild.status === "completed" &&
+    deployment.hldToManifestBuild.result === "succeeded"
   ) {
     return "Complete";
   } else if (
@@ -414,6 +415,15 @@ export const status = (deployment: IDeployment): string => {
       deployment.hldToManifestBuild.status === "inProgress")
   ) {
     return "In Progress";
+  } else if (
+    (deployment.srcToDockerBuild &&
+      deployment.srcToDockerBuild.result === "failed") ||
+    (deployment.dockerToHldReleaseStage &&
+      deployment.dockerToHldReleaseStage.result === "failed") ||
+    (deployment.hldToManifestBuild &&
+      deployment.hldToManifestBuild.result === "failed")
+  ) {
+    return "failed";
   }
   return "Incomplete";
 };

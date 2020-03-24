@@ -295,7 +295,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
           duration: deployment.duration ? deployment.duration + " mins" : "",
           authorName: author ? author.name : "-",
           authorURL: author ? author.imageUrl : "",
-          status: statusStr,
+          status: pr && !pr.mergedBy ? "waiting" : statusStr,
           clusters,
           endTime: endtime,
           manifestCommitId: deployment.manifestCommitId,
@@ -961,6 +961,13 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         };
         indicatorData.label = "Running";
         break;
+      case "waiting":
+        indicatorData.statusProps = {
+          ...Statuses.Waiting,
+          ariaLabel: "Waiting"
+        };
+        indicatorData.label = "Waiting";
+        break;
       case "incomplete":
         indicatorData.statusProps = {
           ...Statuses.Warning,
@@ -970,7 +977,6 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
 
         break;
     }
-
     return indicatorData;
   };
 
