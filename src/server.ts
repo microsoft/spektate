@@ -3,6 +3,7 @@ import * as path from "path";
 import { get as authorGet } from "./backend/author";
 import { get as clusterSyncGet } from "./backend/clustersync";
 import { get as deploymentGet } from "./backend/deployment";
+import { get as prGet } from "./backend/pullrequest";
 
 const app = express();
 
@@ -17,6 +18,9 @@ app.get("/api/clustersync", (req: express.Request, res: express.Response) => {
 });
 app.get("/api/author", (req: express.Request, res: express.Response) => {
   authorGet(req, res);
+});
+app.get("/api/pr", (req: express.Request, res: express.Response) => {
+  prGet(req, res);
 });
 
 // The "catchall" handler: for any request that doesn't
