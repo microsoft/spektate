@@ -13,7 +13,7 @@ az appservice plan create -n $APP_SERVICE_PLAN_NAME -g $RESOURCE_GROUP --is-linu
 _Alternatively_, you want to re-use an existing app service plan. Use Install `jq` and see what existing app service plans you may already have:
 
 ```bash
-az appservice plan list | jq '.[].id' to see existing plans
+az appservice plan list | jq '.[].id'
 ```
 
 ## Create an Azure WebApp For Containers with Spektate
