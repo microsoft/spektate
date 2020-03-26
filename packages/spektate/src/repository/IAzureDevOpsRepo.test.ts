@@ -1,10 +1,12 @@
 import { AxiosResponse } from "axios";
 import * as fs from "fs";
+import * as path from "path";
 import { HttpHelper } from "../HttpHelper";
 import { IAuthor } from "./Author";
 import {
   getAuthor,
   getManifestSyncState,
+  getPullRequest,
   getReleasesURL,
   IAzureDevOpsRepo
 } from "./IAzureDevOpsRepo";
@@ -13,7 +15,8 @@ import { ITag } from "./Tag";
 let authorRawResponse = {};
 let syncTagRawResponse = {};
 let manifestSyncTagResponse = {};
-const mockDirectory = "src/repository/mocks/";
+let prRawResponse = {};
+const mockDirectory = path.join("src", "repository", "mocks");
 const repo: IAzureDevOpsRepo = {
   org: "org",
   project: "project",
@@ -22,16 +25,25 @@ const repo: IAzureDevOpsRepo = {
 
 beforeAll(() => {
   authorRawResponse = JSON.parse(
-    fs.readFileSync(mockDirectory + "azdo-author-response.json", "utf-8")
+    fs.readFileSync(
+      path.join(mockDirectory, "azdo-author-response.json"),
+      "utf-8")
   );
   syncTagRawResponse = JSON.parse(
-    fs.readFileSync(mockDirectory + "azdo-sync-response.json", "utf-8")
+    fs.readFileSync(
+      path.join(mockDirectory, "azdo-sync-response.json"),
+      "utf-8")
   );
   manifestSyncTagResponse = JSON.parse(
     fs.readFileSync(
-      mockDirectory + "azdo-manifest-sync-tag-response.json",
+      path.join(mockDirectory, "azdo-manifest-sync-tag-response.json"),
       "utf-8"
     )
+  );
+  prRawResponse = JSON.parse(
+    fs.readFileSync(
+      path.join(mockDirectory, "azdo-pr-response.json"),
+      "utf-8")
   );
 });
 jest.spyOn(HttpHelper, "httpGet").mockImplementation(
@@ -40,6 +52,8 @@ jest.spyOn(HttpHelper, "httpGet").mockImplementation(
       return getAxiosResponseForObject(authorRawResponse);
     } else if (theUrl.includes("annotatedtags")) {
       return getAxiosResponseForObject(manifestSyncTagResponse);
+    } else if (theUrl.includes("pullrequests")) {
+      return getAxiosResponseForObject(prRawResponse);
     }
     return getAxiosResponseForObject(syncTagRawResponse);
   }
@@ -53,6 +67,28 @@ describe("IAzureDevOpsRepo", () => {
     expect(author!.url).toBeDefined();
     expect(author!.username).toBe("saakhta@microsoft.com");
     expect(author!.imageUrl).toBeTruthy();
+  });
+});
+
+describe("IAzureDevOpsRepo", () => {
+  test("gets PR correctly", async () => {
+    const pr = await getPullRequest(repo, "prid");
+    expect(pr).toBeDefined();
+    expect(pr.mergedBy).toBeDefined();
+    expect(pr!.mergedBy!.name).toBe("Samiya Akhtar");
+    expect(pr!.mergedBy!.username).toBe("saakhta@microsoft.com");
+    expect(pr!.mergedBy!.url).toBeDefined();
+    expect(pr!.mergedBy!.imageUrl).toBeDefined();
+    expect(pr!.url).toBeDefined();
+    expect(pr!.title).toBe(
+      "Updating samiya.frontend image tag to master-20200317.12."
+    );
+    expect(pr!.sourceBranch).toBe(
+      "DEPLOY/samiya2019-samiya.frontend-master-20200317.12"
+    );
+    expect(pr!.targetBranch).toBe("master");
+    expect(pr!.id).toBe(1354);
+    expect(pr!.description).toBeDefined();
   });
 });
 

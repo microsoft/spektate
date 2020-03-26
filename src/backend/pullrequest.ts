@@ -1,22 +1,22 @@
 import { Request, Response } from "express";
-import { fetchAuthor } from "spektate/lib/IDeployment";
-import { IAuthor } from "spektate/lib/repository/Author";
+import { fetchPR } from "spektate/lib/IDeployment";
 import { IAzureDevOpsRepo } from "spektate/lib/repository/IAzureDevOpsRepo";
 import { IGitHub } from "spektate/lib/repository/IGitHub";
+import { IPullRequest } from "spektate/lib/repository/IPullRequest";
 import * as config from "./config";
 
-const getAuthor = (
-  commitId: string,
+const getPR = (
+  prId: string,
   repository: IGitHub | IAzureDevOpsRepo
-): Promise<IAuthor | undefined> => {
+): Promise<IPullRequest | undefined> => {
   return new Promise((resolve, reject) => {
-    fetchAuthor(
+    fetchPR(
       repository,
-      commitId,
+      prId,
       config.SOURCE_REPO_ACCESS_TOKEN || config.AZURE_PIPELINE_ACCESS_TOKEN
     )
-      .then((author: IAuthor | undefined) => {
-        resolve(author);
+      .then((pr: IPullRequest | undefined) => {
+        resolve(pr);
       })
       .catch(err => {
         console.error(err);
@@ -27,28 +27,29 @@ const getAuthor = (
 
 export const get = async (req: Request, res: Response) => {
   if (config.isValuesValid(res)) {
-    if (!req.query.commit) {
-      res.status(400).send("commit query parameter was missing");
+    if (!req.query.pr) {
+      res.status(400).send("pr query parameter was missing");
     } else {
       try {
         if (req.query.org && req.query.project && req.query.repo) {
-          const author = await getAuthor(req.query.commit, {
+          const pr = await getPR(req.query.pr, {
             org: req.query.org,
             project: req.query.project,
             repo: req.query.repo
           });
-          res.json(author || {});
+          res.json(pr || {});
         } else if (req.query.username && req.query.reponame) {
-          const author = await getAuthor(req.query.commit, {
+          const pr = await getPR(req.query.pr, {
             reponame: req.query.reponame,
             username: req.query.username
           });
-          res.json(author || {});
+          res.json(pr || {});
         } else {
           res.status(400).send("required query parameters were missing");
         }
       } catch (err) {
-        res.status(500).send(err);
+        console.log(err);
+        res.status(500);
       }
     }
   }

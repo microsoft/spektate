@@ -1,5 +1,6 @@
 import * as azure from "azure-storage";
 import * as fs from "fs";
+import { HttpHelper } from "./HttpHelper";
 import { IDeployment } from "./IDeployment";
 import * as Deployment from "./IDeployment";
 import {
@@ -7,12 +8,20 @@ import {
   duration,
   endTime,
   getDeploymentsBasedOnFilters,
+  getRepositoryFromURL,
   parseDeploymentsFromDB,
   status
 } from "./IDeployment";
 import { AzureDevOpsPipeline } from "./pipeline/AzureDevOpsPipeline";
-import IPipeline, { IBuilds, IReleases } from "./pipeline/Pipeline";
+import { IBuild } from "./pipeline/Build";
+import IPipeline from "./pipeline/Pipeline";
+import { IRelease } from "./pipeline/Release";
 import { IAuthor } from "./repository/Author";
+import { IAzureDevOpsRepo } from "./repository/IAzureDevOpsRepo";
+import * as AzureDevOpsRepo from "./repository/IAzureDevOpsRepo";
+import { IGitHub } from "./repository/IGitHub";
+import * as GitHub from "./repository/IGitHub";
+import { IPullRequest } from "./repository/IPullRequest";
 
 const mockDirectory = "src/mocks/";
 let rawDeployments: IDeployment[];
@@ -26,24 +35,38 @@ const clusterPipeline = new AzureDevOpsPipeline(
   "test-project",
   false
 );
-
-jest.spyOn(AzureDevOpsPipeline.prototype, "getListOfBuilds").mockImplementation(
-  (buildIds?: Set<string>): Promise<IBuilds> => {
-    return new Promise<IBuilds>(resolve => {
-      resolve({});
-    });
-  }
-);
+const dummyAuthor = {
+  imageUrl: "",
+  name: "",
+  url: "",
+  username: ""
+};
+const dummyPR = {
+  description: "",
+  id: 0,
+  sourceBranch: "",
+  targetBranch: "",
+  title: "",
+  url: ""
+};
 
 jest
+  .spyOn(AzureDevOpsPipeline.prototype, "getBuildStages")
+  .mockReturnValue(Promise.resolve({}));
+jest
   .spyOn(AzureDevOpsPipeline.prototype, "getListOfReleases")
-  .mockImplementation(
-    (releaseIds?: Set<string>): Promise<IReleases> => {
-      return new Promise<IReleases>(resolve => {
-        resolve({});
-      });
-    }
-  );
+  .mockReturnValue(Promise.resolve({}));
+jest
+  .spyOn(AzureDevOpsPipeline.prototype, "getListOfBuilds")
+  .mockReturnValue(Promise.resolve({}));
+jest.spyOn(GitHub, "getAuthor").mockReturnValue(Promise.resolve(dummyAuthor));
+jest
+  .spyOn(AzureDevOpsRepo, "getAuthor")
+  .mockReturnValue(Promise.resolve(dummyAuthor));
+jest.spyOn(GitHub, "getPullRequest").mockReturnValue(Promise.resolve(dummyPR));
+jest
+  .spyOn(AzureDevOpsRepo, "getPullRequest")
+  .mockReturnValue(Promise.resolve(dummyPR));
 
 jest.spyOn(Deployment, "getDeployments").mockImplementation(
   (
@@ -72,7 +95,7 @@ jest
       storageAccountKey: string,
       storageAccountTable: string
     ) => {
-      console.log("Mocking out db cleanup");
+      // no-op
     }
   );
 
@@ -93,41 +116,40 @@ beforeAll(() => {
 });
 
 describe("Deployment", () => {
-  test("Deployments parsing is working as expected", () => {
-    new Promise(resolve => {
-      parseDeploymentsFromDB(
-        rawDeployments,
-        srcPipeline,
-        hldPipeline,
-        clusterPipeline,
-        "",
-        "",
-        "",
-        resolve
-      );
-    }).then(value => {
-      expect(value).toHaveLength(62);
-      const deps = value as IDeployment[];
-      let verified = false;
-      deps.forEach(dep => {
-        if (dep.deploymentId === "179c843496bd") {
-          expect(status(dep)).toBe("Complete");
-          expect(endTime(dep).getTime()).toBe(
-            new Date("2019-10-31T18:15:53.767Z").getTime()
-          );
-          expect(duration(dep)).toBe("9.24");
-          verified = true;
-        }
-      });
-      expect(verified).toBe(true);
+  test("Deployments parsing is working as expected", async done => {
+    parseDeploymentsFromDB(
+      rawDeployments,
+      srcPipeline,
+      hldPipeline,
+      clusterPipeline,
+      "",
+      "",
+      "",
+      value => {
+        expect(value).toHaveLength(62);
+        const deps = value as IDeployment[];
+        let verified = false;
+        deps.forEach(dep => {
+          if (dep.deploymentId === "179c843496bd") {
+            expect(status(dep)).toBe("Complete");
+            expect(endTime(dep).getTime()).toBe(
+              new Date("2019-10-31T18:15:53.767Z").getTime()
+            );
+            expect(duration(dep)).toBe("9.24");
+            verified = true;
+          }
+        });
+        expect(verified).toBe(true);
 
-      deps.sort(compare);
-      expect(deps).toHaveLength(62);
-      expect(endTime(deps[61]).getTime() < endTime(deps[0]).getTime()).toBe(
-        true
-      );
-      expect(endTime(deps[1]).getTime() < endTime(deps[0]).getTime());
-    });
+        deps.sort(compare);
+        expect(deps).toHaveLength(62);
+        expect(endTime(deps[61]).getTime() < endTime(deps[0]).getTime()).toBe(
+          true
+        );
+        expect(endTime(deps[1]).getTime() < endTime(deps[0]).getTime());
+        done();
+      }
+    );
   });
 });
 
@@ -170,60 +192,80 @@ describe("Deployment", () => {
   });
 });
 
+describe("Deployment", () => {
+  test("get Repository from URL works", () => {
+    let repoURL = "https://github.com/username/reponame";
+    let repo = getRepositoryFromURL(repoURL);
+    expect((repo as IGitHub).username).toBe("username");
+    expect((repo as IGitHub).reponame).toBe("reponame");
+    repoURL = "https://dev.azure.com/epicstuff/project/_git/reponame";
+    repo = getRepositoryFromURL(repoURL);
+    expect((repo as IAzureDevOpsRepo).org).toBe("epicstuff");
+    expect((repo as IAzureDevOpsRepo).project).toBe("project");
+    expect((repo as IAzureDevOpsRepo).repo).toBe("reponame");
+    const sameRepoURL = "dev.azure.com/epicstuff/project/_git/reponame";
+    const sameRepo = getRepositoryFromURL(sameRepoURL);
+    expect(sameRepo).toEqual(repo);
+  });
+});
+
+describe("Deployment", () => {
+  test("fetch Author", () => {
+    let repoURL = "https://github.com/username/reponame";
+    let repo = getRepositoryFromURL(repoURL);
+    Deployment.fetchAuthor(repo!, "commit", "token").then(
+      (author: IAuthor | undefined) => {
+        repoURL = "https://dev.azure.com/epicstuff/project/_git/reponame";
+        repo = getRepositoryFromURL(repoURL);
+        expect(author).toBe(dummyAuthor);
+        Deployment.fetchAuthor(repo!, "commit", "token").then(
+          (authorAgain: IAuthor | undefined) => {
+            expect(author).toBe(dummyAuthor);
+          }
+        );
+      }
+    );
+  });
+});
+
+describe("Deployment", () => {
+  test("fetch PR", () => {
+    let repoURL = "https://github.com/username/reponame";
+    let repo = getRepositoryFromURL(repoURL);
+    Deployment.fetchPR(repo!, "commit", "token").then(
+      (pr: IPullRequest | undefined) => {
+        repoURL = "https://dev.azure.com/epicstuff/project/_git/reponame";
+        repo = getRepositoryFromURL(repoURL);
+        expect(pr).toBe(dummyPR);
+        Deployment.fetchPR(repo!, "commit", "token").then(
+          (prAgain: IPullRequest | undefined) => {
+            expect(prAgain).toBe(dummyPR);
+          }
+        );
+      }
+    );
+  });
+});
+
+const updateDatesOnPipeline = (oBuilds: {
+  [id: string]: IBuild | IRelease;
+}) => {
+  for (const id in oBuilds) {
+    if (id) {
+      const item = oBuilds[id];
+      item.finishTime = new Date(item.finishTime);
+      item.startTime = new Date(item.startTime);
+      item.queueTime = new Date(item.queueTime);
+      if (item.lastUpdateTime) {
+        item.lastUpdateTime = new Date(item.lastUpdateTime);
+      }
+    }
+  }
+};
+
 // Since pipelines are coming from mock json, they need to be converted to date formats
 const updatePipelineDates = () => {
-  for (const build in srcPipeline.builds) {
-    if (build) {
-      srcPipeline.builds[build].finishTime = new Date(
-        srcPipeline.builds[build].finishTime
-      );
-      srcPipeline.builds[build].startTime = new Date(
-        srcPipeline.builds[build].startTime
-      );
-      srcPipeline.builds[build].queueTime = new Date(
-        srcPipeline.builds[build].queueTime
-      );
-      if (srcPipeline.builds[build].lastUpdateTime) {
-        srcPipeline.builds[build].lastUpdateTime = new Date(
-          srcPipeline.builds[build].lastUpdateTime!
-        );
-      }
-    }
-  }
-  for (const build in hldPipeline.releases) {
-    if (build) {
-      hldPipeline.releases[build].finishTime = new Date(
-        hldPipeline.releases[build].finishTime
-      );
-      hldPipeline.releases[build].startTime = new Date(
-        hldPipeline.releases[build].startTime
-      );
-      hldPipeline.releases[build].queueTime = new Date(
-        hldPipeline.releases[build].queueTime
-      );
-      if (hldPipeline.releases[build].lastUpdateTime) {
-        hldPipeline.releases[build].lastUpdateTime = new Date(
-          hldPipeline.releases[build].lastUpdateTime!
-        );
-      }
-    }
-  }
-  for (const build in clusterPipeline.builds) {
-    if (build) {
-      clusterPipeline.builds[build].finishTime = new Date(
-        clusterPipeline.builds[build].finishTime
-      );
-      clusterPipeline.builds[build].startTime = new Date(
-        clusterPipeline.builds[build].startTime
-      );
-      clusterPipeline.builds[build].queueTime = new Date(
-        clusterPipeline.builds[build].queueTime
-      );
-      if (clusterPipeline.builds[build].lastUpdateTime) {
-        clusterPipeline.builds[build].lastUpdateTime = new Date(
-          clusterPipeline.builds[build].lastUpdateTime!
-        );
-      }
-    }
-  }
+  updateDatesOnPipeline(srcPipeline.builds);
+  updateDatesOnPipeline(hldPipeline.releases);
+  updateDatesOnPipeline(clusterPipeline.builds);
 };

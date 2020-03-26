@@ -2,8 +2,8 @@ import * as express from "express";
 import { get as authorGet } from "./author";
 import { get as clusterSyncGet } from "./clustersync";
 import { get as deploymentGet } from "./deployment";
+import { get as prGet } from "./pullrequest";
 const app = express();
-import bodyParser = require("body-parser");
 
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
@@ -13,12 +13,6 @@ app.use((req, res, next) => {
   );
   next();
 });
-
-// parse application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({ extended: false }));
-
-// parse application/json
-app.use(bodyParser.json());
 
 // start the Express server
 const port = 8001; // default port to listen
@@ -34,4 +28,7 @@ app.get("/api/clustersync", (req: express.Request, res: express.Response) => {
 });
 app.get("/api/author", (req: express.Request, res: express.Response) => {
   authorGet(req, res);
+});
+app.get("/api/pr", (req: express.Request, res: express.Response) => {
+  prGet(req, res);
 });

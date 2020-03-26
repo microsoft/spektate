@@ -6,9 +6,15 @@ import { IRelease } from "./pipeline/Release";
 import { IAuthor } from "./repository/Author";
 import {
   getAuthor as adoGetAuthor,
+  getPullRequest as adoGetPR,
   IAzureDevOpsRepo
 } from "./repository/IAzureDevOpsRepo";
-import { getAuthor as gitHubGetAuthor, IGitHub } from "./repository/IGitHub";
+import {
+  getAuthor as gitHubGetAuthor,
+  getPullRequest as githubGetPR,
+  IGitHub
+} from "./repository/IGitHub";
+import { IPullRequest } from "./repository/IPullRequest";
 
 export interface IDeployment {
   deploymentId: string;
@@ -27,6 +33,10 @@ export interface IDeployment {
   duration?: string;
   status?: string;
   endTime?: Date;
+  pr?: number;
+  sourceRepo?: string;
+  hldRepo?: string;
+  manifestRepo?: string;
 }
 
 export const getDeploymentsBasedOnFilters = async (
@@ -104,13 +114,21 @@ export const getDeployments = async (
     );
   }
 
-  return new Promise<IDeployment[]>(resolve => {
+  return new Promise<IDeployment[]>((resolve, reject) => {
     tableService.queryEntities(
       storageTableName,
       query!,
       nextContinuationToken,
       (error: any, result: any) => {
-        if (!error) {
+        if (error) {
+          if (error.code === "AuthenticationFailed") {
+            reject(
+              `Authentication failed for storage account '${storageAccount}'.`
+            );
+          } else {
+            reject(error.message);
+          }
+        } else {
           parseDeploymentsFromDB(
             result,
             srcPipeline,
@@ -127,15 +145,10 @@ export const getDeployments = async (
   });
 };
 
-export const compare = (a: IDeployment, b: IDeployment) => {
-  let aInt = 0;
-  let bInt = 0;
-  aInt = endTime(a).getTime();
-  bInt = endTime(b).getTime();
-  if (aInt < bInt) {
-    return 1;
-  }
-  return -1;
+export const compare = (a: IDeployment, b: IDeployment): number => {
+  const aInt = endTime(a).getTime();
+  const bInt = endTime(b).getTime();
+  return aInt < bInt ? 1 : -1;
 };
 
 export const parseDeploymentsFromDB = (
@@ -222,8 +235,8 @@ export const cleanUpDeploymentsFromDB = (
       storageAccountKey
     );
     tableService.executeBatch(storageAccountTable, batch, (error, result) => {
-      if (!error) {
-        console.log("Deleted {0} entities", batch.size());
+      if (error) {
+        console.error("Failed to clean up db: ", error);
       }
     });
   }
@@ -314,10 +327,14 @@ export const getDeploymentFromDBEntry = async (
     dockerToHldReleaseStage: p2ReleaseStage,
     environment: env,
     hldCommitId,
+    hldRepo: entry.hldRepo ? entry.hldRepo._ : undefined,
     hldToManifestBuild: p3,
     imageTag,
     manifestCommitId,
+    manifestRepo: entry.manifestRepo ? entry.manifestRepo._ : undefined,
+    pr: entry.pr ? entry.pr._ : undefined,
     service,
+    sourceRepo: entry.sourceRepo ? entry.sourceRepo._ : undefined,
     srcToDockerBuild: p1,
     timeStamp: entry.Timestamp._
   };
@@ -383,7 +400,8 @@ export const extractLastUpdateTime = (field: any): Date | undefined => {
 export const status = (deployment: IDeployment): string => {
   if (
     deployment.hldToManifestBuild &&
-    deployment.hldToManifestBuild.status === "completed"
+    deployment.hldToManifestBuild.status === "completed" &&
+    deployment.hldToManifestBuild.result === "succeeded"
   ) {
     return "Complete";
   } else if (
@@ -397,6 +415,15 @@ export const status = (deployment: IDeployment): string => {
       deployment.hldToManifestBuild.status === "inProgress")
   ) {
     return "In Progress";
+  } else if (
+    (deployment.srcToDockerBuild &&
+      deployment.srcToDockerBuild.result === "failed") ||
+    (deployment.dockerToHldReleaseStage &&
+      deployment.dockerToHldReleaseStage.result === "failed") ||
+    (deployment.hldToManifestBuild &&
+      deployment.hldToManifestBuild.result === "failed")
+  ) {
+    return "failed";
   }
   return "Incomplete";
 };
@@ -425,4 +452,54 @@ export const fetchAuthor = (
         });
     }
   });
+};
+
+export const fetchPR = (
+  repository: IGitHub | IAzureDevOpsRepo,
+  prId: string,
+  accessToken?: string
+): Promise<IPullRequest | undefined> => {
+  return new Promise((resolve, reject) => {
+    if ("username" in repository) {
+      githubGetPR(repository, prId, accessToken)
+        .then((pr: IPullRequest | undefined) => {
+          resolve(pr);
+        })
+        .catch(error => {
+          reject(error);
+        });
+    } else if ("org" in repository) {
+      adoGetPR(repository, prId, accessToken)
+        .then((pr: IPullRequest | undefined) => {
+          resolve(pr);
+        })
+        .catch(error => {
+          reject(error);
+        });
+    } else {
+      reject("Repository could not be recognized.");
+    }
+  });
+};
+
+export const getRepositoryFromURL = (
+  repository: string
+): IAzureDevOpsRepo | IGitHub | undefined => {
+  repository = repository
+    .replace("https://", "")
+    .replace("http://", "")
+    .toLowerCase();
+  const repoSplit = repository.split("/");
+  if (repository.includes("github")) {
+    return {
+      reponame: repoSplit[repoSplit.length - 1],
+      username: repoSplit[repoSplit.length - 2]
+    };
+  } else if (repository.includes("azure")) {
+    return {
+      org: repoSplit[1],
+      project: repoSplit[2],
+      repo: repoSplit[4]
+    };
+  }
 };

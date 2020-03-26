@@ -19,7 +19,36 @@ Note: Spektate dashboard will delete deployments when their corresponding builds
 
 Follow the steps in this [guide](https://github.com/CatalystCode/spk/blob/master/docs/service-introspection-onboarding.md) to onboard a project to use Spektate.
 
-## Dashboard prototype
+## Install on your cluster
+
+The helm chart to use this dashboard is located [here](./chart). There's a Load Balancer provided in the helm chart but it's turned off in `values.yaml` with the setting `externalIP`. Set this to true if you would like to expose the dashboard via a public endpoint.
+
+Substitute values for your configuration and install this dashboard via the command below:
+
+```bash
+cd ./chart
+helm install . --name spektate --set storageAccessKey=<storageAccessKey> --set storageTableName=<storageTableName> --set storagePartitionKey=<storagePartitionKey> --set storageAccountName=<storageAccountName> --set pipelineProject=<pipelineProjectName> --set pipelineOrg=<pipelineOrg> --set pipelineAccessToken=<PipelinePAT> --set manifest=<manifestRepoName> --set manifestAccessToken=<manifestAccessToken> --set githubManifestUsername=<gitHubUserName>  --set sourceRepoAccessToken=<sourceRepoAccessToken>
+```
+
+- `storageAccessKey`: Access key for the storage account
+- `storageTableName`: Table name for the storage account
+- `storagePartitionKey`: Partition key for your configuration, you may want to use project name or some identifier that helps separate unrelated configurations for the purpose of introspection.
+- `storageAccountName`: Storage account name
+- `pipelineProject`: Project name for the pipelines in Azure DevOps
+- `pipelineOrg`: Org name for the pipelines in Azure DevOps
+- `pipelineAccessToken`: Access token for pipelines in Azure DevOps
+- `manifestRepoName`: Manifest repository name
+- `manifestAccessToken`: Access token for the manifest repository
+- `sourceRepoAccessToken`: Access token for the source repository
+- **Note**: If you're using GitHub, add `githubManifestUsername`: Account name or organization name under which the manifest repository resides.
+
+If you're not using an external IP, use port-forwarding to access the dashboard:
+
+1. Copy pod name from `kubectl get pods`
+2. `kubectl port-forward pod/<pod-name> 2200:5000` or change `2200` to a port of your choice
+3. Navigate to http://localhost:2200 or change `2200` to a port of your choice
+
+## Dashboard dev mode
 
 1. Clone this repository, and run `yarn`.
 2. Add the following env variables to your shell:
@@ -47,9 +76,9 @@ Follow the steps in this [guide](https://github.com/CatalystCode/spk/blob/master
    - `REACT_APP_MANIFEST`: Manifest repository name
    - `REACT_APP_MANIFEST_ACCESS_TOKEN`: Access token for the manifest repository
    - `REACT_APP_SOURCE_REPO_ACCESS_TOKEN`: Access token for the source repository
-   - **Note**: If you're using GitHub, add `REACT_APP_GITHUB_MANIFEST_USERNAME`: Account name under which the manifest repository resides.
+   - **Note**: If you're using GitHub, add `REACT_APP_GITHUB_MANIFEST_USERNAME`: Account name or organization name under which the manifest repository resides.
 
-3. Then run `yarn start` to view the dashboard for the hello world deployment screen.
+3. Then run `yarn start-backend` in one window to start the backend server, and `yarn start` in another to start the front end to view the dashboard for the hello world deployment screen!
 
 ## Command Line Interface
 
