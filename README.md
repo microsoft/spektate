@@ -80,6 +80,10 @@ If you're not using an external IP, use port-forwarding to access the dashboard:
 
 3. Then run `yarn start-backend` in one window to start the backend server, and `yarn start` in another to start the front end to view the dashboard for the hello world deployment screen!
 
+## Azure Web App Hosting
+
+You can provide an Azure Active Directory layer of authetication on top of Spektate. Follow instructions [here](./WebAppHosting.md).
+
 ## Command Line Interface
 
 To use the CLI for Spektate, head over to https://github.com/catalystcode/spk.
