@@ -1,8 +1,7 @@
 import * as express from "express";
-import { get as authorGet } from "./author";
 import { get as clusterSyncGet } from "./clustersync";
-import { get as deploymentGet } from "./deployment";
-import { get as prGet } from "./pullrequest";
+import { cacheRefreshInterval } from "./config";
+import { fetch as fetchDeployment, update as updateCache } from "./lib/cache";
 const app = express();
 
 app.use((req, res, next) => {
@@ -14,21 +13,26 @@ app.use((req, res, next) => {
   next();
 });
 
-// start the Express server
-const port = 8001; // default port to listen
-app.listen(port, () => {
-  console.log(`server started at http://localhost:${port}`);
-});
-
 app.get("/api/deployments", (req: express.Request, res: express.Response) => {
-  deploymentGet(req, res);
+  try {
+    res.json(fetchDeployment());
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
 });
 app.get("/api/clustersync", (req: express.Request, res: express.Response) => {
   clusterSyncGet(req, res);
 });
-app.get("/api/author", (req: express.Request, res: express.Response) => {
-  authorGet(req, res);
-});
-app.get("/api/pr", (req: express.Request, res: express.Response) => {
-  prGet(req, res);
-});
+
+(async () => {
+  await updateCache();
+
+  setInterval(async () => {
+    await updateCache();
+  }, cacheRefreshInterval());
+  // start the Express server
+  const port = 8001; // default port to listen
+  app.listen(port, () => {
+    console.log(`server started at http://localhost:${port}`);
+  });
+})();

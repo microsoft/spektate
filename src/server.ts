@@ -1,9 +1,7 @@
 import * as express from "express";
 import * as path from "path";
-import { get as authorGet } from "./backend/author";
 import { get as clusterSyncGet } from "./backend/clustersync";
-import { get as deploymentGet } from "./backend/deployment";
-import { get as prGet } from "./backend/pullrequest";
+import { fetch as fetchDeployment } from "./backend/lib/cache";
 
 const app = express();
 
@@ -11,16 +9,14 @@ const app = express();
 app.use(express.static(path.join(__dirname)));
 
 app.get("/api/deployments", (req: express.Request, res: express.Response) => {
-  deploymentGet(req, res);
+  try {
+    res.json(fetchDeployment());
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
 });
 app.get("/api/clustersync", (req: express.Request, res: express.Response) => {
   clusterSyncGet(req, res);
-});
-app.get("/api/author", (req: express.Request, res: express.Response) => {
-  authorGet(req, res);
-});
-app.get("/api/pr", (req: express.Request, res: express.Response) => {
-  prGet(req, res);
 });
 
 // The "catchall" handler: for any request that doesn't

@@ -20,7 +20,10 @@
   "scripts": {
     "start-backend": "ts-node src/backend/index.ts",
     "start": "react-scripts-ts start",
-    "build": "react-scripts-ts build && tsc src/backend/** --outDir build/backend/ && tsc src/server.ts --outDir build/",
+    "test-backend": "jest --rootDir src/backend --reporters=jest-junit --reporters=default --coverage --coverageReporters=cobertura --coverageReporters=html",
+    "test": "jest --rootDir src --reporters=jest-junit --reporters=default --coverage --coverageReporters=cobertura --coverageReporters=html",
+    "test-coverage-html": "jest --rootDir src --coverage --coverageReporters=html",
+    "build": "react-scripts-ts build && tsc src/backend/*.ts src/backend/lib/*.ts --outDir build/backend/ && tsc src/server.ts --outDir build/",
     "eject": "react-scripts-ts eject",
     "lint": "tslint -p tsconfig.json -c tslint.json src/**/*.ts",
     "refresh": "rm -rf ./node_modules ./package-lock.json && npm install"
@@ -33,11 +36,15 @@
     "@types/react-dom": "^16.8.3",
     "chai": "^4.2.0",
     "husky": "^3.0.4",
+    "jest": "^25.1.0",
+    "jest-junit": "^10.0.0",
+    "jest-when": "^2.7.0",
     "lint-staged": "^9.2.5",
     "pkg": "^4.4.0",
     "prettier": "^1.18.2",
-    "ts-jest": "^24.0.2",
-    "ts-node": "^8.5.4",
+    "ts-jest": "^25.2.1",
+    "ts-loader": "^6.2.2",
+    "ts-node": "^8.8.1",
     "tslint": "^5.20.0",
     "tslint-config-prettier": "^1.18.0",
     "typescript": "^3.5.3"
@@ -71,5 +78,18 @@
     "**/*/serialize-javascript": ">=2.1.1",
     "**/*/mem": ">=4.0.0",
     "**/*/braces": ">=2.3.1"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js"
+    ],
+    "transform": {
+      "^.+\\.(ts|tsx)$": "./preprocessor.js"
+    },
+    "testMatch": [
+      "**/__tests__/*.(ts|tsx)"
+    ]
   }
 }
