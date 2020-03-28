@@ -49,6 +49,14 @@ describe("test update and fetch function", () => {
       }
     });
   });
+  it("negative test", async () => {
+    jest
+      .spyOn(deployments, "list")
+      .mockRejectedValueOnce(Error("server error"));
+    // when there is a server error, update function will not throw exception
+    // it will try again in the next interval.
+    await update();
+  });
 });
 
 describe("test fetchAuthor function", () => {

@@ -20,7 +20,7 @@
   "scripts": {
     "start-backend": "ts-node src/backend/index.ts",
     "start": "react-scripts-ts start",
-    "test-backend": "jest --rootDir src/backend --reporters=jest-junit --reporters=default --coverage --coverageReporters=cobertura --coverageReporters=html",
+    "test-backend": "jest --rootDir src/backend  --coverage --coverageReporters=html",
     "test": "jest --rootDir src --reporters=jest-junit --reporters=default --coverage --coverageReporters=cobertura --coverageReporters=html",
     "test-coverage-html": "jest --rootDir src --coverage --coverageReporters=html",
     "build": "react-scripts-ts build && tsc src/backend/*.ts src/backend/lib/*.ts --outDir build/backend/ && tsc src/server.ts --outDir build/",
@@ -71,24 +71,6 @@
     "*.{ts,tsx,js,jsx,css,json,md,yml}": [
       "prettier --write",
       "git add"
-    ]
-  },
-  "resolutions": {
-    "**/*/serialize-javascript": ">=2.1.1",
-    "**/*/mem": ">=4.0.0",
-    "**/*/braces": ">=2.3.1"
-  },
-  "jest": {
-    "moduleFileExtensions": [
-      "ts",
-      "tsx",
-      "js"
-    ],
-    "transform": {
-      "^.+\\.(ts|tsx)$": "./preprocessor.js"
-    },
-    "testMatch": [
-      "**/__tests__/*.(ts|tsx)"
     ]
   }
 }

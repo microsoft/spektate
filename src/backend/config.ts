@@ -24,7 +24,7 @@ export const STORAGE_TABLE_NAME: string =
 export const cacheRefreshInterval = (): number => {
   const interval = process.env.REACT_APP_CACHE_REFRESH_INTERVAL_IN_SEC || "30";
   try {
-    const val = parseInt(interval);
+    const val = parseInt(interval, 10);
     return val * 1000;
   } catch (err) {
     console.log("REACT_APP_CACHE_REFRESH_INTERVAL_IN_SEC is not a number");
