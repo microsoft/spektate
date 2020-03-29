@@ -1915,10 +1915,10 @@ axobject-query@^2.0.1:
     "@babel/runtime" "^7.7.4"
     "@babel/runtime-corejs3" "^7.7.4"
 
-azure-devops-ui@^1.155.0:
-  version "1.160.4"
-  resolved "https://registry.yarnpkg.com/azure-devops-ui/-/azure-devops-ui-1.160.4.tgz#88ead26a3bb594c6aedf03252fd6634c8f1003e2"
-  integrity sha512-nW6siTMFrDvT/HZn+15ollj+vlK/HDS/phNh3erRX8J/lrfUWA28DPxp/sayyFOAn5V6CTY5CxGPM9CDGQXHRQ==
+azure-devops-ui@^2.166.1:
+  version "2.166.1"
+  resolved "https://registry.yarnpkg.com/azure-devops-ui/-/azure-devops-ui-2.166.1.tgz#f7b618b23ea141ff67d3bb0fd2ba66030727f10b"
+  integrity sha512-TRbsTW0byfpQY3MFB+SIV8Uk0cb822koEI7JSVpEoKWm829kV+6tH/x6Tnwwa1DT51CrBO8MljePL2y4c81Tvg==
   dependencies:
     array.prototype.find "~2.0.4"
     es6-object-assign "~1.1.0"
