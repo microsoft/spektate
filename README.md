@@ -17,7 +17,7 @@ Note: Spektate dashboard will delete deployments when their corresponding builds
 
 ## Onboard a Bedrock project to use Spektate
 
-Follow the steps in this [guide](https://github.com/CatalystCode/spk/blob/master/docs/service-introspection-onboarding.md) to onboard a project to use Spektate.
+Follow the steps in this [guide](https://github.com/CatalystCode/spk/blob/master/guides/service-introspection-onboarding.md) to onboard a project to use Spektate.
 
 ## Install on your cluster
 
