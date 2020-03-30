@@ -86,7 +86,7 @@ export class DeploymentFilter extends React.Component<
               };
             })}
             selection={new DropdownMultiSelection()}
-            placeholder="Filter by Environment"
+            placeholder="Filter by Ring"
             noItemsText="No environments found"
           />
         </FilterBar>

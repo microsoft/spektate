@@ -49,3 +49,19 @@ body {
 .FilterBar {
   margin-top: -8px;
 }
+
+.icon-blue {
+  color: #0a78d4;
+}
+.icon-red {
+  color: #c8281f;
+}
+.icon-gray {
+  color: #3b606d;
+}
+.icon-green {
+  color: #2aa05b;
+}
+.icon-yellow {
+  color: #e08a00;
+}

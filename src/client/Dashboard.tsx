@@ -39,6 +39,13 @@ import {
 import { DeploymentFilter } from "./DeploymentFilter";
 
 const REFRESH_INTERVAL = 30000;
+const iconColors = {
+  blue: "#0a78d4",
+  gray: "#3b606d",
+  green: "#2aa05b",
+  red: "#c8281f",
+  yellow: "#e08a00"
+};
 class Dashboard<Props> extends React.Component<Props, IDashboardState> {
   private interval: NodeJS.Timeout;
   private filter: Filter = new Filter();
@@ -911,6 +918,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         <SimpleTableCell key={"col-" + columnIndex} columnIndex={columnIndex} />
       );
     }
+    const indicatorData = this.getStatusIndicatorData(tableItem.status);
     return (
       <SimpleTableCell
         columnIndex={columnIndex}
@@ -919,8 +927,8 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         contentClassName="fontWeightSemiBold font-weight-semibold fontSizeM font-size-m scroll-hidden"
       >
         <Status
-          {...this.getStatusIndicatorData(tableItem.status).statusProps}
-          className="icon-large-margin"
+          {...indicatorData.statusProps}
+          className={"icon-large-margin " + indicatorData.classname}
           size={StatusSize.l}
         />
       </SimpleTableCell>
@@ -946,35 +954,59 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     statusStr = statusStr || "";
     statusStr = statusStr.toLowerCase();
     const indicatorData: IStatusIndicatorData = {
+      classname: "icon-green",
       label: "Success",
-      statusProps: { ...Statuses.Success, ariaLabel: "Success" }
+      statusProps: {
+        ...Statuses.Success,
+        ariaLabel: "Success",
+        color: iconColors.green
+      }
     };
     switch (statusStr.toLowerCase()) {
       case "failed":
-        indicatorData.statusProps = { ...Statuses.Failed, ariaLabel: "Failed" };
+        indicatorData.statusProps = {
+          ...Statuses.Failed,
+          ariaLabel: "Failed",
+          color: iconColors.red
+        };
         indicatorData.label = "Failed";
+        indicatorData.classname = "icon-red";
         break;
       case "in progress":
         indicatorData.statusProps = {
           ...Statuses.Running,
-          ariaLabel: "Running"
+          ariaLabel: "Running",
+          color: iconColors.blue
         };
         indicatorData.label = "Running";
+        indicatorData.classname = "icon-blue";
         break;
       case "waiting":
         indicatorData.statusProps = {
           ...Statuses.Waiting,
-          ariaLabel: "Waiting"
+          ariaLabel: "Waiting",
+          color: iconColors.yellow
         };
         indicatorData.label = "Waiting";
+        indicatorData.classname = "icon-yellow";
         break;
       case "incomplete":
         indicatorData.statusProps = {
           ...Statuses.Warning,
-          ariaLabel: "Incomplete"
+          ariaLabel: "Incomplete",
+          color: iconColors.red
         };
         indicatorData.label = "Incomplete";
-
+        indicatorData.classname = "icon-red";
+        break;
+      case "canceled":
+        indicatorData.statusProps = {
+          ...Statuses.Canceled,
+          ariaLabel: "Canceled",
+          color: iconColors.gray
+        };
+        indicatorData.label = "Canceled";
+        indicatorData.classname = "icon-gray";
         break;
     }
     return indicatorData;
@@ -1131,15 +1163,21 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
 
   private getIcon(statusStr?: string): IIconProps {
     if (statusStr === "succeeded") {
-      return { iconName: "SkypeCircleCheck", style: { color: "green" } };
+      return {
+        iconName: "SkypeCircleCheck",
+        style: { color: iconColors.green }
+      };
     } else if (statusStr === undefined || statusStr === "inProgress") {
-      return { iconName: "AwayStatus", style: { color: "#0079d5" } }; // SyncStatusSolid
+      return { iconName: "AwayStatus", style: { color: iconColors.blue } }; // SyncStatusSolid
     } else if (statusStr === "canceled") {
-      return { iconName: "SkypeCircleSlash", style: { color: "gray" } };
+      return {
+        iconName: "SkypeCircleSlash",
+        style: { color: iconColors.gray }
+      };
     } else if (statusStr === "warning") {
-      return { iconName: "AwayStatus", style: { color: "orange" } };
+      return { iconName: "AwayStatus", style: { color: iconColors.yellow } };
     }
-    return { iconName: "SkypeCircleMinus", style: { color: "red" } };
+    return { iconName: "StatusErrorFull", style: { color: iconColors.red } };
   }
 }
 
