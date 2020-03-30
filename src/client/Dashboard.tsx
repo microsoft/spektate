@@ -225,95 +225,13 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     columns.push(ColumnFill);
     let rows: IDeploymentField[] = [];
     try {
-      rows = this.state.filteredDeployments.map(deployment => {
-        const author = this.getAuthor(deployment);
-        const pr = this.getPR(deployment);
-        const tags = this.getClusterSyncStatusForDeployment(deployment);
-        const clusters: string[] = tags ? tags.map(itag => itag.name) : [];
-        const statusStr = status(deployment);
-        const endtime = endTime(deployment);
-        return {
-          deploymentId: deployment.deploymentId,
-          service: deployment.service !== "" ? deployment.service : "-",
-          startTime: deployment.srcToDockerBuild
-            ? deployment.srcToDockerBuild.startTime
-            : new Date(),
-          // tslint:disable-next-line: object-literal-sort-keys
-          imageTag: deployment.imageTag,
-          srcCommitId: deployment.commitId,
-          srcBranchName: deployment.srcToDockerBuild
-            ? deployment.srcToDockerBuild.sourceBranch.replace(
-                "refs/heads/",
-                ""
-              )
-            : "-",
-          srcCommitURL: deployment.srcToDockerBuild
-            ? deployment.srcToDockerBuild.sourceVersionURL
-            : "",
-          srcPipelineId: deployment.srcToDockerBuild
-            ? deployment.srcToDockerBuild.buildNumber
-            : "",
-          srcPipelineURL: deployment.srcToDockerBuild
-            ? deployment.srcToDockerBuild.URL
-            : "",
-          srcPipelineResult: deployment.srcToDockerBuild
-            ? deployment.srcToDockerBuild.result
-            : "-",
-          dockerPipelineId: deployment.dockerToHldRelease
-            ? deployment.dockerToHldRelease.releaseName
-            : deployment.dockerToHldReleaseStage
-            ? deployment.dockerToHldReleaseStage.buildNumber
-            : "",
-          dockerPipelineURL: deployment.dockerToHldRelease
-            ? deployment.dockerToHldRelease.URL
-            : deployment.dockerToHldReleaseStage
-            ? deployment.dockerToHldReleaseStage.URL
-            : "",
-          environment:
-            deployment.environment !== ""
-              ? deployment.environment.toUpperCase()
-              : "-",
-          dockerPipelineResult: deployment.dockerToHldRelease
-            ? deployment.dockerToHldRelease.status
-            : deployment.dockerToHldReleaseStage
-            ? deployment.dockerToHldReleaseStage.result
-            : "",
-          hldCommitId:
-            deployment.hldCommitId !== "" ? deployment.hldCommitId : "-",
-          hldCommitURL: deployment.hldToManifestBuild
-            ? deployment.hldToManifestBuild.sourceVersionURL
-            : "",
-          hldPipelineId: deployment.hldToManifestBuild
-            ? deployment.hldToManifestBuild.buildNumber
-            : "",
-          hldPipelineResult: deployment.hldToManifestBuild
-            ? deployment.hldToManifestBuild.result
-            : "-",
-          hldPipelineURL: deployment.hldToManifestBuild
-            ? deployment.hldToManifestBuild.URL
-            : "",
-          duration: deployment.duration ? deployment.duration + " mins" : "",
-          authorName: author ? author.name : "-",
-          authorURL: author ? author.imageUrl : "",
-          status: pr && !pr.mergedBy ? "waiting" : statusStr,
-          clusters,
-          endTime: endtime,
-          manifestCommitId: deployment.manifestCommitId,
-          pr: pr ? pr.id : undefined,
-          prURL: pr ? pr.url : undefined,
-          prSourceBranch: pr ? pr.sourceBranch : undefined,
-          mergedByName: pr
-            ? pr.mergedBy
-              ? pr.mergedBy.name
-              : undefined
-            : undefined,
-          mergedByImageURL: pr
-            ? pr.mergedBy
-              ? pr.mergedBy.imageUrl
-              : undefined
-            : undefined
-        };
-      });
+      if (this.state.filteredDeployments.length === 0) {
+        rows = new Array(15).fill(new ObservableValue(undefined));
+      } else {
+        rows = this.state.filteredDeployments.map(deployment => {
+          return this.getDeploymentToDisplay(deployment);
+        });
+      }
     } catch (err) {
       console.error(err);
     }
@@ -328,6 +246,94 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         />
       </div>
     );
+  };
+
+  private getDeploymentToDisplay = (
+    deployment: IDeployment
+  ): IDeploymentField => {
+    const author = this.getAuthor(deployment);
+    const pr = this.getPR(deployment);
+    const tags = this.getClusterSyncStatusForDeployment(deployment);
+    const clusters: string[] = tags ? tags.map(itag => itag.name) : [];
+    const statusStr = status(deployment);
+    const endtime = endTime(deployment);
+    return {
+      deploymentId: deployment.deploymentId,
+      service: deployment.service !== "" ? deployment.service : "-",
+      startTime: deployment.srcToDockerBuild
+        ? deployment.srcToDockerBuild.startTime
+        : new Date(),
+      // tslint:disable-next-line: object-literal-sort-keys
+      imageTag: deployment.imageTag,
+      srcCommitId: deployment.commitId,
+      srcBranchName: deployment.srcToDockerBuild
+        ? deployment.srcToDockerBuild.sourceBranch.replace("refs/heads/", "")
+        : "-",
+      srcCommitURL: deployment.srcToDockerBuild
+        ? deployment.srcToDockerBuild.sourceVersionURL
+        : "",
+      srcPipelineId: deployment.srcToDockerBuild
+        ? deployment.srcToDockerBuild.buildNumber
+        : "",
+      srcPipelineURL: deployment.srcToDockerBuild
+        ? deployment.srcToDockerBuild.URL
+        : "",
+      srcPipelineResult: deployment.srcToDockerBuild
+        ? deployment.srcToDockerBuild.result
+        : "-",
+      dockerPipelineId: deployment.dockerToHldRelease
+        ? deployment.dockerToHldRelease.releaseName
+        : deployment.dockerToHldReleaseStage
+        ? deployment.dockerToHldReleaseStage.buildNumber
+        : "",
+      dockerPipelineURL: deployment.dockerToHldRelease
+        ? deployment.dockerToHldRelease.URL
+        : deployment.dockerToHldReleaseStage
+        ? deployment.dockerToHldReleaseStage.URL
+        : "",
+      environment:
+        deployment.environment !== ""
+          ? deployment.environment.toUpperCase()
+          : "-",
+      dockerPipelineResult: deployment.dockerToHldRelease
+        ? deployment.dockerToHldRelease.status
+        : deployment.dockerToHldReleaseStage
+        ? deployment.dockerToHldReleaseStage.result
+        : "",
+      hldCommitId: deployment.hldCommitId !== "" ? deployment.hldCommitId : "-",
+      hldCommitURL: deployment.hldToManifestBuild
+        ? deployment.hldToManifestBuild.sourceVersionURL
+        : "",
+      hldPipelineId: deployment.hldToManifestBuild
+        ? deployment.hldToManifestBuild.buildNumber
+        : "",
+      hldPipelineResult: deployment.hldToManifestBuild
+        ? deployment.hldToManifestBuild.result
+        : "-",
+      hldPipelineURL: deployment.hldToManifestBuild
+        ? deployment.hldToManifestBuild.URL
+        : "",
+      duration: deployment.duration ? deployment.duration + " mins" : "",
+      authorName: author ? author.name : "",
+      authorURL: author ? author.imageUrl : "",
+      status: pr && !pr.mergedBy ? "waiting" : statusStr,
+      clusters,
+      endTime: endtime,
+      manifestCommitId: deployment.manifestCommitId,
+      pr: pr ? pr.id : undefined,
+      prURL: pr ? pr.url : undefined,
+      prSourceBranch: pr ? pr.sourceBranch : undefined,
+      mergedByName: pr
+        ? pr.mergedBy
+          ? pr.mergedBy.name
+          : undefined
+        : undefined,
+      mergedByImageURL: pr
+        ? pr.mergedBy
+          ? pr.mergedBy.imageUrl
+          : undefined
+        : undefined
+    };
   };
 
   private onDashboardFiltered = (filterData: Filter) => {
