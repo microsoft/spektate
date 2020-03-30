@@ -23,11 +23,11 @@ export const STORAGE_TABLE_NAME: string =
 
 export const isValuesValid = (res: Response) => {
   if (
-    !!AZURE_ORG ||
-    !!AZURE_PROJECT ||
-    !!STORAGE_ACCOUNT_NAME ||
-    !!STORAGE_ACCOUNT_KEY ||
-    !!STORAGE_TABLE_NAME ||
+    !!AZURE_ORG &&
+    !!AZURE_PROJECT &&
+    !!STORAGE_ACCOUNT_NAME &&
+    !!STORAGE_ACCOUNT_KEY &&
+    !!STORAGE_TABLE_NAME &&
     !!STORAGE_PARTITION_KEY
   ) {
     return true;
