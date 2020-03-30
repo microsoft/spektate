@@ -6,7 +6,7 @@
   "proxy": "http://localhost:8001",
   "dependencies": {
     "@types/express": "^4.17.0",
-    "azure-devops-ui": "^1.155.0",
+    "azure-devops-ui": "^2.166.1",
     "cli-table": "^0.3.1",
     "commander": "^2.20.0",
     "office-ui-fabric-react": "^7.10.0",
