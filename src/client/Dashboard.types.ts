@@ -61,4 +61,5 @@ export interface IDeploymentField {
   prSourceBranch?: string;
   mergedByName?: string;
   mergedByImageURL?: string;
+  manifestCommitId?: string;
 }
