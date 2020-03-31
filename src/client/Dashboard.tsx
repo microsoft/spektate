@@ -43,6 +43,7 @@ const iconColors = {
   blue: "#0a78d4",
   gray: "#3b606d",
   green: "#2aa05b",
+  purple: "#5b50e2",
   red: "#c8281f",
   yellow: "#e08a00"
 };
@@ -711,7 +712,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         columnIndex,
         tableColumn,
         tableItem,
-        tableItem.mergedByName ? "succeeded" : "warning",
+        tableItem.mergedByName ? "succeeded" : "waiting",
         tableItem.pr.toString(),
         tableItem.prURL,
         tableItem.prSourceBranch,
@@ -991,19 +992,19 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         indicatorData.statusProps = {
           ...Statuses.Waiting,
           ariaLabel: "Waiting",
-          color: iconColors.yellow
+          color: iconColors.purple
         };
         indicatorData.label = "Waiting";
-        indicatorData.classname = "icon-yellow";
+        indicatorData.classname = "icon-purple";
         break;
       case "incomplete":
         indicatorData.statusProps = {
           ...Statuses.Warning,
           ariaLabel: "Incomplete",
-          color: iconColors.red
+          color: iconColors.yellow
         };
         indicatorData.label = "Incomplete";
-        indicatorData.classname = "icon-red";
+        indicatorData.classname = "icon-yellow";
         break;
       case "canceled":
         indicatorData.statusProps = {
@@ -1180,8 +1181,8 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         iconName: "SkypeCircleSlash",
         style: { color: iconColors.gray }
       };
-    } else if (statusStr === "warning") {
-      return { iconName: "AwayStatus", style: { color: iconColors.yellow } };
+    } else if (statusStr === "waiting") {
+      return { iconName: "AwayStatus", style: { color: iconColors.purple } };
     }
     return { iconName: "StatusErrorFull", style: { color: iconColors.red } };
   }
