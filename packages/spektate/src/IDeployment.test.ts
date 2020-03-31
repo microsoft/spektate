@@ -28,13 +28,9 @@ let rawDeployments: IDeployment[];
 let query: azure.TableQuery | undefined;
 
 // Declare these with a test name since response is mocked
-const srcPipeline = new AzureDevOpsPipeline("test-org", "test-project", false);
-const hldPipeline = new AzureDevOpsPipeline("test-org", "test-project", true);
-const clusterPipeline = new AzureDevOpsPipeline(
-  "test-org",
-  "test-project",
-  false
-);
+const srcPipeline = new AzureDevOpsPipeline("test-org", "test-project");
+const hldPipeline = new AzureDevOpsPipeline("test-org", "test-project");
+const clusterPipeline = new AzureDevOpsPipeline("test-org", "test-project");
 const dummyAuthor = {
   imageUrl: "",
   name: "",

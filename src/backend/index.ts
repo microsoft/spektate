@@ -2,6 +2,7 @@ import * as express from "express";
 import { get as authorGet } from "./author";
 import { get as clusterSyncGet } from "./clustersync";
 import { get as deploymentGet } from "./deployment";
+import { get as health } from "./health";
 import { get as prGet } from "./pullrequest";
 const app = express();
 
@@ -31,4 +32,7 @@ app.get("/api/author", (req: express.Request, res: express.Response) => {
 });
 app.get("/api/pr", (req: express.Request, res: express.Response) => {
   prGet(req, res);
+});
+app.get("/health", (req: express.Request, res: express.Response) => {
+  health(req, res);
 });
