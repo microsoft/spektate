@@ -28,6 +28,7 @@ export interface IDashboardState {
   authors: IAuthors;
   filteredDeployments: IDeployment[];
   prs: IPRs;
+  error?: string;
 }
 export interface IDeploymentField {
   deploymentId: string;

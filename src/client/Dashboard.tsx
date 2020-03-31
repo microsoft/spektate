@@ -1,4 +1,5 @@
 import { Ago } from "azure-devops-ui/Ago";
+import { Card } from "azure-devops-ui/Card";
 import { ObservableValue } from "azure-devops-ui/Core/Observable";
 import { Duration } from "azure-devops-ui/Duration";
 import { Icon, IIconProps } from "azure-devops-ui/Icon";
@@ -45,7 +46,6 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
   private filterState: IDashboardFilterState = {
     defaultApplied: false
   };
-  // private manifestRepo?: IGitHub | IAzureDevOpsRepo;
   private releasesUrl?: string;
   private showPRsColumn: boolean = false;
 
@@ -84,64 +84,85 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
           listOfEnvironments={this.getListOfEnvironments()}
           listOfServices={this.getListOfServices()}
         />
-        {this.renderPrototypeTable()}
+        {this.state.error ? (
+          <Card>{this.state.error.toString()}</Card>
+        ) : (
+          this.renderPrototypeTable()
+        )}
       </div>
     );
   }
 
   private updateDeployments = async () => {
-    const deps = await HttpHelper.httpGet<any>("/api/deployments");
-    const ideps: IDeployment[] = deps.data as IDeployment[];
-    this.processQueryParams();
+    try {
+      const deps = await HttpHelper.httpGet<any>("/api/deployments");
+      if (!deps.data) {
+        console.log(deps.request.response);
+        throw new Error(deps.request.response);
+      }
+      const ideps: IDeployment[] = deps.data as IDeployment[];
+      this.processQueryParams();
+      const deployments: IDeployment[] = ideps.map(dep => {
+        return {
+          author: dep.author,
+          commitId: dep.commitId,
+          deploymentId: dep.deploymentId,
+          dockerToHldRelease: dep.dockerToHldRelease,
+          dockerToHldReleaseStage: dep.dockerToHldReleaseStage,
+          environment: dep.environment,
+          hldCommitId: dep.hldCommitId,
+          hldRepo: dep.hldRepo,
+          hldToManifestBuild: dep.hldToManifestBuild,
+          imageTag: dep.imageTag,
+          manifestCommitId: dep.manifestCommitId,
+          manifestRepo: dep.manifestRepo,
+          pr: dep.pr,
+          service: dep.service,
+          sourceRepo: dep.sourceRepo,
+          srcToDockerBuild: dep.srcToDockerBuild,
+          timeStamp: dep.timeStamp
+        };
+      });
 
-    const deployments: IDeployment[] = ideps.map(dep => {
-      return {
-        author: dep.author,
-        commitId: dep.commitId,
-        deploymentId: dep.deploymentId,
-        dockerToHldRelease: dep.dockerToHldRelease,
-        dockerToHldReleaseStage: dep.dockerToHldReleaseStage,
-        environment: dep.environment,
-        hldCommitId: dep.hldCommitId,
-        hldRepo: dep.hldRepo,
-        hldToManifestBuild: dep.hldToManifestBuild,
-        imageTag: dep.imageTag,
-        manifestCommitId: dep.manifestCommitId,
-        manifestRepo: dep.manifestRepo,
-        pr: dep.pr,
-        service: dep.service,
-        sourceRepo: dep.sourceRepo,
-        srcToDockerBuild: dep.srcToDockerBuild,
-        timeStamp: dep.timeStamp
-      };
-    });
+      if (deployments.length === 0) {
+        throw new Error("No deployments were found for this configuration.");
+      }
 
-    this.setState({ deployments });
-    this.setState({ filteredDeployments: this.state.deployments });
-    this.processQueryParams();
-    this.updateFilteredDeployments();
-    this.getAuthors();
-    this.getPRs();
-    if (!this.filterState.defaultApplied) {
-      this.filter.setFilterItemState("authorFilter", {
-        value: this.filterState.currentlySelectedAuthors
+      this.setState({
+        deployments,
+        error: undefined,
+        filteredDeployments: this.state.deployments
       });
-      this.filter.setFilterItemState("serviceFilter", {
-        value: this.filterState.currentlySelectedServices
+      this.processQueryParams();
+      this.updateFilteredDeployments();
+      this.getAuthors();
+      this.getPRs();
+      if (!this.filterState.defaultApplied) {
+        this.filter.setFilterItemState("authorFilter", {
+          value: this.filterState.currentlySelectedAuthors
+        });
+        this.filter.setFilterItemState("serviceFilter", {
+          value: this.filterState.currentlySelectedServices
+        });
+        this.filter.setFilterItemState("envFilter", {
+          value: this.filterState.currentlySelectedEnvs
+        });
+        this.filter.setFilterItemState("keywordFilter", {
+          value: this.filterState.currentlySelectedKeyword
+        });
+      }
+      HttpHelper.httpGet("/api/clustersync").then((syncData: any) => {
+        if (syncData.data && syncData.data.tags && syncData.data.releasesURL) {
+          this.setState({ manifestSyncStatuses: syncData.data.tags as ITag[] });
+          this.releasesUrl = syncData.data.releasesURL;
+        }
       });
-      this.filter.setFilterItemState("envFilter", {
-        value: this.filterState.currentlySelectedEnvs
-      });
-      this.filter.setFilterItemState("keywordFilter", {
-        value: this.filterState.currentlySelectedKeyword
+    } catch (e) {
+      console.log(e);
+      this.setState({
+        error: e
       });
     }
-    HttpHelper.httpGet("/api/clustersync").then((syncData: any) => {
-      if (syncData.data && syncData.data.tags && syncData.data.releasesURL) {
-        this.setState({ manifestSyncStatuses: syncData.data.tags as ITag[] });
-        this.releasesUrl = syncData.data.releasesURL;
-      }
-    });
   };
 
   private renderPrototypeTable = () => {

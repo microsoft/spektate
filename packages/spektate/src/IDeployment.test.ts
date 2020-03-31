@@ -144,6 +144,9 @@ describe("Deployment", () => {
         );
         expect(endTime(deps[1]).getTime() < endTime(deps[0]).getTime());
         done();
+      },
+      () => {
+        expect(true).toBeFalsy();
       }
     );
   });

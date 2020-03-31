@@ -3,7 +3,7 @@ import { AzureDevOpsPipeline } from "./pipeline/AzureDevOpsPipeline";
 
 export interface IValidationError {
   message: string;
-  code?: number;
+  code?: string;
   stack?: string;
 }
 export interface IErrors {
@@ -58,6 +58,13 @@ export const verifyStorageCredentials = async (
         storageTableName,
         (err: Error, result, response) => {
           if (!err && result) {
+            if (!result.exists || !result.isSuccessful) {
+              resolve({
+                code: result.statusCode?.toString(),
+                message:
+                  "Storage table " + storageTableName + " does not exist."
+              });
+            }
             if (storagePartitionKey !== "") {
               resolve();
             } else {

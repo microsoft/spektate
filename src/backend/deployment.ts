@@ -48,7 +48,7 @@ export const get = async (req: Request, res: Response) => {
       res.json(deployments);
     } catch (err) {
       console.log(err);
-      res.sendStatus(500);
+      res.status(500).send(err.toString());
     }
   }
 };
