@@ -114,8 +114,8 @@ export const getPullRequest = (
                 username: pr.merged_by.login ? pr.merged_by.login : ""
               }
             : undefined,
-          sourceBranch: pr.head.ref,
-          targetBranch: pr.base.ref,
+          sourceBranch: pr.head ? pr.head.ref : "",
+          targetBranch: pr.base ? pr.base.ref : "",
           title: pr.title,
           url: pr.url
         });

@@ -58,8 +58,12 @@ export const getPullRequest = (
                 username: pr.closedBy.uniqueName
               }
             : undefined,
-          sourceBranch: pr.sourceRefName.replace("refs/heads/", ""),
-          targetBranch: pr.targetRefName.replace("refs/heads/", ""),
+          sourceBranch: pr.sourceRefName
+            ? pr.sourceRefName.replace("refs/heads/", "")
+            : "",
+          targetBranch: pr.targetRefName
+            ? pr.targetRefName.replace("refs/heads/", "")
+            : "",
           title: pr.title,
           url:
             pr.repository && pr.repository.webUrl
