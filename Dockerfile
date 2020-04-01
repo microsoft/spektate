@@ -8,7 +8,6 @@ RUN yarn install --ignore-optional --silent
 RUN yarn global add ts-node --silent
 COPY . .
 RUN yarn build
-RUN ls
 
 EXPOSE 5000
 COPY docker-entrypoint.sh /app
