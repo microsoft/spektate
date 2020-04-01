@@ -89,6 +89,10 @@ export const getManifestSyncState = async (
         accessToken
       );
 
+      if (!data.data && data.request.response) {
+        throw new Error(data.request.response);
+      }
+
       const tags = data.data.value;
       const fluxTags: ITag[] = [];
       if (tags != null && tags.length > 0) {

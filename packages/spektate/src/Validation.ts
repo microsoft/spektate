@@ -1,5 +1,20 @@
 import * as azure from "azure-storage";
+import {
+  fetchAuthor,
+  getDeployments,
+  getRepositoryFromURL,
+  IDeployment
+} from "./IDeployment";
 import { AzureDevOpsPipeline } from "./pipeline/AzureDevOpsPipeline";
+import { IAuthor } from "./repository";
+import {
+  getManifestSyncState as getADOClusterSync,
+  IAzureDevOpsRepo
+} from "./repository/IAzureDevOpsRepo";
+import {
+  getManifestSyncState as getGitHubClusterSync,
+  IGitHub
+} from "./repository/IGitHub";
 
 export interface IValidationError {
   message: string;
@@ -35,6 +50,27 @@ export const validateConfiguration = async (
   const pipelineError = await verifyPipeline(orgName, projectName, pipelinePAT);
   if (pipelineError) {
     errors.push(pipelineError);
+  }
+  const manifestRepoError = await verifyManifestRepo(
+    manifestRepo,
+    manifestAccessToken,
+    orgName,
+    projectName,
+    manifestRepoGitHubOrgOrUsername
+  );
+  if (manifestRepoError) {
+    errors.push(manifestRepoError);
+  }
+  const sourceRepoAccessError = await verifySourceRepoAccess(
+    storageAccountName,
+    storageAccountKey,
+    storageTableName,
+    storagePartitionKey,
+    sourceRepoAccessToken,
+    createPipeline(orgName, projectName, pipelinePAT)
+  );
+  if (sourceRepoAccessError) {
+    errors.push(sourceRepoAccessError);
   }
 
   return {
@@ -95,21 +131,130 @@ export const verifyPipeline = async (
 ): Promise<IValidationError | undefined> => {
   try {
     const pipeline = new AzureDevOpsPipeline(org, project, pat);
-    const builds = await pipeline.getListOfBuilds();
+    await pipeline.getListOfBuilds();
     return undefined;
   } catch (e) {
+    e.message =
+      "Pipeline org, project or personal access token are invalid. " +
+      e.message;
     return {
-      message:
-        "Pipeline org, project or personal access token are invalid. " +
-        e.message
+      message: e.toString()
     };
   }
 };
 
-export const verifyManifestRepo = (
-  repo: string,
+export const verifyManifestRepo = async (
+  repoName: string,
   pat: string,
+  org: string,
+  project: string,
   githubUsername?: string
-): IValidationError | undefined => {
-  return undefined;
+): Promise<IValidationError | undefined> => {
+  return new Promise<IValidationError | undefined>(async (resolve, reject) => {
+    let repo: IAzureDevOpsRepo | IGitHub | undefined;
+    if (githubUsername && githubUsername !== "") {
+      repo = {
+        reponame: repoName,
+        username: githubUsername
+      };
+      await getGitHubClusterSync(repo, pat)
+        .then(tags => {
+          resolve();
+        })
+        .catch(e => {
+          e.message =
+            "Failed to verify manifest repo for cluster sync status. " +
+            e.message;
+          resolve(e);
+        });
+    } else if (repoName !== "") {
+      repo = {
+        org,
+        project,
+        repo: repoName
+      };
+      await getADOClusterSync(repo, pat)
+        .then(tags => {
+          resolve();
+        })
+        .catch(e => {
+          e.message =
+            "Failed to verify manifest repo for cluster sync status. " +
+            e.message;
+          resolve(e);
+        });
+    } else {
+      return {
+        message: "Manifest repository could not be recognized. "
+      };
+    }
+  });
+};
+
+const createPipeline = (org: string, project: string, token?: string) => {
+  return new AzureDevOpsPipeline(org, project, token);
+};
+
+export const verifySourceRepoAccess = async (
+  storageAccountName: string,
+  storageAccountKey: string,
+  storageTableName: string,
+  storagePartitionKey: string,
+  sourceRepoAccessToken: string,
+  pipeline: AzureDevOpsPipeline
+): Promise<IValidationError | undefined> => {
+  const deployments: IDeployment[] = await getDeployments(
+    storageAccountName,
+    storageAccountKey,
+    storageTableName,
+    storagePartitionKey,
+    pipeline,
+    pipeline,
+    pipeline,
+    undefined
+  );
+
+  if (deployments.length !== 0) {
+    // Attempt to get author for the first deployment to verify source repo access
+    const deployment = deployments[0];
+
+    let repo: IAzureDevOpsRepo | IGitHub | undefined =
+      deployment.srcToDockerBuild?.repository ||
+      (deployment.sourceRepo
+        ? getRepositoryFromURL(deployment.sourceRepo)
+        : undefined);
+    if (!repo && (deployment.hldToManifestBuild || deployment.hldRepo)) {
+      repo =
+        deployment.hldToManifestBuild!.repository ||
+        (deployment.hldRepo
+          ? getRepositoryFromURL(deployment.hldRepo)
+          : undefined);
+    }
+    const commit =
+      deployment.srcToDockerBuild?.sourceVersion ||
+      deployment.hldToManifestBuild?.sourceVersion;
+    if (repo && commit) {
+      fetchAuthor(repo, commit, sourceRepoAccessToken).then(
+        (author: IAuthor | undefined) => {
+          if (author) {
+            return;
+          } else {
+            return {
+              message:
+                "Author fetch failed. Please verify your source repo access token is valid."
+            };
+          }
+        }
+      );
+    } else {
+      return {
+        message:
+          "Source repo access could not be verified. Either the table is missing sufficient data to verify, or data is invalid in storage."
+      };
+    }
+  } else {
+    return {
+      message: "No deployments exist in storage to verify source repo access. "
+    };
+  }
 };

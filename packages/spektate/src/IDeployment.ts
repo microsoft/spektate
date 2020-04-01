@@ -294,6 +294,9 @@ export const getDeploymentFromDBEntry = async (
                 p2ReleaseStage.status = stages[2].state;
               }
             }
+          })
+          .catch(e => {
+            console.error(e);
           });
         promises.push(promise);
       }
@@ -453,6 +456,8 @@ export const fetchAuthor = (
         .catch(error => {
           reject(error);
         });
+    } else {
+      reject("Repository could not be recognized.");
     }
   });
 };

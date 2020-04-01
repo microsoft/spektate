@@ -28,6 +28,10 @@ export const getManifestSyncState = (
           .replace("<repo>", repository.reponame),
         accessToken
       );
+
+      if (!allTags.data && allTags.request.response) {
+        throw new Error(allTags.request.response);
+      }
       const tags = allTags.data;
       if (tags != null && tags.length > 0) {
         const fluxTags: ITag[] = [];
