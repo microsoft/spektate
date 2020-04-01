@@ -67,6 +67,8 @@ export const validateConfiguration = async (
     storageTableName,
     storagePartitionKey,
     sourceRepoAccessToken,
+    createPipeline(orgName, projectName, pipelinePAT),
+    createPipeline(orgName, projectName, pipelinePAT),
     createPipeline(orgName, projectName, pipelinePAT)
   );
   if (sourceRepoAccessError) {
@@ -134,11 +136,10 @@ export const verifyPipeline = async (
     await pipeline.getListOfBuilds();
     return undefined;
   } catch (e) {
-    e.message =
-      "Pipeline org, project or personal access token are invalid. " +
-      e.message;
     return {
-      message: e.toString()
+      message:
+        "Pipeline org, project or personal access token are invalid. " +
+        e.toString()
     };
   }
 };
@@ -162,10 +163,11 @@ export const verifyManifestRepo = async (
           resolve();
         })
         .catch(e => {
-          e.message =
-            "Failed to verify manifest repo for cluster sync status. " +
-            e.message;
-          resolve(e);
+          resolve({
+            message:
+              "Failed to verify manifest repo for cluster sync status. " +
+              e.toString()
+          });
         });
     } else if (repoName !== "") {
       repo = {
@@ -178,10 +180,11 @@ export const verifyManifestRepo = async (
           resolve();
         })
         .catch(e => {
-          e.message =
-            "Failed to verify manifest repo for cluster sync status. " +
-            e.message;
-          resolve(e);
+          resolve({
+            message:
+              "Failed to verify manifest repo for cluster sync status. " +
+              e.toString()
+          });
         });
     } else {
       return {
@@ -201,60 +204,77 @@ export const verifySourceRepoAccess = async (
   storageTableName: string,
   storagePartitionKey: string,
   sourceRepoAccessToken: string,
-  pipeline: AzureDevOpsPipeline
+  srcPipeline: AzureDevOpsPipeline,
+  hldPipeline: AzureDevOpsPipeline,
+  manifestPipeline: AzureDevOpsPipeline
 ): Promise<IValidationError | undefined> => {
-  const deployments: IDeployment[] = await getDeployments(
-    storageAccountName,
-    storageAccountKey,
-    storageTableName,
-    storagePartitionKey,
-    pipeline,
-    pipeline,
-    pipeline,
-    undefined
-  );
-
-  if (deployments.length !== 0) {
-    // Attempt to get author for the first deployment to verify source repo access
-    const deployment = deployments[0];
-
-    let repo: IAzureDevOpsRepo | IGitHub | undefined =
-      deployment.srcToDockerBuild?.repository ||
-      (deployment.sourceRepo
-        ? getRepositoryFromURL(deployment.sourceRepo)
-        : undefined);
-    if (!repo && (deployment.hldToManifestBuild || deployment.hldRepo)) {
-      repo =
-        deployment.hldToManifestBuild!.repository ||
-        (deployment.hldRepo
-          ? getRepositoryFromURL(deployment.hldRepo)
-          : undefined);
-    }
-    const commit =
-      deployment.srcToDockerBuild?.sourceVersion ||
-      deployment.hldToManifestBuild?.sourceVersion;
-    if (repo && commit) {
-      fetchAuthor(repo, commit, sourceRepoAccessToken).then(
-        (author: IAuthor | undefined) => {
-          if (author) {
-            return;
-          } else {
-            return {
-              message:
-                "Author fetch failed. Please verify your source repo access token is valid."
-            };
-          }
-        }
+  return new Promise<IValidationError | undefined>(async (resolve, reject) => {
+    try {
+      const deployments: IDeployment[] = await getDeployments(
+        storageAccountName,
+        storageAccountKey,
+        storageTableName,
+        storagePartitionKey,
+        srcPipeline,
+        hldPipeline,
+        manifestPipeline,
+        undefined
       );
-    } else {
-      return {
+
+      if (deployments.length !== 0) {
+        // Attempt to get author for the first deployment to verify source repo access
+        const deployment = deployments[0];
+
+        let repo: IAzureDevOpsRepo | IGitHub | undefined =
+          deployment.srcToDockerBuild?.repository ||
+          (deployment.sourceRepo
+            ? getRepositoryFromURL(deployment.sourceRepo)
+            : undefined);
+        if (!repo && (deployment.hldToManifestBuild || deployment.hldRepo)) {
+          repo =
+            deployment.hldToManifestBuild!.repository ||
+            (deployment.hldRepo
+              ? getRepositoryFromURL(deployment.hldRepo)
+              : undefined);
+        }
+        const commit =
+          deployment.srcToDockerBuild?.sourceVersion ||
+          deployment.hldToManifestBuild?.sourceVersion;
+        if (repo && commit) {
+          fetchAuthor(repo, commit, sourceRepoAccessToken)
+            .then((author: IAuthor | undefined) => {
+              if (author) {
+                resolve();
+              } else {
+                resolve({
+                  message:
+                    "Failed verification of source repo access. Please verify your source repo access token is valid."
+                });
+              }
+            })
+            .catch(e => {
+              resolve({
+                message:
+                  "Failed verification of source repo access. " + e.toString()
+              });
+            });
+        } else {
+          resolve({
+            message:
+              "Source repo access could not be verified. Either the table is missing sufficient data to verify, or data is invalid in storage."
+          });
+        }
+      } else {
+        resolve({
+          message:
+            "No deployments exist in storage to verify source repo access. "
+        });
+      }
+    } catch (e) {
+      resolve({
         message:
-          "Source repo access could not be verified. Either the table is missing sufficient data to verify, or data is invalid in storage."
-      };
+          "Error occurred while verifying source repo access. " + e.toString()
+      });
     }
-  } else {
-    return {
-      message: "No deployments exist in storage to verify source repo access. "
-    };
-  }
+  });
 };

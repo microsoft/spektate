@@ -93,8 +93,8 @@ export const getManifestSyncState = async (
         accessToken
       );
 
-      if (!data.data && data.request.response) {
-        throw new Error(data.request.response);
+      if (data.status !== 200) {
+        throw new Error(data.statusText);
       }
 
       const tags = data.data.value;
@@ -151,6 +151,10 @@ export const getAuthor = async (
       .replace("{commitId}", commitId),
     accessToken
   );
+
+  if (data.status !== 200) {
+    throw new Error(data.statusText);
+  }
 
   const commitInfo = data.data;
   if (commitInfo && commitInfo.author) {
