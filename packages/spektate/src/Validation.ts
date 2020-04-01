@@ -16,14 +16,37 @@ import {
   IGitHub
 } from "./repository/IGitHub";
 
+/**
+ * Validation error interface
+ */
 export interface IValidationError {
   message: string;
   code?: string;
   stack?: string;
 }
+
+/**
+ * Errors interface
+ */
 export interface IErrors {
   errors: IValidationError[];
 }
+
+/**
+ * Validates all configuration for a spektate instance
+ * @param storageAccountName storage account name
+ * @param storageAccountKey storage account key0
+ * @param storageTableName storage table name
+ * @param storagePartitionKey storage partition key
+ * @param orgName Azure DevOps organization name
+ * @param projectName Azure DevOps project name
+ * @param pipelinePAT Azure DevOps pipeline personal access token
+ * @param sourceRepoAccessToken source repo access token (same as pipeline token if it has access)
+ * @param manifestRepo manifest repo name (eg. test-manifests)
+ * @param manifestAccessToken manifest repo access token (same as pipeline token if it has access)
+ * @param manifestRepoGitHubOrgOrUsername GitHub organization or username for the manifest
+ * repository, eg. for github.com/microsoft/bedrock.git, this would be "microsoft"
+ */
 export const validateConfiguration = async (
   storageAccountName: string,
   storageAccountKey: string,
@@ -80,6 +103,13 @@ export const validateConfiguration = async (
   };
 };
 
+/**
+ * Verifies storage access credentials to make sure storage account and table is accessible
+ * @param storageAccountName storage account name
+ * @param storageAccountKey storage access key
+ * @param storageTableName storage table name
+ * @param storagePartitionKey storage partition key name
+ */
 export const verifyStorageCredentials = async (
   storageAccountName: string,
   storageAccountKey: string,
@@ -126,12 +156,21 @@ export const verifyStorageCredentials = async (
   }
 };
 
+/**
+ * Validates that pipeline is accessible using pipeline personal access token
+ * @param org Azure DevOps organization name
+ * @param project Azure DevOps project name
+ * @param pat Azure DevOps pipeline access token
+ */
 export const verifyPipeline = async (
   org: string,
   project: string,
   pat: string
 ): Promise<IValidationError | undefined> => {
   try {
+    if (org === "" || project === "") {
+      throw new Error("Organization and/or project name are not defined");
+    }
     const pipeline = new AzureDevOpsPipeline(org, project, pat);
     await pipeline.getListOfBuilds();
     return undefined;
@@ -144,6 +183,15 @@ export const verifyPipeline = async (
   }
 };
 
+/**
+ * Validates that manifest repo is accessible for fetching cluster sync statuses
+ * @param repoName repository name
+ * @param pat personal access token for manifest repo
+ * @param org Azure DevOps organization name
+ * @param project Azure DevOps project name
+ * @param githubUsername GitHub organization or username for the manifest
+ * repository, eg. for github.com/microsoft/bedrock.git, this would be "microsoft"
+ */
 export const verifyManifestRepo = async (
   repoName: string,
   pat: string,
@@ -187,17 +235,39 @@ export const verifyManifestRepo = async (
           });
         });
     } else {
-      return {
+      resolve({
         message: "Manifest repository could not be recognized. "
-      };
+      });
     }
   });
 };
 
-const createPipeline = (org: string, project: string, token?: string) => {
+/**
+ * Creates an instance of Azure DevOps pipeline
+ * @param org Azure DevOps organization name
+ * @param project Azure DevOps project name
+ * @param token Azure DevOps personal access token
+ */
+export const createPipeline = (
+  org: string,
+  project: string,
+  token?: string
+) => {
   return new AzureDevOpsPipeline(org, project, token);
 };
 
+/**
+ * Verifies that source repo information is accessible using the source repo access token.
+ * This is used for fetching author data
+ * @param storageAccountName storage account name
+ * @param storageAccountKey storage access key
+ * @param storageTableName storage table name
+ * @param storagePartitionKey storage partition key name
+ * @param sourceRepoAccessToken source repo access token
+ * @param srcPipeline source pipeline
+ * @param hldPipeline hld pipeline
+ * @param manifestPipeline manifest pipeline
+ */
 export const verifySourceRepoAccess = async (
   storageAccountName: string,
   storageAccountKey: string,
@@ -224,7 +294,6 @@ export const verifySourceRepoAccess = async (
       if (deployments.length !== 0) {
         // Attempt to get author for the first deployment to verify source repo access
         const deployment = deployments[0];
-
         let repo: IAzureDevOpsRepo | IGitHub | undefined =
           deployment.srcToDockerBuild?.repository ||
           (deployment.sourceRepo

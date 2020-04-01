@@ -1,6 +1,5 @@
 import * as azure from "azure-storage";
 import * as fs from "fs";
-import { HttpHelper } from "./HttpHelper";
 import { IDeployment } from "./IDeployment";
 import * as Deployment from "./IDeployment";
 import {
