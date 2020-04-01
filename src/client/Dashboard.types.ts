@@ -7,6 +7,7 @@ import { ITag } from "spektate/lib/repository/Tag";
 export interface IStatusIndicatorData {
   statusProps: IStatusProps;
   label: string;
+  classname: string;
 }
 export interface IAuthors {
   [commitId: string]: IAuthor;
