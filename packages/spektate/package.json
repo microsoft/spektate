@@ -30,16 +30,17 @@
     "jest": "^25.1.0",
     "jest-when": "^2.7.0",
     "shx": "^0.3.2",
-    "tslint": "^5.20.0",
     "ts-jest": "^25.2.1",
     "ts-loader": "^6.0.4",
+    "tslint": "^5.20.0",
     "typescript": "^3.6.2",
     "webpack": "^4.39.3",
     "webpack-cli": "^3.3.8"
   },
   "dependencies": {
     "axios": "^0.19.0",
-    "azure-storage": "^2.10.3"
+    "azure-storage": "^2.10.3",
+    "tslint-config-prettier": "^1.18.0"
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx,css,json,md,yaml,yml}": [
