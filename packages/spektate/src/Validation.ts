@@ -283,72 +283,56 @@ export const verifySourceRepoAccess = async (
   hldPipeline: AzureDevOpsPipeline,
   manifestPipeline: AzureDevOpsPipeline
 ): Promise<IValidationError | undefined> => {
-  return new Promise<IValidationError | undefined>(async (resolve, reject) => {
-    try {
-      const deployments: IDeployment[] = await getDeployments(
-        storageAccountName,
-        storageAccountKey,
-        storageTableName,
-        storagePartitionKey,
-        srcPipeline,
-        hldPipeline,
-        manifestPipeline,
-        undefined
-      );
+  try {
+    const deployments: IDeployment[] = await getDeployments(
+      storageAccountName,
+      storageAccountKey,
+      storageTableName,
+      storagePartitionKey,
+      srcPipeline,
+      hldPipeline,
+      manifestPipeline,
+      undefined
+    );
 
-      if (deployments.length !== 0) {
-        // Attempt to get author for the first deployment to verify source repo access
-        const deployment = deployments[0];
-        let repo: IAzureDevOpsRepo | IGitHub | undefined =
-          deployment.srcToDockerBuild?.repository ||
-          (deployment.sourceRepo
-            ? getRepositoryFromURL(deployment.sourceRepo)
+    if (deployments.length !== 0) {
+      // Attempt to get author for the first deployment to verify source repo access
+      const deployment = deployments[0];
+      let repo: IAzureDevOpsRepo | IGitHub | undefined =
+        deployment.srcToDockerBuild?.repository ||
+        (deployment.sourceRepo
+          ? getRepositoryFromURL(deployment.sourceRepo)
+          : undefined);
+      if (!repo && (deployment.hldToManifestBuild || deployment.hldRepo)) {
+        repo =
+          deployment.hldToManifestBuild!.repository ||
+          (deployment.hldRepo
+            ? getRepositoryFromURL(deployment.hldRepo)
             : undefined);
-        if (!repo && (deployment.hldToManifestBuild || deployment.hldRepo)) {
-          repo =
-            deployment.hldToManifestBuild!.repository ||
-            (deployment.hldRepo
-              ? getRepositoryFromURL(deployment.hldRepo)
-              : undefined);
-        }
-        const commit =
-          deployment.srcToDockerBuild?.sourceVersion ||
-          deployment.hldToManifestBuild?.sourceVersion;
-        if (repo && commit) {
-          fetchAuthor(repo, commit, sourceRepoAccessToken)
-            .then((author: IAuthor | undefined) => {
-              if (author) {
-                resolve();
-              } else {
-                resolve({
-                  message:
-                    "Failed verification of source repo access. Please verify your source repo access token is valid."
-                });
-              }
-            })
-            .catch(e => {
-              resolve({
-                message:
-                  "Failed verification of source repo access. " + e.toString()
-              });
-            });
-        } else {
-          resolve({
-            message:
-              "Source repo access could not be verified. Either the table is missing sufficient data to verify, or data is invalid in storage."
-          });
-        }
-      } else {
-        resolve({
-          message:
-            "No deployments exist in storage to verify source repo access. "
-        });
       }
-    } catch (e) {
-      resolve({
-        message:
-          "Error occurred while verifying source repo access. " + e.toString()
-      });
+      const commit =
+        deployment.srcToDockerBuild?.sourceVersion ||
+        deployment.hldToManifestBuild?.sourceVersion;
+      if (repo && commit) {
+        const author: IAuthor | undefined = await fetchAuthor(
+          repo,
+          commit,
+          sourceRepoAccessToken
+        );
+        if (author) {
+          return undefined;
+        }
+      }
     }
-  });
+
+    return {
+      message:
+        "Source repo access could not be verified. Either the table is missing sufficient data to verify, or data is invalid in storage."
+    };
+  } catch (e) {
+    return {
+      message:
+        "Error occurred while verifying source repo access. " + e.toString()
+    };
+  }
 };
