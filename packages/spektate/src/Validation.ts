@@ -213,47 +213,38 @@ export const verifyManifestRepo = async (
   project: string,
   githubUsername?: string
 ): Promise<IValidationError | undefined> => {
-  return new Promise<IValidationError | undefined>(async (resolve, reject) => {
-    let repo: IAzureDevOpsRepo | IGitHub | undefined;
-    if (githubUsername && githubUsername !== "") {
-      repo = {
-        reponame: repoName,
-        username: githubUsername
-      };
-      await getGitHubClusterSync(repo, pat)
-        .then(tags => {
-          resolve();
-        })
-        .catch(e => {
-          resolve({
-            message:
-              "Failed to verify manifest repo for cluster sync status. " +
-              e.toString()
-          });
-        });
-    } else if (repoName !== "") {
-      repo = {
-        org,
-        project,
-        repo: repoName
-      };
-      await getADOClusterSync(repo, pat)
-        .then(tags => {
-          resolve();
-        })
-        .catch(e => {
-          resolve({
-            message:
-              "Failed to verify manifest repo for cluster sync status. " +
-              e.toString()
-          });
-        });
+  try {
+    if (githubUsername) {
+      await getGitHubClusterSync(
+        {
+          reponame: repoName,
+          username: githubUsername
+        },
+        pat
+      );
+      return undefined;
+    } else if (repoName) {
+      await getADOClusterSync(
+        {
+          org,
+          project,
+          repo: repoName
+        },
+        pat
+      );
+      return undefined;
     } else {
-      resolve({
-        message: "Manifest repository could not be recognized. "
-      });
+      return {
+        message: "Manifest repository could not be recognized."
+      };
     }
-  });
+  } catch (err) {
+    return {
+      message:
+        "Failed to verify manifest repo for cluster sync status. " +
+        err.toString()
+    };
+  }
 };
 
 /**
