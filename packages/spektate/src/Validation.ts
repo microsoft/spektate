@@ -60,47 +60,61 @@ export const validateConfiguration = async (
   manifestAccessToken: string,
   manifestRepoGitHubOrgOrUsername?: string
 ): Promise<IErrors> => {
-  const errors: IValidationError[] = [];
-  const storageError = await verifyStorageCredentials(
-    storageAccountName,
-    storageAccountKey,
-    storageTableName,
-    storagePartitionKey
-  );
-  if (storageError) {
-    errors.push(storageError);
-  }
-  const pipelineError = await verifyPipeline(orgName, projectName, pipelinePAT);
-  if (pipelineError) {
-    errors.push(pipelineError);
-  }
-  const manifestRepoError = await verifyManifestRepo(
-    manifestRepo,
-    manifestAccessToken,
-    orgName,
-    projectName,
-    manifestRepoGitHubOrgOrUsername
-  );
-  if (manifestRepoError) {
-    errors.push(manifestRepoError);
-  }
-  const sourceRepoAccessError = await verifySourceRepoAccess(
-    storageAccountName,
-    storageAccountKey,
-    storageTableName,
-    storagePartitionKey,
-    sourceRepoAccessToken,
-    createPipeline(orgName, projectName, pipelinePAT),
-    createPipeline(orgName, projectName, pipelinePAT),
-    createPipeline(orgName, projectName, pipelinePAT)
-  );
-  if (sourceRepoAccessError) {
-    errors.push(sourceRepoAccessError);
-  }
+  try {
+    const errors: IValidationError[] = [];
+    const storageError = await verifyStorageCredentials(
+      storageAccountName,
+      storageAccountKey,
+      storageTableName,
+      storagePartitionKey
+    );
+    if (storageError) {
+      errors.push(storageError);
+    }
+    const pipelineError = await verifyPipeline(
+      orgName,
+      projectName,
+      pipelinePAT
+    );
+    if (pipelineError) {
+      errors.push(pipelineError);
+    }
+    const manifestRepoError = await verifyManifestRepo(
+      manifestRepo,
+      manifestAccessToken,
+      orgName,
+      projectName,
+      manifestRepoGitHubOrgOrUsername
+    );
+    if (manifestRepoError) {
+      errors.push(manifestRepoError);
+    }
+    const sourceRepoAccessError = await verifySourceRepoAccess(
+      storageAccountName,
+      storageAccountKey,
+      storageTableName,
+      storagePartitionKey,
+      sourceRepoAccessToken,
+      createPipeline(orgName, projectName, pipelinePAT),
+      createPipeline(orgName, projectName, pipelinePAT),
+      createPipeline(orgName, projectName, pipelinePAT)
+    );
+    if (sourceRepoAccessError) {
+      errors.push(sourceRepoAccessError);
+    }
 
-  return {
-    errors
-  };
+    return {
+      errors
+    };
+  } catch (e) {
+    return {
+      errors: [
+        {
+          message: e.toString()
+        }
+      ]
+    };
+  }
 };
 
 /**

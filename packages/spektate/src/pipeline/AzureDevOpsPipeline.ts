@@ -39,7 +39,7 @@ export class AzureDevOpsPipeline implements IPipeline {
       );
 
       const builds: IBuild[] = [];
-      if (!json.data || !json.data.value) {
+      if (!json.data?.value) {
         throw new Error(
           "Data could not be fetched from Azure DevOps. Please check the personal access token, org and project name."
         );
@@ -103,11 +103,11 @@ export class AzureDevOpsPipeline implements IPipeline {
 
       build.stages = {};
 
-      if (json.data && json.data.records.length === 0) {
+      if (json.data?.records?.length === 0) {
         return build.stages;
       }
 
-      if (!json.data || !json.data.records) {
+      if (!json.data?.records) {
         throw new Error(
           "Data could not be fetched from Azure DevOps. Please check the personal access token, org and project name."
         );
@@ -149,13 +149,12 @@ export class AzureDevOpsPipeline implements IPipeline {
         this.pipelineAccessToken
       );
 
-      if (!json.data || !json.data.value) {
+      if (!json.data?.value) {
         throw new Error(
           "Data could not be fetched from Azure DevOps. Please check the personal access token, org and project name."
         );
       }
 
-      const releases: IRelease[] = [];
       for (const row of json.data.value) {
         const release: IRelease = {
           URL: row.release._links.web.href,
@@ -179,7 +178,6 @@ export class AzureDevOpsPipeline implements IPipeline {
             release.registryResourceGroup = defRef.resourcegroup.id;
           }
         }
-        releases.push(release);
         this.releases[release.id] = release;
       }
     } catch (e) {
