@@ -93,6 +93,10 @@ export const getManifestSyncState = async (
         accessToken
       );
 
+      if (data.status !== 200) {
+        throw new Error(data.statusText);
+      }
+
       const tags = data.data.value;
       const fluxTags: ITag[] = [];
       if (tags != null && tags.length > 0) {
@@ -147,6 +151,10 @@ export const getAuthor = async (
       .replace("{commitId}", commitId),
     accessToken
   );
+
+  if (data.status !== 200) {
+    throw new Error(data.statusText);
+  }
 
   const commitInfo = data.data;
   if (commitInfo && commitInfo.author) {

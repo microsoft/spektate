@@ -1,6 +1,5 @@
 import * as azure from "azure-storage";
 import * as fs from "fs";
-import { HttpHelper } from "./HttpHelper";
 import { IDeployment } from "./IDeployment";
 import * as Deployment from "./IDeployment";
 import {
@@ -28,13 +27,9 @@ let rawDeployments: IDeployment[];
 let query: azure.TableQuery | undefined;
 
 // Declare these with a test name since response is mocked
-const srcPipeline = new AzureDevOpsPipeline("test-org", "test-project", false);
-const hldPipeline = new AzureDevOpsPipeline("test-org", "test-project", true);
-const clusterPipeline = new AzureDevOpsPipeline(
-  "test-org",
-  "test-project",
-  false
-);
+const srcPipeline = new AzureDevOpsPipeline("test-org", "test-project");
+const hldPipeline = new AzureDevOpsPipeline("test-org", "test-project");
+const clusterPipeline = new AzureDevOpsPipeline("test-org", "test-project");
 const dummyAuthor = {
   imageUrl: "",
   name: "",
@@ -148,6 +143,9 @@ describe("Deployment", () => {
         );
         expect(endTime(deps[1]).getTime() < endTime(deps[0]).getTime());
         done();
+      },
+      () => {
+        expect(true).toBeFalsy();
       }
     );
   });

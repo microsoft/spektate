@@ -7,17 +7,9 @@ import { IBuilds } from "./Pipeline";
 const mockDirectory = "src/pipeline/mocks/";
 
 // Declare these with a test name since response is mocked
-const buildPipeline = new AzureDevOpsPipeline(
-  "test-org",
-  "test-project",
-  false
-);
+const buildPipeline = new AzureDevOpsPipeline("test-org", "test-project");
 let currentRawResponse = {};
-const releasePipeline = new AzureDevOpsPipeline(
-  "test-org",
-  "test-project",
-  true
-);
+const releasePipeline = new AzureDevOpsPipeline("test-org", "test-project");
 
 jest.spyOn(HttpHelper, "httpGet").mockImplementation(
   <T>(theUrl: string, accessToken?: string): Promise<AxiosResponse<T>> => {

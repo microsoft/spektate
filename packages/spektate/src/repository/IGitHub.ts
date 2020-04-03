@@ -28,6 +28,11 @@ export const getManifestSyncState = (
           .replace("<repo>", repository.reponame),
         accessToken
       );
+
+      if (allTags.status !== 200) {
+        throw new Error(allTags.statusText);
+      }
+
       const tags = allTags.data;
       if (tags != null && tags.length > 0) {
         const fluxTags: ITag[] = [];
@@ -136,6 +141,10 @@ export const getAuthor = async (
       .replace("<commitId>", commitId),
     accessToken
   );
+
+  if (data.status !== 200) {
+    throw new Error(data.statusText);
+  }
 
   const authorInfo = data.data;
   if (authorInfo != null) {
