@@ -1,20 +1,26 @@
 import { Ago } from "azure-devops-ui/Ago";
 import { Card } from "azure-devops-ui/Card";
-import { ObservableValue } from "azure-devops-ui/Core/Observable";
+import {
+  ObservableArray,
+  ObservableValue
+} from "azure-devops-ui/Core/Observable";
 import { Duration } from "azure-devops-ui/Duration";
 import { Icon, IIconProps } from "azure-devops-ui/Icon";
 import { Link } from "azure-devops-ui/Link";
 import { Status, Statuses, StatusSize } from "azure-devops-ui/Status";
 import {
   ColumnFill,
+  ColumnSorting,
   ITableColumn,
   SimpleTableCell,
+  sortItems,
+  SortOrder,
   Table,
   TwoLineTableCell
 } from "azure-devops-ui/Table";
 import { Tooltip } from "azure-devops-ui/TooltipEx";
 import { Filter } from "azure-devops-ui/Utilities/Filter";
-import { ArrayItemProvider } from "azure-devops-ui/Utilities/Provider";
+// import { ArrayItemProvider } from "azure-devops-ui/Utilities/Provider";
 import { VssPersona } from "azure-devops-ui/VssPersona";
 import * as querystring from "querystring";
 import * as React from "react";
@@ -56,6 +62,34 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
   };
   private releasesUrl?: string;
   private showPRsColumn: boolean = false;
+
+  private sortFunctions = [
+    // Sort on Name column
+    null,
+    // Sort on Service column
+    (item1: IDeploymentField, item2: IDeploymentField): number => {
+      return item1.service && item2.service
+        ? item1.service?.localeCompare(item2.service!)
+        : 0;
+    },
+    // Sort on Ring column
+    (item1: IDeploymentField, item2: IDeploymentField): number => {
+      return item1.environment && item2.environment
+        ? item1.environment?.localeCompare(item2.environment!)
+        : 0;
+    },
+
+    // Other columns does not need a sort function
+    // null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+    // null
+  ];
 
   constructor(props: Props) {
     super(props);
@@ -185,12 +219,20 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         id: "service",
         name: "Service",
         renderCell: this.renderSimpleText,
+        sortProps: {
+          ariaLabelAscending: "Sorted A to Z",
+          ariaLabelDescending: "Sorted Z to A"
+        },
         width: new ObservableValue(180)
       },
       {
         id: "environment",
         name: "Ring",
         renderCell: this.renderSimpleText,
+        sortProps: {
+          ariaLabelAscending: "Sorted A to Z",
+          ariaLabelDescending: "Sorted Z to A"
+        },
         width: new ObservableValue(220)
       },
       {
@@ -251,6 +293,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         width: new ObservableValue(200)
       });
     }
+
     columns.push(ColumnFill);
     let rows: IDeploymentField[] = [];
     try {
@@ -264,13 +307,35 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     } catch (err) {
       console.error(err);
     }
+    const tableItems = new ObservableArray<IDeploymentField>(rows);
+    const sortingBehavior = new ColumnSorting<IDeploymentField>(
+      (
+        columnIndex: number,
+        proposedSortOrder: SortOrder,
+        event: React.KeyboardEvent<HTMLElement> | React.MouseEvent<HTMLElement>
+      ) => {
+        tableItems.splice(
+          0,
+          tableItems.length,
+          ...sortItems<IDeploymentField>(
+            columnIndex,
+            proposedSortOrder,
+            this.sortFunctions,
+            columns,
+            rows
+          )
+        );
+      }
+    );
+
     return (
       <div className="PrototypeTable">
         <Table
+          behaviors={[sortingBehavior]}
           columns={columns}
           pageSize={rows.length}
           role="table"
-          itemProvider={new ArrayItemProvider<IDeploymentField>(rows)}
+          itemProvider={tableItems}
           showLines={true}
         />
       </div>
