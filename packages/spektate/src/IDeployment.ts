@@ -466,7 +466,7 @@ export const fetchAuthor = (
           reject(error);
         });
     } else {
-      reject("Repository could not be recognized.");
+      reject(new Error("Repository could not be recognized."));
     }
   });
 };

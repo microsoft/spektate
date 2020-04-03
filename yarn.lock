@@ -10444,13 +10444,14 @@ spdy@^3.4.1:
     select-hose "^2.0.0"
     spdy-transport "^2.0.18"
 
-spektate@^1.0.6:
-  version "1.0.6"
-  resolved "https://registry.yarnpkg.com/spektate/-/spektate-1.0.6.tgz#b855654d7ec57442b11e30a901e6ebdc0d0cd36d"
-  integrity sha512-P+TOQPdJjmYPwAucwIju818QaeaOrpCVfWj1RVMN6wj5iGszTk39FB9yCckHQ6o12TIo6UkZM+3I3OM1ZczN5g==
+spektate@^1.0.7:
+  version "1.0.7"
+  resolved "https://registry.yarnpkg.com/spektate/-/spektate-1.0.7.tgz#befbfc799fb5ea3f5bab20d0dfddce0ccf4eb4ff"
+  integrity sha512-0aOCLmfANoJJX5L9z5y4G6W8VPMTTR0rnH/IyoiIYkO6JtNMUowsuqfb8WqWNbPu4vDZ0tzW8EGu7W29ne8ebA==
   dependencies:
     axios "^0.19.0"
     azure-storage "^2.10.3"
+    tslint-config-prettier "^1.18.0"
 
 split-string@^3.0.1:
   version "3.1.0"

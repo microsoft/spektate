@@ -72,35 +72,7 @@ jest
   .spyOn(AzureDevOpsRepo, "getPullRequest")
   .mockReturnValue(Promise.resolve(dummyPR));
 
-jest.spyOn(Deployment, "getDeployments").mockImplementation(
-  (
-    storageAccount: string,
-    storageAccountKey: string,
-    storageTableName: string,
-    partitionKey: string,
-    srcPipeline1: IPipeline,
-    hldPipeline1: IPipeline,
-    manifestPipeline: IPipeline,
-    query1?: azure.TableQuery
-  ): Promise<IDeployment[]> => {
-    return new Promise(resolve => {
-      resolve(rawDeployments);
-    });
-  }
-);
-
-jest
-  .spyOn(Deployment, "cleanUpDeploymentsFromDB")
-  .mockImplementation(
-    (
-      batch: azure.TableBatch,
-      storageAccount: string,
-      storageAccountKey: string,
-      storageAccountTable: string
-    ) => {
-      // no-op
-    }
-  );
+jest.spyOn(Deployment, "cleanUpDeploymentsFromDB").mockReturnValue();
 
 beforeAll(() => {
   rawDeployments = JSON.parse(
@@ -136,6 +108,7 @@ beforeAll(() => {
 
 describe("Deployment", () => {
   test("fetch PR", async () => {
+    jest.spyOn(Deployment, "getDeployments").mockResolvedValue(rawDeployments);
     await validateConfiguration(
       "account-name",
       "account-key",
