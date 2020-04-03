@@ -54,8 +54,8 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
   private filterState: IDashboardFilterState = {
     defaultApplied: false
   };
+  private clusterSyncAvailable: boolean = false;
   private releasesUrl?: string;
-  private showPRsColumn: boolean = false;
 
   constructor(props: Props) {
     super(props);
@@ -210,40 +210,35 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         name: "ACR to HLD",
         renderCell: this.renderDockerRelease,
         width: new ObservableValue(250)
-      }
-    ];
-    if (this.showPRsColumn) {
-      columns.push({
+      },
+      {
         id: "pr",
         name: "Approval Pull Request",
         renderCell: this.renderPR,
         width: new ObservableValue(250)
-      });
-      columns.push({
+      },
+      {
         id: "mergedByName",
         name: "Merged By",
         renderCell: this.renderMergedBy,
         width: new ObservableValue(200)
-      });
-    }
-    columns.push({
-      id: "hldPipelineId",
-      name: "HLD to Manifest",
-      renderCell: this.renderHldBuild,
-      width: new ObservableValue(200)
-    });
-    columns.push({
-      id: "deployedAt",
-      name: "Last Updated",
-      renderCell: this.renderTime,
-      width: new ObservableValue(120)
-    });
+      },
+      {
+        id: "hldPipelineId",
+        name: "HLD to Manifest",
+        renderCell: this.renderHldBuild,
+        width: new ObservableValue(200)
+      },
+      {
+        id: "deployedAt",
+        name: "Last Updated",
+        renderCell: this.renderTime,
+        width: new ObservableValue(120)
+      }
+    ];
 
     // Display the cluster column only if there is information to show in the table
-    if (
-      this.state.manifestSyncStatuses &&
-      this.state.manifestSyncStatuses.length > 0
-    ) {
+    if (this.clusterSyncAvailable) {
       columns.push({
         id: "clusterName",
         name: "Synced Cluster",
@@ -561,6 +556,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     if (this.state.manifestSyncStatuses) {
       this.state.manifestSyncStatuses.forEach((tag: ITag) => {
         if (deployment.manifestCommitId === tag.commit) {
+          this.clusterSyncAvailable = true;
           clusterSyncs.push(tag);
         }
       });
@@ -1106,7 +1102,6 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
             HttpHelper.httpGet("/api/pr?" + queryParams).then(data => {
               const pr = data.data as IPullRequest;
               if (pr && deployment.pr) {
-                this.showPRsColumn = true;
                 const copy = state.prs;
                 copy[deployment.pr] = pr;
                 this.setState({ prs: copy });
