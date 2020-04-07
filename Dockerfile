@@ -5,7 +5,7 @@ ENV PATH /app/node_modules/.bin:$PATH
 
 COPY package.json .
 COPY yarn.lock .
-RUN yarn install --ignore-optional --silent
+RUN yarn install --silent &> /dev/null 
 RUN yarn global add ts-node --silent
 COPY . .
 RUN yarn build
