@@ -7,7 +7,6 @@ const createSourcePipeline = () => {
   return new AzureDevOpsPipeline(
     config.AZURE_ORG,
     config.AZURE_PROJECT,
-    false,
     config.AZURE_PIPELINE_ACCESS_TOKEN
   );
 };
@@ -16,7 +15,6 @@ const createHLDPipeline = () => {
   return new AzureDevOpsPipeline(
     config.AZURE_ORG,
     config.AZURE_PROJECT,
-    true,
     config.AZURE_PIPELINE_ACCESS_TOKEN
   );
 };
@@ -25,7 +23,6 @@ const createClusterPipeline = () => {
   return new AzureDevOpsPipeline(
     config.AZURE_ORG,
     config.AZURE_PROJECT,
-    false,
     config.AZURE_PIPELINE_ACCESS_TOKEN
   );
 };
@@ -51,7 +48,7 @@ export const get = async (req: Request, res: Response) => {
       res.json(deployments);
     } catch (err) {
       console.log(err);
-      res.sendStatus(500);
+      res.status(500).send(err.toString());
     }
   }
 };

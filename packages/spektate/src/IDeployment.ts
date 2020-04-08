@@ -137,11 +137,14 @@ export const getDeployments = async (
             storageAccount,
             storageAccountKey,
             storageTableName,
-            resolve
+            resolve,
+            reject
           );
         }
       }
     );
+  }).catch(e => {
+    throw e;
   });
 };
 
@@ -161,7 +164,8 @@ export const parseDeploymentsFromDB = (
   storageTableName: string,
   resolve: (
     value?: IDeployment[] | PromiseLike<IDeployment[]> | undefined
-  ) => void
+  ) => void,
+  reject: (reason?: any) => void
 ) => {
   const deployments: IDeployment[] = [];
   const srcBuildIds: Set<string> = new Set<string>();
@@ -218,8 +222,7 @@ export const parseDeploymentsFromDB = (
       );
     })
     .catch(err => {
-      console.error(err);
-      resolve([]);
+      reject(err);
     });
 };
 
@@ -291,6 +294,9 @@ export const getDeploymentFromDBEntry = async (
                 p2ReleaseStage.status = stages[2].state;
               }
             }
+          })
+          .catch(e => {
+            console.error(e);
           });
         promises.push(promise);
       }
@@ -459,6 +465,8 @@ export const fetchAuthor = (
         .catch(error => {
           reject(error);
         });
+    } else {
+      reject(new Error("Repository could not be recognized."));
     }
   });
 };
