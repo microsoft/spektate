@@ -15,6 +15,8 @@ Currently, Spektate consists of a command line interface and a simple dashboard 
 
 Note: Spektate dashboard will delete deployments when their corresponding builds/releases have expired in Azure DevOps.
 
+Official docker images for this dashboard are located at `mcr.microsoft.com/k8s/bedrock/spektate`.
+
 ## Onboard a Bedrock project to use Spektate
 
 Follow the steps in this [guide](https://github.com/CatalystCode/spk/blob/master/guides/service-introspection-onboarding.md) to onboard a project to use Spektate.
@@ -79,6 +81,15 @@ If you're not using an external IP, use port-forwarding to access the dashboard:
    - **Note**: If you're using GitHub, add `REACT_APP_GITHUB_MANIFEST_USERNAME`: Account name or organization name under which the manifest repository resides.
 
 3. Then run `yarn start-backend` in one window to start the backend server, and `yarn start` in another to start the front end to view the dashboard for the hello world deployment screen!
+
+## Publish Docker image
+
+In order to publish images to this repository, you will need access to `devcrewsacr.azurecr.io`
+
+1. Run `az acr login --name devcrewsacr`
+2. If you do not know credentials you will need to login, grab them from portal.azure.com or run `az acr credential show --name devcrewsacr`.
+3. Run `docker login devcrewsacr.azurecr.io` and you will be prompted to enter the credentials
+4. Run `docker push devcrewsacr.azurecr.io/public/k8s/bedrock/spektate:<tag>`
 
 ## Azure Web App Hosting
 
