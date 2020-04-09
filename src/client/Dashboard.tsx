@@ -1,13 +1,11 @@
 import { Card } from "azure-devops-ui/Card";
 import { ObservableValue } from "azure-devops-ui/Core/Observable";
-import { Status, StatusSize } from "azure-devops-ui/Status";
 import {
   ColumnFill,
   ITableColumn,
   SimpleTableCell,
   Table
 } from "azure-devops-ui/Table";
-import { Tooltip } from "azure-devops-ui/TooltipEx";
 import { Filter } from "azure-devops-ui/Utilities/Filter";
 import { ArrayItemProvider } from "azure-devops-ui/Utilities/Provider";
 import * as querystring from "querystring";
@@ -26,8 +24,9 @@ import { IPullRequest } from "spektate/lib/repository/IPullRequest";
 import { ITag } from "spektate/lib/repository/Tag";
 import { Build } from "./cells/build";
 import { Cluster } from "./cells/cluster";
-import { getStatusIndicatorData } from "./cells/icons";
 import { Persona } from "./cells/persona";
+import { Simple } from "./cells/simple";
+import { Status } from "./cells/status";
 import { Time } from "./cells/time";
 import "./css/dashboard.css";
 import {
@@ -478,14 +477,6 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       keywordFilter = filters.keyword.toString();
     }
 
-    // this.filterState = {
-    //   currentlySelectedAuthors: Array.from(authorFilters),
-    //   currentlySelectedEnvs: Array.from(envFilters),
-    //   currentlySelectedKeyword: keywordFilter,
-    //   currentlySelectedServices: Array.from(serviceFilters),
-    //   defaultApplied: false
-    // };
-
     this.updateQueryString(
       keywordFilter,
       serviceFilters,
@@ -560,24 +551,12 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     tableColumn: ITableColumn<IDeploymentField>,
     tableItem: IDeploymentField
   ): JSX.Element => {
-    if (!tableItem[tableColumn.id]) {
-      return (
-        <SimpleTableCell key={"col-" + columnIndex} columnIndex={columnIndex} />
-      );
-    }
     return (
-      <SimpleTableCell
+      <Simple
         columnIndex={columnIndex}
         tableColumn={tableColumn}
-        key={"col-" + columnIndex}
-        contentClassName="fontSizeM font-size-m scroll-hidden"
-      >
-        <div className="flex-row scroll-hidden">
-          <Tooltip overflowOnly={true}>
-            <span className="text-ellipsis">{tableItem[tableColumn.id]}</span>
-          </Tooltip>
-        </div>
-      </SimpleTableCell>
+        text={tableItem[tableColumn.id]}
+      />
     );
   };
 
@@ -589,10 +568,9 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
   ): JSX.Element => {
     return (
       <Time
-        rowIndex={rowIndex}
         columnIndex={columnIndex}
         tableColumn={tableColumn}
-        tableItem={tableItem}
+        deployment={tableItem}
       />
     );
   };
@@ -605,10 +583,8 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
   ): JSX.Element => {
     return (
       <Build
-        rowIndex={rowIndex}
         columnIndex={columnIndex}
         tableColumn={tableColumn}
-        tableItem={tableItem}
         pipelineResult={tableItem.srcPipelineResult}
         pipelineId={tableItem.srcPipelineId}
         pipelineURL={tableItem.srcPipelineURL}
@@ -627,10 +603,8 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
   ): JSX.Element => {
     return (
       <Build
-        rowIndex={rowIndex}
         columnIndex={columnIndex}
         tableColumn={tableColumn}
-        tableItem={tableItem}
         pipelineResult={tableItem.hldPipelineResult}
         pipelineId={tableItem.hldPipelineId}
         pipelineURL={tableItem.hldPipelineURL}
@@ -649,10 +623,8 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
   ): JSX.Element => {
     return (
       <Build
-        rowIndex={rowIndex}
         columnIndex={columnIndex}
         tableColumn={tableColumn}
-        tableItem={tableItem}
         pipelineResult={tableItem.dockerPipelineResult}
         pipelineId={tableItem.dockerPipelineId}
         pipelineURL={tableItem.dockerPipelineURL}
@@ -672,10 +644,8 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     if (tableItem.pr) {
       return (
         <Build
-          rowIndex={rowIndex}
           columnIndex={columnIndex}
           tableColumn={tableColumn}
-          tableItem={tableItem}
           pipelineResult={tableItem.mergedByName ? "succeeded" : "waiting"}
           pipelineId={tableItem.pr!.toString()}
           pipelineURL={tableItem.prURL}
@@ -702,10 +672,9 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     if (tableItem.authorName && tableItem.authorURL) {
       return (
         <Persona
-          rowIndex={rowIndex}
           columnIndex={columnIndex}
           tableColumn={tableColumn}
-          tableItem={tableItem}
+          deployment={tableItem}
           name={tableItem.authorName}
           imageUrl={tableItem.authorURL}
         />
@@ -727,10 +696,9 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     if (tableItem.pr && tableItem.mergedByName) {
       return (
         <Persona
-          rowIndex={rowIndex}
           columnIndex={columnIndex}
           tableColumn={tableColumn}
-          tableItem={tableItem}
+          deployment={tableItem}
           name={tableItem.mergedByName}
           imageUrl={tableItem.mergedByImageURL}
         />
@@ -751,10 +719,9 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
   ): JSX.Element => {
     return (
       <Cluster
-        rowIndex={rowIndex}
         columnIndex={columnIndex}
         tableColumn={tableColumn}
-        tableItem={tableItem}
+        deployment={tableItem}
         releasesUrl={this.releasesUrl}
       />
     );
@@ -766,25 +733,12 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     tableColumn: ITableColumn<IDeploymentField>,
     tableItem: IDeploymentField
   ): JSX.Element => {
-    if (!tableItem.status) {
-      return (
-        <SimpleTableCell key={"col-" + columnIndex} columnIndex={columnIndex} />
-      );
-    }
-    const indicatorData = getStatusIndicatorData(tableItem.status);
     return (
-      <SimpleTableCell
+      <Status
         columnIndex={columnIndex}
         tableColumn={tableColumn}
-        key={"col-" + columnIndex}
-        contentClassName="fontWeightSemiBold font-weight-semibold fontSizeM font-size-m scroll-hidden"
-      >
-        <Status
-          {...indicatorData.statusProps}
-          className={"icon-large-margin " + indicatorData.classname}
-          size={StatusSize.l}
-        />
-      </SimpleTableCell>
+        status={tableItem.status}
+      />
     );
   };
 

@@ -10,10 +10,8 @@ import { IDeploymentField } from "../Dashboard.types";
 import { getIcon, WithIcon } from "./icons";
 
 interface IBuildProps {
-  rowIndex: number;
   columnIndex: number;
   tableColumn: ITableColumn<IDeploymentField>;
-  tableItem: IDeploymentField;
   pipelineResult?: string;
   pipelineId?: string;
   pipelineURL?: string;

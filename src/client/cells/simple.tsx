@@ -1,19 +1,16 @@
 import { ITableColumn, SimpleTableCell } from "azure-devops-ui/Table";
 import { Tooltip } from "azure-devops-ui/TooltipEx";
-import { VssPersona } from "azure-devops-ui/VssPersona";
 import * as React from "react";
 import { IDeploymentField } from "../Dashboard.types";
 
-interface IPersonaProps {
+interface ISimpleProps {
   columnIndex: number;
   tableColumn: ITableColumn<IDeploymentField>;
-  deployment: IDeploymentField;
-  name: string;
-  imageUrl?: string;
+  text?: string;
 }
 
-export const Persona: React.FC<IPersonaProps> = (props: IPersonaProps) => {
-  if (!props.deployment[props.tableColumn.id]) {
+export const Simple: React.FC<ISimpleProps> = (props: ISimpleProps) => {
+  if (!props.text) {
     return (
       <SimpleTableCell
         key={"col-" + props.columnIndex}
@@ -26,15 +23,11 @@ export const Persona: React.FC<IPersonaProps> = (props: IPersonaProps) => {
       columnIndex={props.columnIndex}
       tableColumn={props.tableColumn}
       key={"col-" + props.columnIndex}
-      contentClassName="font-size-m text-ellipsis bolt-table-link bolt-table-inline-link"
+      contentClassName="fontSizeM font-size-m scroll-hidden"
     >
-      <VssPersona displayName={name} imageUrl={props.imageUrl} />
-      <div>&nbsp;&nbsp;&nbsp;</div>
       <div className="flex-row scroll-hidden">
         <Tooltip overflowOnly={true}>
-          <span className="text-ellipsis">
-            {props.deployment[props.tableColumn.id]}
-          </span>
+          <span className="text-ellipsis">{props.text}</span>
         </Tooltip>
       </div>
     </SimpleTableCell>
