@@ -1,21 +1,15 @@
-import { Ago } from "azure-devops-ui/Ago";
 import { Card } from "azure-devops-ui/Card";
 import { ObservableValue } from "azure-devops-ui/Core/Observable";
-import { Duration } from "azure-devops-ui/Duration";
-import { Icon, IIconProps } from "azure-devops-ui/Icon";
-import { Link } from "azure-devops-ui/Link";
-import { Status, Statuses, StatusSize } from "azure-devops-ui/Status";
+import { Status, StatusSize } from "azure-devops-ui/Status";
 import {
   ColumnFill,
   ITableColumn,
   SimpleTableCell,
-  Table,
-  TwoLineTableCell
+  Table
 } from "azure-devops-ui/Table";
 import { Tooltip } from "azure-devops-ui/TooltipEx";
 import { Filter } from "azure-devops-ui/Utilities/Filter";
 import { ArrayItemProvider } from "azure-devops-ui/Utilities/Provider";
-import { VssPersona } from "azure-devops-ui/VssPersona";
 import * as querystring from "querystring";
 import * as React from "react";
 import { HttpHelper } from "spektate/lib/HttpHelper";
@@ -30,24 +24,20 @@ import { IAzureDevOpsRepo } from "spektate/lib/repository/IAzureDevOpsRepo";
 import { IGitHub } from "spektate/lib/repository/IGitHub";
 import { IPullRequest } from "spektate/lib/repository/IPullRequest";
 import { ITag } from "spektate/lib/repository/Tag";
+import { Build } from "./cells/build";
+import { Cluster } from "./cells/cluster";
+import { getStatusIndicatorData } from "./cells/icons";
+import { Persona } from "./cells/persona";
+import { Time } from "./cells/time";
 import "./css/dashboard.css";
 import {
   IDashboardFilterState,
   IDashboardState,
-  IDeploymentField,
-  IStatusIndicatorData
+  IDeploymentField
 } from "./Dashboard.types";
 import { DeploymentFilter } from "./DeploymentFilter";
 
 const REFRESH_INTERVAL = 30000;
-const iconColors = {
-  blue: "#0a78d4",
-  gray: "#3b606d",
-  green: "#2aa05b",
-  purple: "#5b50e2",
-  red: "#c8281f",
-  yellow: "#e08a00"
-};
 class Dashboard<Props> extends React.Component<Props, IDashboardState> {
   private interval: NodeJS.Timeout;
   private filter: Filter = new Filter();
@@ -591,68 +581,18 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     );
   };
 
-  private renderPersona = (
-    rowIndex: number,
-    columnIndex: number,
-    tableColumn: ITableColumn<IDeploymentField>,
-    tableItem: IDeploymentField,
-    name: string,
-    imageUrl?: string
-  ): JSX.Element => {
-    if (!tableItem[tableColumn.id]) {
-      return (
-        <SimpleTableCell key={"col-" + columnIndex} columnIndex={columnIndex} />
-      );
-    }
-    return (
-      <SimpleTableCell
-        columnIndex={columnIndex}
-        tableColumn={tableColumn}
-        key={"col-" + columnIndex}
-        contentClassName="font-size-m text-ellipsis bolt-table-link bolt-table-inline-link"
-      >
-        <VssPersona displayName={name} imageUrl={imageUrl} />
-        <div>&nbsp;&nbsp;&nbsp;</div>
-        <div className="flex-row scroll-hidden">
-          <Tooltip overflowOnly={true}>
-            <span className="text-ellipsis">{tableItem[tableColumn.id]}</span>
-          </Tooltip>
-        </div>
-      </SimpleTableCell>
-    );
-  };
-
   private renderTime = (
     rowIndex: number,
     columnIndex: number,
     tableColumn: ITableColumn<IDeploymentField>,
     tableItem: IDeploymentField
   ): JSX.Element => {
-    if (!tableItem.startTime || !tableItem.endTime) {
-      return (
-        <SimpleTableCell key={"col-" + columnIndex} columnIndex={columnIndex} />
-      );
-    }
     return (
-      <TwoLineTableCell
-        key={"col-" + columnIndex}
+      <Time
+        rowIndex={rowIndex}
         columnIndex={columnIndex}
         tableColumn={tableColumn}
-        line1={this.WithIcon({
-          children: <Ago date={new Date(tableItem.endTime!)} />,
-          className: "fontSize font-size",
-          iconProps: { iconName: "Calendar" }
-        })}
-        line2={this.WithIcon({
-          children: (
-            <Duration
-              startDate={new Date(tableItem.startTime!)}
-              endDate={new Date(tableItem.endTime!)}
-            />
-          ),
-          className: "fontSize font-size bolt-table-two-line-cell-item",
-          iconProps: { iconName: "Clock" }
-        })}
+        tableItem={tableItem}
       />
     );
   };
@@ -663,17 +603,19 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     tableColumn: ITableColumn<IDeploymentField>,
     tableItem: IDeploymentField
   ): JSX.Element => {
-    return this.renderBuild(
-      rowIndex,
-      columnIndex,
-      tableColumn,
-      tableItem,
-      tableItem.srcPipelineResult,
-      tableItem.srcPipelineId,
-      tableItem.srcPipelineURL,
-      tableItem.srcCommitId,
-      tableItem.srcCommitURL,
-      "BranchPullRequest"
+    return (
+      <Build
+        rowIndex={rowIndex}
+        columnIndex={columnIndex}
+        tableColumn={tableColumn}
+        tableItem={tableItem}
+        pipelineResult={tableItem.srcPipelineResult}
+        pipelineId={tableItem.srcPipelineId}
+        pipelineURL={tableItem.srcPipelineURL}
+        commitId={tableItem.srcCommitId}
+        commitURL={tableItem.srcCommitURL}
+        iconName={"BranchPullRequest"}
+      />
     );
   };
 
@@ -683,17 +625,19 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     tableColumn: ITableColumn<IDeploymentField>,
     tableItem: IDeploymentField
   ): JSX.Element => {
-    return this.renderBuild(
-      rowIndex,
-      columnIndex,
-      tableColumn,
-      tableItem,
-      tableItem.hldPipelineResult,
-      tableItem.hldPipelineId,
-      tableItem.hldPipelineURL,
-      tableItem.hldCommitId,
-      tableItem.hldCommitURL,
-      "BranchPullRequest"
+    return (
+      <Build
+        rowIndex={rowIndex}
+        columnIndex={columnIndex}
+        tableColumn={tableColumn}
+        tableItem={tableItem}
+        pipelineResult={tableItem.hldPipelineResult}
+        pipelineId={tableItem.hldPipelineId}
+        pipelineURL={tableItem.hldPipelineURL}
+        commitId={tableItem.hldCommitId}
+        commitURL={tableItem.hldCommitURL}
+        iconName={"BranchPullRequest"}
+      />
     );
   };
 
@@ -703,17 +647,19 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     tableColumn: ITableColumn<IDeploymentField>,
     tableItem: IDeploymentField
   ): JSX.Element => {
-    return this.renderBuild(
-      rowIndex,
-      columnIndex,
-      tableColumn,
-      tableItem,
-      tableItem.dockerPipelineResult,
-      tableItem.dockerPipelineId,
-      tableItem.dockerPipelineURL,
-      tableItem.imageTag,
-      "",
-      "Product"
+    return (
+      <Build
+        rowIndex={rowIndex}
+        columnIndex={columnIndex}
+        tableColumn={tableColumn}
+        tableItem={tableItem}
+        pipelineResult={tableItem.dockerPipelineResult}
+        pipelineId={tableItem.dockerPipelineId}
+        pipelineURL={tableItem.dockerPipelineURL}
+        commitId={tableItem.imageTag}
+        commitURL={""}
+        iconName={"Product"}
+      />
     );
   };
 
@@ -724,17 +670,19 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     tableItem: IDeploymentField
   ): JSX.Element => {
     if (tableItem.pr) {
-      return this.renderBuild(
-        rowIndex,
-        columnIndex,
-        tableColumn,
-        tableItem,
-        tableItem.mergedByName ? "succeeded" : "waiting",
-        tableItem.pr.toString(),
-        tableItem.prURL,
-        tableItem.prSourceBranch,
-        "",
-        "BranchPullRequest"
+      return (
+        <Build
+          rowIndex={rowIndex}
+          columnIndex={columnIndex}
+          tableColumn={tableColumn}
+          tableItem={tableItem}
+          pipelineResult={tableItem.mergedByName ? "succeeded" : "waiting"}
+          pipelineId={tableItem.pr!.toString()}
+          pipelineURL={tableItem.prURL}
+          commitId={tableItem.prSourceBranch}
+          commitURL={""}
+          iconName={"BranchPullRequest"}
+        />
       );
     } else {
       return (
@@ -752,13 +700,15 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     tableItem: IDeploymentField
   ): JSX.Element => {
     if (tableItem.authorName && tableItem.authorURL) {
-      return this.renderPersona(
-        rowIndex,
-        columnIndex,
-        tableColumn,
-        tableItem,
-        tableItem.authorName,
-        tableItem.authorURL
+      return (
+        <Persona
+          rowIndex={rowIndex}
+          columnIndex={columnIndex}
+          tableColumn={tableColumn}
+          tableItem={tableItem}
+          name={tableItem.authorName}
+          imageUrl={tableItem.authorURL}
+        />
       );
     }
     return (
@@ -775,13 +725,15 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     tableItem: IDeploymentField
   ): JSX.Element => {
     if (tableItem.pr && tableItem.mergedByName) {
-      return this.renderPersona(
-        rowIndex,
-        columnIndex,
-        tableColumn,
-        tableItem,
-        tableItem.mergedByName,
-        tableItem.mergedByImageURL
+      return (
+        <Persona
+          rowIndex={rowIndex}
+          columnIndex={columnIndex}
+          tableColumn={tableColumn}
+          tableItem={tableItem}
+          name={tableItem.mergedByName}
+          imageUrl={tableItem.mergedByImageURL}
+        />
       );
     }
     return (
@@ -797,136 +749,13 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     tableColumn: ITableColumn<IDeploymentField>,
     tableItem: IDeploymentField
   ): JSX.Element => {
-    if (!tableItem.clusters || tableItem.clusters.length === 0) {
-      return (
-        <SimpleTableCell key={"col-" + columnIndex} columnIndex={columnIndex}>
-          -
-        </SimpleTableCell>
-      );
-    }
-    const strClusters = tableItem.clusters.join(", ");
-    if (tableItem.clusters.length > 2) {
-      return (
-        <TwoLineTableCell
-          className="first-row no-cell-top-border bolt-table-cell-content-with-inline-link no-v-padding"
-          key={"col-" + columnIndex}
-          columnIndex={columnIndex}
-          tableColumn={tableColumn}
-          line1={this.renderCluster(
-            tableItem.clusters[0] + ", " + tableItem.clusters[1],
-            tableItem.clusters!
-          )}
-          line2={this.renderCluster(
-            "and " + (tableItem.clusters.length - 2) + " more...",
-            tableItem.clusters!
-          )}
-        />
-      );
-    }
     return (
-      <SimpleTableCell columnIndex={columnIndex} key={"col-" + columnIndex}>
-        {this.renderCluster(strClusters, tableItem.clusters!)}
-      </SimpleTableCell>
-    );
-  };
-
-  private renderCluster = (
-    text: string,
-    allClusters: string[]
-  ): React.ReactNode => {
-    return (
-      <Tooltip
-        // tslint:disable-next-line: jsx-no-lambda
-        renderContent={() => this.renderCustomClusterTooltip(allClusters)}
-        overflowOnly={false}
-      >
-        <Link
-          className="font-size-m text-ellipsis bolt-table-link bolt-table-inline-link"
-          href={this.releasesUrl}
-          subtle={true}
-        >
-          {text}
-        </Link>
-      </Tooltip>
-    );
-  };
-
-  private renderCustomClusterTooltip = (clusters: string[]) => {
-    const tooltip: React.ReactNode[] = [];
-    clusters.forEach(cluster => {
-      tooltip.push(
-        <span>
-          {cluster}
-          <br />
-        </span>
-      );
-    });
-    return <span>{tooltip}</span>;
-  };
-
-  private renderBuild = (
-    rowIndex: number,
-    columnIndex: number,
-    tableColumn: ITableColumn<IDeploymentField>,
-    tableItem: IDeploymentField,
-    pipelineResult?: string,
-    pipelineId?: string,
-    pipelineURL?: string,
-    commitId?: string,
-    commitURL?: string,
-    iconName?: string
-  ): JSX.Element => {
-    if (!pipelineId || !pipelineURL || !commitId) {
-      return (
-        <SimpleTableCell key={"col-" + columnIndex} columnIndex={columnIndex}>
-          -
-        </SimpleTableCell>
-      );
-    }
-    const commitCell = this.WithIcon({
-      className: "",
-      iconProps: { iconName },
-
-      children: <div>{commitId}</div>
-    });
-    return (
-      <TwoLineTableCell
-        className="first-row no-cell-top-border bolt-table-cell-content-with-inline-link no-v-padding"
-        key={"col-" + columnIndex}
+      <Cluster
+        rowIndex={rowIndex}
         columnIndex={columnIndex}
         tableColumn={tableColumn}
-        iconProps={this.getIcon(pipelineResult)}
-        line1={
-          <Tooltip text={pipelineId} overflowOnly={true}>
-            {pipelineURL && (
-              <Link
-                className="fontSizeM font-size-m text-ellipsis bolt-table-link bolt-table-inline-link"
-                href={pipelineURL}
-                // tslint:disable-next-line: jsx-no-lambda
-                onClick={() => (parent.window.location.href = pipelineURL)}
-              >
-                {pipelineId}
-              </Link>
-            )}
-          </Tooltip>
-        }
-        line2={
-          <Tooltip overflowOnly={true}>
-            <span className="fontSize font-size secondary-text flex-row flex-center text-ellipsis">
-              {commitId && commitURL && commitURL !== "" && (
-                <Link
-                  className="monospaced-text text-ellipsis flex-row flex-center bolt-table-link bolt-table-inline-link"
-                  href={commitURL}
-                  // tslint:disable-next-line: jsx-no-lambda
-                  onClick={() => (parent.window.location.href = commitURL)}
-                >
-                  {commitCell}
-                </Link>
-              )}
-              {commitId && commitURL === "" && commitCell}
-            </span>
-          </Tooltip>
-        }
+        tableItem={tableItem}
+        releasesUrl={this.releasesUrl}
       />
     );
   };
@@ -942,7 +771,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         <SimpleTableCell key={"col-" + columnIndex} columnIndex={columnIndex} />
       );
     }
-    const indicatorData = this.getStatusIndicatorData(tableItem.status);
+    const indicatorData = getStatusIndicatorData(tableItem.status);
     return (
       <SimpleTableCell
         columnIndex={columnIndex}
@@ -957,83 +786,6 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         />
       </SimpleTableCell>
     );
-  };
-
-  private WithIcon = (props: {
-    className?: string;
-    iconProps: IIconProps;
-    children?: React.ReactNode;
-  }) => {
-    return (
-      <div className="flex-row flex-center">
-        {Icon({ ...props.iconProps, className: "icon-margin" })}
-        {props.children}
-      </div>
-    );
-  };
-
-  private getStatusIndicatorData = (
-    statusStr: string
-  ): IStatusIndicatorData => {
-    statusStr = statusStr || "";
-    statusStr = statusStr.toLowerCase();
-    const indicatorData: IStatusIndicatorData = {
-      classname: "icon-green",
-      label: "Success",
-      statusProps: {
-        ...Statuses.Success,
-        ariaLabel: "Success",
-        color: iconColors.green
-      }
-    };
-    switch (statusStr.toLowerCase()) {
-      case "failed":
-        indicatorData.statusProps = {
-          ...Statuses.Failed,
-          ariaLabel: "Failed",
-          color: iconColors.red
-        };
-        indicatorData.label = "Failed";
-        indicatorData.classname = "icon-red";
-        break;
-      case "in progress":
-        indicatorData.statusProps = {
-          ...Statuses.Running,
-          ariaLabel: "Running",
-          color: iconColors.blue
-        };
-        indicatorData.label = "Running";
-        indicatorData.classname = "icon-blue";
-        break;
-      case "waiting":
-        indicatorData.statusProps = {
-          ...Statuses.Waiting,
-          ariaLabel: "Waiting",
-          color: iconColors.purple
-        };
-        indicatorData.label = "Waiting";
-        indicatorData.classname = "icon-purple";
-        break;
-      case "incomplete":
-        indicatorData.statusProps = {
-          ...Statuses.Warning,
-          ariaLabel: "Incomplete",
-          color: iconColors.yellow
-        };
-        indicatorData.label = "Incomplete";
-        indicatorData.classname = "icon-yellow";
-        break;
-      case "canceled":
-        indicatorData.statusProps = {
-          ...Statuses.Canceled,
-          ariaLabel: "Canceled",
-          color: iconColors.gray
-        };
-        indicatorData.label = "Canceled";
-        indicatorData.classname = "icon-gray";
-        break;
-    }
-    return indicatorData;
   };
 
   private getAuthorRequestParams = (deployment: IDeployment) => {
@@ -1183,25 +935,6 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     }
     return undefined;
   };
-
-  private getIcon(statusStr?: string): IIconProps {
-    if (statusStr === "succeeded") {
-      return {
-        iconName: "SkypeCircleCheck",
-        style: { color: iconColors.green }
-      };
-    } else if (statusStr === undefined || statusStr === "inProgress") {
-      return { iconName: "AwayStatus", style: { color: iconColors.blue } }; // SyncStatusSolid
-    } else if (statusStr === "canceled") {
-      return {
-        iconName: "SkypeCircleSlash",
-        style: { color: iconColors.gray }
-      };
-    } else if (statusStr === "waiting") {
-      return { iconName: "AwayStatus", style: { color: iconColors.purple } };
-    }
-    return { iconName: "StatusErrorFull", style: { color: iconColors.red } };
-  }
 }
 
 export default Dashboard;
