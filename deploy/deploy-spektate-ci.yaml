@@ -8,12 +8,17 @@ schedules:
     always: true
 
 variables:
+- group: 'spektate-ci-vg'
   skipComponentGovernanceDetection: "true"
 
 jobs:
   - job: Spektate_Publish
     steps:
       - script: |
+          # Login to Azure
+          echo "az login --service-principal --username $(SP_APP_ID) --password $(SP_PASS) --tenant $(SP_TENANT)"
+          az login --service-principal --username "$(SP_APP_ID)" --password "$(SP_PASS)" --tenant "$(SP_TENANT)"
+
           # Make env vars available to child processes by exporting
           export MANIFEST_REPO_NAME=$(MANIFEST_REPO_NAME)
           export MANIFEST_REPO_PAT=$(MANIFEST_REPO_PAT)
@@ -26,4 +31,5 @@ jobs:
           export AZ_STORAGE_TABLE_NAME=$(AZ_STORAGE_TABLE_NAME)
 
           sh ./scripts/deploy-latest-image.sh
+        displayName: "Run deploy script"
           
