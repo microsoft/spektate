@@ -118,7 +118,7 @@ export const getPullRequest = (
           sourceBranch: pr.head ? pr.head.ref : "",
           targetBranch: pr.base ? pr.base.ref : "",
           title: pr.title,
-          url: pr.url
+          url: pr.html_url ? pr.html_url : ""
         });
       } else {
         reject("No PR was found for " + pullRequestId);
