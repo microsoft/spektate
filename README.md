@@ -19,7 +19,7 @@ Official docker images for this dashboard are located at `mcr.microsoft.com/k8s/
 
 ## Onboard a Bedrock project to use Spektate
 
-Follow the steps in this [guide](https://github.com/CatalystCode/spk/blob/master/guides/service-introspection-onboarding.md) to onboard a project to use Spektate.
+Follow the steps in this [guide](https://github.com/microsoft/bedrock-cli/blob/master/guides/service-introspection-onboarding.md) to onboard a project to use Spektate.
 
 ## Install on your cluster
 
@@ -97,7 +97,7 @@ You can provide an Azure Active Directory layer of authetication on top of Spekt
 
 ## Command Line Interface
 
-To use the CLI for Spektate, head over to https://github.com/catalystcode/spk.
+To use the CLI for Spektate, head over to https://github.com/microsoft/bedrock-cli.
 
 # Contributing
 
