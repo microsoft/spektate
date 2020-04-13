@@ -31,6 +31,6 @@ jobs:
           export PARTITION_KEY_NAME=$(PARTITION_KEY_NAME)
           export AZ_STORAGE_TABLE_NAME=$(AZ_STORAGE_TABLE_NAME)
 
-          sh ./deploy-latest-image.sh
+          sh ./deploy/deploy-latest-image.sh
         displayName: "Run deploy script"
           
