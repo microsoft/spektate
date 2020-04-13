@@ -8,8 +8,9 @@ schedules:
     always: true
 
 variables:
+- name: skipComponentGovernanceDetection
+  value: "true"
 - group: 'spektate-ci-vg'
-  skipComponentGovernanceDetection: "true"
 
 jobs:
   - job: Spektate_Publish
