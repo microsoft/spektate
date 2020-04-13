@@ -52,7 +52,9 @@ export const getPullRequest = (
           id: pr.pullRequestId,
           mergedBy: pr.closedBy
             ? {
-                imageUrl: pr.closedBy.imageUrl,
+                imageUrl: pr.closedBy._links?.avatar?.href
+                  ? pr.closedBy._links?.avatar?.href
+                  : pr.closedBy.imageUrl,
                 name: pr.closedBy.displayName,
                 url: pr.url,
                 username: pr.closedBy.uniqueName
