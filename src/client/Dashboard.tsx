@@ -1,13 +1,6 @@
 import { Card } from "azure-devops-ui/Card";
 import { ObservableValue } from "azure-devops-ui/Core/Observable";
-import {
-  ColumnFill,
-  ITableColumn,
-  SimpleTableCell,
-  Table
-} from "azure-devops-ui/Table";
 import { Filter } from "azure-devops-ui/Utilities/Filter";
-import { ArrayItemProvider } from "azure-devops-ui/Utilities/Provider";
 import * as querystring from "querystring";
 import * as React from "react";
 import { HttpHelper } from "spektate/lib/HttpHelper";
@@ -22,12 +15,6 @@ import { IAzureDevOpsRepo } from "spektate/lib/repository/IAzureDevOpsRepo";
 import { IGitHub } from "spektate/lib/repository/IGitHub";
 import { IPullRequest } from "spektate/lib/repository/IPullRequest";
 import { ITag } from "spektate/lib/repository/Tag";
-import { Build } from "./cells/build";
-import { Cluster } from "./cells/cluster";
-import { Persona } from "./cells/persona";
-import { Simple } from "./cells/simple";
-import { Status } from "./cells/status";
-import { Time } from "./cells/time";
 import "./css/dashboard.css";
 import {
   IDashboardFilterState,
@@ -35,6 +22,7 @@ import {
   IDeploymentField
 } from "./Dashboard.types";
 import { DeploymentFilter } from "./DeploymentFilter";
+import { Table } from "./Table";
 
 const REFRESH_INTERVAL = 30000;
 class Dashboard<Props> extends React.Component<Props, IDashboardState> {
@@ -163,79 +151,6 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
   };
 
   private renderPrototypeTable = () => {
-    const columns: Array<ITableColumn<IDeploymentField>> = [
-      {
-        id: "status",
-        name: "State",
-        renderCell: this.renderDeploymentStatus,
-        width: new ObservableValue(70)
-      },
-      {
-        id: "service",
-        name: "Service",
-        renderCell: this.renderSimpleText,
-        width: new ObservableValue(180)
-      },
-      {
-        id: "environment",
-        name: "Ring",
-        renderCell: this.renderSimpleText,
-        width: new ObservableValue(220)
-      },
-      {
-        id: "authorName",
-        name: "Author",
-        renderCell: this.renderAuthor,
-        width: new ObservableValue(200)
-      },
-      {
-        id: "srcPipelineId",
-        name: "SRC to ACR",
-        renderCell: this.renderSrcBuild,
-        width: new ObservableValue(200)
-      },
-      {
-        id: "dockerPipelineId",
-        name: "ACR to HLD",
-        renderCell: this.renderDockerRelease,
-        width: new ObservableValue(250)
-      },
-      {
-        id: "pr",
-        name: "Approval Pull Request",
-        renderCell: this.renderPR,
-        width: new ObservableValue(250)
-      },
-      {
-        id: "mergedByName",
-        name: "Merged By",
-        renderCell: this.renderMergedBy,
-        width: new ObservableValue(200)
-      },
-      {
-        id: "hldPipelineId",
-        name: "HLD to Manifest",
-        renderCell: this.renderHldBuild,
-        width: new ObservableValue(200)
-      },
-      {
-        id: "deployedAt",
-        name: "Last Updated",
-        renderCell: this.renderTime,
-        width: new ObservableValue(120)
-      }
-    ];
-
-    // Display the cluster column only if there is information to show in the table
-    if (this.clusterSyncAvailable) {
-      columns.push({
-        id: "clusterName",
-        name: "Synced Cluster",
-        renderCell: this.renderClusters,
-        width: new ObservableValue(200)
-      });
-    }
-    columns.push(ColumnFill);
     let rows: IDeploymentField[] = [];
     try {
       if (this.state.filteredDeployments.length === 0) {
@@ -249,15 +164,11 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       console.error(err);
     }
     return (
-      <div className="PrototypeTable">
-        <Table
-          columns={columns}
-          pageSize={rows.length}
-          role="table"
-          itemProvider={new ArrayItemProvider<IDeploymentField>(rows)}
-          showLines={true}
-        />
-      </div>
+      <Table
+        deploymentRows={rows}
+        clusterSyncAvailable={this.clusterSyncAvailable}
+        releasesUrl={this.releasesUrl}
+      />
     );
   };
 
@@ -543,203 +454,6 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       });
     }
     return clusterSyncs;
-  };
-
-  private renderSimpleText = (
-    rowIndex: number,
-    columnIndex: number,
-    tableColumn: ITableColumn<IDeploymentField>,
-    tableItem: IDeploymentField
-  ): JSX.Element => {
-    return (
-      <Simple
-        columnIndex={columnIndex}
-        tableColumn={tableColumn}
-        text={tableItem[tableColumn.id]}
-      />
-    );
-  };
-
-  private renderTime = (
-    rowIndex: number,
-    columnIndex: number,
-    tableColumn: ITableColumn<IDeploymentField>,
-    tableItem: IDeploymentField
-  ): JSX.Element => {
-    return (
-      <Time
-        columnIndex={columnIndex}
-        tableColumn={tableColumn}
-        deployment={tableItem}
-      />
-    );
-  };
-
-  private renderSrcBuild = (
-    rowIndex: number,
-    columnIndex: number,
-    tableColumn: ITableColumn<IDeploymentField>,
-    tableItem: IDeploymentField
-  ): JSX.Element => {
-    return (
-      <Build
-        columnIndex={columnIndex}
-        tableColumn={tableColumn}
-        pipelineResult={tableItem.srcPipelineResult}
-        pipelineId={tableItem.srcPipelineId}
-        pipelineURL={tableItem.srcPipelineURL}
-        commitId={tableItem.srcCommitId}
-        commitURL={tableItem.srcCommitURL}
-        iconName={"BranchPullRequest"}
-      />
-    );
-  };
-
-  private renderHldBuild = (
-    rowIndex: number,
-    columnIndex: number,
-    tableColumn: ITableColumn<IDeploymentField>,
-    tableItem: IDeploymentField
-  ): JSX.Element => {
-    return (
-      <Build
-        columnIndex={columnIndex}
-        tableColumn={tableColumn}
-        pipelineResult={tableItem.hldPipelineResult}
-        pipelineId={tableItem.hldPipelineId}
-        pipelineURL={tableItem.hldPipelineURL}
-        commitId={tableItem.hldCommitId}
-        commitURL={tableItem.hldCommitURL}
-        iconName={"BranchPullRequest"}
-      />
-    );
-  };
-
-  private renderDockerRelease = (
-    rowIndex: number,
-    columnIndex: number,
-    tableColumn: ITableColumn<IDeploymentField>,
-    tableItem: IDeploymentField
-  ): JSX.Element => {
-    return (
-      <Build
-        columnIndex={columnIndex}
-        tableColumn={tableColumn}
-        pipelineResult={tableItem.dockerPipelineResult}
-        pipelineId={tableItem.dockerPipelineId}
-        pipelineURL={tableItem.dockerPipelineURL}
-        commitId={tableItem.imageTag}
-        commitURL={""}
-        iconName={"Product"}
-      />
-    );
-  };
-
-  private renderPR = (
-    rowIndex: number,
-    columnIndex: number,
-    tableColumn: ITableColumn<IDeploymentField>,
-    tableItem: IDeploymentField
-  ): JSX.Element => {
-    if (tableItem.pr) {
-      return (
-        <Build
-          columnIndex={columnIndex}
-          tableColumn={tableColumn}
-          pipelineResult={tableItem.mergedByName ? "succeeded" : "waiting"}
-          pipelineId={tableItem.pr!.toString()}
-          pipelineURL={tableItem.prURL}
-          commitId={tableItem.prSourceBranch}
-          commitURL={""}
-          iconName={"BranchPullRequest"}
-        />
-      );
-    } else {
-      return (
-        <SimpleTableCell key={"col-" + columnIndex} columnIndex={columnIndex}>
-          -
-        </SimpleTableCell>
-      );
-    }
-  };
-
-  private renderAuthor = (
-    rowIndex: number,
-    columnIndex: number,
-    tableColumn: ITableColumn<IDeploymentField>,
-    tableItem: IDeploymentField
-  ): JSX.Element => {
-    if (tableItem.authorName && tableItem.authorURL) {
-      return (
-        <Persona
-          columnIndex={columnIndex}
-          tableColumn={tableColumn}
-          deployment={tableItem}
-          name={tableItem.authorName}
-          imageUrl={tableItem.authorURL}
-        />
-      );
-    }
-    return (
-      <SimpleTableCell key={"col-" + columnIndex} columnIndex={columnIndex}>
-        -
-      </SimpleTableCell>
-    );
-  };
-
-  private renderMergedBy = (
-    rowIndex: number,
-    columnIndex: number,
-    tableColumn: ITableColumn<IDeploymentField>,
-    tableItem: IDeploymentField
-  ): JSX.Element => {
-    if (tableItem.pr && tableItem.mergedByName) {
-      return (
-        <Persona
-          columnIndex={columnIndex}
-          tableColumn={tableColumn}
-          deployment={tableItem}
-          name={tableItem.mergedByName}
-          imageUrl={tableItem.mergedByImageURL}
-        />
-      );
-    }
-    return (
-      <SimpleTableCell key={"col-" + columnIndex} columnIndex={columnIndex}>
-        -
-      </SimpleTableCell>
-    );
-  };
-
-  private renderClusters = (
-    rowIndex: number,
-    columnIndex: number,
-    tableColumn: ITableColumn<IDeploymentField>,
-    tableItem: IDeploymentField
-  ): JSX.Element => {
-    return (
-      <Cluster
-        columnIndex={columnIndex}
-        tableColumn={tableColumn}
-        deployment={tableItem}
-        releasesUrl={this.releasesUrl}
-      />
-    );
-  };
-
-  private renderDeploymentStatus = (
-    rowIndex: number,
-    columnIndex: number,
-    tableColumn: ITableColumn<IDeploymentField>,
-    tableItem: IDeploymentField
-  ): JSX.Element => {
-    return (
-      <Status
-        columnIndex={columnIndex}
-        tableColumn={tableColumn}
-        status={tableItem.status}
-      />
-    );
   };
 
   private getAuthorRequestParams = (deployment: IDeployment) => {
