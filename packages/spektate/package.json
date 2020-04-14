@@ -1,6 +1,6 @@
 {
   "name": "spektate",
-  "version": "1.0.7",
+  "version": "1.0.10",
   "description": "Visualization tool backend for microsoft/bedrock",
   "main": "lib/spektate.js",
   "types": "lib/src/index.d.ts",
