@@ -1,3 +1,4 @@
+import { AxiosResponse } from "axios";
 import { Card } from "azure-devops-ui/Card";
 import { ObservableValue } from "azure-devops-ui/Core/Observable";
 import { Filter } from "azure-devops-ui/Utilities/Filter";
@@ -14,7 +15,7 @@ import { IAuthor } from "spektate/lib/repository/Author";
 import { IAzureDevOpsRepo } from "spektate/lib/repository/IAzureDevOpsRepo";
 import { IGitHub } from "spektate/lib/repository/IGitHub";
 import { IPullRequest } from "spektate/lib/repository/IPullRequest";
-import { ITag } from "spektate/lib/repository/Tag";
+import { IClusterSync, ITag } from "spektate/lib/repository/Tag";
 import "./css/dashboard.css";
 import {
   IDashboardFilterState,
@@ -80,7 +81,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
 
   private updateDeployments = async () => {
     try {
-      const deps = await HttpHelper.httpGet<any>("/api/deployments");
+      const deps = await HttpHelper.httpGet<IDeployment[]>("/api/deployments");
       if (!deps.data) {
         console.log(deps.request.response);
         throw new Error(deps.request.response);
@@ -136,12 +137,12 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
           value: this.filterState.currentlySelectedKeyword
         });
       }
-      HttpHelper.httpGet("/api/clustersync").then((syncData: any) => {
-        if (syncData.data && syncData.data.tags && syncData.data.releasesURL) {
-          this.setState({ manifestSyncStatuses: syncData.data.tags as ITag[] });
-          this.releasesUrl = syncData.data.releasesURL;
-        }
-      });
+      const tags = await HttpHelper.httpGet<IClusterSync>("/api/clustersync");
+
+      if (tags.data && tags.data.releasesURL) {
+        this.setState({ manifestSyncStatuses: tags.data.tags as ITag[] });
+        this.releasesUrl = tags.data.releasesURL;
+      }
     } catch (e) {
       console.log(e);
       this.setState({
@@ -302,7 +303,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     authorFilters: Set<string>,
     envFilters: Set<string>
   ) {
-    const query: any = {};
+    const query: { [id: string]: string[] | string } = {};
 
     if (keywordFilter && keywordFilter.length > 0) {
       query.keyword = keywordFilter;
@@ -539,11 +540,13 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
   private getAuthors = () => {
     try {
       const state = this.state;
-      const promises: Array<Promise<any>> = [];
+      const promises: Array<Promise<AxiosResponse<IAuthor>>> = [];
       this.state.deployments.forEach(deployment => {
         const queryParams = this.getAuthorRequestParams(deployment);
         if (queryParams !== "") {
-          const promise = HttpHelper.httpGet("/api/author?" + queryParams);
+          const promise = HttpHelper.httpGet<IAuthor>(
+            "/api/author?" + queryParams
+          );
 
           promise.then(data => {
             const author = data.data as IAuthor;
