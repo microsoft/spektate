@@ -27,12 +27,31 @@ import { Table } from "./Table";
 
 const REFRESH_INTERVAL = 30000;
 class Dashboard<Props> extends React.Component<Props, IDashboardState> {
+  /**
+   * Interval timer that refreshes dashboard to update stale data
+   */
   private interval: NodeJS.Timeout;
+
+  /**
+   * Filter for dashboard
+   */
   private filter: Filter = new Filter();
+
+  /**
+   * Filter state of dashboard
+   */
   private filterState: IDashboardFilterState = {
     defaultApplied: false
   };
+
+  /**
+   * Whether or not a cluster is synced to service(s) in this dashboard
+   */
   private clusterSyncAvailable: boolean = false;
+
+  /**
+   * Redirect link for cluster sync releases page
+   */
   private releasesUrl?: string;
 
   constructor(props: Props) {
@@ -54,6 +73,9 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     clearInterval(this.interval);
   }
 
+  /**
+   * Render the dashboard
+   */
   public render() {
     return (
       <div className="App">
@@ -73,12 +95,15 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         {this.state.error ? (
           <Card>{this.state.error.toString()}</Card>
         ) : (
-          this.renderPrototypeTable()
+          this.renderTable()
         )}
       </div>
     );
   }
 
+  /**
+   * Refresh deployments from storage
+   */
   private updateDeployments = async () => {
     try {
       const deps = await HttpHelper.httpGet<IDeployment[]>("/api/deployments");
@@ -151,7 +176,10 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     }
   };
 
-  private renderPrototypeTable = () => {
+  /**
+   * Renders table of deployments
+   */
+  private renderTable = () => {
     let rows: IDeploymentField[] = [];
     try {
       if (this.state.filteredDeployments.length === 0) {
@@ -173,6 +201,10 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     );
   };
 
+  /**
+   * Gets the deployment field to display for a deployment from storage
+   * @param deployment Deployment from storage
+   */
   private getDeploymentToDisplay = (
     deployment: IDeployment
   ): IDeploymentField => {
@@ -261,11 +293,17 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     };
   };
 
+  /**
+   * Handler for when dashboard is filtered
+   */
   private onDashboardFiltered = (filterData: Filter) => {
     this.filter = filterData;
     this.updateFilteredDeployments();
   };
 
+  /**
+   * Filters deployments based on applied filters
+   */
   private updateFilteredDeployments = () => {
     if (this.filter) {
       const keywordFilter: string | undefined = this.filter.getFilterItemValue(
@@ -297,6 +335,13 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     }
   };
 
+  /**
+   * Updates query string based on filters
+   * @param keywordFilter Applied filters in keyword textbox
+   * @param serviceFilters Applied service filters
+   * @param authorFilters Applied author filters
+   * @param envFilters Applied env filters
+   */
   private updateQueryString(
     keywordFilter: string | undefined,
     serviceFilters: Set<string>,
@@ -336,6 +381,13 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     }
   }
 
+  /**
+   * Filters deployments
+   * @param keywordFilter Applied filters in keyword textbox
+   * @param serviceFilters Applied service filters
+   * @param authorFilters Applied author filters
+   * @param envFilters Applied env filters
+   */
   private filterDeployments(
     keywordFilter: string | undefined,
     serviceFilters: Set<string>,
@@ -374,6 +426,9 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     this.setState({ filteredDeployments });
   }
 
+  /**
+   * Processes query parameters and applies it to filters
+   */
   private processQueryParams = () => {
     if (window.location.search === "") {
       return;
@@ -403,6 +458,9 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     );
   };
 
+  /**
+   * Gets a set of unique items for any filter drop down
+   */
   private getFilterSet = (queryParam: string): Set<string> => {
     const filters = querystring.decode(window.location.search.replace("?", ""));
     let filterSet: Set<string> = new Set<string>();
@@ -416,6 +474,9 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     return filterSet;
   };
 
+  /**
+   * Gets a list of environments for filter drop down
+   */
   private getListOfEnvironments = (): string[] => {
     const envs: { [id: string]: boolean } = {};
     this.state.deployments.forEach((deployment: IDeployment) => {
@@ -426,6 +487,9 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     return Array.from(Object.keys(envs));
   };
 
+  /**
+   * Gets a list of services for filter drop down
+   */
   private getListOfServices = (): string[] => {
     const services: { [id: string]: boolean } = {};
     this.state.deployments.forEach((deployment: IDeployment) => {
@@ -436,12 +500,19 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     return Array.from(Object.keys(services));
   };
 
+  /**
+   * Gets a list of authors for filter drop down
+   */
   private getListOfAuthors = (): Set<string> => {
     return new Set(
       Array.from(Object.values(this.state.authors)).map(author => author.name)
     );
   };
 
+  /**
+   * Returns the appropriate cluster sync status for a deployment from loaded component state
+   * @param deployment The deployment for which cluster sync state is to be fetched
+   */
   private getClusterSyncStatusForDeployment = (
     deployment: IDeployment
   ): ITag[] | undefined => {
@@ -457,6 +528,10 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     return clusterSyncs;
   };
 
+  /**
+   * Builds author query parameters for sending the HTTP request
+   * @param deployment The deployment for which query parameters are to be built
+   */
   private getAuthorRequestParams = (deployment: IDeployment) => {
     const query: { [key: string]: string } = {};
     const commit =
@@ -489,6 +564,10 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       .join("&");
   };
 
+  /**
+   * Builds PR query parameters for sending the HTTP request
+   * @param deployment The deployment for which query parameters are to be built
+   */
   private getPRRequestParams = (deployment: IDeployment) => {
     const query: { [key: string]: string } = {};
     if (!deployment.hldRepo) {
@@ -513,6 +592,9 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       .join("&");
   };
 
+  /**
+   * Fetches PRs for all deployments asynchronously
+   */
   private getPRs = () => {
     try {
       const state = this.state;
@@ -537,6 +619,9 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     }
   };
 
+  /**
+   * Sends requests to fetch all authors asynchronously
+   */
   private getAuthors = () => {
     try {
       const state = this.state;
@@ -579,6 +664,10 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     }
   };
 
+  /**
+   * Returns author from loaded component state, if available
+   * @param deployment the deployment for which author is being requested
+   */
   private getAuthor = (deployment: IDeployment): IAuthor | undefined => {
     if (
       deployment.srcToDockerBuild &&
@@ -600,6 +689,10 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     return undefined;
   };
 
+  /**
+   * Returns PR from component state, if available
+   * @param deployment the deployment for which PR is being requested
+   */
   private getPR = (deployment: IDeployment): IPullRequest | undefined => {
     if (deployment.pr && deployment.pr in this.state.prs) {
       return this.state.prs[deployment.pr];
