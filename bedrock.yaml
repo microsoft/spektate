@@ -1,0 +1,20 @@
+rings:
+  master:
+    isDefault: true
+services:
+  - displayName: spektate
+    path: ./
+    helm:
+      chart:
+        accessTokenVariable: ACCESS_TOKEN_SECRET
+        branch: master
+        git: "https://github.com/samiyaakhtar/spektate" # TODO: Change this to microsoft/fabrikate-definitions
+        path: chart
+    k8sBackend: ""
+    k8sBackendPort: 5000
+    middlewares: []
+    pathPrefix: ""
+    pathPrefixMajorVersion: ""
+version: 0.6.1
+variableGroups:
+  - inception-vg
