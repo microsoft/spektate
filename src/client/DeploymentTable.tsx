@@ -28,7 +28,7 @@ interface ITableProps {
   releasesUrl?: string;
 }
 let releasesUrl: string = "";
-export const Table: React.FC<ITableProps> = (props: ITableProps) => {
+export const DeploymentTable: React.FC<ITableProps> = (props: ITableProps) => {
   const columns: Array<ITableColumn<IDeploymentField>> = [
     {
       id: "status",
