@@ -23,7 +23,7 @@ import {
   IDeploymentField
 } from "./Dashboard.types";
 import { DeploymentFilter } from "./DeploymentFilter";
-import { Table } from "./Table";
+import { DeploymentTable } from "./DeploymentTable";
 
 const REFRESH_INTERVAL = 30000;
 class Dashboard<Props> extends React.Component<Props, IDashboardState> {
@@ -193,7 +193,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       console.error(err);
     }
     return (
-      <Table
+      <DeploymentTable
         deploymentRows={rows}
         clusterSyncAvailable={this.clusterSyncAvailable}
         releasesUrl={this.releasesUrl}
