@@ -15,18 +15,25 @@ import { Status } from "./cells/status";
 import { Time } from "./cells/time";
 import { IDeploymentField } from "./Dashboard.types";
 
+/**
+ * Render function type based on cells in azure-devops-ui table
+ */
 export type RenderFunction = (
   rowIndex: number,
   columnIndex: number,
   tableColumn: ITableColumn<IDeploymentField>,
-  tableItem: IDeploymentField
+  deployment: IDeploymentField
 ) => JSX.Element;
 
+/**
+ * Interface for table props
+ */
 interface ITableProps {
   clusterSyncAvailable: boolean;
   deploymentRows: IDeploymentField[];
   releasesUrl?: string;
 }
+
 let releasesUrl: string = "";
 export const DeploymentTable: React.FC<ITableProps> = (props: ITableProps) => {
   const columns: Array<ITableColumn<IDeploymentField>> = [
@@ -119,111 +126,153 @@ export const DeploymentTable: React.FC<ITableProps> = (props: ITableProps) => {
   );
 };
 
+/**
+ * Renders simple text cell
+ * @param rowIndex row index
+ * @param columnIndex column index
+ * @param tableColumn table column
+ * @param deployment deployment being displayed
+ */
 export const renderSimpleText = (
   rowIndex: number,
   columnIndex: number,
   tableColumn: ITableColumn<IDeploymentField>,
-  tableItem: IDeploymentField
+  deployment: IDeploymentField
 ): JSX.Element => {
   return (
     <Simple
       columnIndex={columnIndex}
       tableColumn={tableColumn}
-      text={tableItem[tableColumn.id]}
+      text={deployment[tableColumn.id]}
     />
   );
 };
 
+/**
+ * Renders time cell
+ * @param rowIndex row index
+ * @param columnIndex column index
+ * @param tableColumn table column
+ * @param deployment deployment being displayed
+ */
 export const renderTime = (
   rowIndex: number,
   columnIndex: number,
   tableColumn: ITableColumn<IDeploymentField>,
-  tableItem: IDeploymentField
+  deployment: IDeploymentField
 ): JSX.Element => {
   return (
     <Time
       columnIndex={columnIndex}
       tableColumn={tableColumn}
-      deployment={tableItem}
+      deployment={deployment}
     />
   );
 };
 
+/**
+ * Renders source to acr build cell
+ * @param rowIndex row index
+ * @param columnIndex column index
+ * @param tableColumn table column
+ * @param deployment deployment being displayed
+ */
 export const renderSrcBuild = (
   rowIndex: number,
   columnIndex: number,
   tableColumn: ITableColumn<IDeploymentField>,
-  tableItem: IDeploymentField
+  deployment: IDeploymentField
 ): JSX.Element => {
   return (
     <Build
       columnIndex={columnIndex}
       tableColumn={tableColumn}
-      pipelineResult={tableItem.srcPipelineResult}
-      pipelineId={tableItem.srcPipelineId}
-      pipelineURL={tableItem.srcPipelineURL}
-      commitId={tableItem.srcCommitId}
-      commitURL={tableItem.srcCommitURL}
+      pipelineResult={deployment.srcPipelineResult}
+      pipelineId={deployment.srcPipelineId}
+      pipelineURL={deployment.srcPipelineURL}
+      commitId={deployment.srcCommitId}
+      commitURL={deployment.srcCommitURL}
       iconName={"BranchPullRequest"}
     />
   );
 };
 
+/**
+ * Renders hld to manifest build cell
+ * @param rowIndex row index
+ * @param columnIndex column index
+ * @param tableColumn table column
+ * @param deployment deployment being displayed
+ */
 export const renderHldBuild = (
   rowIndex: number,
   columnIndex: number,
   tableColumn: ITableColumn<IDeploymentField>,
-  tableItem: IDeploymentField
+  deployment: IDeploymentField
 ): JSX.Element => {
   return (
     <Build
       columnIndex={columnIndex}
       tableColumn={tableColumn}
-      pipelineResult={tableItem.hldPipelineResult}
-      pipelineId={tableItem.hldPipelineId}
-      pipelineURL={tableItem.hldPipelineURL}
-      commitId={tableItem.hldCommitId}
-      commitURL={tableItem.hldCommitURL}
+      pipelineResult={deployment.hldPipelineResult}
+      pipelineId={deployment.hldPipelineId}
+      pipelineURL={deployment.hldPipelineURL}
+      commitId={deployment.hldCommitId}
+      commitURL={deployment.hldCommitURL}
       iconName={"BranchPullRequest"}
     />
   );
 };
 
+/**
+ * Renders acr to hld cell
+ * @param rowIndex row index
+ * @param columnIndex column index
+ * @param tableColumn table column
+ * @param deployment deployment being displayed
+ */
 export const renderDockerRelease = (
   rowIndex: number,
   columnIndex: number,
   tableColumn: ITableColumn<IDeploymentField>,
-  tableItem: IDeploymentField
+  deployment: IDeploymentField
 ): JSX.Element => {
   return (
     <Build
       columnIndex={columnIndex}
       tableColumn={tableColumn}
-      pipelineResult={tableItem.dockerPipelineResult}
-      pipelineId={tableItem.dockerPipelineId}
-      pipelineURL={tableItem.dockerPipelineURL}
-      commitId={tableItem.imageTag}
+      pipelineResult={deployment.dockerPipelineResult}
+      pipelineId={deployment.dockerPipelineId}
+      pipelineURL={deployment.dockerPipelineURL}
+      commitId={deployment.imageTag}
       commitURL={""}
       iconName={"Product"}
     />
   );
 };
 
+/**
+ * Renders PR cell
+ * @param rowIndex row index
+ * @param columnIndex column index
+ * @param tableColumn table column
+ * @param deployment deployment being displayed
+ */
 export const renderPR = (
   rowIndex: number,
   columnIndex: number,
   tableColumn: ITableColumn<IDeploymentField>,
-  tableItem: IDeploymentField
+  deployment: IDeploymentField
 ): JSX.Element => {
-  if (tableItem.pr) {
+  if (deployment.pr) {
     return (
       <Build
         columnIndex={columnIndex}
         tableColumn={tableColumn}
-        pipelineResult={tableItem.mergedByName ? "succeeded" : "waiting"}
-        pipelineId={tableItem.pr!.toString()}
-        pipelineURL={tableItem.prURL}
-        commitId={tableItem.prSourceBranch}
+        pipelineResult={deployment.mergedByName ? "succeeded" : "waiting"}
+        pipelineId={deployment.pr!.toString()}
+        pipelineURL={deployment.prURL}
+        commitId={deployment.prSourceBranch}
         commitURL={""}
         iconName={"BranchPullRequest"}
       />
@@ -237,20 +286,27 @@ export const renderPR = (
   }
 };
 
+/**
+ * Renders author cell
+ * @param rowIndex row index
+ * @param columnIndex column index
+ * @param tableColumn table column
+ * @param deployment deployment being displayed
+ */
 export const renderAuthor = (
   rowIndex: number,
   columnIndex: number,
   tableColumn: ITableColumn<IDeploymentField>,
-  tableItem: IDeploymentField
+  deployment: IDeploymentField
 ): JSX.Element => {
-  if (tableItem.authorName && tableItem.authorURL) {
+  if (deployment.authorName && deployment.authorURL) {
     return (
       <Persona
         columnIndex={columnIndex}
         tableColumn={tableColumn}
-        deployment={tableItem}
-        name={tableItem.authorName}
-        imageUrl={tableItem.authorURL}
+        deployment={deployment}
+        name={deployment.authorName}
+        imageUrl={deployment.authorURL}
       />
     );
   }
@@ -261,20 +317,27 @@ export const renderAuthor = (
   );
 };
 
+/**
+ * Renders merged by author cell
+ * @param rowIndex row index
+ * @param columnIndex column index
+ * @param tableColumn table column
+ * @param deployment deployment being displayed
+ */
 export const renderMergedBy = (
   rowIndex: number,
   columnIndex: number,
   tableColumn: ITableColumn<IDeploymentField>,
-  tableItem: IDeploymentField
+  deployment: IDeploymentField
 ): JSX.Element => {
-  if (tableItem.pr && tableItem.mergedByName) {
+  if (deployment.pr && deployment.mergedByName) {
     return (
       <Persona
         columnIndex={columnIndex}
         tableColumn={tableColumn}
-        deployment={tableItem}
-        name={tableItem.mergedByName}
-        imageUrl={tableItem.mergedByImageURL}
+        deployment={deployment}
+        name={deployment.mergedByName}
+        imageUrl={deployment.mergedByImageURL}
       />
     );
   }
@@ -285,33 +348,47 @@ export const renderMergedBy = (
   );
 };
 
+/**
+ * Renders clusters cell
+ * @param rowIndex row index
+ * @param columnIndex column index
+ * @param tableColumn table column
+ * @param deployment deployment being displayed
+ */
 export const renderClusters = (
   rowIndex: number,
   columnIndex: number,
   tableColumn: ITableColumn<IDeploymentField>,
-  tableItem: IDeploymentField
+  deployment: IDeploymentField
 ): JSX.Element => {
   return (
     <Cluster
       columnIndex={columnIndex}
       tableColumn={tableColumn}
-      deployment={tableItem}
+      deployment={deployment}
       releasesUrl={releasesUrl}
     />
   );
 };
 
+/**
+ * Renders deployment status cell
+ * @param rowIndex row index
+ * @param columnIndex column index
+ * @param tableColumn table column
+ * @param deployment deployment being displayed
+ */
 export const renderDeploymentStatus = (
   rowIndex: number,
   columnIndex: number,
   tableColumn: ITableColumn<IDeploymentField>,
-  tableItem: IDeploymentField
+  deployment: IDeploymentField
 ): JSX.Element => {
   return (
     <Status
       columnIndex={columnIndex}
       tableColumn={tableColumn}
-      status={tableItem.status}
+      status={deployment.status}
     />
   );
 };

@@ -3,6 +3,10 @@ import { Statuses } from "azure-devops-ui/Status";
 import * as React from "react";
 import { IStatusIndicatorData } from "../Dashboard.types";
 
+/**
+ * Icon colors based on color palette that follows rules certain rules
+ * https://projects.susielu.com/viz-palette?colors=%5B%22#2aa05b%22,%22%23e08a00%22,%22%23c8281f%22%5D&backgroundColor=%22white%22&fontColor=%22black%22&mode=%22normal%22
+ */
 const iconColors = {
   blue: "#0a78d4",
   gray: "#3b606d",
@@ -12,6 +16,9 @@ const iconColors = {
   yellow: "#e08a00"
 };
 
+/**
+ * Returns icon HTML for icon props
+ */
 export const WithIcon = (props: {
   className?: string;
   iconProps: IIconProps;
@@ -25,6 +32,10 @@ export const WithIcon = (props: {
   );
 };
 
+/**
+ * Returns status indicator
+ * @param statusStr status string, such as successful, in progress etc.
+ */
 export const getStatusIndicatorData = (
   statusStr: string
 ): IStatusIndicatorData => {
@@ -89,6 +100,10 @@ export const getStatusIndicatorData = (
   return indicatorData;
 };
 
+/**
+ * Returns icon for a status
+ * @param statusStr status string, such as succeeded, in progress etc.
+ */
 export const getIcon = (statusStr?: string): IIconProps => {
   if (statusStr === "succeeded") {
     return {

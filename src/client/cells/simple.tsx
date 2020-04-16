@@ -3,6 +3,9 @@ import { Tooltip } from "azure-devops-ui/TooltipEx";
 import * as React from "react";
 import { IDeploymentField } from "../Dashboard.types";
 
+/**
+ * Interface for simple cell props
+ */
 interface ISimpleProps {
   columnIndex: number;
   tableColumn: ITableColumn<IDeploymentField>;

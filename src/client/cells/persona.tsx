@@ -4,6 +4,9 @@ import { VssPersona } from "azure-devops-ui/VssPersona";
 import * as React from "react";
 import { IDeploymentField } from "../Dashboard.types";
 
+/**
+ * Interface for author cell props
+ */
 interface IPersonaProps {
   columnIndex: number;
   tableColumn: ITableColumn<IDeploymentField>;

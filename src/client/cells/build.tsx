@@ -9,6 +9,9 @@ import * as React from "react";
 import { IDeploymentField } from "../Dashboard.types";
 import { getIcon, WithIcon } from "./icons";
 
+/**
+ * Interface for build cell props
+ */
 interface IBuildProps {
   columnIndex: number;
   tableColumn: ITableColumn<IDeploymentField>;
@@ -19,6 +22,7 @@ interface IBuildProps {
   commitURL?: string;
   iconName?: string;
 }
+
 export const Build: React.FC<IBuildProps> = (props: IBuildProps) => {
   if (!props.pipelineId || !props.pipelineURL || !props.commitId) {
     return (
@@ -31,10 +35,9 @@ export const Build: React.FC<IBuildProps> = (props: IBuildProps) => {
     );
   }
   const commitCell = WithIcon({
+    children: <div>{props.commitId}</div>,
     className: "",
-    iconProps: { iconName: props.iconName },
-
-    children: <div>{props.commitId}</div>
+    iconProps: { iconName: props.iconName }
   });
   return (
     <TwoLineTableCell

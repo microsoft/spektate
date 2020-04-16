@@ -4,6 +4,9 @@ import * as React from "react";
 import { IDeploymentField } from "../Dashboard.types";
 import { getStatusIndicatorData } from "./icons";
 
+/**
+ * Interface for status cell props
+ */
 interface IStatusProps {
   columnIndex: number;
   tableColumn: ITableColumn<IDeploymentField>;

@@ -9,6 +9,9 @@ import * as React from "react";
 import { IDeploymentField } from "../Dashboard.types";
 import { WithIcon } from "./icons";
 
+/**
+ * Interface for last updated time cell props
+ */
 interface ITimeProps {
   columnIndex: number;
   tableColumn: ITableColumn<IDeploymentField>;

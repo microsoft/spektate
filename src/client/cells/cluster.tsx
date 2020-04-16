@@ -8,6 +8,9 @@ import { Tooltip } from "azure-devops-ui/TooltipEx";
 import * as React from "react";
 import { IDeploymentField } from "../Dashboard.types";
 
+/**
+ * Interface for cluster cell props
+ */
 interface IClusterProps {
   columnIndex: number;
   tableColumn: ITableColumn<IDeploymentField>;
@@ -26,6 +29,8 @@ export const Cluster: React.FC<IClusterProps> = (props: IClusterProps) => {
     );
   }
   const strClusters = props.deployment.clusters.join(", ");
+
+  // If there are more than two clusters, don't show their names but show as "and n more..."
   if (props.deployment.clusters.length > 2) {
     return (
       <TwoLineTableCell
@@ -60,6 +65,12 @@ export const Cluster: React.FC<IClusterProps> = (props: IClusterProps) => {
   );
 };
 
+/**
+ * Renders a single cluster name with tooltip and link
+ * @param text text to display
+ * @param allClusters list of all other clusters to show as tooltip
+ * @param releasesUrl url link
+ */
 export const renderCluster = (
   text: string,
   allClusters: string[],
@@ -82,6 +93,10 @@ export const renderCluster = (
   );
 };
 
+/**
+ * Renders tooltip for cluster
+ * @param clusters text to be rendered inside tooltip
+ */
 export const renderCustomClusterTooltip = (clusters: string[]) => {
   const tooltip: React.ReactNode[] = [];
   clusters.forEach(cluster => {
