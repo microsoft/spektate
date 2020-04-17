@@ -1,21 +1,7 @@
-import { Ago } from "azure-devops-ui/Ago";
+import { AxiosResponse } from "axios";
 import { Card } from "azure-devops-ui/Card";
 import { ObservableValue } from "azure-devops-ui/Core/Observable";
-import { Duration } from "azure-devops-ui/Duration";
-import { Icon, IIconProps } from "azure-devops-ui/Icon";
-import { Link } from "azure-devops-ui/Link";
-import { Status, Statuses, StatusSize } from "azure-devops-ui/Status";
-import {
-  ColumnFill,
-  ITableColumn,
-  SimpleTableCell,
-  Table,
-  TwoLineTableCell
-} from "azure-devops-ui/Table";
-import { Tooltip } from "azure-devops-ui/TooltipEx";
 import { Filter } from "azure-devops-ui/Utilities/Filter";
-import { ArrayItemProvider } from "azure-devops-ui/Utilities/Provider";
-import { VssPersona } from "azure-devops-ui/VssPersona";
 import * as querystring from "querystring";
 import * as React from "react";
 import { HttpHelper } from "spektate/lib/HttpHelper";
@@ -29,32 +15,43 @@ import { IAuthor } from "spektate/lib/repository/Author";
 import { IAzureDevOpsRepo } from "spektate/lib/repository/IAzureDevOpsRepo";
 import { IGitHub } from "spektate/lib/repository/IGitHub";
 import { IPullRequest } from "spektate/lib/repository/IPullRequest";
-import { ITag } from "spektate/lib/repository/Tag";
+import { IClusterSync, ITag } from "spektate/lib/repository/Tag";
 import "./css/dashboard.css";
 import {
   IDashboardFilterState,
   IDashboardState,
-  IDeploymentField,
-  IStatusIndicatorData
+  IDeploymentField
 } from "./Dashboard.types";
 import { DeploymentFilter } from "./DeploymentFilter";
+import { DeploymentTable } from "./DeploymentTable";
 
 const REFRESH_INTERVAL = 30000;
-const iconColors = {
-  blue: "#0a78d4",
-  gray: "#3b606d",
-  green: "#2aa05b",
-  purple: "#5b50e2",
-  red: "#c8281f",
-  yellow: "#e08a00"
-};
 class Dashboard<Props> extends React.Component<Props, IDashboardState> {
+  /**
+   * Interval timer that refreshes dashboard to update stale data
+   */
   private interval: NodeJS.Timeout;
+
+  /**
+   * Filter for dashboard
+   */
   private filter: Filter = new Filter();
+
+  /**
+   * Filter state of dashboard
+   */
   private filterState: IDashboardFilterState = {
     defaultApplied: false
   };
+
+  /**
+   * Whether or not a cluster is synced to service(s) in this dashboard
+   */
   private clusterSyncAvailable: boolean = false;
+
+  /**
+   * Redirect link for cluster sync releases page
+   */
   private releasesUrl?: string;
 
   constructor(props: Props) {
@@ -76,6 +73,9 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     clearInterval(this.interval);
   }
 
+  /**
+   * Render the dashboard
+   */
   public render() {
     return (
       <div className="App">
@@ -95,15 +95,18 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         {this.state.error ? (
           <Card>{this.state.error.toString()}</Card>
         ) : (
-          this.renderPrototypeTable()
+          this.renderTable()
         )}
       </div>
     );
   }
 
+  /**
+   * Refresh deployments from storage
+   */
   private updateDeployments = async () => {
     try {
-      const deps = await HttpHelper.httpGet<any>("/api/deployments");
+      const deps = await HttpHelper.httpGet<IDeployment[]>("/api/deployments");
       if (!deps.data) {
         console.log(deps.request.response);
         throw new Error(deps.request.response);
@@ -159,12 +162,12 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
           value: this.filterState.currentlySelectedKeyword
         });
       }
-      HttpHelper.httpGet("/api/clustersync").then((syncData: any) => {
-        if (syncData.data && syncData.data.tags && syncData.data.releasesURL) {
-          this.setState({ manifestSyncStatuses: syncData.data.tags as ITag[] });
-          this.releasesUrl = syncData.data.releasesURL;
-        }
-      });
+      const tags = await HttpHelper.httpGet<IClusterSync>("/api/clustersync");
+
+      if (tags.data && tags.data.releasesURL) {
+        this.setState({ manifestSyncStatuses: tags.data.tags as ITag[] });
+        this.releasesUrl = tags.data.releasesURL;
+      }
     } catch (e) {
       console.log(e);
       this.setState({
@@ -173,80 +176,10 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     }
   };
 
-  private renderPrototypeTable = () => {
-    const columns: Array<ITableColumn<IDeploymentField>> = [
-      {
-        id: "status",
-        name: "State",
-        renderCell: this.renderDeploymentStatus,
-        width: new ObservableValue(70)
-      },
-      {
-        id: "service",
-        name: "Service",
-        renderCell: this.renderSimpleText,
-        width: new ObservableValue(180)
-      },
-      {
-        id: "environment",
-        name: "Ring",
-        renderCell: this.renderSimpleText,
-        width: new ObservableValue(220)
-      },
-      {
-        id: "authorName",
-        name: "Author",
-        renderCell: this.renderAuthor,
-        width: new ObservableValue(200)
-      },
-      {
-        id: "srcPipelineId",
-        name: "SRC to ACR",
-        renderCell: this.renderSrcBuild,
-        width: new ObservableValue(200)
-      },
-      {
-        id: "dockerPipelineId",
-        name: "ACR to HLD",
-        renderCell: this.renderDockerRelease,
-        width: new ObservableValue(250)
-      },
-      {
-        id: "pr",
-        name: "Approval Pull Request",
-        renderCell: this.renderPR,
-        width: new ObservableValue(250)
-      },
-      {
-        id: "mergedByName",
-        name: "Merged By",
-        renderCell: this.renderMergedBy,
-        width: new ObservableValue(200)
-      },
-      {
-        id: "hldPipelineId",
-        name: "HLD to Manifest",
-        renderCell: this.renderHldBuild,
-        width: new ObservableValue(200)
-      },
-      {
-        id: "deployedAt",
-        name: "Last Updated",
-        renderCell: this.renderTime,
-        width: new ObservableValue(120)
-      }
-    ];
-
-    // Display the cluster column only if there is information to show in the table
-    if (this.clusterSyncAvailable) {
-      columns.push({
-        id: "clusterName",
-        name: "Synced Cluster",
-        renderCell: this.renderClusters,
-        width: new ObservableValue(200)
-      });
-    }
-    columns.push(ColumnFill);
+  /**
+   * Renders table of deployments
+   */
+  private renderTable = () => {
     let rows: IDeploymentField[] = [];
     try {
       if (this.state.filteredDeployments.length === 0) {
@@ -260,18 +193,18 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       console.error(err);
     }
     return (
-      <div className="PrototypeTable">
-        <Table
-          columns={columns}
-          pageSize={rows.length}
-          role="table"
-          itemProvider={new ArrayItemProvider<IDeploymentField>(rows)}
-          showLines={true}
-        />
-      </div>
+      <DeploymentTable
+        deploymentRows={rows}
+        clusterSyncAvailable={this.clusterSyncAvailable}
+        releasesUrl={this.releasesUrl}
+      />
     );
   };
 
+  /**
+   * Gets the deployment field to display for a deployment from storage
+   * @param deployment Deployment from storage
+   */
   private getDeploymentToDisplay = (
     deployment: IDeployment
   ): IDeploymentField => {
@@ -360,11 +293,17 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     };
   };
 
+  /**
+   * Handler for when dashboard is filtered
+   */
   private onDashboardFiltered = (filterData: Filter) => {
     this.filter = filterData;
     this.updateFilteredDeployments();
   };
 
+  /**
+   * Filters deployments based on applied filters
+   */
   private updateFilteredDeployments = () => {
     if (this.filter) {
       const keywordFilter: string | undefined = this.filter.getFilterItemValue(
@@ -396,13 +335,20 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     }
   };
 
+  /**
+   * Updates query string based on filters
+   * @param keywordFilter Applied filters in keyword textbox
+   * @param serviceFilters Applied service filters
+   * @param authorFilters Applied author filters
+   * @param envFilters Applied env filters
+   */
   private updateQueryString(
     keywordFilter: string | undefined,
     serviceFilters: Set<string>,
     authorFilters: Set<string>,
     envFilters: Set<string>
   ) {
-    const query: any = {};
+    const query: { [id: string]: string[] | string } = {};
 
     if (keywordFilter && keywordFilter.length > 0) {
       query.keyword = keywordFilter;
@@ -435,6 +381,13 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     }
   }
 
+  /**
+   * Filters deployments
+   * @param keywordFilter Applied filters in keyword textbox
+   * @param serviceFilters Applied service filters
+   * @param authorFilters Applied author filters
+   * @param envFilters Applied env filters
+   */
   private filterDeployments(
     keywordFilter: string | undefined,
     serviceFilters: Set<string>,
@@ -473,6 +426,9 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     this.setState({ filteredDeployments });
   }
 
+  /**
+   * Processes query parameters and applies it to filters
+   */
   private processQueryParams = () => {
     if (window.location.search === "") {
       return;
@@ -488,14 +444,6 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       keywordFilter = filters.keyword.toString();
     }
 
-    // this.filterState = {
-    //   currentlySelectedAuthors: Array.from(authorFilters),
-    //   currentlySelectedEnvs: Array.from(envFilters),
-    //   currentlySelectedKeyword: keywordFilter,
-    //   currentlySelectedServices: Array.from(serviceFilters),
-    //   defaultApplied: false
-    // };
-
     this.updateQueryString(
       keywordFilter,
       serviceFilters,
@@ -510,6 +458,9 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     );
   };
 
+  /**
+   * Gets a set of unique items for any filter drop down
+   */
   private getFilterSet = (queryParam: string): Set<string> => {
     const filters = querystring.decode(window.location.search.replace("?", ""));
     let filterSet: Set<string> = new Set<string>();
@@ -523,6 +474,9 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     return filterSet;
   };
 
+  /**
+   * Gets a list of environments for filter drop down
+   */
   private getListOfEnvironments = (): string[] => {
     const envs: { [id: string]: boolean } = {};
     this.state.deployments.forEach((deployment: IDeployment) => {
@@ -533,6 +487,9 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     return Array.from(Object.keys(envs));
   };
 
+  /**
+   * Gets a list of services for filter drop down
+   */
   private getListOfServices = (): string[] => {
     const services: { [id: string]: boolean } = {};
     this.state.deployments.forEach((deployment: IDeployment) => {
@@ -543,12 +500,19 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     return Array.from(Object.keys(services));
   };
 
+  /**
+   * Gets a list of authors for filter drop down
+   */
   private getListOfAuthors = (): Set<string> => {
     return new Set(
       Array.from(Object.values(this.state.authors)).map(author => author.name)
     );
   };
 
+  /**
+   * Returns the appropriate cluster sync status for a deployment from loaded component state
+   * @param deployment The deployment for which cluster sync state is to be fetched
+   */
   private getClusterSyncStatusForDeployment = (
     deployment: IDeployment
   ): ITag[] | undefined => {
@@ -564,478 +528,10 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     return clusterSyncs;
   };
 
-  private renderSimpleText = (
-    rowIndex: number,
-    columnIndex: number,
-    tableColumn: ITableColumn<IDeploymentField>,
-    tableItem: IDeploymentField
-  ): JSX.Element => {
-    if (!tableItem[tableColumn.id]) {
-      return (
-        <SimpleTableCell key={"col-" + columnIndex} columnIndex={columnIndex} />
-      );
-    }
-    return (
-      <SimpleTableCell
-        columnIndex={columnIndex}
-        tableColumn={tableColumn}
-        key={"col-" + columnIndex}
-        contentClassName="fontSizeM font-size-m scroll-hidden"
-      >
-        <div className="flex-row scroll-hidden">
-          <Tooltip overflowOnly={true}>
-            <span className="text-ellipsis">{tableItem[tableColumn.id]}</span>
-          </Tooltip>
-        </div>
-      </SimpleTableCell>
-    );
-  };
-
-  private renderPersona = (
-    rowIndex: number,
-    columnIndex: number,
-    tableColumn: ITableColumn<IDeploymentField>,
-    tableItem: IDeploymentField,
-    name: string,
-    imageUrl?: string
-  ): JSX.Element => {
-    if (!tableItem[tableColumn.id]) {
-      return (
-        <SimpleTableCell key={"col-" + columnIndex} columnIndex={columnIndex} />
-      );
-    }
-    return (
-      <SimpleTableCell
-        columnIndex={columnIndex}
-        tableColumn={tableColumn}
-        key={"col-" + columnIndex}
-        contentClassName="font-size-m text-ellipsis bolt-table-link bolt-table-inline-link"
-      >
-        <VssPersona displayName={name} imageUrl={imageUrl} />
-        <div>&nbsp;&nbsp;&nbsp;</div>
-        <div className="flex-row scroll-hidden">
-          <Tooltip overflowOnly={true}>
-            <span className="text-ellipsis">{tableItem[tableColumn.id]}</span>
-          </Tooltip>
-        </div>
-      </SimpleTableCell>
-    );
-  };
-
-  private renderTime = (
-    rowIndex: number,
-    columnIndex: number,
-    tableColumn: ITableColumn<IDeploymentField>,
-    tableItem: IDeploymentField
-  ): JSX.Element => {
-    if (!tableItem.startTime || !tableItem.endTime) {
-      return (
-        <SimpleTableCell key={"col-" + columnIndex} columnIndex={columnIndex} />
-      );
-    }
-    return (
-      <TwoLineTableCell
-        key={"col-" + columnIndex}
-        columnIndex={columnIndex}
-        tableColumn={tableColumn}
-        line1={this.WithIcon({
-          children: <Ago date={new Date(tableItem.endTime!)} />,
-          className: "fontSize font-size",
-          iconProps: { iconName: "Calendar" }
-        })}
-        line2={this.WithIcon({
-          children: (
-            <Duration
-              startDate={new Date(tableItem.startTime!)}
-              endDate={new Date(tableItem.endTime!)}
-            />
-          ),
-          className: "fontSize font-size bolt-table-two-line-cell-item",
-          iconProps: { iconName: "Clock" }
-        })}
-      />
-    );
-  };
-
-  private renderSrcBuild = (
-    rowIndex: number,
-    columnIndex: number,
-    tableColumn: ITableColumn<IDeploymentField>,
-    tableItem: IDeploymentField
-  ): JSX.Element => {
-    return this.renderBuild(
-      rowIndex,
-      columnIndex,
-      tableColumn,
-      tableItem,
-      tableItem.srcPipelineResult,
-      tableItem.srcPipelineId,
-      tableItem.srcPipelineURL,
-      tableItem.srcCommitId,
-      tableItem.srcCommitURL,
-      "BranchPullRequest"
-    );
-  };
-
-  private renderHldBuild = (
-    rowIndex: number,
-    columnIndex: number,
-    tableColumn: ITableColumn<IDeploymentField>,
-    tableItem: IDeploymentField
-  ): JSX.Element => {
-    return this.renderBuild(
-      rowIndex,
-      columnIndex,
-      tableColumn,
-      tableItem,
-      tableItem.hldPipelineResult,
-      tableItem.hldPipelineId,
-      tableItem.hldPipelineURL,
-      tableItem.hldCommitId,
-      tableItem.hldCommitURL,
-      "BranchPullRequest"
-    );
-  };
-
-  private renderDockerRelease = (
-    rowIndex: number,
-    columnIndex: number,
-    tableColumn: ITableColumn<IDeploymentField>,
-    tableItem: IDeploymentField
-  ): JSX.Element => {
-    return this.renderBuild(
-      rowIndex,
-      columnIndex,
-      tableColumn,
-      tableItem,
-      tableItem.dockerPipelineResult,
-      tableItem.dockerPipelineId,
-      tableItem.dockerPipelineURL,
-      tableItem.imageTag,
-      "",
-      "Product"
-    );
-  };
-
-  private renderPR = (
-    rowIndex: number,
-    columnIndex: number,
-    tableColumn: ITableColumn<IDeploymentField>,
-    tableItem: IDeploymentField
-  ): JSX.Element => {
-    if (tableItem.pr) {
-      return this.renderBuild(
-        rowIndex,
-        columnIndex,
-        tableColumn,
-        tableItem,
-        tableItem.mergedByName ? "succeeded" : "waiting",
-        tableItem.pr.toString(),
-        tableItem.prURL,
-        tableItem.prSourceBranch,
-        "",
-        "BranchPullRequest"
-      );
-    } else {
-      return (
-        <SimpleTableCell key={"col-" + columnIndex} columnIndex={columnIndex}>
-          -
-        </SimpleTableCell>
-      );
-    }
-  };
-
-  private renderAuthor = (
-    rowIndex: number,
-    columnIndex: number,
-    tableColumn: ITableColumn<IDeploymentField>,
-    tableItem: IDeploymentField
-  ): JSX.Element => {
-    if (tableItem.authorName && tableItem.authorURL) {
-      return this.renderPersona(
-        rowIndex,
-        columnIndex,
-        tableColumn,
-        tableItem,
-        tableItem.authorName,
-        tableItem.authorURL
-      );
-    }
-    return (
-      <SimpleTableCell key={"col-" + columnIndex} columnIndex={columnIndex}>
-        -
-      </SimpleTableCell>
-    );
-  };
-
-  private renderMergedBy = (
-    rowIndex: number,
-    columnIndex: number,
-    tableColumn: ITableColumn<IDeploymentField>,
-    tableItem: IDeploymentField
-  ): JSX.Element => {
-    if (tableItem.pr && tableItem.mergedByName) {
-      return this.renderPersona(
-        rowIndex,
-        columnIndex,
-        tableColumn,
-        tableItem,
-        tableItem.mergedByName,
-        tableItem.mergedByImageURL
-      );
-    }
-    return (
-      <SimpleTableCell key={"col-" + columnIndex} columnIndex={columnIndex}>
-        -
-      </SimpleTableCell>
-    );
-  };
-
-  private renderClusters = (
-    rowIndex: number,
-    columnIndex: number,
-    tableColumn: ITableColumn<IDeploymentField>,
-    tableItem: IDeploymentField
-  ): JSX.Element => {
-    if (!tableItem.clusters || tableItem.clusters.length === 0) {
-      return (
-        <SimpleTableCell key={"col-" + columnIndex} columnIndex={columnIndex}>
-          -
-        </SimpleTableCell>
-      );
-    }
-    const strClusters = tableItem.clusters.join(", ");
-    if (tableItem.clusters.length > 2) {
-      return (
-        <TwoLineTableCell
-          className="first-row no-cell-top-border bolt-table-cell-content-with-inline-link no-v-padding"
-          key={"col-" + columnIndex}
-          columnIndex={columnIndex}
-          tableColumn={tableColumn}
-          line1={this.renderCluster(
-            tableItem.clusters[0] + ", " + tableItem.clusters[1],
-            tableItem.clusters!
-          )}
-          line2={this.renderCluster(
-            "and " + (tableItem.clusters.length - 2) + " more...",
-            tableItem.clusters!
-          )}
-        />
-      );
-    }
-    return (
-      <SimpleTableCell columnIndex={columnIndex} key={"col-" + columnIndex}>
-        {this.renderCluster(strClusters, tableItem.clusters!)}
-      </SimpleTableCell>
-    );
-  };
-
-  private renderCluster = (
-    text: string,
-    allClusters: string[]
-  ): React.ReactNode => {
-    return (
-      <Tooltip
-        // tslint:disable-next-line: jsx-no-lambda
-        renderContent={() => this.renderCustomClusterTooltip(allClusters)}
-        overflowOnly={false}
-      >
-        <Link
-          className="font-size-m text-ellipsis bolt-table-link bolt-table-inline-link"
-          href={this.releasesUrl}
-          subtle={true}
-        >
-          {text}
-        </Link>
-      </Tooltip>
-    );
-  };
-
-  private renderCustomClusterTooltip = (clusters: string[]) => {
-    const tooltip: React.ReactNode[] = [];
-    clusters.forEach(cluster => {
-      tooltip.push(
-        <span>
-          {cluster}
-          <br />
-        </span>
-      );
-    });
-    return <span>{tooltip}</span>;
-  };
-
-  private renderBuild = (
-    rowIndex: number,
-    columnIndex: number,
-    tableColumn: ITableColumn<IDeploymentField>,
-    tableItem: IDeploymentField,
-    pipelineResult?: string,
-    pipelineId?: string,
-    pipelineURL?: string,
-    commitId?: string,
-    commitURL?: string,
-    iconName?: string
-  ): JSX.Element => {
-    if (!pipelineId || !pipelineURL || !commitId) {
-      return (
-        <SimpleTableCell key={"col-" + columnIndex} columnIndex={columnIndex}>
-          -
-        </SimpleTableCell>
-      );
-    }
-    const commitCell = this.WithIcon({
-      className: "",
-      iconProps: { iconName },
-
-      children: <div>{commitId}</div>
-    });
-    return (
-      <TwoLineTableCell
-        className="first-row no-cell-top-border bolt-table-cell-content-with-inline-link no-v-padding"
-        key={"col-" + columnIndex}
-        columnIndex={columnIndex}
-        tableColumn={tableColumn}
-        iconProps={this.getIcon(pipelineResult)}
-        line1={
-          <Tooltip text={pipelineId} overflowOnly={true}>
-            {pipelineURL && (
-              <Link
-                className="fontSizeM font-size-m text-ellipsis bolt-table-link bolt-table-inline-link"
-                href={pipelineURL}
-                // tslint:disable-next-line: jsx-no-lambda
-                onClick={() => (parent.window.location.href = pipelineURL)}
-              >
-                {pipelineId}
-              </Link>
-            )}
-          </Tooltip>
-        }
-        line2={
-          <Tooltip overflowOnly={true}>
-            <span className="fontSize font-size secondary-text flex-row flex-center text-ellipsis">
-              {commitId && commitURL && commitURL !== "" && (
-                <Link
-                  className="monospaced-text text-ellipsis flex-row flex-center bolt-table-link bolt-table-inline-link"
-                  href={commitURL}
-                  // tslint:disable-next-line: jsx-no-lambda
-                  onClick={() => (parent.window.location.href = commitURL)}
-                >
-                  {commitCell}
-                </Link>
-              )}
-              {commitId && commitURL === "" && commitCell}
-            </span>
-          </Tooltip>
-        }
-      />
-    );
-  };
-
-  private renderDeploymentStatus = (
-    rowIndex: number,
-    columnIndex: number,
-    tableColumn: ITableColumn<IDeploymentField>,
-    tableItem: IDeploymentField
-  ): JSX.Element => {
-    if (!tableItem.status) {
-      return (
-        <SimpleTableCell key={"col-" + columnIndex} columnIndex={columnIndex} />
-      );
-    }
-    const indicatorData = this.getStatusIndicatorData(tableItem.status);
-    return (
-      <SimpleTableCell
-        columnIndex={columnIndex}
-        tableColumn={tableColumn}
-        key={"col-" + columnIndex}
-        contentClassName="fontWeightSemiBold font-weight-semibold fontSizeM font-size-m scroll-hidden"
-      >
-        <Status
-          {...indicatorData.statusProps}
-          className={"icon-large-margin " + indicatorData.classname}
-          size={StatusSize.l}
-        />
-      </SimpleTableCell>
-    );
-  };
-
-  private WithIcon = (props: {
-    className?: string;
-    iconProps: IIconProps;
-    children?: React.ReactNode;
-  }) => {
-    return (
-      <div className="flex-row flex-center">
-        {Icon({ ...props.iconProps, className: "icon-margin" })}
-        {props.children}
-      </div>
-    );
-  };
-
-  private getStatusIndicatorData = (
-    statusStr: string
-  ): IStatusIndicatorData => {
-    statusStr = statusStr || "";
-    statusStr = statusStr.toLowerCase();
-    const indicatorData: IStatusIndicatorData = {
-      classname: "icon-green",
-      label: "Success",
-      statusProps: {
-        ...Statuses.Success,
-        ariaLabel: "Success",
-        color: iconColors.green
-      }
-    };
-    switch (statusStr.toLowerCase()) {
-      case "failed":
-        indicatorData.statusProps = {
-          ...Statuses.Failed,
-          ariaLabel: "Failed",
-          color: iconColors.red
-        };
-        indicatorData.label = "Failed";
-        indicatorData.classname = "icon-red";
-        break;
-      case "in progress":
-        indicatorData.statusProps = {
-          ...Statuses.Running,
-          ariaLabel: "Running",
-          color: iconColors.blue
-        };
-        indicatorData.label = "Running";
-        indicatorData.classname = "icon-blue";
-        break;
-      case "waiting":
-        indicatorData.statusProps = {
-          ...Statuses.Waiting,
-          ariaLabel: "Waiting",
-          color: iconColors.purple
-        };
-        indicatorData.label = "Waiting";
-        indicatorData.classname = "icon-purple";
-        break;
-      case "incomplete":
-        indicatorData.statusProps = {
-          ...Statuses.Warning,
-          ariaLabel: "Incomplete",
-          color: iconColors.yellow
-        };
-        indicatorData.label = "Incomplete";
-        indicatorData.classname = "icon-yellow";
-        break;
-      case "canceled":
-        indicatorData.statusProps = {
-          ...Statuses.Canceled,
-          ariaLabel: "Canceled",
-          color: iconColors.gray
-        };
-        indicatorData.label = "Canceled";
-        indicatorData.classname = "icon-gray";
-        break;
-    }
-    return indicatorData;
-  };
-
+  /**
+   * Builds author query parameters for sending the HTTP request
+   * @param deployment The deployment for which query parameters are to be built
+   */
   private getAuthorRequestParams = (deployment: IDeployment) => {
     const query: { [key: string]: string } = {};
     const commit =
@@ -1068,6 +564,10 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       .join("&");
   };
 
+  /**
+   * Builds PR query parameters for sending the HTTP request
+   * @param deployment The deployment for which query parameters are to be built
+   */
   private getPRRequestParams = (deployment: IDeployment) => {
     const query: { [key: string]: string } = {};
     if (!deployment.hldRepo) {
@@ -1092,6 +592,9 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       .join("&");
   };
 
+  /**
+   * Fetches PRs for all deployments asynchronously
+   */
   private getPRs = () => {
     try {
       const state = this.state;
@@ -1116,14 +619,19 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     }
   };
 
+  /**
+   * Sends requests to fetch all authors asynchronously
+   */
   private getAuthors = () => {
     try {
       const state = this.state;
-      const promises: Array<Promise<any>> = [];
+      const promises: Array<Promise<AxiosResponse<IAuthor>>> = [];
       this.state.deployments.forEach(deployment => {
         const queryParams = this.getAuthorRequestParams(deployment);
         if (queryParams !== "") {
-          const promise = HttpHelper.httpGet("/api/author?" + queryParams);
+          const promise = HttpHelper.httpGet<IAuthor>(
+            "/api/author?" + queryParams
+          );
 
           promise.then(data => {
             const author = data.data as IAuthor;
@@ -1156,6 +664,10 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     }
   };
 
+  /**
+   * Returns author from loaded component state, if available
+   * @param deployment the deployment for which author is being requested
+   */
   private getAuthor = (deployment: IDeployment): IAuthor | undefined => {
     if (
       deployment.srcToDockerBuild &&
@@ -1177,31 +689,16 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     return undefined;
   };
 
+  /**
+   * Returns PR from component state, if available
+   * @param deployment the deployment for which PR is being requested
+   */
   private getPR = (deployment: IDeployment): IPullRequest | undefined => {
     if (deployment.pr && deployment.pr in this.state.prs) {
       return this.state.prs[deployment.pr];
     }
     return undefined;
   };
-
-  private getIcon(statusStr?: string): IIconProps {
-    if (statusStr === "succeeded") {
-      return {
-        iconName: "SkypeCircleCheck",
-        style: { color: iconColors.green }
-      };
-    } else if (statusStr === undefined || statusStr === "inProgress") {
-      return { iconName: "AwayStatus", style: { color: iconColors.blue } }; // SyncStatusSolid
-    } else if (statusStr === "canceled") {
-      return {
-        iconName: "SkypeCircleSlash",
-        style: { color: iconColors.gray }
-      };
-    } else if (statusStr === "waiting") {
-      return { iconName: "AwayStatus", style: { color: iconColors.purple } };
-    }
-    return { iconName: "StatusErrorFull", style: { color: iconColors.red } };
-  }
 }
 
 export default Dashboard;
