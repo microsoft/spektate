@@ -1,11 +1,16 @@
-import { ObservableValue } from "azure-devops-ui/Core/Observable";
+import {
+  ObservableArray,
+  ObservableValue
+} from "azure-devops-ui/Core/Observable";
 import {
   ColumnFill,
+  ColumnSorting,
   ITableColumn,
   SimpleTableCell,
+  sortItems,
+  SortOrder,
   Table as AzureTable
 } from "azure-devops-ui/Table";
-import { ArrayItemProvider } from "azure-devops-ui/Utilities/Provider";
 import * as React from "react";
 import { Build } from "./cells/build";
 import { Cluster } from "./cells/cluster";
@@ -35,8 +40,15 @@ interface ITableProps {
 }
 
 let releasesUrl: string = "";
+let tableItems: ObservableArray<IDeploymentField>;
+let rawTableItems: IDeploymentField[];
+let columns: Array<ITableColumn<IDeploymentField>>;
+
 export const DeploymentTable: React.FC<ITableProps> = (props: ITableProps) => {
-  const columns: Array<ITableColumn<IDeploymentField>> = [
+  tableItems = new ObservableArray<IDeploymentField>(props.deploymentRows);
+  rawTableItems = props.deploymentRows;
+  initSortFunctions(props.clusterSyncAvailable);
+  columns = [
     {
       id: "status",
       name: "State",
@@ -114,12 +126,11 @@ export const DeploymentTable: React.FC<ITableProps> = (props: ITableProps) => {
   return (
     <div className="PrototypeTable">
       <AzureTable
+        behaviors={[sortingBehavior]}
         columns={columns}
         pageSize={props.deploymentRows.length}
         role="table"
-        itemProvider={
-          new ArrayItemProvider<IDeploymentField>(props.deploymentRows)
-        }
+        itemProvider={tableItems}
         showLines={true}
       />
     </div>
@@ -392,3 +403,58 @@ export const renderDeploymentStatus = (
     />
   );
 };
+
+let sortFunctions: any[];
+
+export const initSortFunctions = (isClusterSyncAvailable: boolean) => {
+  sortFunctions = [
+    null,
+    // Sort on Service column
+    (item1: IDeploymentField, item2: IDeploymentField): number => {
+      return item1.service.localeCompare(item2.service);
+    },
+    // Sort on Ring/Environment column
+    (item1: IDeploymentField, item2: IDeploymentField): number => {
+      return item1.environment!.localeCompare(item2.environment!);
+    },
+    // Sort on Author
+    null,
+    // Sort on SRC to ACR
+    null,
+    // Sort on ACR to HLD
+    null,
+    // Sort on Approval Pull Request
+    null,
+    // Sort on Merged By
+    null,
+    // Sort on HLD to Manifest
+    null,
+    // SORT on Last Updated
+    null
+  ];
+
+  if (isClusterSyncAvailable) {
+    // Sort on Synced Cluster
+    sortFunctions.push(null);
+  }
+};
+
+const sortingBehavior = new ColumnSorting<IDeploymentField>(
+  (
+    columnIndex: number,
+    proposedSortOrder: SortOrder,
+    event: React.KeyboardEvent<HTMLElement> | React.MouseEvent<HTMLElement>
+  ) => {
+    tableItems.splice(
+      0,
+      tableItems.length,
+      ...sortItems<IDeploymentField>(
+        columnIndex,
+        proposedSortOrder,
+        sortFunctions,
+        columns,
+        rawTableItems
+      )
+    );
+  }
+);
