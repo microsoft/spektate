@@ -30,6 +30,7 @@ export interface IDashboardState {
   filteredDeployments: IDeployment[];
   prs: IPRs;
   error?: string;
+  rowLimit: number;
 }
 export interface IDeploymentField {
   deploymentId: string;

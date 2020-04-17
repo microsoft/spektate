@@ -1,8 +1,6 @@
-import { AxiosResponse } from "axios";
 import { Card } from "azure-devops-ui/Card";
 import { ObservableValue } from "azure-devops-ui/Core/Observable";
 import { Filter } from "azure-devops-ui/Utilities/Filter";
-import * as querystring from "querystring";
 import * as React from "react";
 import { HttpHelper } from "spektate/lib/HttpHelper";
 import {
@@ -27,6 +25,17 @@ import { DeploymentTable } from "./DeploymentTable";
 
 const REFRESH_INTERVAL = 30000;
 class Dashboard<Props> extends React.Component<Props, IDashboardState> {
+  public state: IDashboardState = {
+    authors: {},
+    deployments: [],
+    filteredDeployments: [],
+    prs: {},
+    rowLimit: Number.parseInt(
+      new URLSearchParams(location.search).get("limit") ?? "50", // default to 50 rows
+      10
+    )
+  };
+
   /**
    * Interval timer that refreshes dashboard to update stale data
    */
@@ -53,16 +62,6 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
    * Redirect link for cluster sync releases page
    */
   private releasesUrl?: string;
-
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      authors: {},
-      deployments: [],
-      filteredDeployments: [],
-      prs: {}
-    };
-  }
 
   public componentDidMount() {
     this.interval = setInterval(this.updateDeployments, REFRESH_INTERVAL);
@@ -111,29 +110,8 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         console.log(deps.request.response);
         throw new Error(deps.request.response);
       }
-      const ideps: IDeployment[] = deps.data as IDeployment[];
+      const deployments: IDeployment[] = deps.data as IDeployment[];
       this.processQueryParams();
-      const deployments: IDeployment[] = ideps.map(dep => {
-        return {
-          author: dep.author,
-          commitId: dep.commitId,
-          deploymentId: dep.deploymentId,
-          dockerToHldRelease: dep.dockerToHldRelease,
-          dockerToHldReleaseStage: dep.dockerToHldReleaseStage,
-          environment: dep.environment,
-          hldCommitId: dep.hldCommitId,
-          hldRepo: dep.hldRepo,
-          hldToManifestBuild: dep.hldToManifestBuild,
-          imageTag: dep.imageTag,
-          manifestCommitId: dep.manifestCommitId,
-          manifestRepo: dep.manifestRepo,
-          pr: dep.pr,
-          service: dep.service,
-          sourceRepo: dep.sourceRepo,
-          srcToDockerBuild: dep.srcToDockerBuild,
-          timeStamp: dep.timeStamp
-        };
-      });
 
       if (deployments.length === 0) {
         throw new Error("No deployments were found for this configuration.");
@@ -185,9 +163,9 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       if (this.state.filteredDeployments.length === 0) {
         rows = new Array(15).fill(new ObservableValue(undefined));
       } else {
-        rows = this.state.filteredDeployments.map(deployment => {
-          return this.getDeploymentToDisplay(deployment);
-        });
+        rows = this.state.filteredDeployments
+          .slice(0, this.state.rowLimit)
+          .map(this.getDeploymentToDisplay);
       }
     } catch (err) {
       console.error(err);
@@ -348,36 +326,40 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     authorFilters: Set<string>,
     envFilters: Set<string>
   ) {
-    const query: { [id: string]: string[] | string } = {};
+    const setParams = (
+      params: URLSearchParams,
+      name: string,
+      values: Set<string> | string
+    ): void => {
+      params.delete(name);
+      const hasValue =
+        typeof values === "string" ? values.length > 0 : values.size > 0;
 
-    if (keywordFilter && keywordFilter.length > 0) {
-      query.keyword = keywordFilter;
-    }
-
-    if (serviceFilters.size > 0) {
-      query.service = Array.from(serviceFilters);
-    }
-
-    if (authorFilters.size > 0) {
-      query.author = Array.from(authorFilters);
-    }
-
-    if (envFilters.size > 0) {
-      query.env = Array.from(envFilters);
-    }
+      if (hasValue) {
+        if (typeof values === "string") {
+          params.append(name, values);
+        } else {
+          for (const value of values) {
+            params.append(name, value);
+          }
+        }
+      }
+    };
+    const searchParams = new URLSearchParams(location.search);
+    setParams(searchParams, "keyword", keywordFilter ?? "");
+    setParams(searchParams, "service", serviceFilters);
+    setParams(searchParams, "author", authorFilters);
+    setParams(searchParams, "env", envFilters);
+    setParams(searchParams, "limit", this.state.rowLimit.toString());
 
     if (history.replaceState) {
-      const newurl =
-        window.location.protocol +
-        "//" +
-        window.location.host +
-        window.location.pathname +
-        "?" +
-        querystring.encode(query);
-
-      window.history.replaceState({ path: newurl }, "", newurl);
+      const newUrl = window.location.pathname + "?" + searchParams.toString();
+      // only update history if a the new path doesn't match the current one
+      if (!window.location.href.endsWith(newUrl)) {
+        window.history.replaceState({ path: newUrl }, "", newUrl);
+      }
     } else {
-      window.location.search = querystring.encode(query);
+      window.location.search = searchParams.toString();
     }
   }
 
@@ -434,15 +416,11 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       return;
     }
 
-    const filters = querystring.decode(window.location.search.replace("?", ""));
-    let keywordFilter: undefined | string;
+    const searchParams = new URLSearchParams(location.search);
+    const keywordFilter = searchParams.get("keyword") ?? undefined;
     const authorFilters: Set<string> = this.getFilterSet("author");
     const serviceFilters: Set<string> = this.getFilterSet("service");
     const envFilters: Set<string> = this.getFilterSet("env");
-
-    if (filters.keyword && filters.keyword !== "") {
-      keywordFilter = filters.keyword.toString();
-    }
 
     this.updateQueryString(
       keywordFilter,
@@ -462,15 +440,10 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
    * Gets a set of unique items for any filter drop down
    */
   private getFilterSet = (queryParam: string): Set<string> => {
-    const filters = querystring.decode(window.location.search.replace("?", ""));
-    let filterSet: Set<string> = new Set<string>();
-    if (filters[queryParam] && filters[queryParam].length > 0) {
-      if (typeof filters[queryParam] === "string") {
-        filterSet.add(filters[queryParam] as string);
-      } else {
-        filterSet = new Set(filters[queryParam]);
-      }
-    }
+    const searchParams = new URLSearchParams(location.search);
+    const params = searchParams.getAll(queryParam);
+    const filterSet = new Set(params);
+
     return filterSet;
   };
 
@@ -478,26 +451,22 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
    * Gets a list of environments for filter drop down
    */
   private getListOfEnvironments = (): string[] => {
-    const envs: { [id: string]: boolean } = {};
-    this.state.deployments.forEach((deployment: IDeployment) => {
-      if (deployment.environment !== "" && !(deployment.environment in envs)) {
-        envs[deployment.environment] = true;
-      }
-    });
-    return Array.from(Object.keys(envs));
+    const environments = this.state.deployments.reduce((acc, dep) => {
+      return dep.environment ? acc.add(dep.environment) : acc;
+    }, new Set<string>());
+
+    return [...environments];
   };
 
   /**
    * Gets a list of services for filter drop down
    */
   private getListOfServices = (): string[] => {
-    const services: { [id: string]: boolean } = {};
-    this.state.deployments.forEach((deployment: IDeployment) => {
-      if (deployment.service !== "" && !(deployment.service in services)) {
-        services[deployment.service] = true;
-      }
-    });
-    return Array.from(Object.keys(services));
+    const services = this.state.deployments.reduce((acc, dep) => {
+      return dep.service ? acc.add(dep.service) : acc;
+    }, new Set<string>());
+
+    return [...services];
   };
 
   /**
@@ -505,7 +474,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
    */
   private getListOfAuthors = (): Set<string> => {
     return new Set(
-      Array.from(Object.values(this.state.authors)).map(author => author.name)
+      Object.values(this.state.authors).map(author => author.name)
     );
   };
 
@@ -516,15 +485,12 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
   private getClusterSyncStatusForDeployment = (
     deployment: IDeployment
   ): ITag[] | undefined => {
-    const clusterSyncs: ITag[] = [];
-    if (this.state.manifestSyncStatuses) {
-      this.state.manifestSyncStatuses.forEach((tag: ITag) => {
-        if (deployment.manifestCommitId === tag.commit) {
-          this.clusterSyncAvailable = true;
-          clusterSyncs.push(tag);
-        }
-      });
-    }
+    const statuses = this.state.manifestSyncStatuses ?? [];
+    const clusterSyncs = statuses.filter(tag => {
+      return tag.commit === deployment.manifestCommitId;
+    });
+    this.clusterSyncAvailable = clusterSyncs.length > 0;
+
     return clusterSyncs;
   };
 
@@ -624,34 +590,44 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
    */
   private getAuthors = () => {
     try {
-      const state = this.state;
-      const promises: Array<Promise<AxiosResponse<IAuthor>>> = [];
-      this.state.deployments.forEach(deployment => {
-        const queryParams = this.getAuthorRequestParams(deployment);
-        if (queryParams !== "") {
-          const promise = HttpHelper.httpGet<IAuthor>(
-            "/api/author?" + queryParams
-          );
+      const authors = Object.entries(
+        this.state.deployments.reduce<{
+          [query: string]: IDeployment[];
+        }>((acc, deployment) => {
+          const authorQuery = this.getAuthorRequestParams(deployment);
+          return {
+            ...acc,
+            [authorQuery]: [...(acc[authorQuery] ?? []), deployment]
+          };
+        }, {})
+      ).map(([query, deployments]) => ({ query, deployments }));
 
-          promise.then(data => {
-            const author = data.data as IAuthor;
-            if (author && deployment.srcToDockerBuild) {
-              const copy = state.authors;
-              copy[deployment.srcToDockerBuild.sourceVersion] = author;
-              this.setState({ authors: copy });
-              this.updateFilteredDeployments();
-            } else if (author && deployment.hldToManifestBuild) {
-              const copy = state.authors;
-              copy[deployment.hldToManifestBuild.sourceVersion] = author;
-              this.setState({ authors: copy });
-              this.updateFilteredDeployments();
-            }
-          });
-          promises.push(promise);
-        }
+      const requests = authors.map(async ({ query, deployments }) => {
+        const response = await HttpHelper.httpGet<IAuthor>(
+          "/api/author?" + query
+        );
+        const author = response.data;
+        const newAuthorEntries = deployments
+          .map(d => {
+            return d.srcToDockerBuild
+              ? { [d.srcToDockerBuild.sourceVersion]: author }
+              : d.hldToManifestBuild
+              ? { [d.hldToManifestBuild.sourceVersion]: author }
+              : undefined;
+          })
+          .filter((e): e is NonNullable<typeof e> => !!e)
+          .reduce((acc, entry) => {
+            return { ...acc, ...entry };
+          }, {});
+
+        this.setState({
+          authors: { ...this.state.authors, ...newAuthorEntries }
+        });
+        this.updateFilteredDeployments();
+        return;
       });
 
-      Promise.all(promises).then(() => {
+      Promise.all(requests).then(() => {
         if (!this.filterState.defaultApplied) {
           this.filter.setFilterItemState("authorFilter", {
             value: this.filterState.currentlySelectedAuthors
