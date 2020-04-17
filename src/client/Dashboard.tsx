@@ -423,6 +423,13 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       });
     }
 
+    // to-do: remove sort by service
+    // filteredDeployments.sort((a, b) =>a.service.localeCompare(b.service));
+    // sort by ring
+    filteredDeployments.sort((a, b) =>
+      a.environment.localeCompare(b.environment)
+    );
+
     this.setState({ filteredDeployments });
   }
 
