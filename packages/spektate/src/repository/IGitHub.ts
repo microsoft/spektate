@@ -51,14 +51,14 @@ export const getManifestSyncState = (
               accessToken
             );
 
-            if (syncStatus != null) {
-              const clusterName = syncStatus.data.tag.replace("flux-", "");
+            if (syncStatus != null && syncStatus.data) {
+              const clusterName = syncStatus.data.tag?.replace("flux-", "");
               const manifestSync = {
-                commit: syncStatus.data.object.sha.substring(0, 7),
-                date: new Date(syncStatus.data.tagger.date),
+                commit: syncStatus.data.object.sha?.substring(0, 7),
+                date: new Date(syncStatus.data.tagger?.date),
                 message: syncStatus.data.message,
                 name: clusterName.toUpperCase(),
-                tagger: syncStatus.data.tagger.name
+                tagger: syncStatus.data.tagger?.name
               };
               fluxTags.push(manifestSync);
             }
