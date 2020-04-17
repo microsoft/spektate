@@ -44,6 +44,26 @@ let tableItems: ObservableArray<IDeploymentField>;
 let rawTableItems: IDeploymentField[];
 let columns: Array<ITableColumn<IDeploymentField>>;
 
+const sortingBehavior = new ColumnSorting<IDeploymentField>(
+  (
+    columnIndex: number,
+    proposedSortOrder: SortOrder,
+    event: React.KeyboardEvent<HTMLElement> | React.MouseEvent<HTMLElement>
+  ) => {
+    tableItems.splice(
+      0,
+      tableItems.length,
+      ...sortItems<IDeploymentField>(
+        columnIndex,
+        proposedSortOrder,
+        sortFunctions,
+        columns,
+        rawTableItems
+      )
+    );
+  }
+);
+
 export const DeploymentTable: React.FC<ITableProps> = (props: ITableProps) => {
   tableItems = new ObservableArray<IDeploymentField>(props.deploymentRows);
   rawTableItems = props.deploymentRows;
@@ -59,12 +79,20 @@ export const DeploymentTable: React.FC<ITableProps> = (props: ITableProps) => {
       id: "service",
       name: "Service",
       renderCell: renderSimpleText,
+      sortProps: {
+        ariaLabelAscending: "Sorted A to Z",
+        ariaLabelDescending: "Sorted Z to A"
+      },
       width: new ObservableValue(180)
     },
     {
       id: "environment",
       name: "Ring",
       renderCell: renderSimpleText,
+      sortProps: {
+        ariaLabelAscending: "Sorted A to Z",
+        ariaLabelDescending: "Sorted Z to A"
+      },
       width: new ObservableValue(220)
     },
     {
@@ -438,23 +466,3 @@ export const initSortFunctions = (isClusterSyncAvailable: boolean) => {
     sortFunctions.push(null);
   }
 };
-
-const sortingBehavior = new ColumnSorting<IDeploymentField>(
-  (
-    columnIndex: number,
-    proposedSortOrder: SortOrder,
-    event: React.KeyboardEvent<HTMLElement> | React.MouseEvent<HTMLElement>
-  ) => {
-    tableItems.splice(
-      0,
-      tableItems.length,
-      ...sortItems<IDeploymentField>(
-        columnIndex,
-        proposedSortOrder,
-        sortFunctions,
-        columns,
-        rawTableItems
-      )
-    );
-  }
-);
