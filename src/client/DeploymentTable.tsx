@@ -139,6 +139,10 @@ export const DeploymentTable: React.FC<ITableProps> = (props: ITableProps) => {
       id: "deployedAt",
       name: "Last Updated",
       renderCell: renderTime,
+      sortProps: {
+        ariaLabelAscending: "Sorted low to high",
+        ariaLabelDescending: "Sorted high to low"
+      },
       width: new ObservableValue(120)
     }
   ];
@@ -464,7 +468,9 @@ export const initSortFunctions = (isClusterSyncAvailable: boolean) => {
     // Sort on HLD to Manifest
     null,
     // SORT on Last Updated
-    null
+    (item1: IDeploymentField, item2: IDeploymentField): number => {
+      return item1.endTime!.getTime() - item2.endTime!.getTime();
+    }
   ];
 
   if (isClusterSyncAvailable) {
