@@ -43,6 +43,9 @@ let releasesUrl: string = "";
 let tableItems: ObservableArray<IDeploymentField>;
 let rawTableItems: IDeploymentField[];
 let columns: Array<ITableColumn<IDeploymentField>>;
+let sortFunctions: Array<
+  ((item1: IDeploymentField, item2: IDeploymentField) => number) | null
+>;
 
 const sortingBehavior = new ColumnSorting<IDeploymentField>(
   (
@@ -127,6 +130,10 @@ export const DeploymentTable: React.FC<ITableProps> = (props: ITableProps) => {
       id: "mergedByName",
       name: "Merged By",
       renderCell: renderMergedBy,
+      sortProps: {
+        ariaLabelAscending: "Sorted A to Z",
+        ariaLabelDescending: "Sorted Z to A"
+      },
       width: new ObservableValue(200)
     },
     {
@@ -149,6 +156,7 @@ export const DeploymentTable: React.FC<ITableProps> = (props: ITableProps) => {
   if (props.releasesUrl) {
     releasesUrl = props.releasesUrl;
   }
+
   // Display the cluster column only if there is information to show in the table
   if (props.clusterSyncAvailable) {
     columns.push({
@@ -377,7 +385,11 @@ export const renderMergedBy = (
   tableColumn: ITableColumn<IDeploymentField>,
   deployment: IDeploymentField
 ): JSX.Element => {
-  if (deployment.pr && deployment.mergedByName) {
+  if (
+    deployment.pr &&
+    deployment.mergedByName &&
+    deployment.mergedByName !== ""
+  ) {
     return (
       <Persona
         columnIndex={columnIndex}
@@ -440,22 +452,26 @@ export const renderDeploymentStatus = (
   );
 };
 
-let sortFunctions: any[];
-
 export const initSortFunctions = (isClusterSyncAvailable: boolean) => {
   sortFunctions = [
     null,
     // Sort on Service column
     (item1: IDeploymentField, item2: IDeploymentField): number => {
-      return item1.service.localeCompare(item2.service);
+      return item1.service && item2.environment
+        ? item1.service!.localeCompare(item2.service!)
+        : 1;
     },
     // Sort on Ring/Environment column
     (item1: IDeploymentField, item2: IDeploymentField): number => {
-      return item1.environment!.localeCompare(item2.environment!);
+      return item1.environment && item2.environment
+        ? item1.environment!.localeCompare(item2.environment!)
+        : 1;
     },
     // Sort on Author
     (item1: IDeploymentField, item2: IDeploymentField): number => {
-      return item1.authorName!.localeCompare(item2.authorName!);
+      return item1.authorName && item2.authorName
+        ? item1.authorName!.localeCompare(item2.authorName!)
+        : 1;
     },
     // Sort on SRC to ACR
     null,
@@ -464,7 +480,11 @@ export const initSortFunctions = (isClusterSyncAvailable: boolean) => {
     // Sort on Approval Pull Request
     null,
     // Sort on Merged By
-    null,
+    (item1: IDeploymentField, item2: IDeploymentField): number => {
+      return item1.mergedByName && item2.mergedByName
+        ? item1.mergedByName!.localeCompare(item2.mergedByName!)
+        : 1;
+    },
     // Sort on HLD to Manifest
     null,
     // SORT on Last Updated
