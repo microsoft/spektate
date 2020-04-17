@@ -99,6 +99,10 @@ export const DeploymentTable: React.FC<ITableProps> = (props: ITableProps) => {
       id: "authorName",
       name: "Author",
       renderCell: renderAuthor,
+      sortProps: {
+        ariaLabelAscending: "Sorted A to Z",
+        ariaLabelDescending: "Sorted Z to A"
+      },
       width: new ObservableValue(200)
     },
     {
@@ -446,7 +450,9 @@ export const initSortFunctions = (isClusterSyncAvailable: boolean) => {
       return item1.environment!.localeCompare(item2.environment!);
     },
     // Sort on Author
-    null,
+    (item1: IDeploymentField, item2: IDeploymentField): number => {
+      return item1.authorName!.localeCompare(item2.authorName!);
+    },
     // Sort on SRC to ACR
     null,
     // Sort on ACR to HLD
