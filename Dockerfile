@@ -12,9 +12,9 @@ RUN pwd
 COPY frontend .
 RUN yarn build
 
-WORKDIR /app
+WORKDIR /app/node_modules
 RUN ls
-COPY frontend/node_modules /app/node_modules
+COPY frontend/node_modules .
 
 WORKDIR /app/backend
 COPY backend/package.json .
