@@ -9,6 +9,8 @@ COPY frontend/yarn.lock .
 RUN yarn install --silent &> /dev/null 
 COPY frontend .
 RUN yarn build
+COPY frontend/node_modules /app/node_modules/
+RUN ls
 
 WORKDIR /app/backend
 COPY backend/package.json .
@@ -16,6 +18,8 @@ COPY backend/yarn.lock .
 RUN yarn install --silent
 COPY backend .
 RUN yarn build
+COPY backend/node_modules /app/node_modules/
+RUN ls
 
 WORKDIR /app/build
 RUN ls

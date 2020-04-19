@@ -1,8 +1,6 @@
 {
   "name": "spektate",
   "version": "0.1.0",
-  "main": "build/dist/index.js",
-  "types": "build/dist/index.d.ts",
   "license": "MIT",
   "dependencies": {
     "@types/express": "^4.17.0",
