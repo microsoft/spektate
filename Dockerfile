@@ -18,10 +18,8 @@ RUN yarn install --silent
 COPY backend .
 RUN yarn build
 
+WORKDIR /app/build
 RUN ls
-RUN ls build
-
 EXPOSE 5000
 COPY docker-entrypoint.sh /app
-WORKDIR /app/build
 ENTRYPOINT ["/app/docker-entrypoint.sh"]
