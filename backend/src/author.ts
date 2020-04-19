@@ -32,16 +32,16 @@ export const get = async (req: Request, res: Response) => {
     } else {
       try {
         if (req.query.org && req.query.project && req.query.repo) {
-          const author = await getAuthor(req.query.commit, {
-            org: req.query.org,
-            project: req.query.project,
-            repo: req.query.repo
+          const author = await getAuthor(req.query.commit.toString(), {
+            org: req.query.org.toString(),
+            project: req.query.project.toString(),
+            repo: req.query.repo.toString()
           });
           res.json(author || {});
         } else if (req.query.username && req.query.reponame) {
-          const author = await getAuthor(req.query.commit, {
-            reponame: req.query.reponame,
-            username: req.query.username
+          const author = await getAuthor(req.query.commit.toString(), {
+            reponame: req.query.reponame.toString(),
+            username: req.query.username.toString()
           });
           res.json(author || {});
         } else {

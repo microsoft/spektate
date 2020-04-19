@@ -12,18 +12,17 @@ steps:
 
   - script: |
       yarn install
-    workingDirectory: "./"
-    displayName: "yarn"
-
-  - script: |
       yarn lint
-    workingDirectory: "./"
-    displayName: "tslint"
+      yarn build
+    workingDirectory: "./frontend"
+    displayName: "Frontend install, lint and build"
 
   - script: |
+      yarn install
+      yarn lint
       yarn build
-    workingDirectory: "./"
-    displayName: "Build"
+    workingDirectory: "./backend"
+    displayName: "Backend install, lint and build"
 
   - task: Docker@2
     inputs:
