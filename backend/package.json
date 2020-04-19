@@ -16,15 +16,24 @@
     "lint": "tslint -p tsconfig.json -c tslint.json src/*.ts"
   },
   "devDependencies": {
-    "@types/jest": "^24.0.18",
-    "@types/jest-when": "^2.7.0",
     "@types/node": "^12.6.8",
-    "lint-staged": "^9.2.5",
-    "prettier": "^1.18.2",
-    "ts-jest": "^24.0.2",
     "ts-node": "^8.5.4",
     "tslint": "^5.20.0",
     "tslint-config-prettier": "^1.18.0",
-    "typescript": "^3.5.3"
+    "typescript": "^3.5.3",
+    "husky": "^4.2.5",
+    "lint-staged": "^10.1.5",
+    "prettier": "^2.0.4"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx,css,json,md,yml}": [
+      "prettier --write",
+      "git add"
+    ]
   }
 }
