@@ -7,7 +7,6 @@ WORKDIR /app/frontend
 COPY frontend/package.json .
 COPY frontend/yarn.lock .
 RUN yarn install --silent &> /dev/null 
-# RUN yarn global add ts-node --silent
 COPY frontend .
 RUN yarn build
 
