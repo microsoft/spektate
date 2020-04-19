@@ -9,7 +9,7 @@ COPY frontend/yarn.lock .
 RUN yarn install --silent &> /dev/null 
 RUN ls
 RUN pwd
-COPY frontend/node_modules/ /app/node_modules/
+COPY node_modules/ /app/node_modules/
 COPY frontend .
 RUN yarn build
 
@@ -19,7 +19,7 @@ COPY backend/yarn.lock .
 RUN yarn install --silent
 RUN ls
 RUN pwd
-COPY backend/node_modules/ /app/node_modules/
+COPY node_modules/ /app/node_modules/
 COPY backend .
 RUN yarn build
 
