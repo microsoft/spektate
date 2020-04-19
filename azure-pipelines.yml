@@ -5,7 +5,7 @@ pool:
   vmImage: "ubuntu-latest"
 
 stages:
-  - stage: Build and test frontend, backend and spektate
+  - stage: spektate_ci
     jobs:
       - job: build_and_test
         pool:
