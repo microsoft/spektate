@@ -10,6 +10,7 @@ RUN yarn install --silent &> /dev/null
 COPY frontend .
 RUN yarn build
 RUN ls
+RUN pwd
 COPY frontend/node_modules /app/node_modules/
 
 WORKDIR /app/backend
@@ -19,6 +20,7 @@ RUN yarn install --silent
 COPY backend .
 RUN yarn build
 RUN ls
+RUN pwd
 COPY backend/node_modules /app/node_modules/
 
 WORKDIR /app/build

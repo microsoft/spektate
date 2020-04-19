@@ -8,5 +8,4 @@ do
     export $key=$value
 done
 
-cd backend
 node server.js
