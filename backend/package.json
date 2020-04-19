@@ -10,7 +10,7 @@
   },
   "scripts": {
     "start": "ts-node src/index.ts",
-    "build": "tsc src/** --outDir ../build/backend/",
+    "build": "tsc src/** --outDir ../build/backend/ && tsc src/server.ts --outDir ../build/",
     "lint": "tslint -p tsconfig.json -c tslint.json src/*.ts"
   },
   "devDependencies": {
