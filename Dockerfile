@@ -9,10 +9,12 @@ COPY frontend/yarn.lock .
 RUN yarn install --silent &> /dev/null 
 RUN ls
 RUN pwd
-# COPY frontend/node_modules/ /app/node_modules/
-COPY ["frontend/node_modules", "/app/node_modules"]
 COPY frontend .
 RUN yarn build
+
+WORKDIR /app
+RUN ls
+COPY frontend/node_modules /app/node_modules
 
 WORKDIR /app/backend
 COPY backend/package.json .
@@ -20,10 +22,12 @@ COPY backend/yarn.lock .
 RUN yarn install --silent
 RUN ls
 RUN pwd
-# COPY backend/node_modules/ /app/node_modules/
-COPY ["backend/node_modules", "/app/node_modules"]
+COPY backend/node_modules/ /app/node_modules/
 COPY backend .
 RUN yarn build
+
+WORKDIR /app
+COPY backend/node_modules /app/node_modules
 
 WORKDIR /app/build
 RUN ls
