@@ -7,21 +7,21 @@ WORKDIR /app/frontend
 COPY frontend/package.json .
 COPY frontend/yarn.lock .
 RUN yarn install --silent &> /dev/null 
-COPY frontend .
-RUN yarn build
 RUN ls
 RUN pwd
 COPY frontend/node_modules /app/node_modules/
+COPY frontend .
+RUN yarn build
 
 WORKDIR /app/backend
 COPY backend/package.json .
 COPY backend/yarn.lock .
 RUN yarn install --silent
-COPY backend .
-RUN yarn build
 RUN ls
 RUN pwd
 COPY backend/node_modules /app/node_modules/
+COPY backend .
+RUN yarn build
 
 WORKDIR /app/build
 RUN ls
