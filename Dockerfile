@@ -8,7 +8,7 @@ COPY backend/package.json .
 COPY backend/yarn.lock .
 RUN yarn install --silent
 COPY backend .
-RUN yarn build-prod
+RUN yarn build
 
 # frontend environment
 FROM node:12.2.0-alpine as frontend
@@ -20,7 +20,7 @@ COPY frontend/package.json .
 COPY frontend/yarn.lock .
 RUN yarn install --silent &> /dev/null 
 COPY frontend .
-RUN yarn build-prod
+RUN yarn build
 
 # prod environment
 FROM node:12.2.0-alpine as production
