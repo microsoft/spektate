@@ -37,7 +37,7 @@ ENV PATH /app/node_modules/.bin:$PATH
 COPY --from=backend /app/build /app/build
 COPY --from=backend /app/node_modules /app/node_modules
 COPY --from=frontend /app/build /app/build
-COPY --from=frontend /app/node_modules /app/node_modules
+# COPY --from=frontend /app/node_modules /app/node_modules
 WORKDIR /app/build
 RUN ls
 EXPOSE 5000
