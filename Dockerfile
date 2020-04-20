@@ -19,7 +19,7 @@ FROM node:12.2.0-alpine as frontend
 WORKDIR /app
 ENV PATH /app/node_modules/.bin:$PATH
 
-WORKDIR /app/frontend
+WORKDIR /app
 COPY frontend/package.json .
 COPY frontend/yarn.lock .
 RUN yarn install --silent &> /dev/null 
