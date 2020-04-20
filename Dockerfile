@@ -24,6 +24,10 @@ RUN pwd
 WORKDIR /app/build
 RUN ls
 RUN ls build
+COPY build /app/build
+RUN ls
+COPY /app/build/build /app/build
+RUN ls
 EXPOSE 5000
 COPY docker-entrypoint.sh /app
 ENTRYPOINT ["/app/docker-entrypoint.sh"]
