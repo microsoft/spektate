@@ -8,7 +8,6 @@
   "dependencies": {
     "azure-devops-ui": "^2.166.1",
     "office-ui-fabric-react": "^7.10.0",
-    "open": "^6.4.0",
     "react": "^16.8.5",
     "react-dom": "^16.8.5",
     "react-scripts-ts": "^4.0.8",
@@ -30,12 +29,12 @@
     "@types/react-dom": "^16.8.3",
     "husky": "^3.0.4",
     "lint-staged": "^9.2.5",
-    "pkg": "^4.4.0",
     "prettier": "^1.18.2",
     "ts-jest": "^24.0.2",
     "ts-node": "^8.5.4",
     "tslint": "^5.20.0",
     "tslint-config-prettier": "^1.18.0",
+    "tslint-react": "^4.2.0",
     "typescript": "^3.5.3"
   },
   "browserslist": [
