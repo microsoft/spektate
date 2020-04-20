@@ -17,6 +17,7 @@
   "scripts": {
     "start": "react-scripts-ts start",
     "build": "react-scripts-ts build && mv build ../build",
+    "build-prod": "react-scripts-ts build",
     "eject": "react-scripts-ts eject",
     "lint": "tslint -p tsconfig.json -c tslint.json src/**/*.ts",
     "refresh": "rm -rf ./node_modules ./package-lock.json && npm install"

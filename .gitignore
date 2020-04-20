@@ -7,6 +7,7 @@
 .pnp.js
 /venv
 node_modules/
+build/
 
 # testing
 /coverage
