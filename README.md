@@ -52,8 +52,9 @@ If you're not using an external IP, use port-forwarding to access the dashboard:
 
 ## Dashboard dev mode
 
-1. Clone this repository, and run `yarn`.
-2. Add the following env variables to your shell:
+1. Clone this repository.
+2. There is frontend and backend folders and each of them are separate yarn projects. `cd frontend` in one window and `cd backend` in another.
+3. Add the following env variables to your shell where you have changed directory to `backend`:
 
    ```bash
    export REACT_APP_STORAGE_ACCESS_KEY=
@@ -80,9 +81,8 @@ If you're not using an external IP, use port-forwarding to access the dashboard:
    - `REACT_APP_SOURCE_REPO_ACCESS_TOKEN`: Access token for the source repository
    - **Note**: If you're using GitHub, add `REACT_APP_GITHUB_MANIFEST_USERNAME`: Account name or organization name under which the manifest repository resides.
 
-3. There is frontend and backend folders and each of them are separate yarn projects. `cd frontend` in one window and `cd backend` in another
 4. Run `yarn` in both to install dependencies
-5. Run `yarn start` in both to start the applications. You should be able to see the dashboard launch in one, and a Node.js server start in another! 
+5. Run `yarn start` in both to start the applications. You should be able to see the dashboard launch in one, and a Node.js server start in another! It should navigate you to the browser where dashboard is running.
 
 ## Publish Docker image
 
