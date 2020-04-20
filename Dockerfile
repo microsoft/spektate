@@ -3,33 +3,24 @@ FROM node:12.2.0-alpine as build
 WORKDIR /app
 ENV PATH /app/node_modules/.bin:$PATH
 
+WORKDIR /app
+COPY backend/package.json .
+COPY backend/yarn.lock .
+RUN yarn install --silent
+COPY backend .
+RUN yarn build-prod
+RUN ls
+RUN pwd
+
 WORKDIR /app/frontend
 COPY frontend/package.json .
 COPY frontend/yarn.lock .
 RUN yarn install --silent &> /dev/null 
-RUN ls
-RUN pwd
 COPY frontend .
-RUN yarn build
-
-# WORKDIR /app/node_modules
-# RUN ls
-# COPY frontend/node_modules .
-
-WORKDIR /app/backend
-COPY backend/package.json .
-COPY backend/yarn.lock .
-RUN yarn install --silent
+RUN yarn build-prod
+COPY frontend/build /app/build
 RUN ls
 RUN pwd
-# COPY backend/node_modules/ /app/node_modules/
-COPY backend .
-RUN yarn build
-
-# WORKDIR /app
-# COPY backend/node_modules /app/node_modules
-
-RUN yarn global add express
 
 WORKDIR /app/build
 RUN ls
