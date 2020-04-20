@@ -22,7 +22,7 @@ COPY backend/yarn.lock .
 RUN yarn install --silent
 RUN ls
 RUN pwd
-COPY backend/node_modules/ /app/node_modules/
+# COPY backend/node_modules/ /app/node_modules/
 COPY backend .
 RUN yarn build
 
