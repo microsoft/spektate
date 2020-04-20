@@ -17,8 +17,7 @@ COPY frontend/package.json .
 COPY frontend/yarn.lock .
 RUN yarn install --silent &> /dev/null 
 COPY frontend .
-RUN yarn build-prod
-COPY frontend/build /app/build
+RUN yarn build
 RUN ls
 RUN pwd
 
