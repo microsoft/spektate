@@ -80,7 +80,9 @@ If you're not using an external IP, use port-forwarding to access the dashboard:
    - `REACT_APP_SOURCE_REPO_ACCESS_TOKEN`: Access token for the source repository
    - **Note**: If you're using GitHub, add `REACT_APP_GITHUB_MANIFEST_USERNAME`: Account name or organization name under which the manifest repository resides.
 
-3. Then run `yarn start-backend` in one window to start the backend server, and `yarn start` in another to start the front end to view the dashboard for the hello world deployment screen!
+3. There is frontend and backend folders and each of them are separate yarn projects. `cd frontend` in one window and `cd backend` in another
+4. Run `yarn` in both to install dependencies
+5. Run `yarn start` in both to start the applications. You should be able to see the dashboard launch in one, and a Node.js server start in another! 
 
 ## Publish Docker image
 

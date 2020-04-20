@@ -18,7 +18,7 @@ const getPR = (
       .then((pr: IPullRequest | undefined) => {
         resolve(pr);
       })
-      .catch(err => {
+      .catch((err) => {
         console.error(err);
         reject(err);
       });
@@ -32,16 +32,16 @@ export const get = async (req: Request, res: Response) => {
     } else {
       try {
         if (req.query.org && req.query.project && req.query.repo) {
-          const pr = await getPR(req.query.pr, {
-            org: req.query.org,
-            project: req.query.project,
-            repo: req.query.repo
+          const pr = await getPR(req.query.pr.toString(), {
+            org: req.query.org.toString(),
+            project: req.query.project.toString(),
+            repo: req.query.repo.toString(),
           });
           res.json(pr || {});
         } else if (req.query.username && req.query.reponame) {
-          const pr = await getPR(req.query.pr, {
-            reponame: req.query.reponame,
-            username: req.query.username
+          const pr = await getPR(req.query.pr.toString(), {
+            reponame: req.query.reponame.toString(),
+            username: req.query.username.toString(),
           });
           res.json(pr || {});
         } else {
