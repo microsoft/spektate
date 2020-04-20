@@ -53,23 +53,41 @@ beforeAll(() => {
     )
   );
 });
-jest.spyOn(HttpHelper, "httpGet").mockImplementation(
-  <T>(theUrl: string, accessToken?: string): Promise<AxiosResponse<T>> => {
-    if (theUrl.includes("096c95228c786715b14b0269a722a3de887c01bd")) {
-      return getAxiosResponseForObject(manifestResponse1);
-    } else if (theUrl.includes("commits")) {
-      return getAxiosResponseForObject(authorRawResponse);
-    } else if (theUrl.endsWith("refs/tags")) {
-      return getAxiosResponseForObject(syncTagRawResponse);
-    } else if (theUrl.includes("pulls")) {
-      return getAxiosResponseForObject(prRawResponse);
-    }
-    return getAxiosResponseForObject(manifestSyncTagResponse);
+
+const mockedFunction = <T>(theUrl: string, accessToken?: string): Promise<AxiosResponse<T>> => {
+  if (theUrl.includes("096c95228c786715b14b0269a722a3de887c01bd")) {
+    return getAxiosResponseForObject(manifestResponse1);
+  } else if (theUrl.includes("commits")) {
+    return getAxiosResponseForObject(authorRawResponse);
+  } else if (theUrl.endsWith("refs/tags")) {
+    return getAxiosResponseForObject(syncTagRawResponse);
+  } else if (theUrl.includes("pulls")) {
+    return getAxiosResponseForObject(prRawResponse);
   }
-);
+  return getAxiosResponseForObject(manifestSyncTagResponse);
+};
+
+const mockedEmptyResponse = <T>(theUrl: string, accessToken?: string): Promise<AxiosResponse<T>> => {
+  if (theUrl.endsWith("refs/tags")) {
+    return getAxiosResponseForObject([]);
+  } else if (theUrl.includes("pulls")) {
+    return getAxiosResponseForObject(undefined);
+  }
+  return getAxiosResponseForObject([]);
+};
+
+const mockedErrorResponse = <T>(theUrl: string, accessToken?: string): Promise<AxiosResponse<T>> => {
+  if (theUrl.endsWith("refs/tags")) {
+    return getAxiosResponseForObject([]);
+  } else if (theUrl.includes("pulls")) {
+    throw new Error("Request failed with Network error");
+  }
+  return getAxiosResponseForObject([]);
+};
 
 describe("IGitHub", () => {
   test("gets author correctly", async () => {
+    jest.spyOn(HttpHelper, "httpGet").mockImplementationOnce(mockedFunction);
     const author = await getAuthor(repo, "commit");
     expect(author).toBeDefined();
     expect(author!.name).toBe("Edaena Salinas");
@@ -81,6 +99,7 @@ describe("IGitHub", () => {
 
 describe("IGitHub", () => {
   test("gets PR correctly", async () => {
+    jest.spyOn(HttpHelper, "httpGet").mockImplementationOnce(mockedFunction);
     const pr = await getPullRequest(repo, "prid");
     expect(pr).toBeDefined();
     expect(pr.mergedBy).toBeDefined();
@@ -96,17 +115,46 @@ describe("IGitHub", () => {
     expect(pr!.targetBranch).toBe("master");
     expect(pr!.id).toBe(408);
     expect(pr!.description).toBeDefined();
+    jest.spyOn(HttpHelper, "httpGet").mockClear();
+  });
+  test("negative tests", async () => {
+    jest.spyOn(HttpHelper, "httpGet").mockImplementation(mockedEmptyResponse);
+    let flag = 0;
+    try {
+      expect(await getPullRequest(repo, "prid")).toThrow();
+    } catch (e) {
+      flag = 1;
+    }
+    expect(flag).toBe(1);
+    jest.spyOn(HttpHelper, "httpGet").mockClear();
+
+    jest.spyOn(HttpHelper, "httpGet").mockImplementation(mockedErrorResponse);
+    flag = 0;
+    try {
+      expect(await getPullRequest(repo, "prid")).toThrow();
+    } catch (e) {
+      flag = 1;
+    }
+    expect(flag).toBe(1);
+    jest.spyOn(HttpHelper, "httpGet").mockClear();
   });
 });
 
 describe("IGitHub", () => {
   test("gets manifest sync tag correctly", async () => {
+    jest.spyOn(HttpHelper, "httpGet").mockImplementation(mockedFunction);
     const tags = await getManifestSyncState(repo);
     expect(tags).toHaveLength(2);
     expect(tags[0].commit).toBe("57cb69b");
     expect(tags[0].tagger).toBeDefined();
     expect(tags[0].tagger).toBe("Weave Flux");
     expect(tags[0].name).toBe("ALASKA");
+    jest.spyOn(HttpHelper, "httpGet").mockClear();
+  });
+  test("negative tests", async () => {
+    jest.spyOn(HttpHelper, "httpGet").mockImplementation(mockedEmptyResponse);
+    const tags = await getManifestSyncState(repo);
+    expect(tags).toHaveLength(0);
   });
 });
 
