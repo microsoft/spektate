@@ -57,22 +57,4 @@ stages:
               Dockerfile: "**/Dockerfile"
               tags: "spektate-$(Build.SourceBranchName)-$(Build.BuildId)"
             condition: ne(variables['Build.Reason'], 'PullRequest')
-            displayName: Build combined docker image
-          - task: Docker@2
-            inputs:
-              containerRegistry: "spektateacrconnection"
-              repository: "spektate"
-              command: "buildAndPush"
-              Dockerfile: "**/backend/Dockerfile"
-              tags: "spektate-backend-$(Build.SourceBranchName)-$(Build.BuildId)"
-            condition: ne(variables['Build.Reason'], 'PullRequest')
-            displayName: Build backend docker image
-          - task: Docker@2
-            inputs:
-              containerRegistry: "spektateacrconnection"
-              repository: "spektate"
-              command: "buildAndPush"
-              Dockerfile: "**/frontend/Dockerfile"
-              tags: "spektate-frontend-$(Build.SourceBranchName)-$(Build.BuildId)"
-            condition: ne(variables['Build.Reason'], 'PullRequest')
-            displayName: Build frontend docker image
+            displayName: Build docker image
