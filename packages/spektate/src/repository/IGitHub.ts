@@ -51,10 +51,10 @@ export const getManifestSyncState = (
               accessToken
             );
 
-            if (syncStatus != null && syncStatus.data) {
-              const clusterName = syncStatus.data.tag?.replace("flux-", "");
+            if (syncStatus != null && syncStatus.data && syncStatus.data.tag) {
+              const clusterName = syncStatus.data.tag.replace("flux-", "");
               const manifestSync = {
-                commit: syncStatus.data.object.sha?.substring(0, 7),
+                commit: syncStatus.data.object?.sha?.substring(0, 7),
                 date: new Date(syncStatus.data.tagger?.date),
                 message: syncStatus.data.message,
                 name: clusterName.toUpperCase(),
@@ -107,13 +107,13 @@ export const getPullRequest = (
           id: pr.number,
           mergedBy: pr.merged_by
             ? {
-                imageUrl: pr.merged_by.avatar_url
-                  ? pr.merged_by.avatar_url
-                  : "",
-                name: pr.merged_by.login ? pr.merged_by.login : "",
-                url: pr.merged_by.url ? pr.merged_by.html_url : "",
-                username: pr.merged_by.login ? pr.merged_by.login : ""
-              }
+              imageUrl: pr.merged_by.avatar_url
+                ? pr.merged_by.avatar_url
+                : "",
+              name: pr.merged_by.login ? pr.merged_by.login : "",
+              url: pr.merged_by.url ? pr.merged_by.html_url : "",
+              username: pr.merged_by.login ? pr.merged_by.login : ""
+            }
             : undefined,
           sourceBranch: pr.head ? pr.head.ref : "",
           targetBranch: pr.base ? pr.base.ref : "",
