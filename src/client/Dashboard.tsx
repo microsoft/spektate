@@ -489,7 +489,9 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     const clusterSyncs = statuses.filter(tag => {
       return tag.commit === deployment.manifestCommitId;
     });
-    this.clusterSyncAvailable = clusterSyncs.length > 0;
+    if (!this.clusterSyncAvailable) {
+      this.clusterSyncAvailable = clusterSyncs.length > 0;
+    }
 
     return clusterSyncs;
   };
