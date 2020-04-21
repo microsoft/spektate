@@ -24,10 +24,10 @@ app.get("/api/author", (req: express.Request, res: express.Response) => {
 app.get("/api/pr", (req: express.Request, res: express.Response) => {
   prGet(req, res);
 });
-app.get("/health", (req: express.Request, res: express.Response) => {
+app.get("/api/health", (req: express.Request, res: express.Response) => {
   health(req, res);
 });
-app.get("/version", (req: express.Request, res: express.Response) => {
+app.get("/api/version", (req: express.Request, res: express.Response) => {
   version(req, res);
 });
 
