@@ -6,6 +6,7 @@ ACR_NAME="spektateacr"
 ACR_REPO="spektate"
 ACR_PASS=$(az acr credential show -n $ACR_NAME | jq -r ".passwords[0].value")
 ACR_SERVER_URL="https://$ACR_NAME.azurecr.io"
+ACR_BRANCH_PATTERN="$ACR_REPO-master-"
 
 # ACI 
 CONTAINER_NAME="spektate-ci-env"
@@ -28,8 +29,9 @@ RESTART_POLICY="Always"
 # echo "az login --service-principal --username $(SP_APP_ID) --password $(SP_PASS) --tenant $(SP_TENANT)"
 # az login --service-principal --username "$(SP_APP_ID)" --password "$(SP_PASS)" --tenant "$(SP_TENANT)"
 
-# Get the latest image in ACR
-LATEST_SPEKTATE_TAG=$(az acr repository show-manifests -n $ACR_NAME --repository $ACR_REPO --top 1 --orderby time_desc --detail | jq -r ".[0].tags[0]")
+# Get the latest MASTER image in ACR
+SPEKTATE_TAGS=$(az acr repository show-manifests -n $ACR_NAME --repository $ACR_REPO --top 100 --orderby time_desc)
+LATEST_SPEKTATE_TAG=$(echo $SPEKTATE_TAGS | jq -r --arg ACR_BRANCH_PATTERN "$ACR_BRANCH_PATTERN" '[.[].tags[0] | select(startswith($ACR_BRANCH_PATTERN))][0]')
 echo "\nThe latest tag is $LATEST_SPEKTATE_TAG\n"
 CUSTOM_IMAGE_NAME="$ACR_NAME.azurecr.io/$ACR_REPO:$LATEST_SPEKTATE_TAG"
 
