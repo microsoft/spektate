@@ -52,13 +52,13 @@ export const getPullRequest = (
           id: pr.pullRequestId,
           mergedBy: pr.closedBy
             ? {
-                imageUrl: pr.closedBy._links?.avatar?.href
-                  ? pr.closedBy._links?.avatar?.href
-                  : pr.closedBy.imageUrl,
-                name: pr.closedBy.displayName,
-                url: pr.url,
-                username: pr.closedBy.uniqueName
-              }
+              imageUrl: pr.closedBy._links?.avatar?.href
+                ? pr.closedBy._links?.avatar?.href
+                : pr.closedBy.imageUrl,
+              name: pr.closedBy.displayName,
+              url: pr.url,
+              username: pr.closedBy.uniqueName
+            }
             : undefined,
           sourceBranch: pr.sourceRefName
             ? pr.sourceRefName.replace("refs/heads/", "")
@@ -114,16 +114,16 @@ export const getManifestSyncState = async (
               accessToken
             );
 
-            if (syncStatus != null) {
+            if (syncStatus != null && syncStatus.data && syncStatus.data.name) {
               const clusterName: string = syncStatus.data.name.replace(
                 "flux-",
                 ""
               );
               const manifestSync = {
-                commit: syncStatus.data.taggedObject.objectId.substring(0, 7),
-                date: new Date(syncStatus.data.taggedBy.date),
+                commit: syncStatus.data.taggedObject?.objectId?.substring(0, 7),
+                date: new Date(syncStatus.data.taggedBy?.date),
                 name: clusterName.toUpperCase(),
-                tagger: syncStatus.data.taggedBy.name
+                tagger: syncStatus.data.taggedBy?.name
               };
               fluxTags.push(manifestSync);
             }

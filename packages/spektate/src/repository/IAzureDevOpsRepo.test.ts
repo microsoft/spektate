@@ -46,21 +46,39 @@ beforeAll(() => {
       "utf-8")
   );
 });
-jest.spyOn(HttpHelper, "httpGet").mockImplementation(
-  <T>(theUrl: string, accessToken?: string): Promise<AxiosResponse<T>> => {
-    if (theUrl.includes("commits")) {
-      return getAxiosResponseForObject(authorRawResponse);
-    } else if (theUrl.includes("annotatedtags")) {
-      return getAxiosResponseForObject(manifestSyncTagResponse);
-    } else if (theUrl.includes("pullrequests")) {
-      return getAxiosResponseForObject(prRawResponse);
-    }
-    return getAxiosResponseForObject(syncTagRawResponse);
+
+const mockedFunction = <T>(theUrl: string, accessToken?: string): Promise<AxiosResponse<T>> => {
+  if (theUrl.includes("commits")) {
+    return getAxiosResponseForObject(authorRawResponse);
+  } else if (theUrl.includes("annotatedtags")) {
+    return getAxiosResponseForObject(manifestSyncTagResponse);
+  } else if (theUrl.includes("pullrequests")) {
+    return getAxiosResponseForObject(prRawResponse);
   }
-);
+  return getAxiosResponseForObject(syncTagRawResponse);
+};
+
+const mockedEmptyResponse = <T>(theUrl: string, accessToken?: string): Promise<AxiosResponse<T>> => {
+  if (theUrl.endsWith("annotatedtags")) {
+    return getAxiosResponseForObject([]);
+  } else if (theUrl.includes("pullrequests")) {
+    return getAxiosResponseForObject(undefined);
+  }
+  return getAxiosResponseForObject([]);
+};
+
+const mockedErrorResponse = <T>(theUrl: string, accessToken?: string): Promise<AxiosResponse<T>> => {
+  if (theUrl.endsWith("annotatedtags")) {
+    return getAxiosResponseForObject([]);
+  } else if (theUrl.includes("pullrequests")) {
+    throw new Error("Request failed with Network error");
+  }
+  return getAxiosResponseForObject([]);
+};
 
 describe("IAzureDevOpsRepo", () => {
   test("gets author correctly", async () => {
+    jest.spyOn(HttpHelper, "httpGet").mockImplementationOnce(mockedFunction);
     const author = await getAuthor(repo, "commit");
     expect(author).toBeDefined();
     expect(author!.name).toBe("Samiya Akhtar");
@@ -72,6 +90,7 @@ describe("IAzureDevOpsRepo", () => {
 
 describe("IAzureDevOpsRepo", () => {
   test("gets PR correctly", async () => {
+    jest.spyOn(HttpHelper, "httpGet").mockImplementationOnce(mockedFunction);
     const pr = await getPullRequest(repo, "prid");
     expect(pr).toBeDefined();
     expect(pr.mergedBy).toBeDefined();
@@ -89,15 +108,43 @@ describe("IAzureDevOpsRepo", () => {
     expect(pr!.targetBranch).toBe("master");
     expect(pr!.id).toBe(1354);
     expect(pr!.description).toBeDefined();
+    jest.spyOn(HttpHelper, "httpGet").mockClear();
+  });
+  test("negative tests", async () => {
+    jest.spyOn(HttpHelper, "httpGet").mockImplementation(mockedEmptyResponse);
+    let flag = 0;
+    try {
+      expect(await getPullRequest(repo, "prid")).toThrow();
+    } catch (e) {
+      flag = 1;
+    }
+    expect(flag).toBe(1);
+    jest.spyOn(HttpHelper, "httpGet").mockClear();
+
+    jest.spyOn(HttpHelper, "httpGet").mockImplementation(mockedErrorResponse);
+    flag = 0;
+    try {
+      expect(await getPullRequest(repo, "prid")).toThrow();
+    } catch (e) {
+      flag = 1;
+    }
+    expect(flag).toBe(1);
+    jest.spyOn(HttpHelper, "httpGet").mockClear();
   });
 });
 
 describe("IAzureDevOpsRepo", () => {
   test("gets manifest sync tag correctly", async () => {
+    jest.spyOn(HttpHelper, "httpGet").mockImplementation(mockedFunction);
     const tags = await getManifestSyncState(repo);
     expect(tags).toHaveLength(1);
     expect(tags[0].commit).toBe("ab4c9f1");
     expect(tags[0].name).toBe("SYNC");
+  });
+  test("negative tests", async () => {
+    jest.spyOn(HttpHelper, "httpGet").mockImplementation(mockedEmptyResponse);
+    const tags = await getManifestSyncState(repo);
+    expect(tags).toHaveLength(0);
   });
 });
 
