@@ -385,11 +385,7 @@ export const renderMergedBy = (
   tableColumn: ITableColumn<IDeploymentField>,
   deployment: IDeploymentField
 ): JSX.Element => {
-  if (
-    deployment.pr &&
-    deployment.mergedByName &&
-    deployment.mergedByName !== ""
-  ) {
+  if (deployment.pr && deployment.mergedByName) {
     return (
       <Persona
         columnIndex={columnIndex}
