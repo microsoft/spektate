@@ -7,7 +7,7 @@ import {
   endTime,
   getRepositoryFromURL,
   IDeployment,
-  status
+  status,
 } from "spektate/lib/IDeployment";
 import { IAuthor } from "spektate/lib/repository/Author";
 import { IAzureDevOpsRepo } from "spektate/lib/repository/IAzureDevOpsRepo";
@@ -18,7 +18,7 @@ import "./css/dashboard.css";
 import {
   IDashboardFilterState,
   IDashboardState,
-  IDeploymentField
+  IDeploymentField,
 } from "./Dashboard.types";
 import { DeploymentFilter } from "./DeploymentFilter";
 import { DeploymentTable } from "./DeploymentTable";
@@ -38,7 +38,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
    * Filter state of dashboard
    */
   private filterState: IDashboardFilterState = {
-    defaultApplied: false
+    defaultApplied: false,
   };
 
   /**
@@ -60,7 +60,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       filteredDeployments: [],
       prs: {},
       refreshRate: Number.parseInt(searchParams.get("refresh") ?? "", 10) || 30, // default to 30 seconds
-      rowLimit: Number.parseInt(searchParams.get("limit") ?? "", 10) || 50 // default to 50 rows
+      rowLimit: Number.parseInt(searchParams.get("limit") ?? "", 10) || 50, // default to 50 rows
     };
   }
 
@@ -127,7 +127,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       this.setState({
         deployments,
         error: undefined,
-        filteredDeployments: this.state.deployments
+        filteredDeployments: this.state.deployments,
       });
       this.processQueryParams();
       this.updateFilteredDeployments();
@@ -135,16 +135,16 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       this.getPRs();
       if (!this.filterState.defaultApplied) {
         this.filter.setFilterItemState("authorFilter", {
-          value: this.filterState.currentlySelectedAuthors
+          value: this.filterState.currentlySelectedAuthors,
         });
         this.filter.setFilterItemState("serviceFilter", {
-          value: this.filterState.currentlySelectedServices
+          value: this.filterState.currentlySelectedServices,
         });
         this.filter.setFilterItemState("envFilter", {
-          value: this.filterState.currentlySelectedEnvs
+          value: this.filterState.currentlySelectedEnvs,
         });
         this.filter.setFilterItemState("keywordFilter", {
-          value: this.filterState.currentlySelectedKeyword
+          value: this.filterState.currentlySelectedKeyword,
         });
       }
       const tags = await HttpHelper.httpGet<IClusterSync>("/api/clustersync");
@@ -156,7 +156,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     } catch (e) {
       console.log(e);
       this.setState({
-        error: e
+        error: e,
       });
     }
   };
@@ -196,7 +196,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     const author = this.getAuthor(deployment);
     const pr = this.getPR(deployment);
     const tags = this.getClusterSyncStatusForDeployment(deployment);
-    const clusters: string[] = tags ? tags.map(itag => itag.name) : [];
+    const clusters: string[] = tags ? tags.map((itag) => itag.name) : [];
     const statusStr = status(deployment);
     const endtime = endTime(deployment);
     return {
@@ -274,7 +274,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         ? pr.mergedBy
           ? pr.mergedBy.imageUrl
           : undefined
-        : undefined
+        : undefined,
     };
   };
 
@@ -387,19 +387,19 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     let filteredDeployments: IDeployment[] = this.state.deployments;
 
     if (keywordFilter && keywordFilter.length > 0) {
-      filteredDeployments = filteredDeployments.filter(deployment => {
+      filteredDeployments = filteredDeployments.filter((deployment) => {
         return JSON.stringify(deployment).includes(keywordFilter);
       });
     }
 
     if (serviceFilters.size > 0) {
-      filteredDeployments = filteredDeployments.filter(deployment => {
+      filteredDeployments = filteredDeployments.filter((deployment) => {
         return serviceFilters.has(deployment.service);
       });
     }
 
     if (authorFilters.size > 0) {
-      filteredDeployments = filteredDeployments.filter(deployment => {
+      filteredDeployments = filteredDeployments.filter((deployment) => {
         if (deployment.author) {
           return authorFilters.has(deployment.author!.name);
         }
@@ -408,7 +408,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     }
 
     if (envFilters.size > 0) {
-      filteredDeployments = filteredDeployments.filter(deployment => {
+      filteredDeployments = filteredDeployments.filter((deployment) => {
         return envFilters.has(deployment.environment);
       });
     }
@@ -482,7 +482,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
    */
   private getListOfAuthors = (): Set<string> => {
     return new Set(
-      Object.values(this.state.authors).map(author => author.name)
+      Object.values(this.state.authors).map((author) => author.name)
     );
   };
 
@@ -494,7 +494,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     deployment: IDeployment
   ): ITag[] | undefined => {
     const statuses = this.state.manifestSyncStatuses ?? [];
-    const clusterSyncs = statuses.filter(tag => {
+    const clusterSyncs = statuses.filter((tag) => {
       return tag.commit === deployment.manifestCommitId;
     });
     if (!this.clusterSyncAvailable) {
@@ -536,7 +536,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       query.commit = commit;
     }
     return Object.keys(query)
-      .map(k => `${k}=${encodeURIComponent(query[k])}`)
+      .map((k) => `${k}=${encodeURIComponent(query[k])}`)
       .join("&");
   };
 
@@ -564,7 +564,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     }
 
     return Object.keys(query)
-      .map(k => `${k}=${encodeURIComponent(query[k])}`)
+      .map((k) => `${k}=${encodeURIComponent(query[k])}`)
       .join("&");
   };
 
@@ -574,11 +574,11 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
   private getPRs = () => {
     try {
       const state = this.state;
-      this.state.deployments.forEach(deployment => {
+      this.state.deployments.forEach((deployment) => {
         if (deployment.pr) {
           const queryParams = this.getPRRequestParams(deployment);
           if (queryParams !== "") {
-            HttpHelper.httpGet("/api/pr?" + queryParams).then(data => {
+            HttpHelper.httpGet("/api/pr?" + queryParams).then((data) => {
               const pr = data.data as IPullRequest;
               if (pr && deployment.pr) {
                 const copy = state.prs;
@@ -607,7 +607,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
           const authorQuery = this.getAuthorRequestParams(deployment);
           return {
             ...acc,
-            [authorQuery]: [...(acc[authorQuery] ?? []), deployment]
+            [authorQuery]: [...(acc[authorQuery] ?? []), deployment],
           };
         }, {})
       ).map(([query, deployments]) => ({ query, deployments }));
@@ -618,7 +618,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         );
         const author = response.data;
         const newAuthorEntries = deployments
-          .map(d => {
+          .map((d) => {
             return d.srcToDockerBuild
               ? { [d.srcToDockerBuild.sourceVersion]: author }
               : d.hldToManifestBuild
@@ -631,7 +631,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
           }, {});
 
         this.setState({
-          authors: { ...this.state.authors, ...newAuthorEntries }
+          authors: { ...this.state.authors, ...newAuthorEntries },
         });
         this.updateFilteredDeployments();
         return;
@@ -640,7 +640,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       Promise.all(requests).then(() => {
         if (!this.filterState.defaultApplied) {
           this.filter.setFilterItemState("authorFilter", {
-            value: this.filterState.currentlySelectedAuthors
+            value: this.filterState.currentlySelectedAuthors,
           });
           this.filterState.defaultApplied = true;
         }

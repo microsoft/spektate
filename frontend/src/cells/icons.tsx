@@ -13,7 +13,7 @@ const iconColors = {
   green: "#2aa05b",
   purple: "#5b50e2",
   red: "#c8281f",
-  yellow: "#e08a00"
+  yellow: "#e08a00",
 };
 
 /**
@@ -47,15 +47,15 @@ export const getStatusIndicatorData = (
     statusProps: {
       ...Statuses.Success,
       ariaLabel: "Success",
-      color: iconColors.green
-    }
+      color: iconColors.green,
+    },
   };
   switch (statusStr.toLowerCase()) {
     case "failed":
       indicatorData.statusProps = {
         ...Statuses.Failed,
         ariaLabel: "Failed",
-        color: iconColors.red
+        color: iconColors.red,
       };
       indicatorData.label = "Failed";
       indicatorData.classname = "icon-red";
@@ -64,7 +64,7 @@ export const getStatusIndicatorData = (
       indicatorData.statusProps = {
         ...Statuses.Running,
         ariaLabel: "Running",
-        color: iconColors.blue
+        color: iconColors.blue,
       };
       indicatorData.label = "Running";
       indicatorData.classname = "icon-blue";
@@ -73,7 +73,7 @@ export const getStatusIndicatorData = (
       indicatorData.statusProps = {
         ...Statuses.Waiting,
         ariaLabel: "Waiting",
-        color: iconColors.purple
+        color: iconColors.purple,
       };
       indicatorData.label = "Waiting";
       indicatorData.classname = "icon-purple";
@@ -82,7 +82,7 @@ export const getStatusIndicatorData = (
       indicatorData.statusProps = {
         ...Statuses.Warning,
         ariaLabel: "Incomplete",
-        color: iconColors.yellow
+        color: iconColors.yellow,
       };
       indicatorData.label = "Incomplete";
       indicatorData.classname = "icon-yellow";
@@ -91,7 +91,7 @@ export const getStatusIndicatorData = (
       indicatorData.statusProps = {
         ...Statuses.Canceled,
         ariaLabel: "Canceled",
-        color: iconColors.gray
+        color: iconColors.gray,
       };
       indicatorData.label = "Canceled";
       indicatorData.classname = "icon-gray";
@@ -108,14 +108,14 @@ export const getIcon = (statusStr?: string): IIconProps => {
   if (statusStr === "succeeded") {
     return {
       iconName: "SkypeCircleCheck",
-      style: { color: iconColors.green }
+      style: { color: iconColors.green },
     };
   } else if (statusStr === undefined || statusStr === "inProgress") {
     return { iconName: "AwayStatus", style: { color: iconColors.blue } }; // SyncStatusSolid
   } else if (statusStr === "canceled") {
     return {
       iconName: "SkypeCircleSlash",
-      style: { color: iconColors.gray }
+      style: { color: iconColors.gray },
     };
   } else if (statusStr === "waiting") {
     return { iconName: "AwayStatus", style: { color: iconColors.purple } };

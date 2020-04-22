@@ -4,23 +4,24 @@
   "license": "MIT",
   "dependencies": {
     "@types/express": "^4.17.0",
-    "spektate": "^1.0.10",
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "spektate": "^1.0.10"
   },
   "scripts": {
     "start": "ts-node src/index.ts",
     "build": "tsc src/** --outDir ./build/",
-    "lint": "tslint -p tsconfig.json -c tslint.json src/*.ts"
+    "lint": "tslint -p tsconfig.json -c tslint.json src/*.ts",
+    "prettier": "prettier --write src"
   },
   "devDependencies": {
     "@types/node": "^12.6.8",
-    "ts-node": "^8.5.4",
-    "tslint": "^5.20.0",
-    "tslint-config-prettier": "^1.18.0",
-    "typescript": "^3.5.3",
     "husky": "^4.2.5",
     "lint-staged": "^10.1.5",
-    "prettier": "^2.0.4"
+    "prettier": "^2.0.5",
+    "ts-node": "^8.9.0",
+    "tslint": "^6.1.1",
+    "tslint-config-prettier": "^1.18.0",
+    "typescript": "^3.8.3"
   },
   "husky": {
     "hooks": {

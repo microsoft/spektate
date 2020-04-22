@@ -18,6 +18,7 @@
     "build": "react-scripts-ts build",
     "eject": "react-scripts-ts eject",
     "lint": "tslint -p tsconfig.json -c tslint.json src/**/*.ts",
+    "prettier": "prettier --write src",
     "refresh": "rm -rf ./node_modules ./package-lock.json && npm install"
   },
   "devDependencies": {
@@ -26,15 +27,15 @@
     "@types/node": "^12.6.8",
     "@types/react": "^16.8.10",
     "@types/react-dom": "^16.8.3",
-    "husky": "^3.0.4",
-    "lint-staged": "^9.2.5",
-    "prettier": "^1.18.2",
-    "ts-jest": "^24.0.2",
-    "ts-node": "^8.5.4",
-    "tslint": "^5.20.0",
+    "husky": ">=4",
+    "lint-staged": ">=10",
+    "prettier": "^2.0.5",
+    "ts-jest": "^25.4.0",
+    "ts-node": "^8.9.0",
+    "tslint": "^6.1.1",
     "tslint-config-prettier": "^1.18.0",
     "tslint-react": "^4.2.0",
-    "typescript": "^3.5.3"
+    "typescript": "^3.8.3"
   },
   "browserslist": [
     ">0.2%",
@@ -56,10 +57,7 @@
     }
   },
   "lint-staged": {
-    "*.{ts,tsx,js,jsx,css,json,md,yml}": [
-      "prettier --write",
-      "git add"
-    ]
+    "*.{ts,tsx,js,jsx,css,json,md,yml,yaml}": "prettier --write"
   },
   "resolutions": {
     "**/*/serialize-javascript": ">=2.1.1",
