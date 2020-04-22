@@ -171,8 +171,8 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         rows = new Array(15).fill(new ObservableValue(undefined));
       } else {
         rows = this.state.filteredDeployments
-          .slice(0, this.state.rowLimit)
-          .map(this.getDeploymentToDisplay);
+          .map(this.getDeploymentToDisplay)
+          .slice(0, this.state.rowLimit);
       }
     } catch (err) {
       console.error(err);
