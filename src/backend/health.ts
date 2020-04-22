@@ -9,8 +9,8 @@ export interface ISpektateConfig {
   [id: string]: string;
 }
 
-export const getKeyToDisplay = (key: string) => {
-  return key.replace(/.(?=.{4})/g, "*");
+export const getKeyToDisplay = (key: string): string => {
+  return key ? key.replace(/.(?=.{4})/g, "*") : "";
 };
 
 export const get = async (req: Request, res: Response) => {
@@ -32,24 +32,12 @@ export const get = async (req: Request, res: Response) => {
       errors: status.errors,
       variables: {
         AZURE_ORG: config.AZURE_ORG,
-        AZURE_PIPELINE_ACCESS_TOKEN:
-          config.AZURE_PIPELINE_ACCESS_TOKEN !== ""
-            ? getKeyToDisplay(config.AZURE_PIPELINE_ACCESS_TOKEN)
-            : "",
+        AZURE_PIPELINE_ACCESS_TOKEN: getKeyToDisplay(config.AZURE_PIPELINE_ACCESS_TOKEN),
         AZURE_PROJECT: config.AZURE_PROJECT,
         MANIFEST: config.MANIFEST,
-        MANIFEST_ACCESS_TOKEN:
-          config.MANIFEST_ACCESS_TOKEN !== ""
-            ? getKeyToDisplay(config.MANIFEST_ACCESS_TOKEN)
-            : "",
-        SOURCE_REPO_ACCESS_TOKEN:
-          config.SOURCE_REPO_ACCESS_TOKEN !== ""
-            ? getKeyToDisplay(config.SOURCE_REPO_ACCESS_TOKEN)
-            : "",
-        STORAGE_ACCOUNT_KEY:
-          config.STORAGE_ACCOUNT_KEY !== ""
-            ? getKeyToDisplay(config.STORAGE_ACCOUNT_KEY)
-            : "",
+        MANIFEST_ACCESS_TOKEN: getKeyToDisplay(config.MANIFEST_ACCESS_TOKEN),
+        SOURCE_REPO_ACCESS_TOKEN: getKeyToDisplay(config.SOURCE_REPO_ACCESS_TOKEN),
+        STORAGE_ACCOUNT_KEY: getKeyToDisplay(config.STORAGE_ACCOUNT_KEY),
         STORAGE_ACCOUNT_NAME: config.STORAGE_ACCOUNT_NAME,
         STORAGE_PARTITION_KEY: config.STORAGE_PARTITION_KEY,
         STORAGE_TABLE_NAME: config.STORAGE_TABLE_NAME
