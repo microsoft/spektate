@@ -2,12 +2,12 @@ import { Request, Response } from "express";
 import {
   getManifestSyncState as getADOClusterSync,
   getReleasesURL as getADOReleasesURL,
-  IAzureDevOpsRepo
+  IAzureDevOpsRepo,
 } from "spektate/lib/repository/IAzureDevOpsRepo";
 import {
   getManifestSyncState as getGitHubClusterSync,
   getReleasesURL as getGitHubReleasesURL,
-  IGitHub
+  IGitHub,
 } from "spektate/lib/repository/IGitHub";
 import { IClusterSync } from "spektate/lib/repository/Tag";
 import * as config from "./config";
@@ -23,7 +23,7 @@ const getManifestRepoSyncState = (): Promise<IClusterSync | undefined> => {
   ) {
     manifestRepo = {
       reponame: config.MANIFEST,
-      username: config.GITHUB_MANIFEST_USERNAME
+      username: config.GITHUB_MANIFEST_USERNAME,
     };
     releasesURL = getGitHubReleasesURL(manifestRepo);
 
@@ -32,13 +32,13 @@ const getManifestRepoSyncState = (): Promise<IClusterSync | undefined> => {
         manifestRepo as IGitHub,
         config.MANIFEST_ACCESS_TOKEN
       )
-        .then(syncCommits => {
+        .then((syncCommits) => {
           resolve({
             releasesURL,
-            tags: syncCommits
+            tags: syncCommits,
           });
         })
-        .catch(err => {
+        .catch((err) => {
           reject(err);
         });
     });
@@ -46,7 +46,7 @@ const getManifestRepoSyncState = (): Promise<IClusterSync | undefined> => {
     manifestRepo = {
       org: config.AZURE_ORG,
       project: config.AZURE_PROJECT,
-      repo: config.MANIFEST
+      repo: config.MANIFEST,
     };
     releasesURL = getADOReleasesURL(manifestRepo);
     return new Promise((resolve, reject) => {
@@ -54,13 +54,13 @@ const getManifestRepoSyncState = (): Promise<IClusterSync | undefined> => {
         manifestRepo as IAzureDevOpsRepo,
         config.MANIFEST_ACCESS_TOKEN
       )
-        .then(syncCommits => {
+        .then((syncCommits) => {
           resolve({
             releasesURL,
-            tags: syncCommits
+            tags: syncCommits,
           });
         })
-        .catch(err => {
+        .catch((err) => {
           reject(err);
         });
     });

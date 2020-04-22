@@ -1,11 +1,11 @@
 import * as express from "express";
 import * as path from "path";
-import { get as authorGet } from "./backend/author";
-import { get as clusterSyncGet } from "./backend/clustersync";
-import { get as deploymentGet } from "./backend/deployment";
-import { get as health } from "./backend/health";
-import { get as prGet } from "./backend/pullrequest";
-import { get as version } from "./backend/version";
+import { get as authorGet } from "./author";
+import { get as clusterSyncGet } from "./clustersync";
+import { get as deploymentGet } from "./deployment";
+import { get as health } from "./health";
+import { get as prGet } from "./pullrequest";
+import { get as version } from "./version";
 
 const app = express();
 
