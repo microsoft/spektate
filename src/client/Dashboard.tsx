@@ -23,19 +23,7 @@ import {
 import { DeploymentFilter } from "./DeploymentFilter";
 import { DeploymentTable } from "./DeploymentTable";
 
-const REFRESH_INTERVAL = 30000;
 class Dashboard<Props> extends React.Component<Props, IDashboardState> {
-  public state: IDashboardState = {
-    authors: {},
-    deployments: [],
-    filteredDeployments: [],
-    prs: {},
-    rowLimit: Number.parseInt(
-      new URLSearchParams(location.search).get("limit") ?? "50", // default to 50 rows
-      10
-    )
-  };
-
   /**
    * Interval timer that refreshes dashboard to update stale data
    */
@@ -63,9 +51,28 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
    */
   private releasesUrl?: string;
 
+  public constructor(props: Props) {
+    super(props);
+    const searchParams = new URLSearchParams(location.search);
+    this.state = {
+      authors: {},
+      deployments: [],
+      filteredDeployments: [],
+      prs: {},
+      refreshRate: Number.parseInt(searchParams.get("refresh") ?? "", 10) || 30, // default to 30 seconds
+      rowLimit: Number.parseInt(searchParams.get("limit") ?? "", 10) || 50 // default to 50 rows
+    };
+  }
+
   public componentDidMount() {
-    this.interval = setInterval(this.updateDeployments, REFRESH_INTERVAL);
-    this.updateDeployments();
+    this.startRefreshLoop();
+  }
+
+  public componentDidUpdate(prevProps: Props, prevState: IDashboardState) {
+    // update refresh loop if changed
+    if (this.state.refreshRate !== prevState.refreshRate) {
+      this.startRefreshLoop();
+    }
   }
 
   public componentWillUnmount() {
@@ -351,6 +358,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     setParams(searchParams, "author", authorFilters);
     setParams(searchParams, "env", envFilters);
     setParams(searchParams, "limit", this.state.rowLimit.toString());
+    setParams(searchParams, "refresh", this.state.refreshRate.toString());
 
     if (history.replaceState) {
       const newUrl = window.location.pathname + "?" + searchParams.toString();
@@ -412,7 +420,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
    * Processes query parameters and applies it to filters
    */
   private processQueryParams = () => {
-    if (window.location.search === "") {
+    if (location.search.substring(1) === "") {
       return;
     }
 
@@ -676,6 +684,19 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       return this.state.prs[deployment.pr];
     }
     return undefined;
+  };
+
+  /**
+   * Starts the polling loop to refresh deployments
+   * - This clears previously started refresh timeout.
+   */
+  private startRefreshLoop = async () => {
+    clearTimeout(this.interval);
+    await this.updateDeployments();
+    this.interval = setTimeout(
+      this.startRefreshLoop,
+      this.state.refreshRate * 1000
+    );
   };
 }
 
