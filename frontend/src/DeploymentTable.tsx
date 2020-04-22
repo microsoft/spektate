@@ -448,6 +448,10 @@ export const renderDeploymentStatus = (
   );
 };
 
+/**
+ * initializes sort functions that assist in sorting certain columns of the dashboard
+ * @param isClusterSyncAvailable 
+ */
 export const initSortFunctions = (isClusterSyncAvailable: boolean) => {
   sortFunctions = [
     null,
@@ -477,9 +481,7 @@ export const initSortFunctions = (isClusterSyncAvailable: boolean) => {
     null,
     // Sort on Merged By
     (item1: IDeploymentField, item2: IDeploymentField): number => {
-      return item1.mergedByName && item2.mergedByName
-        ? item1.mergedByName!.localeCompare(item2.mergedByName!)
-        : 1;
+      return (item1.mergedByName || "").localeCompare(item2.mergedByName || "");
     },
     // Sort on HLD to Manifest
     null,
