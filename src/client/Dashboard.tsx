@@ -23,19 +23,7 @@ import {
 import { DeploymentFilter } from "./DeploymentFilter";
 import { DeploymentTable } from "./DeploymentTable";
 
-const REFRESH_INTERVAL = 30000;
 class Dashboard<Props> extends React.Component<Props, IDashboardState> {
-  public state: IDashboardState = {
-    authors: {},
-    deployments: [],
-    filteredDeployments: [],
-    prs: {},
-    rowLimit: Number.parseInt(
-      new URLSearchParams(location.search).get("limit") ?? "50", // default to 50 rows
-      10
-    )
-  };
-
   /**
    * Interval timer that refreshes dashboard to update stale data
    */
@@ -49,9 +37,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
   /**
    * Filter state of dashboard
    */
-  private filterState: IDashboardFilterState = {
-    defaultApplied: false
-  };
+  private filterState: IDashboardFilterState = {};
 
   /**
    * Whether or not a cluster is synced to service(s) in this dashboard
@@ -63,13 +49,66 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
    */
   private releasesUrl?: string;
 
+  public constructor(props: Props) {
+    super(props);
+
+    // Inherit default filter state from GET params
+    const searchParams = new URLSearchParams(location.search);
+    this.filterState = {
+      ...this.filterState,
+      currentlySelectedAuthors: searchParams.getAll("author"),
+      currentlySelectedEnvs: searchParams.getAll("env"),
+      currentlySelectedKeyword: searchParams.get("keyword") ?? "",
+      currentlySelectedServices: searchParams.getAll("service")
+    };
+
+    this.state = {
+      authors: {},
+      deployments: [],
+      filteredDeployments: [],
+      prs: {},
+      refreshRate: Number.parseInt(
+        searchParams.get("refresh") ?? "30", // default to 30 seconds
+        10
+      ),
+      rowLimit: Number.parseInt(
+        searchParams.get("limit") ?? "50", // default to 50 rows
+        10
+      ),
+      searchParams
+    };
+  }
+
   public componentDidMount() {
-    this.interval = setInterval(this.updateDeployments, REFRESH_INTERVAL);
-    this.updateDeployments();
+    this.startRefreshLoop();
+  }
+
+  public componentDidUpdate(prevProps: Props, prevState: IDashboardState) {
+    // update refresh loop
+    if (this.state.refreshRate !== prevState.refreshRate) {
+      this.startRefreshLoop();
+    }
+    // update filters
+    if (
+      this.state.searchParams.toString() !== prevState.searchParams.toString()
+    ) {
+      this.filter.setFilterItemState("authorFilter", {
+        value: this.filterState.currentlySelectedAuthors
+      });
+      this.filter.setFilterItemState("serviceFilter", {
+        value: this.filterState.currentlySelectedServices
+      });
+      this.filter.setFilterItemState("envFilter", {
+        value: this.filterState.currentlySelectedEnvs
+      });
+      this.filter.setFilterItemState("keywordFilter", {
+        value: this.filterState.currentlySelectedKeyword
+      });
+    }
   }
 
   public componentWillUnmount() {
-    clearInterval(this.interval);
+    clearTimeout(this.interval);
   }
 
   /**
@@ -94,7 +133,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         {this.state.error ? (
           <Card>{this.state.error.toString()}</Card>
         ) : (
-          this.renderTable()
+          <this.Table />
         )}
       </div>
     );
@@ -117,29 +156,26 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         throw new Error("No deployments were found for this configuration.");
       }
 
-      this.setState({
-        deployments,
-        error: undefined,
-        filteredDeployments: this.state.deployments
-      });
-      this.processQueryParams();
-      this.updateFilteredDeployments();
+      const fetchedUpdatedDeployments =
+        JSON.stringify(this.state.deployments) !== JSON.stringify(deployments);
+      if (fetchedUpdatedDeployments) {
+        this.setState(
+          {
+            deployments,
+            error: undefined,
+            filteredDeployments:
+              this.state.filteredDeployments.length > 0
+                ? this.state.filteredDeployments
+                : deployments
+          },
+          () => {
+            this.processQueryParams();
+            this.updateFilteredDeployments();
+          }
+        );
+      }
       this.getAuthors();
       this.getPRs();
-      if (!this.filterState.defaultApplied) {
-        this.filter.setFilterItemState("authorFilter", {
-          value: this.filterState.currentlySelectedAuthors
-        });
-        this.filter.setFilterItemState("serviceFilter", {
-          value: this.filterState.currentlySelectedServices
-        });
-        this.filter.setFilterItemState("envFilter", {
-          value: this.filterState.currentlySelectedEnvs
-        });
-        this.filter.setFilterItemState("keywordFilter", {
-          value: this.filterState.currentlySelectedKeyword
-        });
-      }
       const tags = await HttpHelper.httpGet<IClusterSync>("/api/clustersync");
 
       if (tags.data && tags.data.releasesURL) {
@@ -157,7 +193,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
   /**
    * Renders table of deployments
    */
-  private renderTable = () => {
+  private Table = () => {
     let rows: IDeploymentField[] = [];
     try {
       if (this.state.filteredDeployments.length === 0) {
@@ -351,6 +387,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     setParams(searchParams, "author", authorFilters);
     setParams(searchParams, "env", envFilters);
     setParams(searchParams, "limit", this.state.rowLimit.toString());
+    setParams(searchParams, "refresh", this.state.refreshRate.toString());
 
     if (history.replaceState) {
       const newUrl = window.location.pathname + "?" + searchParams.toString();
@@ -412,7 +449,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
    * Processes query parameters and applies it to filters
    */
   private processQueryParams = () => {
-    if (window.location.search === "") {
+    if (location.search.substring(1) === "") {
       return;
     }
 
@@ -561,34 +598,39 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
   /**
    * Fetches PRs for all deployments asynchronously
    */
-  private getPRs = () => {
+  private getPRs = async () => {
     try {
-      const state = this.state;
-      this.state.deployments.forEach(deployment => {
+      const requests = this.state.deployments.map(async deployment => {
         if (deployment.pr) {
           const queryParams = this.getPRRequestParams(deployment);
           if (queryParams !== "") {
-            HttpHelper.httpGet("/api/pr?" + queryParams).then(data => {
-              const pr = data.data as IPullRequest;
-              if (pr && deployment.pr) {
-                const copy = state.prs;
-                copy[deployment.pr] = pr;
-                this.setState({ prs: copy });
-                this.updateFilteredDeployments();
-              }
-            });
+            const data = await HttpHelper.httpGet("/api/pr?" + queryParams);
+            const pr = data.data as IPullRequest;
+            if (pr && deployment.pr) {
+              this.setState(
+                {
+                  prs: {
+                    ...this.state.prs,
+                    [deployment.pr]: pr
+                  }
+                },
+                this.updateFilteredDeployments
+              );
+            }
           }
         }
       });
+      return Promise.all(requests);
     } catch (err) {
       console.error(err);
+      return [];
     }
   };
 
   /**
    * Sends requests to fetch all authors asynchronously
    */
-  private getAuthors = () => {
+  private getAuthors = async () => {
     try {
       const authors = Object.entries(
         this.state.deployments.reduce<{
@@ -620,21 +662,16 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
             return { ...acc, ...entry };
           }, {});
 
-        this.setState({
-          authors: { ...this.state.authors, ...newAuthorEntries }
-        });
-        this.updateFilteredDeployments();
+        this.setState(
+          {
+            authors: { ...this.state.authors, ...newAuthorEntries }
+          },
+          this.updateFilteredDeployments
+        );
         return;
       });
 
-      Promise.all(requests).then(() => {
-        if (!this.filterState.defaultApplied) {
-          this.filter.setFilterItemState("authorFilter", {
-            value: this.filterState.currentlySelectedAuthors
-          });
-          this.filterState.defaultApplied = true;
-        }
-      });
+      await Promise.all(requests);
     } catch (err) {
       console.error(err);
     }
@@ -674,6 +711,19 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       return this.state.prs[deployment.pr];
     }
     return undefined;
+  };
+
+  /**
+   * Starts the polling loop to refresh deployments
+   * - This kills the any previously started timeout loop started
+   */
+  private startRefreshLoop = async () => {
+    clearTimeout(this.interval);
+    await this.updateDeployments();
+    this.interval = setTimeout(
+      this.startRefreshLoop,
+      this.state.refreshRate * 1000
+    );
   };
 }
 

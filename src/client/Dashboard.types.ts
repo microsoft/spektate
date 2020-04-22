@@ -9,9 +9,11 @@ export interface IStatusIndicatorData {
   label: string;
   classname: string;
 }
+
 export interface IAuthors {
   [commitId: string]: IAuthor;
 }
+
 export interface IPRs {
   [pr: string]: IPullRequest;
 }
@@ -21,8 +23,8 @@ export interface IDashboardFilterState {
   currentlySelectedEnvs?: string[];
   currentlySelectedAuthors?: string[];
   currentlySelectedKeyword?: string;
-  defaultApplied: boolean;
 }
+
 export interface IDashboardState {
   deployments: IDeployment[];
   manifestSyncStatuses?: ITag[];
@@ -30,8 +32,11 @@ export interface IDashboardState {
   filteredDeployments: IDeployment[];
   prs: IPRs;
   error?: string;
+  refreshRate: number;
   rowLimit: number;
+  searchParams: URLSearchParams;
 }
+
 export interface IDeploymentField {
   deploymentId: string;
   service: string;
