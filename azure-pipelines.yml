@@ -4,48 +4,57 @@ trigger:
 pool:
   vmImage: "ubuntu-latest"
 
-steps:
-  - task: NodeTool@0
-    inputs:
-      versionSpec: "10.x"
-    displayName: "Install Node.js"
+stages:
+  - stage: spektate_ci
+    jobs:
+      - job: build_and_test
+        pool:
+          vmImage: "Ubuntu 16.04"
+        steps:
+          - task: NodeTool@0
+            inputs:
+              versionSpec: "10.x"
+            displayName: "Install Node.js"
 
-  - script: |
-      yarn install
-    workingDirectory: "./"
-    displayName: "yarn"
+          - script: |
+              yarn install
+              yarn lint
+              yarn build
+            workingDirectory: "./frontend"
+            displayName: "Frontend install, lint and build"
 
-  - script: |
-      yarn lint
-    workingDirectory: "./"
-    displayName: "tslint"
+          - script: |
+              yarn install
+              yarn lint
+              yarn build
+            workingDirectory: "./backend"
+            displayName: "Backend install, lint and build"
 
-  - script: |
-      yarn build
-    workingDirectory: "./"
-    displayName: "Build"
+          - script: |
+              set -e
+              cd packages/spektate
+              yarn
+              yarn build
+              yarn lint
+              yarn test
+            displayName: "Spektate build, lint and test"
 
-  - task: Docker@2
-    inputs:
-      containerRegistry: "spektateacrconnection"
-      repository: "spektate"
-      command: "buildAndPush"
-      Dockerfile: "**/Dockerfile"
-      tags: "spektate-$(Build.SourceBranchName)-$(Build.BuildId)"
-    condition: ne(variables['Build.Reason'], 'PullRequest')
-    displayName: Build docker image
+          - task: PublishCodeCoverageResults@1
+            inputs:
+              codeCoverageTool: Cobertura
+              summaryFileLocation: "$(System.DefaultWorkingDirectory)/**/*coverage.xml"
+              reportDirectory: "$(System.DefaultWorkingDirectory)/**/coverage"
 
-  - script: |
-      set -e
-      cd packages/spektate
-      yarn
-      yarn build
-      yarn lint
-      yarn test
-    displayName: "package build, lint and test"
-
-  - task: PublishCodeCoverageResults@1
-    inputs:
-      codeCoverageTool: Cobertura
-      summaryFileLocation: "$(System.DefaultWorkingDirectory)/**/*coverage.xml"
-      reportDirectory: "$(System.DefaultWorkingDirectory)/**/coverage"
+      - job: docker_build
+        pool:
+          vmImage: "Ubuntu 16.04"
+        steps:
+          - task: Docker@2
+            inputs:
+              containerRegistry: "spektateacrconnection"
+              repository: "spektate"
+              command: "buildAndPush"
+              Dockerfile: "**/Dockerfile"
+              tags: "spektate-$(Build.SourceBranchName)-$(Build.BuildId)"
+            condition: ne(variables['Build.Reason'], 'PullRequest')
+            displayName: Build docker image

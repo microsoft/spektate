@@ -1,0 +1,70 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+}
+
+.App {
+  max-width: 100vw;
+  text-align: center;
+}
+
+.App-header {
+  background-color: #222;
+  color: white;
+  position: relative;
+}
+
+.App-title {
+  font-size: 1.5em;
+  display: inline-block;
+}
+
+.App-last-update {
+  float: right;
+  height: 100%;
+  position: absolute;
+  right: 20px;
+  font-size: 1em;
+  top: 0px;
+}
+
+.App-last-update > div {
+  height: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: sans-serif;
+  max-height: 100%;
+}
+
+.App-intro {
+  font-size: large;
+}
+
+.PrototypeTable {
+  overflow: scroll;
+}
+
+.FilterBar {
+  margin-top: -8px;
+}
+
+.icon-blue {
+  color: #0a78d4;
+}
+.icon-red {
+  color: #c8281f;
+}
+.icon-gray {
+  color: #3b606d;
+}
+.icon-green {
+  color: #2aa05b;
+}
+.icon-yellow {
+  color: #e08a00;
+}
+.icon-purple {
+  color: #5b50e2;
+}

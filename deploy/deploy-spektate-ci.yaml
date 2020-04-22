@@ -1,0 +1,37 @@
+trigger: none
+
+schedules:
+  - cron: "0 3 * * Mon-Fri"
+    branches:
+      include: [master]
+    displayName: M-F 7:00PM (UTC - 8:00) Pacific daily build
+    always: true
+
+variables:
+- name: skipComponentGovernanceDetection
+  value: "true"
+- group: 'spektate-ci-vg'
+
+jobs:
+  - job: Spektate_Publish
+    steps:
+      - script: |
+          # Login to Azure
+          echo "az login --service-principal --username $(SP_APP_ID) --password $(SP_PASS) --tenant $(SP_TENANT)"
+          az login --service-principal --username "$(SP_APP_ID)" --password "$(SP_PASS)" --tenant "$(SP_TENANT)"
+
+          # Make env vars available to child processes by exporting
+          export MANIFEST_REPO_NAME=$(MANIFEST_REPO_NAME)
+          export MANIFEST_REPO_PAT=$(MANIFEST_REPO_PAT)
+          export AZDO_PIPELINE_PAT=$(AZDO_PIPELINE_PAT)
+          export AZDO_ORG_NAME=$(AZDO_ORG_NAME)
+          export AZDO_PROJECT_NAME=$(AZDO_PROJECT_NAME)
+          export AZ_STORAGE_KEY=$(AZ_STORAGE_KEY)
+          export AZ_STORAGE_NAME=$(AZ_STORAGE_NAME)
+          export PARTITION_KEY_NAME=$(PARTITION_KEY_NAME)
+          export AZ_STORAGE_TABLE_NAME=$(AZ_STORAGE_TABLE_NAME)
+          export RESOURCE_GROUP=$(RESOURCE_GROUP)
+
+          sh ./deploy/deploy-latest-image.sh
+        displayName: "Run deploy script"
+          

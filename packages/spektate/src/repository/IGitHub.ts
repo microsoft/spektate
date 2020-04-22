@@ -28,6 +28,11 @@ export const getManifestSyncState = (
           .replace("<repo>", repository.reponame),
         accessToken
       );
+
+      if (allTags.status !== 200) {
+        throw new Error(allTags.statusText);
+      }
+
       const tags = allTags.data;
       if (tags != null && tags.length > 0) {
         const fluxTags: ITag[] = [];
@@ -46,14 +51,14 @@ export const getManifestSyncState = (
               accessToken
             );
 
-            if (syncStatus != null) {
+            if (syncStatus != null && syncStatus.data && syncStatus.data.tag) {
               const clusterName = syncStatus.data.tag.replace("flux-", "");
               const manifestSync = {
-                commit: syncStatus.data.object.sha.substring(0, 7),
-                date: new Date(syncStatus.data.tagger.date),
+                commit: syncStatus.data.object?.sha?.substring(0, 7),
+                date: new Date(syncStatus.data.tagger?.date),
                 message: syncStatus.data.message,
                 name: clusterName.toUpperCase(),
-                tagger: syncStatus.data.tagger.name
+                tagger: syncStatus.data.tagger?.name
               };
               fluxTags.push(manifestSync);
             }
@@ -102,18 +107,18 @@ export const getPullRequest = (
           id: pr.number,
           mergedBy: pr.merged_by
             ? {
-                imageUrl: pr.merged_by.avatar_url
-                  ? pr.merged_by.avatar_url
-                  : "",
-                name: pr.merged_by.login ? pr.merged_by.login : "",
-                url: pr.merged_by.url ? pr.merged_by.html_url : "",
-                username: pr.merged_by.login ? pr.merged_by.login : ""
-              }
+              imageUrl: pr.merged_by.avatar_url
+                ? pr.merged_by.avatar_url
+                : "",
+              name: pr.merged_by.login ? pr.merged_by.login : "",
+              url: pr.merged_by.url ? pr.merged_by.html_url : "",
+              username: pr.merged_by.login ? pr.merged_by.login : ""
+            }
             : undefined,
-          sourceBranch: pr.head.ref,
-          targetBranch: pr.base.ref,
+          sourceBranch: pr.head ? pr.head.ref : "",
+          targetBranch: pr.base ? pr.base.ref : "",
           title: pr.title,
-          url: pr.url
+          url: pr.html_url ? pr.html_url : ""
         });
       } else {
         reject("No PR was found for " + pullRequestId);
@@ -136,6 +141,10 @@ export const getAuthor = async (
       .replace("<commitId>", commitId),
     accessToken
   );
+
+  if (data.status !== 200) {
+    throw new Error(data.statusText);
+  }
 
   const authorInfo = data.data;
   if (authorInfo != null) {
