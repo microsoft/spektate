@@ -32,16 +32,20 @@ export const get = async (req: Request, res: Response) => {
       errors: status.errors,
       variables: {
         AZURE_ORG: config.AZURE_ORG,
-        AZURE_PIPELINE_ACCESS_TOKEN: getKeyToDisplay(config.AZURE_PIPELINE_ACCESS_TOKEN),
+        AZURE_PIPELINE_ACCESS_TOKEN: getKeyToDisplay(
+          config.AZURE_PIPELINE_ACCESS_TOKEN
+        ),
         AZURE_PROJECT: config.AZURE_PROJECT,
         MANIFEST: config.MANIFEST,
         MANIFEST_ACCESS_TOKEN: getKeyToDisplay(config.MANIFEST_ACCESS_TOKEN),
-        SOURCE_REPO_ACCESS_TOKEN: getKeyToDisplay(config.SOURCE_REPO_ACCESS_TOKEN),
+        SOURCE_REPO_ACCESS_TOKEN: getKeyToDisplay(
+          config.SOURCE_REPO_ACCESS_TOKEN
+        ),
         STORAGE_ACCOUNT_KEY: getKeyToDisplay(config.STORAGE_ACCOUNT_KEY),
         STORAGE_ACCOUNT_NAME: config.STORAGE_ACCOUNT_NAME,
         STORAGE_PARTITION_KEY: config.STORAGE_PARTITION_KEY,
-        STORAGE_TABLE_NAME: config.STORAGE_TABLE_NAME
-      }
+        STORAGE_TABLE_NAME: config.STORAGE_TABLE_NAME,
+      },
     };
     if (config.GITHUB_MANIFEST_USERNAME !== "") {
       health.variables.GITHUB_MANIFEST_USERNAME =

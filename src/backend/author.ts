@@ -18,7 +18,7 @@ const getAuthor = (
       .then((author: IAuthor | undefined) => {
         resolve(author);
       })
-      .catch(err => {
+      .catch((err) => {
         console.error(err);
         reject(err);
       });
@@ -35,13 +35,13 @@ export const get = async (req: Request, res: Response) => {
           const author = await getAuthor(req.query.commit, {
             org: req.query.org,
             project: req.query.project,
-            repo: req.query.repo
+            repo: req.query.repo,
           });
           res.json(author || {});
         } else if (req.query.username && req.query.reponame) {
           const author = await getAuthor(req.query.commit, {
             reponame: req.query.reponame,
-            username: req.query.username
+            username: req.query.username,
           });
           res.json(author || {});
         } else {

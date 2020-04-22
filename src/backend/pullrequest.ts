@@ -18,7 +18,7 @@ const getPR = (
       .then((pr: IPullRequest | undefined) => {
         resolve(pr);
       })
-      .catch(err => {
+      .catch((err) => {
         console.error(err);
         reject(err);
       });
@@ -35,13 +35,13 @@ export const get = async (req: Request, res: Response) => {
           const pr = await getPR(req.query.pr, {
             org: req.query.org,
             project: req.query.project,
-            repo: req.query.repo
+            repo: req.query.repo,
           });
           res.json(pr || {});
         } else if (req.query.username && req.query.reponame) {
           const pr = await getPR(req.query.pr, {
             reponame: req.query.reponame,
-            username: req.query.username
+            username: req.query.username,
           });
           res.json(pr || {});
         } else {
