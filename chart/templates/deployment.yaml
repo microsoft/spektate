@@ -48,6 +48,8 @@ spec:
             value: {{ .Values.githubManifestUsername }}
           - name: REACT_APP_SOURCE_REPO_ACCESS_TOKEN
             value: {{ .Values.sourceRepoAccessToken }}
+          - name: REACT_APP_DOCKER_VERSION
+            value: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           ports:
             - containerPort: {{ .Values.service.internalPort }}
           livenessProbe:

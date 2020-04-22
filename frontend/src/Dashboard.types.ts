@@ -31,6 +31,7 @@ export interface IDashboardState {
   prs: IPRs;
   error?: string;
   rowLimit: number;
+  refreshRate: number;
 }
 export interface IDeploymentField {
   deploymentId: string;

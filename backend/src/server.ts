@@ -3,7 +3,9 @@ import * as path from "path";
 import { get as authorGet } from "./author";
 import { get as clusterSyncGet } from "./clustersync";
 import { get as deploymentGet } from "./deployment";
+import { get as health } from "./health";
 import { get as prGet } from "./pullrequest";
+import { get as version } from "./version";
 
 const app = express();
 
@@ -21,6 +23,12 @@ app.get("/api/author", (req: express.Request, res: express.Response) => {
 });
 app.get("/api/pr", (req: express.Request, res: express.Response) => {
   prGet(req, res);
+});
+app.get("/api/health", (req: express.Request, res: express.Response) => {
+  health(req, res);
+});
+app.get("/api/version", (req: express.Request, res: express.Response) => {
+  version(req, res);
 });
 
 // The "catchall" handler: for any request that doesn't

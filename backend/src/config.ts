@@ -1,6 +1,6 @@
 import { Response } from "express";
 
-export const AZURE_ORG: string = process.env.REACT_APP_PIPELINE_ORG || "" || "";
+export const AZURE_ORG: string = process.env.REACT_APP_PIPELINE_ORG || "";
 export const AZURE_PIPELINE_ACCESS_TOKEN: string =
   process.env.REACT_APP_PIPELINE_ACCESS_TOKEN || "";
 export const AZURE_PROJECT: string =
@@ -20,6 +20,8 @@ export const STORAGE_PARTITION_KEY: string =
   process.env.REACT_APP_STORAGE_PARTITION_KEY || "";
 export const STORAGE_TABLE_NAME: string =
   process.env.REACT_APP_STORAGE_TABLE_NAME || "";
+export const DOCKER_VERSION: string =
+  process.env.REACT_APP_DOCKER_VERSION || "";
 
 export const isValuesValid = (res: Response) => {
   if (
