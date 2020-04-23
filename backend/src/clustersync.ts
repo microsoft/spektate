@@ -10,28 +10,26 @@ import {
   IGitHub,
 } from "spektate/lib/repository/IGitHub";
 import { IClusterSync } from "spektate/lib/repository/Tag";
-import * as config from "./config";
+import { getConfig, isConfigValid } from "./config";
 
 const getManifestRepoSyncState = (): Promise<IClusterSync | undefined> => {
   let manifestRepo: IAzureDevOpsRepo | IGitHub | undefined;
   let releasesURL = "";
+  const config = getConfig();
 
   if (
-    config.MANIFEST &&
-    config.GITHUB_MANIFEST_USERNAME &&
-    config.GITHUB_MANIFEST_USERNAME !== ""
+    config.manifestRepoName &&
+    config.githubManifestUsername &&
+    config.githubManifestUsername !== ""
   ) {
     manifestRepo = {
-      reponame: config.MANIFEST,
-      username: config.GITHUB_MANIFEST_USERNAME,
+      reponame: config.manifestRepoName,
+      username: config.githubManifestUsername,
     };
     releasesURL = getGitHubReleasesURL(manifestRepo);
 
     return new Promise((resolve, reject) => {
-      getGitHubClusterSync(
-        manifestRepo as IGitHub,
-        config.MANIFEST_ACCESS_TOKEN
-      )
+      getGitHubClusterSync(manifestRepo as IGitHub, config.manifestAccessToken)
         .then((syncCommits) => {
           resolve({
             releasesURL,
@@ -42,17 +40,17 @@ const getManifestRepoSyncState = (): Promise<IClusterSync | undefined> => {
           reject(err);
         });
     });
-  } else if (config.MANIFEST) {
+  } else if (config.manifestRepoName) {
     manifestRepo = {
-      org: config.AZURE_ORG,
-      project: config.AZURE_PROJECT,
-      repo: config.MANIFEST,
+      org: config.org,
+      project: config.project,
+      repo: config.manifestRepoName,
     };
     releasesURL = getADOReleasesURL(manifestRepo);
     return new Promise((resolve, reject) => {
       getADOClusterSync(
         manifestRepo as IAzureDevOpsRepo,
-        config.MANIFEST_ACCESS_TOKEN
+        config.manifestAccessToken
       )
         .then((syncCommits) => {
           resolve({
@@ -71,7 +69,7 @@ const getManifestRepoSyncState = (): Promise<IClusterSync | undefined> => {
 };
 
 export const get = async (req: Request, res: Response) => {
-  if (config.isValuesValid(res)) {
+  if (isConfigValid(res)) {
     try {
       const status = await getManifestRepoSyncState();
       res.json(status || {});

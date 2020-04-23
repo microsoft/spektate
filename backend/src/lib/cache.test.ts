@@ -1,5 +1,4 @@
 import { IAuthor } from "spektate/lib/repository/Author";
-
 import * as author from "./author";
 import {
   fetch,
@@ -13,8 +12,8 @@ import {
 import * as cache from "./cache";
 import { deepClone, IDeploymentData } from "./common";
 import * as deployments from "./deployments";
-import { data as deploymentData } from "./deploymentsData";
-import { data as deploymentDataExtra } from "./deploymentsDataExtra";
+import { data as deploymentData } from "./mocks/deploymentsData";
+import { data as deploymentDataExtra } from "./mocks/deploymentsDataExtra";
 import * as testCommon from "./test-common";
 
 describe("test update and fetch function", () => {

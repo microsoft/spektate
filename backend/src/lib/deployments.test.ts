@@ -1,11 +1,15 @@
 import * as deploymentService from "spektate/lib/IDeployment";
 import * as config from "../config";
-import { setProcessEnv } from "./common";
+import { getMockedConfig } from "./common";
 import { list } from "./deployments";
-import { data as deploymentData } from "./deploymentsData";
+import { data as deploymentData } from "./mocks/deploymentsData";
 
 beforeAll(() => {
-  setProcessEnv();
+  jest.spyOn(config, "getConfig").mockImplementation(
+    (): config.IConfig => {
+      return getMockedConfig();
+    }
+  );
 });
 
 describe("sanity test", () => {
@@ -23,7 +27,7 @@ describe("sanity test", () => {
     await expect(list()).rejects.toThrow();
   });
   it("negative test: config error", async () => {
-    jest.spyOn(config, "isValuesValid").mockReturnValueOnce(false);
+    jest.spyOn(config, "isConfigValid").mockReturnValueOnce(false);
     await expect(list()).rejects.toThrow();
   });
 });

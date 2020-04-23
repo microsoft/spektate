@@ -1,48 +1,32 @@
 import { getDeployments, IDeployment } from "spektate/lib/IDeployment";
 import AzureDevOpsPipeline from "spektate/lib/pipeline/AzureDevOpsPipeline";
-import * as config from "../config";
+import { getConfig, isConfigValid } from "../config";
 
-const createSourcePipeline = () => {
+const createPipeline = () => {
+  const config = getConfig();
   return new AzureDevOpsPipeline(
-    config.AZURE_ORG,
-    config.AZURE_PROJECT,
-    false,
-    config.AZURE_PIPELINE_ACCESS_TOKEN
-  );
-};
-
-const createHLDPipeline = () => {
-  return new AzureDevOpsPipeline(
-    config.AZURE_ORG,
-    config.AZURE_PROJECT,
-    true,
-    config.AZURE_PIPELINE_ACCESS_TOKEN
-  );
-};
-
-const createClusterPipeline = () => {
-  return new AzureDevOpsPipeline(
-    config.AZURE_ORG,
-    config.AZURE_PROJECT,
-    false,
-    config.AZURE_PIPELINE_ACCESS_TOKEN
+    config.org,
+    config.project,
+    config.pipelineAccessToken
   );
 };
 
 export const list = async (): Promise<IDeployment[]> => {
-  const srcPipeline = createSourcePipeline();
-  const hldPipeline = createHLDPipeline();
-  const clusterPipeline = createClusterPipeline();
+  // Create three instances of pipelines
+  const srcPipeline = createPipeline();
+  const hldPipeline = createPipeline();
+  const clusterPipeline = createPipeline();
+  const config = getConfig();
 
-  if (!config.isValuesValid()) {
+  if (!isConfigValid()) {
     throw Error("Invalid configuration");
   }
 
   return await getDeployments(
-    config.STORAGE_ACCOUNT_NAME,
-    config.STORAGE_ACCOUNT_KEY,
-    config.STORAGE_TABLE_NAME,
-    config.STORAGE_PARTITION_KEY,
+    config.storageAccountName,
+    config.storageAccessKey,
+    config.storageTableName,
+    config.storagePartitionKey,
     srcPipeline,
     hldPipeline,
     clusterPipeline,

@@ -2,7 +2,7 @@ import { fetchAuthor, getRepositoryFromURL } from "spektate/lib/IDeployment";
 import { IAuthor } from "spektate/lib/repository/Author";
 import { IAzureDevOpsRepo } from "spektate/lib/repository/IAzureDevOpsRepo";
 import { IGitHub } from "spektate/lib/repository/IGitHub";
-import * as config from "../config";
+import { getConfig } from "../config";
 import { IDeploymentData } from "./common";
 
 /**
@@ -13,20 +13,21 @@ import { IDeploymentData } from "./common";
 export const get = async (
   deployment: IDeploymentData
 ): Promise<IAuthor | undefined> => {
-  const commit =
+  const config = getConfig();
+  let commit =
     deployment.srcToDockerBuild?.sourceVersion ||
     deployment.hldToManifestBuild?.sourceVersion;
 
   let repo: IAzureDevOpsRepo | IGitHub | undefined =
-    deployment.srcToDockerBuild?.repository;
+    deployment.srcToDockerBuild?.repository ||
+    deployment.hldToManifestBuild?.repository;
   if (!repo && deployment.sourceRepo) {
     repo = getRepositoryFromURL(deployment.sourceRepo);
-  }
-  if (!repo && deployment.hldToManifestBuild) {
-    repo = deployment.hldToManifestBuild.repository;
+    commit = deployment.srcToDockerBuild?.sourceVersion;
   }
   if (!repo && deployment.hldRepo) {
     repo = getRepositoryFromURL(deployment.hldRepo);
+    commit = deployment.hldToManifestBuild?.sourceVersion;
   }
 
   if (commit && repo) {
@@ -37,7 +38,7 @@ export const get = async (
           username: repo.username,
         },
         commit,
-        config.SOURCE_REPO_ACCESS_TOKEN || config.AZURE_PIPELINE_ACCESS_TOKEN
+        config.sourceRepoAccessToken || config.pipelineAccessToken
       );
     }
     if ("org" in repo) {
@@ -48,7 +49,7 @@ export const get = async (
           repo: repo.repo,
         },
         commit,
-        config.SOURCE_REPO_ACCESS_TOKEN || config.AZURE_PIPELINE_ACCESS_TOKEN
+        config.sourceRepoAccessToken || config.pipelineAccessToken
       );
     }
   }

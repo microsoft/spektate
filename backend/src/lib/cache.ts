@@ -13,11 +13,7 @@ let cacheData: IDeploymentData[] = [];
 export const fetchAuthor = async (
   deployment: IDeploymentData
 ): Promise<void> => {
-  if (deployment.srcToDockerBuild) {
-    deployment.author = await getAuthor(deployment);
-  } else if (deployment.hldToManifestBuild) {
-    deployment.author = await getAuthor(deployment);
-  }
+  deployment.author = await getAuthor(deployment);
 };
 
 /**

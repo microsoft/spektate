@@ -1,10 +1,11 @@
 import { Request, Response } from "express";
-import * as config from "./config";
+import { getConfig } from "./config";
 
 export const get = async (req: Request, res: Response) => {
+  const config = getConfig();
   try {
     res.json({
-      version: config.DOCKER_VERSION === "" ? "unknown" : config.DOCKER_VERSION,
+      version: config.dockerVersion === "" ? "unknown" : config.dockerVersion,
     });
   } catch (err) {
     console.log(err);
