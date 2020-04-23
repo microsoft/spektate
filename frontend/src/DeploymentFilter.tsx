@@ -5,7 +5,7 @@ import { KeywordFilterBarItem } from "azure-devops-ui/TextFilterBarItem";
 import { DropdownMultiSelection } from "azure-devops-ui/Utilities/DropdownSelection";
 import {
   Filter,
-  FILTER_CHANGE_EVENT /* FilterOperatorType */
+  FILTER_CHANGE_EVENT /* FilterOperatorType */,
 } from "azure-devops-ui/Utilities/Filter";
 import * as React from "react";
 import "./css/dashboard.css";
@@ -48,11 +48,11 @@ export class DeploymentFilter extends React.Component<
           <DropdownFilterBarItem
             filterItemKey="serviceFilter"
             filter={this.props.filter}
-            items={this.props.listOfServices.map(i => {
+            items={this.props.listOfServices.map((i) => {
               return {
                 iconProps: { iconName: "Home" },
                 id: i,
-                text: i
+                text: i,
               };
             })}
             selection={new DropdownMultiSelection()}
@@ -63,11 +63,11 @@ export class DeploymentFilter extends React.Component<
           <DropdownFilterBarItem
             filterItemKey="authorFilter"
             filter={this.props.filter}
-            items={Array.from(this.props.listOfAuthors).map(i => {
+            items={Array.from(this.props.listOfAuthors).map((i) => {
               return {
                 iconProps: { iconName: "Contact" },
                 id: i,
-                text: i
+                text: i,
               };
             })}
             selection={new DropdownMultiSelection()}
@@ -78,11 +78,11 @@ export class DeploymentFilter extends React.Component<
           <DropdownFilterBarItem
             filterItemKey="envFilter"
             filter={this.props.filter}
-            items={this.props.listOfEnvironments.map(i => {
+            items={this.props.listOfEnvironments.map((i) => {
               return {
                 iconProps: { iconName: "Globe" },
                 id: i,
-                text: i.toUpperCase()
+                text: i.toUpperCase(),
               };
             })}
             selection={new DropdownMultiSelection()}

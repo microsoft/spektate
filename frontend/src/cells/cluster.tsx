@@ -2,7 +2,7 @@ import { Link } from "azure-devops-ui/Link";
 import {
   ITableColumn,
   SimpleTableCell,
-  TwoLineTableCell
+  TwoLineTableCell,
 } from "azure-devops-ui/Table";
 import { Tooltip } from "azure-devops-ui/TooltipEx";
 import * as React from "react";
@@ -99,7 +99,7 @@ export const renderCluster = (
  */
 export const renderCustomClusterTooltip = (clusters: string[]) => {
   const tooltip: React.ReactNode[] = [];
-  clusters.forEach(cluster => {
+  clusters.forEach((cluster) => {
     tooltip.push(
       <span>
         {cluster}
