@@ -16,6 +16,11 @@ export interface IPRs {
   [pr: string]: IPullRequest;
 }
 
+export interface IDeploymentData extends IDeployment {
+  author?: IAuthor | undefined;
+  pullRequest?: IPullRequest | undefined;
+}
+
 export interface IDashboardFilterState {
   currentlySelectedServices?: string[];
   currentlySelectedEnvs?: string[];
@@ -23,16 +28,18 @@ export interface IDashboardFilterState {
   currentlySelectedKeyword?: string;
   defaultApplied: boolean;
 }
+
 export interface IDashboardState {
-  deployments: IDeployment[];
+  deployments: IDeploymentData[];
   manifestSyncStatuses?: ITag[];
   authors: IAuthors;
-  filteredDeployments: IDeployment[];
+  filteredDeployments: IDeploymentData[];
   prs: IPRs;
   error?: string;
   rowLimit: number;
   refreshRate: number;
 }
+
 export interface IDeploymentField {
   deploymentId: string;
   service: string;

@@ -47,6 +47,11 @@ export const updateNewDeployment = async (
     newDeployments.reverse().forEach((d) => {
       cache.unshift(d);
     });
+    console.log(
+      "Fetching new author and prs for " +
+        newDeployments.length +
+        " deployments"
+    );
     await Promise.all(newDeployments.map((d) => fetchAuthor(d)));
     await Promise.all(newDeployments.map((d) => fetchPullRequest(d)));
   }
@@ -66,6 +71,16 @@ export const updateOldDeployment = (
   return cache.filter((d) => cacheIds.indexOf(d.deploymentId) !== -1);
 };
 
+export const isDeploymentEligibleForQuickRefresh = (
+  oldDeployment: IDeploymentData,
+  newDeployment: IDeploymentData
+): boolean => {
+  return (
+    newDeployment.timeStamp !== oldDeployment.timeStamp ||
+    oldDeployment.status?.toLowerCase() !== "complete"
+  );
+};
+
 /**
  * Replaces cache where there are changed instances
  *
@@ -77,8 +92,8 @@ export const updateChangedDeployment = async (
   newData: IDeploymentData[]
 ): Promise<void> => {
   const cacheIds = cache.map((d) => d.deploymentId);
-  const cacheId2timeStamp = cache.reduce((a, c) => {
-    a[c.deploymentId] = c.timeStamp;
+  const cacheId2deployment = cache.reduce((a, c) => {
+    a[c.deploymentId] = c;
     return a;
   }, {});
   cache.map((d) => d.deploymentId);
@@ -86,17 +101,45 @@ export const updateChangedDeployment = async (
     if (cacheIds.indexOf(d.deploymentId) === -1) {
       return false;
     }
-    return d.timeStamp !== cacheId2timeStamp[d.deploymentId];
+    // We want to update the deployments that have been updated or were in progress,
+    // to reflect new changes in them
+    return isDeploymentEligibleForQuickRefresh(
+      cacheId2deployment[d.deploymentId],
+      d
+    );
+    //  d.timeStamp !== cacheId2deployment[d.deploymentId].timeStamp || cacheId2deployment[d.deploymentId].status?.toLowerCase() !== "complete";
   });
+  console.log(changed.length);
 
   if (changed.length > 0) {
     changed.forEach((ch) => {
       const idx = cacheIds.indexOf(ch.deploymentId);
       cache.splice(idx, 1, ch);
     });
+    console.log("Found " + changed.length + " incomplete deployments");
 
-    await Promise.all(changed.map((d) => fetchAuthor(d)));
-    await Promise.all(changed.map((d) => fetchPullRequest(d)));
+    await Promise.all(
+      changed.map((d) => {
+        if (!cacheId2deployment[d.deploymentId].author) {
+          console.log("Not using author from cache for " + d.deploymentId);
+          fetchAuthor(d);
+        } else {
+          console.log("Using author from cache for " + d.deploymentId);
+          d.author = cacheId2deployment[d.deploymentId].author;
+        }
+      })
+    );
+    await Promise.all(
+      changed.map((d) => {
+        if (!cacheId2deployment[d.deploymentId].pullRequest?.mergedBy) {
+          console.log("Not using pr from cache for " + d.pr);
+          fetchPullRequest(d);
+        } else {
+          console.log("Using pr from cache for " + d.pr);
+          d.pullRequest = cacheId2deployment[d.deploymentId].pullRequest;
+        }
+      })
+    );
   }
 };
 
@@ -105,6 +148,7 @@ export const updateChangedDeployment = async (
  */
 export const update = async () => {
   try {
+    console.log("Updating cache");
     const latest = deepClone(await listDeployments());
 
     // clone the current cache data and do an atomic replace later.

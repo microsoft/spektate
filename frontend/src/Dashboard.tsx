@@ -5,19 +5,20 @@ import * as React from "react";
 import { HttpHelper } from "spektate/lib/HttpHelper";
 import {
   endTime,
-  getRepositoryFromURL,
+  // getRepositoryFromURL,
   IDeployment,
   status
 } from "spektate/lib/IDeployment";
-import { IAuthor } from "spektate/lib/repository/Author";
-import { IAzureDevOpsRepo } from "spektate/lib/repository/IAzureDevOpsRepo";
-import { IGitHub } from "spektate/lib/repository/IGitHub";
-import { IPullRequest } from "spektate/lib/repository/IPullRequest";
+// import { IAuthor } from "spektate/lib/repository/Author";
+// import { IAzureDevOpsRepo } from "spektate/lib/repository/IAzureDevOpsRepo";
+// import { IGitHub } from "spektate/lib/repository/IGitHub";
+// import { IPullRequest } from "spektate/lib/repository/IPullRequest";
 import { IClusterSync, ITag } from "spektate/lib/repository/Tag";
 import "./css/dashboard.css";
 import {
   IDashboardFilterState,
   IDashboardState,
+  IDeploymentData,
   IDeploymentField
 } from "./Dashboard.types";
 import { DeploymentFilter } from "./DeploymentFilter";
@@ -101,8 +102,8 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         {this.state.error ? (
           <Card>{this.state.error.toString()}</Card>
         ) : (
-          this.renderTable()
-        )}
+            this.renderTable()
+          )}
       </div>
     );
   }
@@ -117,7 +118,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         console.log(deps.request.response);
         throw new Error(deps.request.response);
       }
-      const deployments: IDeployment[] = deps.data as IDeployment[];
+      const deployments: IDeploymentData[] = deps.data as IDeploymentData[];
       this.processQueryParams();
 
       if (deployments.length === 0) {
@@ -131,8 +132,8 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       });
       this.processQueryParams();
       this.updateFilteredDeployments();
-      this.getAuthors();
-      this.getPRs();
+      // this.getAuthors();
+      // this.getPRs();
       if (!this.filterState.defaultApplied) {
         this.filter.setFilterItemState("authorFilter", {
           value: this.filterState.currentlySelectedAuthors
@@ -191,10 +192,13 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
    * @param deployment Deployment from storage
    */
   private getDeploymentToDisplay = (
-    deployment: IDeployment
+    deployment: IDeploymentData
   ): IDeploymentField => {
-    const author = this.getAuthor(deployment);
-    const pr = this.getPR(deployment);
+    console.log(deployment);
+    // const author = this.getAuthor(deployment);
+    // const pr = this.getPR(deployment);
+    const author = deployment.author;
+    const pr = deployment.pullRequest;
     const tags = this.getClusterSyncStatusForDeployment(deployment);
     const clusters: string[] = tags ? tags.map(itag => itag.name) : [];
     const statusStr = status(deployment);
@@ -226,13 +230,13 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       dockerPipelineId: deployment.dockerToHldRelease
         ? deployment.dockerToHldRelease.releaseName
         : deployment.dockerToHldReleaseStage
-        ? deployment.dockerToHldReleaseStage.buildNumber
-        : "",
+          ? deployment.dockerToHldReleaseStage.buildNumber
+          : "",
       dockerPipelineURL: deployment.dockerToHldRelease
         ? deployment.dockerToHldRelease.URL
         : deployment.dockerToHldReleaseStage
-        ? deployment.dockerToHldReleaseStage.URL
-        : "",
+          ? deployment.dockerToHldReleaseStage.URL
+          : "",
       environment:
         deployment.environment !== ""
           ? deployment.environment.toUpperCase()
@@ -240,8 +244,8 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       dockerPipelineResult: deployment.dockerToHldRelease
         ? deployment.dockerToHldRelease.status
         : deployment.dockerToHldReleaseStage
-        ? deployment.dockerToHldReleaseStage.result
-        : "",
+          ? deployment.dockerToHldReleaseStage.result
+          : "",
       hldCommitId: deployment.hldCommitId !== "" ? deployment.hldCommitId : "-",
       hldCommitURL: deployment.hldToManifestBuild
         ? deployment.hldToManifestBuild.sourceVersionURL
@@ -504,187 +508,187 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     return clusterSyncs;
   };
 
-  /**
-   * Builds author query parameters for sending the HTTP request
-   * @param deployment The deployment for which query parameters are to be built
-   */
-  private getAuthorRequestParams = (deployment: IDeployment) => {
-    const query: { [key: string]: string } = {};
-    const commit =
-      deployment.srcToDockerBuild?.sourceVersion ||
-      deployment.hldToManifestBuild?.sourceVersion;
-    let repo: IAzureDevOpsRepo | IGitHub | undefined =
-      deployment.srcToDockerBuild?.repository ||
-      (deployment.sourceRepo
-        ? getRepositoryFromURL(deployment.sourceRepo)
-        : undefined);
-    if (!repo && (deployment.hldToManifestBuild || deployment.hldRepo)) {
-      repo =
-        deployment.hldToManifestBuild!.repository ||
-        (deployment.hldRepo
-          ? getRepositoryFromURL(deployment.hldRepo)
-          : undefined);
-    }
-    if (repo && "username" in repo && commit) {
-      query.username = repo.username;
-      query.reponame = repo.reponame;
-      query.commit = commit;
-    } else if (repo && "org" in repo && commit) {
-      query.org = repo.org;
-      query.project = repo.project;
-      query.repo = repo.repo;
-      query.commit = commit;
-    }
-    return Object.keys(query)
-      .map(k => `${k}=${encodeURIComponent(query[k])}`)
-      .join("&");
-  };
+  // /**
+  //  * Builds author query parameters for sending the HTTP request
+  //  * @param deployment The deployment for which query parameters are to be built
+  //  */
+  // private getAuthorRequestParams = (deployment: IDeployment) => {
+  //   const query: { [key: string]: string } = {};
+  //   const commit =
+  //     deployment.srcToDockerBuild?.sourceVersion ||
+  //     deployment.hldToManifestBuild?.sourceVersion;
+  //   let repo: IAzureDevOpsRepo | IGitHub | undefined =
+  //     deployment.srcToDockerBuild?.repository ||
+  //     (deployment.sourceRepo
+  //       ? getRepositoryFromURL(deployment.sourceRepo)
+  //       : undefined);
+  //   if (!repo && (deployment.hldToManifestBuild || deployment.hldRepo)) {
+  //     repo =
+  //       deployment.hldToManifestBuild!.repository ||
+  //       (deployment.hldRepo
+  //         ? getRepositoryFromURL(deployment.hldRepo)
+  //         : undefined);
+  //   }
+  //   if (repo && "username" in repo && commit) {
+  //     query.username = repo.username;
+  //     query.reponame = repo.reponame;
+  //     query.commit = commit;
+  //   } else if (repo && "org" in repo && commit) {
+  //     query.org = repo.org;
+  //     query.project = repo.project;
+  //     query.repo = repo.repo;
+  //     query.commit = commit;
+  //   }
+  //   return Object.keys(query)
+  //     .map(k => `${k}=${encodeURIComponent(query[k])}`)
+  //     .join("&");
+  // };
 
-  /**
-   * Builds PR query parameters for sending the HTTP request
-   * @param deployment The deployment for which query parameters are to be built
-   */
-  private getPRRequestParams = (deployment: IDeployment) => {
-    const query: { [key: string]: string } = {};
-    if (!deployment.hldRepo) {
-      return "";
-    }
-    const repo: IAzureDevOpsRepo | IGitHub | undefined = getRepositoryFromURL(
-      deployment.hldRepo
-    );
-    if (repo && "username" in repo && deployment.pr) {
-      query.username = repo.username;
-      query.reponame = repo.reponame;
-      query.pr = deployment.pr!.toString();
-    } else if (repo && "org" in repo && deployment.pr) {
-      query.org = repo.org;
-      query.project = repo.project;
-      query.repo = repo.repo;
-      query.pr = deployment.pr!.toString();
-    }
+  // /**
+  //  * Builds PR query parameters for sending the HTTP request
+  //  * @param deployment The deployment for which query parameters are to be built
+  //  */
+  // private getPRRequestParams = (deployment: IDeployment) => {
+  //   const query: { [key: string]: string } = {};
+  //   if (!deployment.hldRepo) {
+  //     return "";
+  //   }
+  //   const repo: IAzureDevOpsRepo | IGitHub | undefined = getRepositoryFromURL(
+  //     deployment.hldRepo
+  //   );
+  //   if (repo && "username" in repo && deployment.pr) {
+  //     query.username = repo.username;
+  //     query.reponame = repo.reponame;
+  //     query.pr = deployment.pr!.toString();
+  //   } else if (repo && "org" in repo && deployment.pr) {
+  //     query.org = repo.org;
+  //     query.project = repo.project;
+  //     query.repo = repo.repo;
+  //     query.pr = deployment.pr!.toString();
+  //   }
 
-    return Object.keys(query)
-      .map(k => `${k}=${encodeURIComponent(query[k])}`)
-      .join("&");
-  };
+  //   return Object.keys(query)
+  //     .map(k => `${k}=${encodeURIComponent(query[k])}`)
+  //     .join("&");
+  // };
 
-  /**
-   * Fetches PRs for all deployments asynchronously
-   */
-  private getPRs = () => {
-    try {
-      const state = this.state;
-      this.state.deployments.forEach(deployment => {
-        if (deployment.pr) {
-          const queryParams = this.getPRRequestParams(deployment);
-          if (queryParams !== "") {
-            HttpHelper.httpGet("/api/pr?" + queryParams).then(data => {
-              const pr = data.data as IPullRequest;
-              if (pr && deployment.pr) {
-                const copy = state.prs;
-                copy[deployment.pr] = pr;
-                this.setState({ prs: copy });
-                this.updateFilteredDeployments();
-              }
-            });
-          }
-        }
-      });
-    } catch (err) {
-      console.error(err);
-    }
-  };
+  // /**
+  //  * Fetches PRs for all deployments asynchronously
+  //  */
+  // private getPRs = () => {
+  //   try {
+  //     const state = this.state;
+  //     this.state.deployments.forEach(deployment => {
+  //       if (deployment.pr) {
+  //         const queryParams = this.getPRRequestParams(deployment);
+  //         if (queryParams !== "") {
+  //           HttpHelper.httpGet("/api/pr?" + queryParams).then(data => {
+  //             const pr = data.data as IPullRequest;
+  //             if (pr && deployment.pr) {
+  //               const copy = state.prs;
+  //               copy[deployment.pr] = pr;
+  //               this.setState({ prs: copy });
+  //               this.updateFilteredDeployments();
+  //             }
+  //           });
+  //         }
+  //       }
+  //     });
+  //   } catch (err) {
+  //     console.error(err);
+  //   }
+  // };
 
-  /**
-   * Sends requests to fetch all authors asynchronously
-   */
-  private getAuthors = () => {
-    try {
-      const authors = Object.entries(
-        this.state.deployments.reduce<{
-          [query: string]: IDeployment[];
-        }>((acc, deployment) => {
-          const authorQuery = this.getAuthorRequestParams(deployment);
-          return {
-            ...acc,
-            [authorQuery]: [...(acc[authorQuery] ?? []), deployment]
-          };
-        }, {})
-      ).map(([query, deployments]) => ({ query, deployments }));
+  // /**
+  //  * Sends requests to fetch all authors asynchronously
+  //  */
+  // private getAuthors = () => {
+  //   try {
+  //     const authors = Object.entries(
+  //       this.state.deployments.reduce<{
+  //         [query: string]: IDeployment[];
+  //       }>((acc, deployment) => {
+  //         const authorQuery = this.getAuthorRequestParams(deployment);
+  //         return {
+  //           ...acc,
+  //           [authorQuery]: [...(acc[authorQuery] ?? []), deployment]
+  //         };
+  //       }, {})
+  //     ).map(([query, deployments]) => ({ query, deployments }));
 
-      const requests = authors.map(async ({ query, deployments }) => {
-        const response = await HttpHelper.httpGet<IAuthor>(
-          "/api/author?" + query
-        );
-        const author = response.data;
-        const newAuthorEntries = deployments
-          .map(d => {
-            return d.srcToDockerBuild
-              ? { [d.srcToDockerBuild.sourceVersion]: author }
-              : d.hldToManifestBuild
-              ? { [d.hldToManifestBuild.sourceVersion]: author }
-              : undefined;
-          })
-          .filter((e): e is NonNullable<typeof e> => !!e)
-          .reduce((acc, entry) => {
-            return { ...acc, ...entry };
-          }, {});
+  //     const requests = authors.map(async ({ query, deployments }) => {
+  //       const response = await HttpHelper.httpGet<IAuthor>(
+  //         "/api/author?" + query
+  //       );
+  //       const author = response.data;
+  //       const newAuthorEntries = deployments
+  //         .map(d => {
+  //           return d.srcToDockerBuild
+  //             ? { [d.srcToDockerBuild.sourceVersion]: author }
+  //             : d.hldToManifestBuild
+  //               ? { [d.hldToManifestBuild.sourceVersion]: author }
+  //               : undefined;
+  //         })
+  //         .filter((e): e is NonNullable<typeof e> => !!e)
+  //         .reduce((acc, entry) => {
+  //           return { ...acc, ...entry };
+  //         }, {});
 
-        this.setState({
-          authors: { ...this.state.authors, ...newAuthorEntries }
-        });
-        this.updateFilteredDeployments();
-        return;
-      });
+  //       this.setState({
+  //         authors: { ...this.state.authors, ...newAuthorEntries }
+  //       });
+  //       this.updateFilteredDeployments();
+  //       return;
+  //     });
 
-      Promise.all(requests).then(() => {
-        if (!this.filterState.defaultApplied) {
-          this.filter.setFilterItemState("authorFilter", {
-            value: this.filterState.currentlySelectedAuthors
-          });
-          this.filterState.defaultApplied = true;
-        }
-      });
-    } catch (err) {
-      console.error(err);
-    }
-  };
+  //     Promise.all(requests).then(() => {
+  //       if (!this.filterState.defaultApplied) {
+  //         this.filter.setFilterItemState("authorFilter", {
+  //           value: this.filterState.currentlySelectedAuthors
+  //         });
+  //         this.filterState.defaultApplied = true;
+  //       }
+  //     });
+  //   } catch (err) {
+  //     console.error(err);
+  //   }
+  // };
 
-  /**
-   * Returns author from loaded component state, if available
-   * @param deployment the deployment for which author is being requested
-   */
-  private getAuthor = (deployment: IDeployment): IAuthor | undefined => {
-    if (
-      deployment.srcToDockerBuild &&
-      deployment.srcToDockerBuild.sourceVersion in this.state.authors
-    ) {
-      deployment.author = this.state.authors[
-        deployment.srcToDockerBuild.sourceVersion
-      ];
-      return this.state.authors[deployment.srcToDockerBuild.sourceVersion];
-    } else if (
-      deployment.hldToManifestBuild &&
-      deployment.hldToManifestBuild.sourceVersion in this.state.authors
-    ) {
-      deployment.author = this.state.authors[
-        deployment.hldToManifestBuild.sourceVersion
-      ];
-      return this.state.authors[deployment.hldToManifestBuild.sourceVersion];
-    }
-    return undefined;
-  };
+  // /**
+  //  * Returns author from loaded component state, if available
+  //  * @param deployment the deployment for which author is being requested
+  //  */
+  // private getAuthor = (deployment: IDeployment): IAuthor | undefined => {
+  //   if (
+  //     deployment.srcToDockerBuild &&
+  //     deployment.srcToDockerBuild.sourceVersion in this.state.authors
+  //   ) {
+  //     deployment.author = this.state.authors[
+  //       deployment.srcToDockerBuild.sourceVersion
+  //     ];
+  //     return this.state.authors[deployment.srcToDockerBuild.sourceVersion];
+  //   } else if (
+  //     deployment.hldToManifestBuild &&
+  //     deployment.hldToManifestBuild.sourceVersion in this.state.authors
+  //   ) {
+  //     deployment.author = this.state.authors[
+  //       deployment.hldToManifestBuild.sourceVersion
+  //     ];
+  //     return this.state.authors[deployment.hldToManifestBuild.sourceVersion];
+  //   }
+  //   return undefined;
+  // };
 
-  /**
-   * Returns PR from component state, if available
-   * @param deployment the deployment for which PR is being requested
-   */
-  private getPR = (deployment: IDeployment): IPullRequest | undefined => {
-    if (deployment.pr && deployment.pr in this.state.prs) {
-      return this.state.prs[deployment.pr];
-    }
-    return undefined;
-  };
+  // /**
+  //  * Returns PR from component state, if available
+  //  * @param deployment the deployment for which PR is being requested
+  //  */
+  // private getPR = (deployment: IDeployment): IPullRequest | undefined => {
+  //   if (deployment.pr && deployment.pr in this.state.prs) {
+  //     return this.state.prs[deployment.pr];
+  //   }
+  //   return undefined;
+  // };
 
   /**
    * Starts the polling loop to refresh deployments
