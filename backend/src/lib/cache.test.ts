@@ -134,6 +134,17 @@ describe("test updateChangedDeployment function", () => {
       .mockResolvedValueOnce(deploymentData as any);
     const cached: IDeploymentData[] = deploymentData as any;
     const originalCache = deepClone(cached);
+
+    const fnFetchAuthor = jest.spyOn(cache, "fetchAuthor");
+    fnFetchAuthor.mockReset();
+    fnFetchAuthor.mockResolvedValueOnce();
+    fnFetchAuthor.mockResolvedValueOnce();
+
+    const fnFetchPullRequest = jest.spyOn(cache, "fetchPullRequest");
+    fnFetchPullRequest.mockReset();
+    fnFetchPullRequest.mockResolvedValueOnce();
+    fnFetchPullRequest.mockResolvedValueOnce();
+
     await updateChangedDeployment(cached, deploymentData as any);
     expect(cached).toStrictEqual(originalCache);
   });
@@ -147,9 +158,18 @@ describe("test updateChangedDeployment function", () => {
     const cached: IDeploymentData[] = deploymentData as any;
     const originalCache = deepClone(cached);
 
+    const fnFetchAuthor = jest.spyOn(cache, "fetchAuthor");
+    fnFetchAuthor.mockReset();
+    fnFetchAuthor.mockResolvedValueOnce();
+    fnFetchAuthor.mockResolvedValueOnce();
+
+    const fnFetchPullRequest = jest.spyOn(cache, "fetchPullRequest");
+    fnFetchPullRequest.mockReset();
+    fnFetchPullRequest.mockResolvedValueOnce();
+    fnFetchPullRequest.mockResolvedValueOnce();
+
     await updateChangedDeployment(cached, originalCache);
     expect(cached).toStrictEqual(originalCache);
-
   });
   it("cache is not empty and latest data has changed item", async () => {
     const fnFetchAuthor = jest.spyOn(cache, "fetchAuthor");
