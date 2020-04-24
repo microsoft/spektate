@@ -42,11 +42,10 @@ interface ITableProps {
 let releasesUrl: string = "";
 let tableItems: ObservableArray<IDeploymentField>;
 let rawTableItems: IDeploymentField[];
-let columns: ITableColumn<IDeploymentField>[];
-let sortFunctions: (
-  | ((item1: IDeploymentField, item2: IDeploymentField) => number)
-  | null
-)[];
+let columns: Array<ITableColumn<IDeploymentField>>;
+let sortFunctions: Array<
+  ((item1: IDeploymentField, item2: IDeploymentField) => number) | null
+>;
 
 const sortingBehavior = new ColumnSorting<IDeploymentField>(
   (
