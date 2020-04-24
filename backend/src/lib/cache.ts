@@ -142,7 +142,6 @@ export const updateChangedDeployment = async (
  */
 export const update = async () => {
   try {
-    console.log("Updating cache");
     const latest = deepClone(await listDeployments());
 
     // clone the current cache data and do an atomic replace later.
