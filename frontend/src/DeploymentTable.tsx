@@ -1,6 +1,6 @@
 import {
   ObservableArray,
-  ObservableValue
+  ObservableValue,
 } from "azure-devops-ui/Core/Observable";
 import {
   ColumnFill,
@@ -9,7 +9,7 @@ import {
   SimpleTableCell,
   sortItems,
   SortOrder,
-  Table as AzureTable
+  Table as AzureTable,
 } from "azure-devops-ui/Table";
 import * as React from "react";
 import { Build } from "./cells/build";
@@ -76,7 +76,7 @@ export const DeploymentTable: React.FC<ITableProps> = (props: ITableProps) => {
       id: "status",
       name: "State",
       renderCell: renderDeploymentStatus,
-      width: new ObservableValue(70)
+      width: new ObservableValue(70),
     },
     {
       id: "service",
@@ -84,9 +84,9 @@ export const DeploymentTable: React.FC<ITableProps> = (props: ITableProps) => {
       renderCell: renderSimpleText,
       sortProps: {
         ariaLabelAscending: "Sorted A to Z",
-        ariaLabelDescending: "Sorted Z to A"
+        ariaLabelDescending: "Sorted Z to A",
       },
-      width: new ObservableValue(180)
+      width: new ObservableValue(180),
     },
     {
       id: "environment",
@@ -94,9 +94,9 @@ export const DeploymentTable: React.FC<ITableProps> = (props: ITableProps) => {
       renderCell: renderSimpleText,
       sortProps: {
         ariaLabelAscending: "Sorted A to Z",
-        ariaLabelDescending: "Sorted Z to A"
+        ariaLabelDescending: "Sorted Z to A",
       },
-      width: new ObservableValue(220)
+      width: new ObservableValue(220),
     },
     {
       id: "authorName",
@@ -104,27 +104,27 @@ export const DeploymentTable: React.FC<ITableProps> = (props: ITableProps) => {
       renderCell: renderAuthor,
       sortProps: {
         ariaLabelAscending: "Sorted A to Z",
-        ariaLabelDescending: "Sorted Z to A"
+        ariaLabelDescending: "Sorted Z to A",
       },
-      width: new ObservableValue(200)
+      width: new ObservableValue(200),
     },
     {
       id: "srcPipelineId",
       name: "SRC to ACR",
       renderCell: renderSrcBuild,
-      width: new ObservableValue(200)
+      width: new ObservableValue(200),
     },
     {
       id: "dockerPipelineId",
       name: "ACR to HLD",
       renderCell: renderDockerRelease,
-      width: new ObservableValue(250)
+      width: new ObservableValue(250),
     },
     {
       id: "pr",
       name: "Approval Pull Request",
       renderCell: renderPR,
-      width: new ObservableValue(250)
+      width: new ObservableValue(250),
     },
     {
       id: "mergedByName",
@@ -132,15 +132,15 @@ export const DeploymentTable: React.FC<ITableProps> = (props: ITableProps) => {
       renderCell: renderMergedBy,
       sortProps: {
         ariaLabelAscending: "Sorted A to Z",
-        ariaLabelDescending: "Sorted Z to A"
+        ariaLabelDescending: "Sorted Z to A",
       },
-      width: new ObservableValue(200)
+      width: new ObservableValue(200),
     },
     {
       id: "hldPipelineId",
       name: "HLD to Manifest",
       renderCell: renderHldBuild,
-      width: new ObservableValue(200)
+      width: new ObservableValue(200),
     },
     {
       id: "deployedAt",
@@ -148,10 +148,10 @@ export const DeploymentTable: React.FC<ITableProps> = (props: ITableProps) => {
       renderCell: renderTime,
       sortProps: {
         ariaLabelAscending: "Sorted low to high",
-        ariaLabelDescending: "Sorted high to low"
+        ariaLabelDescending: "Sorted high to low",
       },
-      width: new ObservableValue(120)
-    }
+      width: new ObservableValue(120),
+    },
   ];
   if (props.releasesUrl) {
     releasesUrl = props.releasesUrl;
@@ -163,7 +163,7 @@ export const DeploymentTable: React.FC<ITableProps> = (props: ITableProps) => {
       id: "clusterName",
       name: "Synced Cluster",
       renderCell: renderClusters,
-      width: new ObservableValue(200)
+      width: new ObservableValue(200),
     });
   }
   columns.push(ColumnFill);
@@ -450,7 +450,7 @@ export const renderDeploymentStatus = (
 
 /**
  * initializes sort functions that assist in sorting certain columns of the dashboard
- * @param isClusterSyncAvailable 
+ * @param isClusterSyncAvailable
  */
 export const initSortFunctions = (isClusterSyncAvailable: boolean) => {
   sortFunctions = [
@@ -488,7 +488,7 @@ export const initSortFunctions = (isClusterSyncAvailable: boolean) => {
     // SORT on Last Updated
     (item1: IDeploymentField, item2: IDeploymentField): number => {
       return item1.endTime!.getTime() - item2.endTime!.getTime();
-    }
+    },
   ];
 
   if (isClusterSyncAvailable) {

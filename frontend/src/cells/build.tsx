@@ -2,7 +2,7 @@ import { Link } from "azure-devops-ui/Link";
 import {
   ITableColumn,
   SimpleTableCell,
-  TwoLineTableCell
+  TwoLineTableCell,
 } from "azure-devops-ui/Table";
 import { Tooltip } from "azure-devops-ui/TooltipEx";
 import * as React from "react";
@@ -37,7 +37,7 @@ export const Build: React.FC<IBuildProps> = (props: IBuildProps) => {
   const commitCell = WithIcon({
     children: <div>{props.commitId}</div>,
     className: "",
-    iconProps: { iconName: props.iconName }
+    iconProps: { iconName: props.iconName },
   });
   return (
     <TwoLineTableCell

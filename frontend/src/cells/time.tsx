@@ -3,7 +3,7 @@ import { Duration } from "azure-devops-ui/Duration";
 import {
   ITableColumn,
   SimpleTableCell,
-  TwoLineTableCell
+  TwoLineTableCell,
 } from "azure-devops-ui/Table";
 import * as React from "react";
 import { IDeploymentField } from "../Dashboard.types";
@@ -34,7 +34,7 @@ export const Time: React.FC<ITimeProps> = (props: ITimeProps) => {
       line1={WithIcon({
         children: <Ago date={new Date(props.deployment.endTime!)} />,
         className: "fontSize font-size",
-        iconProps: { iconName: "Calendar" }
+        iconProps: { iconName: "Calendar" },
       })}
       line2={WithIcon({
         children: (
@@ -44,7 +44,7 @@ export const Time: React.FC<ITimeProps> = (props: ITimeProps) => {
           />
         ),
         className: "fontSize font-size bolt-table-two-line-cell-item",
-        iconProps: { iconName: "Clock" }
+        iconProps: { iconName: "Clock" },
       })}
     />
   );

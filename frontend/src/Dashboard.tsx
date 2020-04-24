@@ -3,18 +3,14 @@ import { ObservableValue } from "azure-devops-ui/Core/Observable";
 import { Filter } from "azure-devops-ui/Utilities/Filter";
 import * as React from "react";
 import { HttpHelper } from "spektate/lib/HttpHelper";
-import {
-  endTime,
-  IDeployment,
-  status
-} from "spektate/lib/IDeployment";
+import { endTime, IDeployment, status } from "spektate/lib/IDeployment";
 import { IClusterSync, ITag } from "spektate/lib/repository/Tag";
 import "./css/dashboard.css";
 import {
   IDashboardFilterState,
   IDashboardState,
   IDeploymentData,
-  IDeploymentField
+  IDeploymentField,
 } from "./Dashboard.types";
 import { DeploymentFilter } from "./DeploymentFilter";
 import { DeploymentTable } from "./DeploymentTable";
@@ -34,7 +30,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
    * Filter state of dashboard
    */
   private filterState: IDashboardFilterState = {
-    defaultApplied: false
+    defaultApplied: false,
   };
 
   /**
@@ -56,7 +52,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       filteredDeployments: [],
       prs: {},
       refreshRate: Number.parseInt(searchParams.get("refresh") ?? "", 10) || 30, // default to 30 seconds
-      rowLimit: Number.parseInt(searchParams.get("limit") ?? "", 10) || 50 // default to 50 rows
+      rowLimit: Number.parseInt(searchParams.get("limit") ?? "", 10) || 50, // default to 50 rows
     };
   }
 
@@ -97,8 +93,8 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         {this.state.error ? (
           <Card>{this.state.error.toString()}</Card>
         ) : (
-            this.renderTable()
-          )}
+          this.renderTable()
+        )}
       </div>
     );
   }
@@ -123,7 +119,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       this.setState({
         deployments,
         error: undefined,
-        filteredDeployments: this.state.deployments
+        filteredDeployments: this.state.deployments,
       });
       this.processQueryParams();
       this.updateFilteredDeployments();
@@ -131,16 +127,16 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       // this.getPRs();
       if (!this.filterState.defaultApplied) {
         this.filter.setFilterItemState("authorFilter", {
-          value: this.filterState.currentlySelectedAuthors
+          value: this.filterState.currentlySelectedAuthors,
         });
         this.filter.setFilterItemState("serviceFilter", {
-          value: this.filterState.currentlySelectedServices
+          value: this.filterState.currentlySelectedServices,
         });
         this.filter.setFilterItemState("envFilter", {
-          value: this.filterState.currentlySelectedEnvs
+          value: this.filterState.currentlySelectedEnvs,
         });
         this.filter.setFilterItemState("keywordFilter", {
-          value: this.filterState.currentlySelectedKeyword
+          value: this.filterState.currentlySelectedKeyword,
         });
       }
       const tags = await HttpHelper.httpGet<IClusterSync>("/api/clustersync");
@@ -152,7 +148,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     } catch (e) {
       console.log(e);
       this.setState({
-        error: e
+        error: e,
       });
     }
   };
@@ -167,8 +163,8 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         rows = new Array(15).fill(new ObservableValue(undefined));
       } else {
         rows = this.state.filteredDeployments
-          .slice(0, this.state.rowLimit)
-          .map(this.getDeploymentToDisplay);
+          .map(this.getDeploymentToDisplay)
+          .slice(0, this.state.rowLimit);
       }
     } catch (err) {
       console.error(err);
@@ -191,7 +187,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
   ): IDeploymentField => {
     console.log(deployment);
     const tags = this.getClusterSyncStatusForDeployment(deployment);
-    const clusters: string[] = tags ? tags.map(itag => itag.name) : [];
+    const clusters: string[] = tags ? tags.map((itag) => itag.name) : [];
     const statusStr = status(deployment);
     const endtime = endTime(deployment);
     return {
@@ -221,13 +217,13 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       dockerPipelineId: deployment.dockerToHldRelease
         ? deployment.dockerToHldRelease.releaseName
         : deployment.dockerToHldReleaseStage
-          ? deployment.dockerToHldReleaseStage.buildNumber
-          : "",
+        ? deployment.dockerToHldReleaseStage.buildNumber
+        : "",
       dockerPipelineURL: deployment.dockerToHldRelease
         ? deployment.dockerToHldRelease.URL
         : deployment.dockerToHldReleaseStage
-          ? deployment.dockerToHldReleaseStage.URL
-          : "",
+        ? deployment.dockerToHldReleaseStage.URL
+        : "",
       environment:
         deployment.environment !== ""
           ? deployment.environment.toUpperCase()
@@ -235,8 +231,8 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       dockerPipelineResult: deployment.dockerToHldRelease
         ? deployment.dockerToHldRelease.status
         : deployment.dockerToHldReleaseStage
-          ? deployment.dockerToHldReleaseStage.result
-          : "",
+        ? deployment.dockerToHldReleaseStage.result
+        : "",
       hldCommitId: deployment.hldCommitId !== "" ? deployment.hldCommitId : "-",
       hldCommitURL: deployment.hldToManifestBuild
         ? deployment.hldToManifestBuild.sourceVersionURL
@@ -253,13 +249,18 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       duration: deployment.duration ? deployment.duration + " mins" : "",
       authorName: deployment.author ? deployment.author.name : "",
       authorURL: deployment.author ? deployment.author.imageUrl : "",
-      status: deployment.pullRequest && !deployment.pullRequest.mergedBy ? "waiting" : statusStr,
+      status:
+        deployment.pullRequest && !deployment.pullRequest.mergedBy
+          ? "waiting"
+          : statusStr,
       clusters,
       endTime: endtime,
       manifestCommitId: deployment.manifestCommitId,
       pr: deployment.pullRequest ? deployment.pullRequest.id : undefined,
       prURL: deployment.pullRequest ? deployment.pullRequest.url : undefined,
-      prSourceBranch: deployment.pullRequest ? deployment.pullRequest.sourceBranch : undefined,
+      prSourceBranch: deployment.pullRequest
+        ? deployment.pullRequest.sourceBranch
+        : undefined,
       mergedByName: deployment.pullRequest
         ? deployment.pullRequest.mergedBy
           ? deployment.pullRequest.mergedBy.name
@@ -269,7 +270,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         ? deployment.pullRequest.mergedBy
           ? deployment.pullRequest.mergedBy.imageUrl
           : undefined
-        : undefined
+        : undefined,
     };
   };
 
@@ -382,19 +383,19 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     let filteredDeployments: IDeployment[] = this.state.deployments;
 
     if (keywordFilter && keywordFilter.length > 0) {
-      filteredDeployments = filteredDeployments.filter(deployment => {
+      filteredDeployments = filteredDeployments.filter((deployment) => {
         return JSON.stringify(deployment).includes(keywordFilter);
       });
     }
 
     if (serviceFilters.size > 0) {
-      filteredDeployments = filteredDeployments.filter(deployment => {
+      filteredDeployments = filteredDeployments.filter((deployment) => {
         return serviceFilters.has(deployment.service);
       });
     }
 
     if (authorFilters.size > 0) {
-      filteredDeployments = filteredDeployments.filter(deployment => {
+      filteredDeployments = filteredDeployments.filter((deployment) => {
         if (deployment.author) {
           return authorFilters.has(deployment.author!.name);
         }
@@ -403,7 +404,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     }
 
     if (envFilters.size > 0) {
-      filteredDeployments = filteredDeployments.filter(deployment => {
+      filteredDeployments = filteredDeployments.filter((deployment) => {
         return envFilters.has(deployment.environment);
       });
     }
@@ -477,7 +478,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
    */
   private getListOfAuthors = (): Set<string> => {
     return new Set(
-      Object.values(this.state.authors).map(author => author.name)
+      Object.values(this.state.authors).map((author) => author.name)
     );
   };
 
@@ -489,7 +490,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     deployment: IDeployment
   ): ITag[] | undefined => {
     const statuses = this.state.manifestSyncStatuses ?? [];
-    const clusterSyncs = statuses.filter(tag => {
+    const clusterSyncs = statuses.filter((tag) => {
       return tag.commit === deployment.manifestCommitId;
     });
     if (!this.clusterSyncAvailable) {
