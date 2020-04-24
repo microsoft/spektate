@@ -147,8 +147,9 @@ describe("test updateChangedDeployment function", () => {
     const cached: IDeploymentData[] = deploymentData as any;
     const originalCache = deepClone(cached);
 
-    await updateChangedDeployment(cached, deploymentDataExtra as any);
+    await updateChangedDeployment(cached, originalCache);
     expect(cached).toStrictEqual(originalCache);
+
   });
   it("cache is not empty and latest data has changed item", async () => {
     const fnFetchAuthor = jest.spyOn(cache, "fetchAuthor");
@@ -175,8 +176,8 @@ describe("test updateChangedDeployment function", () => {
     // changed item is replaced
     expect(cacheObj[0].timeStamp).toBe(ts);
     expect(cacheObj[0].timeStamp).not.toBe(oldTs);
-    expect(fnFetchAuthor).toBeCalledTimes(1);
-    expect(fnFetchPullRequest).toBeCalledTimes(1);
+    expect(fnFetchAuthor).toBeCalledTimes(2);
+    expect(fnFetchPullRequest).toBeCalledTimes(2);
   });
 });
 
