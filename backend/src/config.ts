@@ -1,5 +1,8 @@
 import { Response } from "express";
 
+/**
+ * Config interface
+ */
 export interface IConfig {
   org: string;
   project: string;
@@ -15,6 +18,9 @@ export interface IConfig {
   dockerVersion: string;
 }
 
+/**
+ * Gets config
+ */
 export const getConfig = (): IConfig => {
   return {
     dockerVersion: process.env.REACT_APP_DOCKER_VERSION || "",
@@ -33,6 +39,9 @@ export const getConfig = (): IConfig => {
   };
 };
 
+/**
+ * Gets cache refresh interval
+ */
 export const cacheRefreshInterval = (): number => {
   const interval = process.env.REACT_APP_CACHE_REFRESH_INTERVAL_IN_SEC || "30";
   try {
@@ -45,6 +54,10 @@ export const cacheRefreshInterval = (): number => {
   }
 };
 
+/**
+ * Checks whether config is valid or not
+ * @param res Response obj
+ */
 export const isConfigValid = (res?: Response) => {
   const config = getConfig();
   if (

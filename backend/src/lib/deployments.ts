@@ -2,6 +2,9 @@ import { getDeployments, IDeployment } from "spektate/lib/IDeployment";
 import AzureDevOpsPipeline from "spektate/lib/pipeline/AzureDevOpsPipeline";
 import { getConfig, isConfigValid } from "../config";
 
+/**
+ * Create instance of AzDO pipeline
+ */
 const createPipeline = () => {
   const config = getConfig();
   return new AzureDevOpsPipeline(
@@ -11,6 +14,9 @@ const createPipeline = () => {
   );
 };
 
+/**
+ * Fetches deployments
+ */
 export const list = async (): Promise<IDeployment[]> => {
   // Create three instances of pipelines
   const srcPipeline = createPipeline();

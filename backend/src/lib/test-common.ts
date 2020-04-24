@@ -3,7 +3,12 @@ import { IAuthor } from "spektate/lib/repository/Author";
 import { IAzureDevOpsRepo } from "spektate/lib/repository/IAzureDevOpsRepo";
 import { IGitHub } from "spektate/lib/repository/IGitHub";
 import { IPullRequest } from "spektate/lib/repository/IPullRequest";
+import { IConfig } from "../config";
 
+/**
+ * Mock for author fetch
+ * @param hasUndefined
+ */
 export const mockFetchAuthor = (hasUndefined = false) => {
   jest.spyOn(deployment, "fetchAuthor").mockImplementationOnce(
     async (
@@ -33,6 +38,10 @@ export const mockFetchAuthor = (hasUndefined = false) => {
   );
 };
 
+/**
+ * Mock for PR fetch
+ * @param hasUndefined
+ */
 export const mockFetchPullRequest = (hasUndefined = false) => {
   jest.spyOn(deployment, "fetchPR").mockImplementationOnce(
     async (
@@ -66,4 +75,24 @@ export const mockFetchPullRequest = (hasUndefined = false) => {
       return undefined;
     }
   );
+};
+
+/**
+ * Mock for config
+ */
+export const getMockedConfig = (): IConfig => {
+  return {
+    dockerVersion: "mockedVersion",
+    githubManifestUsername: "",
+    manifestAccessToken: "cf8a78a2abcdsomekey65b0cb9bd8dsomekeyfsomekey",
+    manifestRepoName: "hello-manifests",
+    org: "epicorg",
+    pipelineAccessToken: "cf8a78a2abcdsomekey65b0cb9bd8dsomekeyfsomekey",
+    project: "hellobedrock",
+    sourceRepoAccessToken: "cf8a78a2abcdsomekey65b0cb9bd8dsomekeyfsomekey",
+    storageAccessKey: "access-key-seeeeeecret",
+    storageAccountName: "storageaccount",
+    storagePartitionKey: "partition-key",
+    storageTableName: "table-name",
+  };
 };

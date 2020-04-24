@@ -5,14 +5,24 @@ import { getConfig } from "./config";
 export interface IHealth extends validation.IErrors {
   variables: ISpektateConfig;
 }
+
 export interface ISpektateConfig {
   [id: string]: string;
 }
 
+/**
+ * Masks secrets with * and returns displayable string
+ * @param key
+ */
 export const getKeyToDisplay = (key: string): string => {
   return key ? key.replace(/.(?=.{4})/g, "*") : "";
 };
 
+/**
+ * Express get function for health
+ * @param req Request obj
+ * @param res Response obj
+ */
 export const get = async (req: Request, res: Response) => {
   const config = getConfig();
   try {

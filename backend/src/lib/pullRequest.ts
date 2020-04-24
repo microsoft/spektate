@@ -4,7 +4,7 @@ import { getConfig } from "../config";
 import { IDeploymentData } from "./common";
 
 /**
- * Returns author information
+ * Fetches PR information
  *
  * @param deployment Deployment instance
  */

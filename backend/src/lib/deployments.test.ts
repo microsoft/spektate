@@ -1,8 +1,8 @@
 import * as deploymentService from "spektate/lib/IDeployment";
 import * as config from "../config";
-import { getMockedConfig } from "./common";
 import { list } from "./deployments";
 import { data as deploymentData } from "./mocks/deploymentsData";
+import { getMockedConfig } from "./test-common";
 
 beforeAll(() => {
   jest.spyOn(config, "getConfig").mockImplementation(

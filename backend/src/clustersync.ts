@@ -12,6 +12,9 @@ import {
 import { IClusterSync } from "spektate/lib/repository/Tag";
 import { getConfig, isConfigValid } from "./config";
 
+/**
+ * Gets manifest repo sync state to determine cluster sync status
+ */
 const getManifestRepoSyncState = (): Promise<IClusterSync | undefined> => {
   let manifestRepo: IAzureDevOpsRepo | IGitHub | undefined;
   let releasesURL = "";
@@ -68,6 +71,11 @@ const getManifestRepoSyncState = (): Promise<IClusterSync | undefined> => {
   });
 };
 
+/**
+ * Express get request
+ * @param req Request
+ * @param res Response
+ */
 export const get = async (req: Request, res: Response) => {
   if (isConfigValid(res)) {
     try {

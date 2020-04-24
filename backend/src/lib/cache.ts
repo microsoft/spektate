@@ -47,11 +47,7 @@ export const updateNewDeployment = async (
     newDeployments.reverse().forEach((d) => {
       cache.unshift(d);
     });
-    console.log(
-      "Fetching new author and prs for " +
-        newDeployments.length +
-        " deployments"
-    );
+    // For new deployments, always need to fetch author and pull request
     await Promise.all(newDeployments.map((d) => fetchAuthor(d)));
     await Promise.all(newDeployments.map((d) => fetchPullRequest(d)));
   }
@@ -71,7 +67,13 @@ export const updateOldDeployment = (
   return cache.filter((d) => cacheIds.indexOf(d.deploymentId) !== -1);
 };
 
-export const isDeploymentEligibleForQuickRefresh = (
+/**
+ * Checks if deployment is eligible for quick refresh, if its timestamp has changed or
+ * it was in progress or incomplete
+ * @param oldDeployment deployment in cache
+ * @param newDeployment newly fetched deployment
+ */
+export const isDeploymentChanged = (
   oldDeployment: IDeploymentData,
   newDeployment: IDeploymentData
 ): boolean => {
@@ -103,28 +105,22 @@ export const updateChangedDeployment = async (
     }
     // We want to update the deployments that have been updated or were in progress,
     // to reflect new changes in them
-    return isDeploymentEligibleForQuickRefresh(
-      cacheId2deployment[d.deploymentId],
-      d
-    );
-    //  d.timeStamp !== cacheId2deployment[d.deploymentId].timeStamp || cacheId2deployment[d.deploymentId].status?.toLowerCase() !== "complete";
+    return isDeploymentChanged(cacheId2deployment[d.deploymentId], d);
   });
-  console.log(changed.length);
 
   if (changed.length > 0) {
     changed.forEach((ch) => {
       const idx = cacheIds.indexOf(ch.deploymentId);
       cache.splice(idx, 1, ch);
     });
-    console.log("Found " + changed.length + " incomplete deployments");
 
+    // For changed deployments, fetch author only if it was empty, and PR only if
+    // it wasn't closed (to pull merge updates)
     await Promise.all(
       changed.map((d) => {
         if (!cacheId2deployment[d.deploymentId].author) {
-          console.log("Not using author from cache for " + d.deploymentId);
           fetchAuthor(d);
         } else {
-          console.log("Using author from cache for " + d.deploymentId);
           d.author = cacheId2deployment[d.deploymentId].author;
         }
       })
@@ -132,10 +128,8 @@ export const updateChangedDeployment = async (
     await Promise.all(
       changed.map((d) => {
         if (!cacheId2deployment[d.deploymentId].pullRequest?.mergedBy) {
-          console.log("Not using pr from cache for " + d.pr);
           fetchPullRequest(d);
         } else {
-          console.log("Using pr from cache for " + d.pr);
           d.pullRequest = cacheId2deployment[d.deploymentId].pullRequest;
         }
       })
