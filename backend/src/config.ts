@@ -44,14 +44,8 @@ export const getConfig = (): IConfig => {
  */
 export const cacheRefreshInterval = (): number => {
   const interval = process.env.REACT_APP_CACHE_REFRESH_INTERVAL_IN_SEC || "30";
-  try {
-    const val = parseInt(interval, 10);
-    return val * 1000;
-  } catch (err) {
-    console.log("REACT_APP_CACHE_REFRESH_INTERVAL_IN_SEC is not a number");
-    // default to 30 seconds
-    return 30 * 1000;
-  }
+  const val = parseInt(interval, 10);
+  return isNaN(val) ? 30 * 1000 : val * 1000;
 };
 
 /**
