@@ -1,4 +1,5 @@
 import { cacheRefreshInterval, isConfigValid } from "./config";
+import * as config from "./config";
 
 describe("test cacheRefreshInterval function", () => {
   it("sanity test: default value", () => {
@@ -18,6 +19,24 @@ describe("test cacheRefreshInterval function", () => {
 describe("test isConfigValid function", () => {
   // postiive tests are already covered by other functions
   it("negative test", () => {
+    jest.spyOn(config, "getConfig").mockImplementationOnce(
+      (): config.IConfig => {
+        return {
+          org: "",
+          project: "",
+          manifestAccessToken: "",
+          pipelineAccessToken: "",
+          sourceRepoAccessToken: "",
+          storageAccessKey: "",
+          storagePartitionKey: "",
+          storageAccountName: "",
+          storageTableName: "",
+          githubManifestUsername: "",
+          manifestRepoName: "",
+          dockerVersion: ""
+        }
+      }
+    );
     expect(isConfigValid()).toBe(false);
   });
   it("negative test with response object", () => {
