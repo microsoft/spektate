@@ -42,7 +42,7 @@ export const get = (): Promise<IClusterSync | undefined> => {
           reject(err);
         });
     });
-  } else if (config.manifestRepoName) {
+  } else if (config.manifestRepoName && config.manifestRepoName !== "") {
     manifestRepo = {
       org: config.org,
       project: config.project,
