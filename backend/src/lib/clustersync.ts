@@ -1,4 +1,3 @@
-import { Request, Response } from "express";
 import {
   getManifestSyncState as getADOClusterSync,
   getReleasesURL as getADOReleasesURL,
@@ -10,12 +9,12 @@ import {
   IGitHub,
 } from "spektate/lib/repository/IGitHub";
 import { IClusterSync } from "spektate/lib/repository/Tag";
-import { getConfig, isConfigValid } from "./config";
+import { getConfig } from "../config";
 
 /**
  * Gets manifest repo sync state to determine cluster sync status
  */
-const getManifestRepoSyncState = (): Promise<IClusterSync | undefined> => {
+export const get = (): Promise<IClusterSync | undefined> => {
   let manifestRepo: IAzureDevOpsRepo | IGitHub | undefined;
   let releasesURL = "";
   const config = getConfig();
@@ -69,21 +68,4 @@ const getManifestRepoSyncState = (): Promise<IClusterSync | undefined> => {
   return new Promise((resolve, reject) => {
     reject(`No tags were found`);
   });
-};
-
-/**
- * Express get request
- * @param req Request
- * @param res Response
- */
-export const get = async (req: Request, res: Response) => {
-  if (isConfigValid(res)) {
-    try {
-      const status = await getManifestRepoSyncState();
-      res.json(status || {});
-    } catch (err) {
-      console.log(err);
-      res.sendStatus(500);
-    }
-  }
 };

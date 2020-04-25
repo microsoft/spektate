@@ -32,10 +32,10 @@ describe("test update and fetch function", () => {
     await update();
 
     const cached = fetch();
-    expect(cached.length).toBe(3);
+    expect(cached.deployments.length).toBe(3);
 
     // fetch author works
-    cached.forEach((c, idx) => {
+    cached.deployments.forEach((c, idx) => {
       expect(c.srcToDockerBuild).toBeDefined();
       if (c.srcToDockerBuild) {
         if (idx === 2) {

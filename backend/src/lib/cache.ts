@@ -1,9 +1,13 @@
 import { get as getAuthor } from "./author";
-import { deepClone, IDeploymentData } from "./common";
+import { deepClone, IDeploymentData, IDeployments } from "./common";
 import { list as listDeployments } from "./deployments";
 import { get as getPullRequest } from "./pullRequest";
+import { get as getManifestRepoSyncState } from "./clustersync";
 
-let cacheData: IDeploymentData[] = [];
+let cacheData: IDeployments = {
+  deployments: [],
+  clusterSync: undefined
+};
 
 /**
  * Populates author information to deployment.
@@ -145,10 +149,11 @@ export const update = async () => {
     const latest = deepClone(await listDeployments());
 
     // clone the current cache data and do an atomic replace later.
-    const clone = deepClone(cacheData);
+    const clone = deepClone(cacheData.deployments);
     await updateChangedDeployment(clone, latest as IDeploymentData[]);
     await updateNewDeployment(clone, latest as IDeploymentData[]);
-    cacheData = updateOldDeployment(clone, latest as IDeploymentData[]);
+    cacheData.deployments = updateOldDeployment(clone, latest as IDeploymentData[]);
+    cacheData.clusterSync = await getManifestRepoSyncState();
   } catch (e) {
     console.log(e);
   }
@@ -158,7 +163,10 @@ export const update = async () => {
  * Purges cache
  */
 export const purge = () => {
-  cacheData = [];
+  cacheData = {
+    deployments: [],
+    clusterSync: undefined
+  };
 };
 
 /**

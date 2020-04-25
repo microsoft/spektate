@@ -4,13 +4,14 @@ import { Filter } from "azure-devops-ui/Utilities/Filter";
 import * as React from "react";
 import { HttpHelper } from "spektate/lib/HttpHelper";
 import { endTime, IDeployment, status } from "spektate/lib/IDeployment";
-import { IClusterSync, ITag } from "spektate/lib/repository/Tag";
+import { ITag } from "spektate/lib/repository/Tag";
 import "./css/dashboard.css";
 import {
   IDashboardFilterState,
   IDashboardState,
   IDeploymentData,
   IDeploymentField,
+  IDeployments,
 } from "./Dashboard.types";
 import { DeploymentFilter } from "./DeploymentFilter";
 import { DeploymentTable } from "./DeploymentTable";
@@ -104,12 +105,13 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
    */
   private updateDeployments = async () => {
     try {
-      const deps = await HttpHelper.httpGet<IDeployment[]>("/api/deployments");
+      const deps = await HttpHelper.httpGet<IDeployments>("/api/deployments");
       if (!deps.data) {
         console.log(deps.request.response);
         throw new Error(deps.request.response);
       }
-      const deployments: IDeploymentData[] = deps.data as IDeploymentData[];
+      const deployments: IDeploymentData[] = deps.data
+        .deployments as IDeploymentData[];
       this.processQueryParams();
 
       if (deployments.length === 0) {
@@ -139,11 +141,11 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
           value: this.filterState.currentlySelectedKeyword,
         });
       }
-      const tags = await HttpHelper.httpGet<IClusterSync>("/api/clustersync");
+      const tags = deps.data.clusterSync;
 
-      if (tags.data && tags.data.releasesURL) {
-        this.setState({ manifestSyncStatuses: tags.data.tags as ITag[] });
-        this.releasesUrl = tags.data.releasesURL;
+      if (tags && tags.releasesURL) {
+        this.setState({ manifestSyncStatuses: tags.tags as ITag[] });
+        this.releasesUrl = tags.releasesURL;
       }
     } catch (e) {
       console.log(e);

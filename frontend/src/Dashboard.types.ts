@@ -2,7 +2,7 @@ import { IStatusProps } from "azure-devops-ui/Status";
 import { IDeployment } from "spektate/lib/IDeployment";
 import { IAuthor } from "spektate/lib/repository/Author";
 import { IPullRequest } from "spektate/lib/repository/IPullRequest";
-import { ITag } from "spektate/lib/repository/Tag";
+import { IClusterSync, ITag } from "spektate/lib/repository/Tag";
 
 export interface IStatusIndicatorData {
   statusProps: IStatusProps;
@@ -19,6 +19,11 @@ export interface IPRs {
 export interface IDeploymentData extends IDeployment {
   author?: IAuthor | undefined;
   pullRequest?: IPullRequest | undefined;
+}
+
+export interface IDeployments {
+  deployments: IDeploymentData[];
+  clusterSync: IClusterSync | undefined;
 }
 
 export interface IDashboardFilterState {

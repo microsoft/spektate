@@ -1,5 +1,4 @@
 import * as express from "express";
-import { get as clusterSyncGet } from "./clustersync";
 import { cacheRefreshInterval } from "./config";
 import { get as healthGet } from "./health";
 import { fetch as fetchDeployment, update as updateCache } from "./lib/cache";
@@ -21,9 +20,6 @@ app.get("/api/deployments", (req: express.Request, res: express.Response) => {
   } catch (err) {
     res.status(500).send(err.message);
   }
-});
-app.get("/api/clustersync", (req: express.Request, res: express.Response) => {
-  clusterSyncGet(req, res);
 });
 app.get("/api/health", (req: express.Request, res: express.Response) => {
   healthGet(req, res);
