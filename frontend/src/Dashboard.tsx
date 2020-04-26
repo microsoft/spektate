@@ -125,8 +125,6 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       });
       this.processQueryParams();
       this.updateFilteredDeployments();
-      // this.getAuthors();
-      // this.getPRs();
       if (!this.filterState.defaultApplied) {
         this.filter.setFilterItemState("authorFilter", {
           value: this.filterState.currentlySelectedAuthors,
