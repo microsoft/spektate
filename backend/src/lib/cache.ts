@@ -55,7 +55,7 @@ export const fetchClusterSync = async (): Promise<IClusterSync | undefined> => {
 export const updateNewDeployment = async (
   cache: IDeployments,
   newData: IDeployments
-): Promise<void> => {
+): Promise<boolean> => {
   const cacheIds = cache.deployments.map((d) => d.deploymentId);
   const newDeployments = newData.deployments.filter(
     (d) => cacheIds.indexOf(d.deploymentId) === -1
@@ -69,8 +69,8 @@ export const updateNewDeployment = async (
     // For new deployments, always need to fetch author, pull request and cluster sync
     await Promise.all(newDeployments.map((d) => fetchAuthor(d)));
     await Promise.all(newDeployments.map((d) => fetchPullRequest(d)));
-    newData.clusterSync = await fetchClusterSync();
   }
+  return newDeployments.length > 0;
 };
 
 /**
@@ -112,7 +112,7 @@ export const isDeploymentChanged = (
 export const updateChangedDeployment = async (
   cache: IDeployments,
   newData: IDeployments
-): Promise<void> => {
+): Promise<boolean> => {
   const cacheIds = cache.deployments.map((d) => d.deploymentId);
   const cacheId2deployment = cache.deployments.reduce((a, c) => {
     a[c.deploymentId] = c;
@@ -133,9 +133,6 @@ export const updateChangedDeployment = async (
       const idx = cacheIds.indexOf(ch.deploymentId);
       cache.deployments.splice(idx, 1, ch);
     });
-
-    // When changed.length > 0 => some data has changed, update cluster sync
-    newData.clusterSync = await fetchClusterSync();
 
     // For changed deployments, fetch author only if it was empty, and PR only if
     // it wasn't closed (to pull merge updates)
@@ -158,6 +155,7 @@ export const updateChangedDeployment = async (
       })
     );
   }
+  return changed.length > 0;
 };
 
 /**
@@ -167,15 +165,17 @@ export const update = async () => {
   try {
     const latest: IDeployments = {
       deployments: deepClone(await listDeployments()),
-      clusterSync: cacheData.clusterSync ?? await fetchClusterSync()
+      clusterSync: cacheData.clusterSync
     };
 
     // clone the current cache data and do an atomic replace later.
     const clone = deepClone(cacheData);
-    await updateChangedDeployment(clone, latest);
-    await updateNewDeployment(clone, latest);
+    const areDeploymentsChanged = await updateChangedDeployment(clone, latest);
+    const areDeploymentsAdded = await updateNewDeployment(clone, latest);
     cacheData.deployments = updateOldDeployment(clone.deployments, latest.deployments);
-    cacheData.clusterSync = latest.clusterSync;
+    if (areDeploymentsChanged || areDeploymentsAdded) {
+      cacheData.clusterSync = await fetchClusterSync();
+    }
   } catch (e) {
     console.log(e);
   }
