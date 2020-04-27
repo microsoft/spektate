@@ -3,6 +3,7 @@ import { deepClone, IDeploymentData, IDeployments } from "./common";
 import { list as listDeployments } from "./deployments";
 import { get as getPullRequest } from "./pullRequest";
 import { get as getManifestRepoSyncState } from "./clustersync";
+import { IClusterSync } from 'spektate/lib/repository/Tag';
 
 let cacheData: IDeployments = {
   deployments: [],
@@ -32,28 +33,43 @@ export const fetchPullRequest = async (
 };
 
 /**
+ * Fetches latest cluster sync data
+ */
+export const fetchClusterSync = async (): Promise<IClusterSync | undefined> => {
+  try {
+    return await getManifestRepoSyncState();
+  } catch (e) {
+    // If there's an error with cluster sync, we want to fail silently since 
+    // deployments can still be displayed.
+    console.error(e);
+  }
+  return undefined;
+}
+
+/**
  * Updates cache where there are new instances.
  *
  * @param cache Cloned cache
  * @param newData latest deployments
  */
 export const updateNewDeployment = async (
-  cache: IDeploymentData[],
-  newData: IDeploymentData[]
+  cache: IDeployments,
+  newData: IDeployments
 ): Promise<void> => {
-  const cacheIds = cache.map((d) => d.deploymentId);
-  const newDeployments = newData.filter(
+  const cacheIds = cache.deployments.map((d) => d.deploymentId);
+  const newDeployments = newData.deployments.filter(
     (d) => cacheIds.indexOf(d.deploymentId) === -1
   );
 
   if (newDeployments.length > 0) {
     // reverse to keep the latest item to the top
     newDeployments.reverse().forEach((d) => {
-      cache.unshift(d);
+      cache.deployments.unshift(d);
     });
-    // For new deployments, always need to fetch author and pull request
+    // For new deployments, always need to fetch author, pull request and cluster sync
     await Promise.all(newDeployments.map((d) => fetchAuthor(d)));
     await Promise.all(newDeployments.map((d) => fetchPullRequest(d)));
+    newData.clusterSync = await fetchClusterSync();
   }
 };
 
@@ -94,16 +110,16 @@ export const isDeploymentChanged = (
  * @param newData latest deployments
  */
 export const updateChangedDeployment = async (
-  cache: IDeploymentData[],
-  newData: IDeploymentData[]
+  cache: IDeployments,
+  newData: IDeployments
 ): Promise<void> => {
-  const cacheIds = cache.map((d) => d.deploymentId);
-  const cacheId2deployment = cache.reduce((a, c) => {
+  const cacheIds = cache.deployments.map((d) => d.deploymentId);
+  const cacheId2deployment = cache.deployments.reduce((a, c) => {
     a[c.deploymentId] = c;
     return a;
   }, {});
-  cache.map((d) => d.deploymentId);
-  const changed = newData.filter((d) => {
+  cache.deployments.map((d) => d.deploymentId);
+  const changed = newData.deployments.filter((d) => {
     if (cacheIds.indexOf(d.deploymentId) === -1) {
       return false;
     }
@@ -115,8 +131,11 @@ export const updateChangedDeployment = async (
   if (changed.length > 0) {
     changed.forEach((ch) => {
       const idx = cacheIds.indexOf(ch.deploymentId);
-      cache.splice(idx, 1, ch);
+      cache.deployments.splice(idx, 1, ch);
     });
+
+    // When changed.length > 0 => some data has changed, update cluster sync
+    newData.clusterSync = await fetchClusterSync();
 
     // For changed deployments, fetch author only if it was empty, and PR only if
     // it wasn't closed (to pull merge updates)
@@ -146,14 +165,17 @@ export const updateChangedDeployment = async (
  */
 export const update = async () => {
   try {
-    const latest = deepClone(await listDeployments());
+    const latest: IDeployments = {
+      deployments: deepClone(await listDeployments()),
+      clusterSync: cacheData.clusterSync ?? await fetchClusterSync()
+    };
 
     // clone the current cache data and do an atomic replace later.
-    const clone = deepClone(cacheData.deployments);
-    await updateChangedDeployment(clone, latest as IDeploymentData[]);
-    await updateNewDeployment(clone, latest as IDeploymentData[]);
-    cacheData.deployments = updateOldDeployment(clone, latest as IDeploymentData[]);
-    cacheData.clusterSync = await getManifestRepoSyncState();
+    const clone = deepClone(cacheData);
+    await updateChangedDeployment(clone, latest);
+    await updateNewDeployment(clone, latest);
+    cacheData.deployments = updateOldDeployment(clone.deployments, latest.deployments);
+    cacheData.clusterSync = latest.clusterSync;
   } catch (e) {
     console.log(e);
   }

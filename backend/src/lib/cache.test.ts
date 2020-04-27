@@ -10,11 +10,26 @@ import {
   updateOldDeployment,
 } from "./cache";
 import * as cache from "./cache";
-import { deepClone, IDeploymentData } from "./common";
+import { deepClone, IDeployments } from "./common";
 import * as deployments from "./deployments";
 import { data as deploymentData } from "./mocks/deploymentsData";
 import { data as deploymentDataExtra } from "./mocks/deploymentsDataExtra";
 import * as testCommon from "./test-common";
+import * as clusterSync from "./clustersync";
+
+const emptyDeployments: IDeployments = {
+  deployments: [],
+  clusterSync: undefined
+};
+const mockedDeployment: IDeployments = {
+  deployments: deploymentData as any,
+  clusterSync: undefined
+};
+const mockedDeploymentExtra: IDeployments = {
+  deployments: deploymentDataExtra as any,
+  clusterSync: undefined
+};
+jest.spyOn(clusterSync, "get").mockResolvedValue(Promise.resolve(undefined));
 
 describe("test update and fetch function", () => {
   it("sanity test", async () => {
@@ -119,20 +134,20 @@ describe("test fetchAuthor function", () => {
 
 describe("test updateChangedDeployment function", () => {
   it("cache is empty and no data", async () => {
-    const cached: IDeploymentData[] = [];
-    await updateChangedDeployment(cached, []);
-    expect(cached).toStrictEqual([]);
+    const cached: IDeployments = { deployments: [], clusterSync: undefined };
+    await updateChangedDeployment(cached, deepClone(emptyDeployments));
+    expect(cached.deployments).toStrictEqual([]);
   });
   it("cache is empty and new data", async () => {
-    const cached: IDeploymentData[] = [];
-    await updateChangedDeployment(cached, deploymentData as any);
-    expect(cached).toStrictEqual([]);
+    const cached: IDeployments = deepClone(emptyDeployments);
+    await updateChangedDeployment(cached, mockedDeployment);
+    expect(cached.deployments).toStrictEqual([]);
   });
   it("cache is not empty and latest data is the same", async () => {
     jest
       .spyOn(deployments, "list")
-      .mockResolvedValueOnce(deploymentData as any);
-    const cached: IDeploymentData[] = deploymentData as any;
+      .mockResolvedValueOnce(mockedDeployment as any);
+    const cached: IDeployments = mockedDeployment as any;
     const originalCache = deepClone(cached);
 
     const fnFetchAuthor = jest.spyOn(cache, "fetchAuthor");
@@ -145,17 +160,17 @@ describe("test updateChangedDeployment function", () => {
     fnFetchPullRequest.mockResolvedValueOnce();
     fnFetchPullRequest.mockResolvedValueOnce();
 
-    await updateChangedDeployment(cached, deploymentData as any);
-    expect(cached).toStrictEqual(originalCache);
+    await updateChangedDeployment(cached, mockedDeployment);
+    expect(cached.deployments).toStrictEqual(originalCache.deployments);
   });
   it("cache is not empty and latest data is empty", async () => {
-    const cached: IDeploymentData[] = deploymentData as any;
+    const cached: IDeployments = mockedDeployment;
     const originalCache = deepClone(cached);
-    await updateChangedDeployment(cached, []);
-    expect(cached).toStrictEqual(originalCache);
+    await updateChangedDeployment(cached, deepClone(emptyDeployments));
+    expect(cached.deployments).toStrictEqual(originalCache.deployments);
   });
   it("cache is not empty and latest data has new item", async () => {
-    const cached: IDeploymentData[] = deploymentData as any;
+    const cached: IDeployments = mockedDeployment;
     const originalCache = deepClone(cached);
 
     const fnFetchAuthor = jest.spyOn(cache, "fetchAuthor");
@@ -169,7 +184,7 @@ describe("test updateChangedDeployment function", () => {
     fnFetchPullRequest.mockResolvedValueOnce();
 
     await updateChangedDeployment(cached, originalCache);
-    expect(cached).toStrictEqual(originalCache);
+    expect(cached.deployments).toStrictEqual(originalCache.deployments);
   });
   it("cache is not empty and latest data has changed item", async () => {
     const fnFetchAuthor = jest.spyOn(cache, "fetchAuthor");
@@ -185,17 +200,22 @@ describe("test updateChangedDeployment function", () => {
     const oldTs = changed[0].timeStamp;
     changed[0].timeStamp = ts;
 
-    const cacheObj: IDeploymentData[] = deploymentData as any;
-    const sz = cacheObj.length;
+    const cacheObj: IDeployments = mockedDeployment;
+    const sz = cacheObj.deployments.length;
 
-    await updateChangedDeployment(cacheObj, changed as any);
+    const changedDeps: IDeployments = {
+      deployments: changed as any,
+      clusterSync: undefined
+    }
+
+    await updateChangedDeployment(cacheObj, changedDeps);
 
     // no change in size
-    expect(cacheObj.length).toBe(sz);
+    expect(cacheObj.deployments.length).toBe(sz);
 
     // changed item is replaced
-    expect(cacheObj[0].timeStamp).toBe(ts);
-    expect(cacheObj[0].timeStamp).not.toBe(oldTs);
+    expect(cacheObj.deployments[0].timeStamp).toBe(ts);
+    expect(cacheObj.deployments[0].timeStamp).not.toBe(oldTs);
     expect(fnFetchAuthor).toBeCalledTimes(2);
     expect(fnFetchPullRequest).toBeCalledTimes(2);
   });
@@ -203,7 +223,7 @@ describe("test updateChangedDeployment function", () => {
 
 describe("test updateNewDeployment function", () => {
   it("cache is empty and no data", async () => {
-    await updateNewDeployment([], []);
+    await updateNewDeployment(emptyDeployments, deepClone(emptyDeployments));
   });
   it("cache is empty and new data", async () => {
     const fnFetchAuthor = jest.spyOn(cache, "fetchAuthor");
@@ -218,7 +238,7 @@ describe("test updateNewDeployment function", () => {
     fnFetchPullRequest.mockResolvedValueOnce();
     fnFetchPullRequest.mockResolvedValueOnce();
 
-    await updateNewDeployment([], deploymentData as any);
+    await updateNewDeployment(emptyDeployments, mockedDeployment);
     expect(fnFetchAuthor).toBeCalledTimes(3);
     expect(fnFetchPullRequest).toBeCalledTimes(3);
   });
@@ -228,7 +248,7 @@ describe("test updateNewDeployment function", () => {
     const fnFetchPullRequest = jest.spyOn(cache, "fetchPullRequest");
     fnFetchPullRequest.mockReset();
 
-    await updateNewDeployment(deploymentData as any, deploymentData as any);
+    await updateNewDeployment(mockedDeployment, mockedDeployment);
     expect(fnFetchAuthor).toBeCalledTimes(0);
     expect(fnFetchPullRequest).toBeCalledTimes(0);
   });
@@ -238,7 +258,7 @@ describe("test updateNewDeployment function", () => {
     const fnFetchPullRequest = jest.spyOn(cache, "fetchPullRequest");
     fnFetchPullRequest.mockReset();
 
-    await updateNewDeployment(deploymentData as any, []);
+    await updateNewDeployment(mockedDeployment, emptyDeployments);
     expect(fnFetchAuthor).toBeCalledTimes(0);
     expect(fnFetchPullRequest).toBeCalledTimes(0);
   });
@@ -251,8 +271,8 @@ describe("test updateNewDeployment function", () => {
     fnFetchPullRequest.mockResolvedValueOnce();
 
     await updateNewDeployment(
-      deploymentData as any,
-      deploymentDataExtra as any
+      mockedDeployment,
+      mockedDeploymentExtra
     );
     expect(fnFetchAuthor).toBeCalledTimes(1);
     expect(fnFetchPullRequest).toBeCalledTimes(1);
@@ -269,24 +289,24 @@ describe("test updateOldDeployment function", () => {
     expect(res).toStrictEqual([]);
   });
   it("cache is not empty and latest data is the same", () => {
-    const originalCache = deepClone(deploymentData);
+    const originalCache = deepClone(mockedDeployment);
     const res = updateOldDeployment(
       deploymentData as any,
       deploymentData as any
     );
-    expect(res).toStrictEqual(originalCache);
+    expect(res).toStrictEqual(originalCache.deployments);
   });
   it("cache is not empty and latest data is empty", () => {
     const res = updateOldDeployment(deploymentData as any, []);
     expect(res).toStrictEqual([]);
   });
   it("cache is not empty and latest data has new item", () => {
-    const originalCache = deepClone(deploymentData);
+    const originalCache = deepClone(mockedDeployment);
     const res = updateOldDeployment(
       deploymentData as any,
       deploymentDataExtra as any
     );
-    expect(res).toStrictEqual(originalCache);
+    expect(res).toStrictEqual(originalCache.deployments);
   });
   it("cache is not empty and latest data has one less item", () => {
     const res = updateOldDeployment(
