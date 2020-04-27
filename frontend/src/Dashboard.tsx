@@ -48,10 +48,8 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     super(props);
     const searchParams = new URLSearchParams(location.search);
     this.state = {
-      authors: {},
       deployments: [],
       filteredDeployments: [],
-      prs: {},
       refreshRate: Number.parseInt(searchParams.get("refresh") ?? "", 10) || 30, // default to 30 seconds
       rowLimit: Number.parseInt(searchParams.get("limit") ?? "", 10) || 50, // default to 50 rows
     };
@@ -477,9 +475,10 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
    * Gets a list of authors for filter drop down
    */
   private getListOfAuthors = (): Set<string> => {
-    return new Set(
-      Object.values(this.state.authors).map((author) => author.name)
-    );
+    const authors = this.state.deployments.reduce((acc, dep) => {
+      return dep.author ? acc.add(dep.author.name) : acc;
+    }, new Set<string>());
+    return authors;
   };
 
   /**

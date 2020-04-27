@@ -37,9 +37,7 @@ export interface IDashboardFilterState {
 export interface IDashboardState {
   deployments: IDeploymentData[];
   manifestSyncStatuses?: ITag[];
-  authors: IAuthors;
   filteredDeployments: IDeploymentData[];
-  prs: IPRs;
   error?: string;
   rowLimit: number;
   refreshRate: number;
