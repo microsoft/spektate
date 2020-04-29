@@ -450,7 +450,7 @@ export const renderDeploymentStatus = (
 
 /**
  * initializes sort functions that assist in sorting certain columns of the dashboard
- * @param isClusterSyncAvailable 
+ * @param isClusterSyncAvailable
  */
 export const initSortFunctions = (isClusterSyncAvailable: boolean) => {
   sortFunctions = [

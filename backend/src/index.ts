@@ -1,10 +1,8 @@
 import * as express from "express";
-import { get as authorGet } from "./author";
-import { get as clusterSyncGet } from "./clustersync";
-import { get as deploymentGet } from "./deployment";
-import { get as health } from "./health";
-import { get as prGet } from "./pullrequest";
-import { get as version } from "./version";
+import { cacheRefreshInterval } from "./config";
+import { get as healthGet } from "./health";
+import { fetch as fetchDeployment, update as updateCache } from "./lib/cache";
+import { get as versionGet } from "./version";
 const app = express();
 
 app.use((req, res, next) => {
@@ -16,27 +14,29 @@ app.use((req, res, next) => {
   next();
 });
 
-// start the Express server
-const port = 8001; // default port to listen
-app.listen(port, () => {
-  console.log(`server started at http://localhost:${port}`);
-});
-
 app.get("/api/deployments", (req: express.Request, res: express.Response) => {
-  deploymentGet(req, res);
-});
-app.get("/api/clustersync", (req: express.Request, res: express.Response) => {
-  clusterSyncGet(req, res);
-});
-app.get("/api/author", (req: express.Request, res: express.Response) => {
-  authorGet(req, res);
-});
-app.get("/api/pr", (req: express.Request, res: express.Response) => {
-  prGet(req, res);
+  try {
+    res.json(fetchDeployment());
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
 });
 app.get("/api/health", (req: express.Request, res: express.Response) => {
-  health(req, res);
+  healthGet(req, res);
 });
 app.get("/api/version", (req: express.Request, res: express.Response) => {
-  version(req, res);
+  versionGet(req, res);
 });
+
+(async () => {
+  await updateCache();
+
+  setInterval(async () => {
+    await updateCache();
+  }, cacheRefreshInterval());
+  // start the Express server
+  const port = 8001; // default port to listen
+  app.listen(port, () => {
+    console.log(`server started at http://localhost:${port}`);
+  });
+})();

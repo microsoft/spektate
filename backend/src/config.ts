@@ -1,43 +1,76 @@
 import { Response } from "express";
 
-export const AZURE_ORG: string = process.env.REACT_APP_PIPELINE_ORG || "";
-export const AZURE_PIPELINE_ACCESS_TOKEN: string =
-  process.env.REACT_APP_PIPELINE_ACCESS_TOKEN || "";
-export const AZURE_PROJECT: string =
-  process.env.REACT_APP_PIPELINE_PROJECT || "";
-export const GITHUB_MANIFEST_USERNAME: string =
-  process.env.REACT_APP_GITHUB_MANIFEST_USERNAME || "";
-export const MANIFEST: string = process.env.REACT_APP_MANIFEST || "";
-export const MANIFEST_ACCESS_TOKEN: string =
-  process.env.REACT_APP_MANIFEST_ACCESS_TOKEN || "";
-export const SOURCE_REPO_ACCESS_TOKEN: string =
-  process.env.REACT_APP_SOURCE_REPO_ACCESS_TOKEN || "";
-export const STORAGE_ACCOUNT_KEY: string =
-  process.env.REACT_APP_STORAGE_ACCESS_KEY || "";
-export const STORAGE_ACCOUNT_NAME: string =
-  process.env.REACT_APP_STORAGE_ACCOUNT_NAME || "";
-export const STORAGE_PARTITION_KEY: string =
-  process.env.REACT_APP_STORAGE_PARTITION_KEY || "";
-export const STORAGE_TABLE_NAME: string =
-  process.env.REACT_APP_STORAGE_TABLE_NAME || "";
-export const DOCKER_VERSION: string =
-  process.env.REACT_APP_DOCKER_VERSION || "";
+/**
+ * Config interface
+ */
+export interface IConfig {
+  org: string;
+  project: string;
+  pipelineAccessToken: string;
+  githubManifestUsername: string;
+  manifestRepoName: string;
+  manifestAccessToken: string;
+  sourceRepoAccessToken: string;
+  storageAccessKey: string;
+  storageAccountName: string;
+  storageTableName: string;
+  storagePartitionKey: string;
+  dockerVersion: string;
+}
 
-export const isValuesValid = (res: Response) => {
+/**
+ * Gets config
+ */
+export const getConfig = (): IConfig => {
+  return {
+    dockerVersion: process.env.REACT_APP_DOCKER_VERSION || "",
+    githubManifestUsername:
+      process.env.REACT_APP_GITHUB_MANIFEST_USERNAME || "",
+    manifestAccessToken: process.env.REACT_APP_MANIFEST_ACCESS_TOKEN || "",
+    manifestRepoName: process.env.REACT_APP_MANIFEST || "",
+    org: process.env.REACT_APP_PIPELINE_ORG || "",
+    pipelineAccessToken: process.env.REACT_APP_PIPELINE_ACCESS_TOKEN || "",
+    project: process.env.REACT_APP_PIPELINE_PROJECT || "",
+    sourceRepoAccessToken: process.env.REACT_APP_SOURCE_REPO_ACCESS_TOKEN || "",
+    storageAccessKey: process.env.REACT_APP_STORAGE_ACCESS_KEY || "",
+    storageAccountName: process.env.REACT_APP_STORAGE_ACCOUNT_NAME || "",
+    storagePartitionKey: process.env.REACT_APP_STORAGE_PARTITION_KEY || "",
+    storageTableName: process.env.REACT_APP_STORAGE_TABLE_NAME || "",
+  };
+};
+
+/**
+ * Gets cache refresh interval
+ */
+export const cacheRefreshInterval = (): number => {
+  const interval = process.env.REACT_APP_CACHE_REFRESH_INTERVAL_IN_SEC || "30";
+  const val = parseInt(interval, 10);
+  return isNaN(val) ? 30 * 1000 : val * 1000;
+};
+
+/**
+ * Checks whether config is valid or not
+ * @param res Response obj
+ */
+export const isConfigValid = (res?: Response) => {
+  const config = getConfig();
   if (
-    !!AZURE_ORG &&
-    !!AZURE_PROJECT &&
-    !!STORAGE_ACCOUNT_NAME &&
-    !!STORAGE_ACCOUNT_KEY &&
-    !!STORAGE_TABLE_NAME &&
-    !!STORAGE_PARTITION_KEY
+    !!config.org &&
+    !!config.project &&
+    !!config.storageAccountName &&
+    !!config.storageAccessKey &&
+    !!config.storageTableName &&
+    !!config.storagePartitionKey
   ) {
     return true;
   }
-  res
-    .status(500)
-    .send(
-      "Environment variables need to be exported for Spektate configuration"
-    );
+
+  if (res) {
+    res
+      .status(500)
+      .send(
+        "Environment variables need to be exported for Spektate configuration"
+      );
+  }
   return false;
 };

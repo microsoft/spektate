@@ -9,19 +9,24 @@
   },
   "scripts": {
     "start": "ts-node src/index.ts",
-    "build": "tsc src/** --outDir ./build/",
-    "lint": "tslint -p tsconfig.json -c tslint.json src/*.ts",
-    "prettier": "prettier --write src"
+    "build": "tsc",
+    "lint": "tslint -p tsconfig.json -c tslint.json src/**/*.ts",
+    "prettier": "prettier --write src",
+    "test": "jest --coverage --coverageReporters=cobertura --coverageReporters=html",
+    "test-watch": "jest --watchAll"
   },
   "devDependencies": {
     "@types/node": "^12.6.8",
+    "@types/jest": "^24.0.18",
     "husky": "^4.2.5",
     "lint-staged": "^10.1.5",
     "prettier": "^2.0.5",
     "ts-node": "^8.9.0",
     "tslint": "^6.1.1",
     "tslint-config-prettier": "^1.18.0",
-    "typescript": "^3.8.3"
+    "ts-jest": "^25.2.1",
+    "typescript": "^3.8.3",
+    "jest": "^25.1.0"
   },
   "husky": {
     "hooks": {

@@ -27,6 +27,7 @@ stages:
               yarn install
               yarn lint
               yarn build
+              yarn test
             workingDirectory: "./backend"
             displayName: "Backend install, lint and build"
 
