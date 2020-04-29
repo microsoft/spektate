@@ -10,7 +10,7 @@ schedules:
 variables:
 - name: skipComponentGovernanceDetection
   value: "true"
-- group: 'spektate-ci-vg'
+- group: 'spektate-ci-vg-temp'
 
 jobs:
   - job: Spektate_Publish
