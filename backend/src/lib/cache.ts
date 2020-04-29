@@ -18,7 +18,14 @@ let cacheData: IDeployments = {
 export const fetchAuthor = async (
   deployment: IDeploymentData
 ): Promise<void> => {
-  deployment.author = await getAuthor(deployment);
+  try {
+    deployment.author = await getAuthor(deployment);
+  } catch (e) {
+    // If there's an error with author, we want to fail silently since 
+    // deployments can still be displayed.
+    console.error(e);
+  }
+  return undefined;
 };
 
 /**
@@ -29,7 +36,14 @@ export const fetchAuthor = async (
 export const fetchPullRequest = async (
   deployment: IDeploymentData
 ): Promise<void> => {
-  deployment.pullRequest = await getPullRequest(deployment);
+  try {
+    deployment.pullRequest = await getPullRequest(deployment);
+  } catch (e) {
+    // If there's an error with PRs, we want to fail silently since 
+    // deployments can still be displayed.
+    console.error(e);
+  }
+  return undefined;
 };
 
 /**
