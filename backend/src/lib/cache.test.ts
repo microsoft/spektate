@@ -112,15 +112,10 @@ describe("test fetchAuthor function", () => {
         sourceVersion: "be3c7f65b7c9eb792a7af3ff1f7d3d187cd47773",
       },
     };
-    let error = false;
-    try {
+    expect(async () => {
       await fetchAuthor(deployment as any);
-    } catch (e) {
-      error = true;
-    }
-    // Make sure exception was not thrown
-    expect(error).toBe(false);
-    expect(deployment.srcToDockerBuild.author).toBeUndefined();
+      expect(deployment.srcToDockerBuild.author).toBeUndefined();
+    }).not.toThrow();
   });
   it("exception test for PR", async () => {
     jest.spyOn(pr, "get").mockImplementation((
@@ -141,15 +136,10 @@ describe("test fetchAuthor function", () => {
       },
       pullRequest: undefined
     };
-    let error = false;
-    try {
+    expect(async () => {
       await fetchPullRequest(deployment as any);
-    } catch (e) {
-      error = true;
-    }
-    // Make sure exception was not thrown
-    expect(error).toBe(false);
-    expect(deployment.pullRequest).toBeUndefined();
+      expect(deployment.pullRequest).toBeUndefined();
+    }).not.toThrow();
   });
   it("exception test for cluster sync", async () => {
     jest.spyOn(clusterSync, "get").mockImplementation((): Promise<IClusterSync | undefined> => {
@@ -157,16 +147,10 @@ describe("test fetchAuthor function", () => {
         reject("Not found");
       });
     });
-    let error = false;
-    let clustersync;
-    try {
-      clustersync = await fetchClusterSync();
-    } catch (e) {
-      error = true;
-    }
-    // Make sure exception was not thrown
-    expect(error).toBe(false);
-    expect(clustersync).toBeUndefined();
+    expect(async () => {
+      const clustersync = await fetchClusterSync();
+      expect(clustersync).toBeUndefined();
+    }).not.toThrow();
   });
   it("srcToDockerBuild test", async () => {
     jest.spyOn(author, "get").mockResolvedValueOnce({
