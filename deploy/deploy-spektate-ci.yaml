@@ -8,9 +8,9 @@ schedules:
     always: true
 
 variables:
-- name: skipComponentGovernanceDetection
-  value: "true"
-- group: 'spektate-ci-vg-temp'
+  - name: skipComponentGovernanceDetection
+    value: "true"
+  - group: "spektate-ci-vg"
 
 jobs:
   - job: Spektate_Publish
@@ -35,4 +35,3 @@ jobs:
 
           sh ./deploy/deploy-latest-image.sh
         displayName: "Run deploy script"
-          
