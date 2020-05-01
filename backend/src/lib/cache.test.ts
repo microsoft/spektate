@@ -1,5 +1,6 @@
 import { IAuthor } from "spektate/lib/repository/Author";
 import * as author from "./author";
+import * as pr from "./pullRequest";
 import {
   fetch,
   fetchAuthor,
@@ -8,14 +9,18 @@ import {
   updateChangedDeployment,
   updateNewDeployment,
   updateOldDeployment,
+  fetchPullRequest,
+  fetchClusterSync,
 } from "./cache";
 import * as cache from "./cache";
-import { deepClone, IDeployments } from "./common";
+import { deepClone, IDeployments, IDeploymentData } from "./common";
 import * as deployments from "./deployments";
 import { data as deploymentData } from "./mocks/deploymentsData";
 import { data as deploymentDataExtra } from "./mocks/deploymentsDataExtra";
 import * as testCommon from "./test-common";
 import * as clusterSync from "./clustersync";
+import { IPullRequest } from 'spektate/lib/repository/IPullRequest';
+import { IClusterSync } from 'spektate/lib/repository/Tag';
 
 const emptyDeployments: IDeployments = {
   deployments: [],
@@ -88,6 +93,64 @@ describe("test fetchAuthor function", () => {
     };
     await fetchAuthor(deployment as any);
     expect(deployment.srcToDockerBuild.author).toBeUndefined();
+  });
+  it("exception test for author", async () => {
+    jest.spyOn(author, "get").mockImplementation((
+      _: IDeploymentData
+    ): Promise<IAuthor | undefined> => {
+      return new Promise((resolve, reject) => {
+        reject("Author not found");
+      });
+    });
+    const deployment = {
+      commitId: "be3c7f6",
+      deploymentId: "c3e4a8937af9",
+      sourceRepo:
+        "https://dev.azure.com/epictest/hellobedrockprivate/_git/hello-bedrock",
+      srcToDockerBuild: {
+        author: undefined,
+        sourceVersion: "be3c7f65b7c9eb792a7af3ff1f7d3d187cd47773",
+      },
+    };
+    expect(async () => {
+      await fetchAuthor(deployment as any);
+      expect(deployment.srcToDockerBuild.author).toBeUndefined();
+    }).not.toThrow();
+  });
+  it("exception test for PR", async () => {
+    jest.spyOn(pr, "get").mockImplementation((
+      _: IDeploymentData
+    ): Promise<IPullRequest | undefined> => {
+      return new Promise((resolve, reject) => {
+        reject("PR not found");
+      });
+    });
+    const deployment = {
+      commitId: "be3c7f6",
+      deploymentId: "c3e4a8937af9",
+      sourceRepo:
+        "https://dev.azure.com/epictest/hellobedrockprivate/_git/hello-bedrock",
+      srcToDockerBuild: {
+        author: undefined,
+        sourceVersion: "be3c7f65b7c9eb792a7af3ff1f7d3d187cd47773",
+      },
+      pullRequest: undefined
+    };
+    expect(async () => {
+      await fetchPullRequest(deployment as any);
+      expect(deployment.pullRequest).toBeUndefined();
+    }).not.toThrow();
+  });
+  it("exception test for cluster sync", async () => {
+    jest.spyOn(clusterSync, "get").mockImplementation((): Promise<IClusterSync | undefined> => {
+      return new Promise((resolve, reject) => {
+        reject("Not found");
+      });
+    });
+    expect(async () => {
+      const clustersync = await fetchClusterSync();
+      expect(clustersync).toBeUndefined();
+    }).not.toThrow();
   });
   it("srcToDockerBuild test", async () => {
     jest.spyOn(author, "get").mockResolvedValueOnce({
