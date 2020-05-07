@@ -7,6 +7,7 @@ import { endTime, IDeployment, status } from "spektate/lib/IDeployment";
 import { ITag } from "spektate/lib/repository/Tag";
 import "./css/dashboard.css";
 import {
+  DeploymentType,
   IDashboardFilterState,
   IDashboardState,
   IDeploymentData,
@@ -53,6 +54,10 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       refreshRate: Number.parseInt(searchParams.get("refresh") ?? "", 10) || 30, // default to 30 seconds
       rowLimit: Number.parseInt(searchParams.get("limit") ?? "", 10) || 50, // default to 50 rows
     };
+    this.filterState.currentlySelectedTypes = [DeploymentType.DEPLOYMENT];
+    this.filter.setFilterItemState("typeFilter", {
+      value: this.filterState.currentlySelectedTypes,
+    });
   }
 
   public componentDidMount() {
@@ -136,6 +141,9 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         this.filter.setFilterItemState("keywordFilter", {
           value: this.filterState.currentlySelectedKeyword,
         });
+        this.filter.setFilterItemState("typeFilter", {
+          value: this.filterState.currentlySelectedTypes,
+        });
       }
       const tags = deps.data.clusterSync;
 
@@ -183,14 +191,19 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
   private getDeploymentToDisplay = (
     deployment: IDeploymentData
   ): IDeploymentField => {
-    console.log(deployment);
     const tags = this.getClusterSyncStatusForDeployment(deployment);
     const clusters: string[] = tags ? tags.map((itag) => itag.name) : [];
     const statusStr = status(deployment);
     const endtime = endTime(deployment);
     return {
       deploymentId: deployment.deploymentId,
-      service: deployment.service !== "" ? deployment.service : "-",
+      deploymentType: this.getDeploymentTypeForDeployment(deployment),
+      service:
+        deployment.service !== ""
+          ? deployment.service
+          : !deployment.srcToDockerBuild && deployment.hldToManifestBuild
+          ? "(Manual HLD Edit)"
+          : "-",
       startTime: deployment.srcToDockerBuild
         ? deployment.srcToDockerBuild.startTime
         : new Date(),
@@ -277,6 +290,21 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
    */
   private onDashboardFiltered = (filterData: Filter) => {
     this.filter = filterData;
+    this.filterState.currentlySelectedKeyword = this.filter.getFilterItemValue(
+      "keywordFilter"
+    );
+    this.filterState.currentlySelectedAuthors = Array.from(
+      new Set(this.filter.getFilterItemValue("authorFilter"))
+    );
+    this.filterState.currentlySelectedServices = Array.from(
+      new Set(this.filter.getFilterItemValue("serviceFilter"))
+    );
+    this.filterState.currentlySelectedEnvs = Array.from(
+      new Set(this.filter.getFilterItemValue("envFilter"))
+    );
+    this.filterState.currentlySelectedTypes = Array.from(
+      new Set(this.filter.getFilterItemValue("typeFilter"))
+    );
     this.updateFilteredDeployments();
   };
 
@@ -298,18 +326,23 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       const envFilters: Set<string> = new Set(
         this.filter.getFilterItemValue("envFilter")
       );
+      const typeFilters: Set<string> = new Set(
+        this.filter.getFilterItemValue("typeFilter")
+      );
 
       this.updateQueryString(
         keywordFilter,
         serviceFilters,
         authorFilters,
-        envFilters
+        envFilters,
+        typeFilters
       );
       this.filterDeployments(
         keywordFilter,
         serviceFilters,
         authorFilters,
-        envFilters
+        envFilters,
+        typeFilters
       );
     }
   };
@@ -325,16 +358,18 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     keywordFilter: string | undefined,
     serviceFilters: Set<string>,
     authorFilters: Set<string>,
-    envFilters: Set<string>
+    envFilters: Set<string>,
+    typeFilters: Set<string>
   ) {
+    const searchParams = new URLSearchParams(location.search);
     const setParams = (
       params: URLSearchParams,
       name: string,
-      values: Set<string> | string
+      values: string | string[]
     ): void => {
       params.delete(name);
       const hasValue =
-        typeof values === "string" ? values.length > 0 : values.size > 0;
+        typeof values === "string" ? values.length > 0 : values.length > 0;
 
       if (hasValue) {
         if (typeof values === "string") {
@@ -346,11 +381,11 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         }
       }
     };
-    const searchParams = new URLSearchParams(location.search);
     setParams(searchParams, "keyword", keywordFilter ?? "");
-    setParams(searchParams, "service", serviceFilters);
-    setParams(searchParams, "author", authorFilters);
-    setParams(searchParams, "env", envFilters);
+    setParams(searchParams, "service", Array.from(serviceFilters));
+    setParams(searchParams, "author", Array.from(authorFilters));
+    setParams(searchParams, "env", Array.from(envFilters));
+    setParams(searchParams, "type", Array.from(typeFilters));
     setParams(searchParams, "limit", this.state.rowLimit.toString());
     setParams(searchParams, "refresh", this.state.refreshRate.toString());
 
@@ -376,7 +411,8 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     keywordFilter: string | undefined,
     serviceFilters: Set<string>,
     authorFilters: Set<string>,
-    envFilters: Set<string>
+    envFilters: Set<string>,
+    typeFilters: Set<string>
   ) {
     let filteredDeployments: IDeployment[] = this.state.deployments;
 
@@ -407,6 +443,13 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       });
     }
 
+    if (typeFilters.size > 0) {
+      filteredDeployments = filteredDeployments.filter((deployment) => {
+        const type = this.getDeploymentTypeForDeployment(deployment);
+        return type ? typeFilters.has(type) : false;
+      });
+    }
+
     this.setState({ filteredDeployments });
   }
 
@@ -423,18 +466,21 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     const authorFilters: Set<string> = this.getFilterSet("author");
     const serviceFilters: Set<string> = this.getFilterSet("service");
     const envFilters: Set<string> = this.getFilterSet("env");
+    const typeFilters: Set<string> = this.getFilterSet("type");
 
     this.updateQueryString(
       keywordFilter,
       serviceFilters,
       authorFilters,
-      envFilters
+      envFilters,
+      typeFilters
     );
     this.filterDeployments(
       keywordFilter,
       serviceFilters,
       authorFilters,
-      envFilters
+      envFilters,
+      typeFilters
     );
   };
 
@@ -479,6 +525,19 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       return dep.author ? acc.add(dep.author.name) : acc;
     }, new Set<string>());
     return authors;
+  };
+
+  /**
+   * Gets deployment type for a deployment, whether manual HLD edit or a bedrock deployment
+   */
+  private getDeploymentTypeForDeployment = (
+    deployment: IDeployment
+  ): DeploymentType | undefined => {
+    return deployment.service !== ""
+      ? DeploymentType.DEPLOYMENT
+      : !deployment.srcToDockerBuild && deployment.hldToManifestBuild
+      ? DeploymentType.HLD_EDIT
+      : undefined;
   };
 
   /**

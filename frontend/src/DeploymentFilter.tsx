@@ -9,6 +9,7 @@ import {
 } from "azure-devops-ui/Utilities/Filter";
 import * as React from "react";
 import "./css/dashboard.css";
+import { DeploymentType } from "./Dashboard.types";
 
 export interface IDeploymentFilterProps {
   listOfServices: string[];
@@ -46,6 +47,20 @@ export class DeploymentFilter extends React.Component<
         <FilterBar filter={this.props.filter}>
           <KeywordFilterBarItem filterItemKey="keywordFilter" />
           <DropdownFilterBarItem
+            filterItemKey="typeFilter"
+            filter={this.props.filter}
+            items={Object.values(DeploymentType).map((i) => {
+              return {
+                iconProps: { iconName: "Cloud" },
+                id: i,
+                text: i,
+              };
+            })}
+            selection={new DropdownMultiSelection()}
+            placeholder="Filter by Type"
+            noItemsText="No types found"
+          />
+          <DropdownFilterBarItem
             filterItemKey="serviceFilter"
             filter={this.props.filter}
             items={this.props.listOfServices.map((i) => {
@@ -59,7 +74,6 @@ export class DeploymentFilter extends React.Component<
             placeholder="Filter by Service"
             noItemsText="No services found"
           />
-
           <DropdownFilterBarItem
             filterItemKey="authorFilter"
             filter={this.props.filter}
@@ -74,7 +88,6 @@ export class DeploymentFilter extends React.Component<
             placeholder="Filter by Author"
             noItemsText="No authors found"
           />
-
           <DropdownFilterBarItem
             filterItemKey="envFilter"
             filter={this.props.filter}

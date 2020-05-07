@@ -21,6 +21,11 @@ export interface IDeploymentData extends IDeployment {
   pullRequest?: IPullRequest | undefined;
 }
 
+export enum DeploymentType {
+  DEPLOYMENT = "Bedrock Deployments",
+  HLD_EDIT = "Manual HLD Edits",
+}
+
 export interface IDeployments {
   deployments: IDeploymentData[];
   clusterSync: IClusterSync | undefined;
@@ -30,6 +35,7 @@ export interface IDashboardFilterState {
   currentlySelectedServices?: string[];
   currentlySelectedEnvs?: string[];
   currentlySelectedAuthors?: string[];
+  currentlySelectedTypes?: string[];
   currentlySelectedKeyword?: string;
   defaultApplied: boolean;
 }
@@ -44,6 +50,7 @@ export interface IDashboardState {
 }
 
 export interface IDeploymentField {
+  deploymentType?: DeploymentType;
   deploymentId: string;
   service: string;
   startTime?: Date;
