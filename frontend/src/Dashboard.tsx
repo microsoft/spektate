@@ -54,10 +54,14 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       refreshRate: Number.parseInt(searchParams.get("refresh") ?? "", 10) || 30, // default to 30 seconds
       rowLimit: Number.parseInt(searchParams.get("limit") ?? "", 10) || 50, // default to 50 rows
     };
-    this.filterState.currentlySelectedTypes = [DeploymentType.DEPLOYMENT];
-    this.filter.setFilterItemState("typeFilter", {
-      value: this.filterState.currentlySelectedTypes,
-    });
+    // Set default deployments to not show manual HLD Edits, unless user has
+    // selected them specifically
+    if (this.getFilterSet("type").size === 0) {
+      this.filterState.currentlySelectedTypes = [DeploymentType.DEPLOYMENT];
+      this.filter.setFilterItemState("typeFilter", {
+        value: this.filterState.currentlySelectedTypes,
+      });
+    }
   }
 
   public componentDidMount() {
@@ -144,6 +148,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         this.filter.setFilterItemState("typeFilter", {
           value: this.filterState.currentlySelectedTypes,
         });
+        this.filterState.defaultApplied = true;
       }
       const tags = deps.data.clusterSync;
 
@@ -290,21 +295,6 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
    */
   private onDashboardFiltered = (filterData: Filter) => {
     this.filter = filterData;
-    this.filterState.currentlySelectedKeyword = this.filter.getFilterItemValue(
-      "keywordFilter"
-    );
-    this.filterState.currentlySelectedAuthors = Array.from(
-      new Set(this.filter.getFilterItemValue("authorFilter"))
-    );
-    this.filterState.currentlySelectedServices = Array.from(
-      new Set(this.filter.getFilterItemValue("serviceFilter"))
-    );
-    this.filterState.currentlySelectedEnvs = Array.from(
-      new Set(this.filter.getFilterItemValue("envFilter"))
-    );
-    this.filterState.currentlySelectedTypes = Array.from(
-      new Set(this.filter.getFilterItemValue("typeFilter"))
-    );
     this.updateFilteredDeployments();
   };
 
@@ -467,6 +457,12 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     const serviceFilters: Set<string> = this.getFilterSet("service");
     const envFilters: Set<string> = this.getFilterSet("env");
     const typeFilters: Set<string> = this.getFilterSet("type");
+
+    this.filterState.currentlySelectedKeyword = keywordFilter;
+    this.filterState.currentlySelectedServices = Array.from(serviceFilters);
+    this.filterState.currentlySelectedEnvs = Array.from(envFilters);
+    this.filterState.currentlySelectedTypes = Array.from(typeFilters);
+    this.filterState.currentlySelectedAuthors = Array.from(authorFilters);
 
     this.updateQueryString(
       keywordFilter,
