@@ -240,6 +240,15 @@ export const renderSrcBuild = (
   tableColumn: ITableColumn<IDeploymentField>,
   deployment: IDeploymentField
 ): JSX.Element => {
+  if (deployment.deploymentType === DeploymentType.HLD_EDIT) {
+    return (
+      <Simple
+        columnIndex={columnIndex}
+        tableColumn={tableColumn}
+        text={"Manual HLD Edit"}
+      />
+    );
+  }
   return (
     <Build
       columnIndex={columnIndex}
