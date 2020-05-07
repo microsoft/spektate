@@ -112,13 +112,13 @@ export const DeploymentTable: React.FC<ITableProps> = (props: ITableProps) => {
     },
     {
       id: "srcPipelineId",
-      name: "SRC to ACR",
+      name: "Image Creation",
       renderCell: renderSrcBuild,
       width: new ObservableValue(200),
     },
     {
       id: "dockerPipelineId",
-      name: "ACR to HLD",
+      name: "Metadata Update",
       renderCell: renderDockerRelease,
       width: new ObservableValue(250),
     },
@@ -140,7 +140,7 @@ export const DeploymentTable: React.FC<ITableProps> = (props: ITableProps) => {
     },
     {
       id: "hldPipelineId",
-      name: "HLD to Manifest",
+      name: "Ready to Deploy",
       renderCell: renderHldBuild,
       width: new ObservableValue(200),
     },
