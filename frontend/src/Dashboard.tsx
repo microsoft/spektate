@@ -207,7 +207,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         deployment.service !== ""
           ? deployment.service
           : !deployment.srcToDockerBuild && deployment.hldToManifestBuild
-          ? "(Manual HLD Edit)"
+          ? "Manual HLD Edit"
           : "-",
       startTime: deployment.srcToDockerBuild
         ? deployment.srcToDockerBuild.startTime
@@ -229,7 +229,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         : "",
       srcPipelineResult: deployment.srcToDockerBuild
         ? deployment.srcToDockerBuild.result
-        : "-",
+        : "",
       dockerPipelineId: deployment.dockerToHldRelease
         ? deployment.dockerToHldRelease.releaseName
         : deployment.dockerToHldReleaseStage
