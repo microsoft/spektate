@@ -54,8 +54,8 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       refreshRate: Number.parseInt(searchParams.get("refresh") ?? "", 10) || 30, // default to 30 seconds
       rowLimit: Number.parseInt(searchParams.get("limit") ?? "", 10) || 50, // default to 50 rows
     };
-    // Set default deployments to not show manual HLD Edits, unless user has
-    // selected them specifically
+
+    // Set default deployments to not show manual HLD Edits, unless user has selected any of them
     if (this.getFilterSet("type").size === 0) {
       this.filterState.currentlySelectedTypes = [DeploymentType.DEPLOYMENT];
       this.filter.setFilterItemState("typeFilter", {
@@ -355,11 +355,11 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     const setParams = (
       params: URLSearchParams,
       name: string,
-      values: string | string[]
+      values: Set<string> | string
     ): void => {
       params.delete(name);
       const hasValue =
-        typeof values === "string" ? values.length > 0 : values.length > 0;
+        typeof values === "string" ? values.length > 0 : values.size > 0;
 
       if (hasValue) {
         if (typeof values === "string") {
@@ -372,10 +372,10 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       }
     };
     setParams(searchParams, "keyword", keywordFilter ?? "");
-    setParams(searchParams, "service", Array.from(serviceFilters));
-    setParams(searchParams, "author", Array.from(authorFilters));
-    setParams(searchParams, "env", Array.from(envFilters));
-    setParams(searchParams, "type", Array.from(typeFilters));
+    setParams(searchParams, "service", serviceFilters);
+    setParams(searchParams, "author", authorFilters);
+    setParams(searchParams, "env", envFilters);
+    setParams(searchParams, "type", typeFilters);
     setParams(searchParams, "limit", this.state.rowLimit.toString());
     setParams(searchParams, "refresh", this.state.refreshRate.toString());
 
