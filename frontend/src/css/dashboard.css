@@ -68,3 +68,7 @@ body {
 .icon-purple {
   color: #5b50e2;
 }
+
+.italic-text {
+  font-style: italic;
+}

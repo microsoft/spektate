@@ -1,6 +1,7 @@
 import { ITableColumn, SimpleTableCell } from "azure-devops-ui/Table";
 import { Tooltip } from "azure-devops-ui/TooltipEx";
 import * as React from "react";
+import "../css/dashboard.css";
 import { IDeploymentField } from "../Dashboard.types";
 
 /**
@@ -10,6 +11,7 @@ interface ISimpleProps {
   columnIndex: number;
   tableColumn: ITableColumn<IDeploymentField>;
   text?: string;
+  className?: string;
 }
 
 export const Simple: React.FC<ISimpleProps> = (props: ISimpleProps) => {
@@ -26,7 +28,9 @@ export const Simple: React.FC<ISimpleProps> = (props: ISimpleProps) => {
       columnIndex={props.columnIndex}
       tableColumn={props.tableColumn}
       key={"col-" + props.columnIndex}
-      contentClassName="fontSizeM font-size-m scroll-hidden"
+      contentClassName={
+        "fontSizeM font-size-m scroll-hidden " + props.className
+      }
     >
       <div className="flex-row scroll-hidden">
         <Tooltip overflowOnly={true}>
