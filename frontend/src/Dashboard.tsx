@@ -203,7 +203,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     return {
       deploymentId: deployment.deploymentId,
       deploymentType: this.getDeploymentTypeForDeployment(deployment),
-      service: deployment.service,
+      service: deployment.service !== "" ? deployment.service : "-",
       startTime: deployment.srcToDockerBuild
         ? deployment.srcToDockerBuild.startTime
         : new Date(),
