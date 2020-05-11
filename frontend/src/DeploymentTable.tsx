@@ -18,7 +18,7 @@ import { Persona } from "./cells/persona";
 import { Simple } from "./cells/simple";
 import { Status } from "./cells/status";
 import { Time } from "./cells/time";
-import { IDeploymentField } from "./Dashboard.types";
+import { DeploymentType, IDeploymentField } from "./Dashboard.types";
 
 /**
  * Render function type based on cells in azure-devops-ui table
@@ -42,7 +42,9 @@ interface ITableProps {
 let releasesUrl: string = "";
 let tableItems: ObservableArray<IDeploymentField>;
 let rawTableItems: IDeploymentField[];
+// tslint:disable-next-line: array-type
 let columns: Array<ITableColumn<IDeploymentField>>;
+// tslint:disable-next-line: array-type
 let sortFunctions: Array<
   ((item1: IDeploymentField, item2: IDeploymentField) => number) | null
 >;
@@ -292,6 +294,16 @@ export const renderDockerRelease = (
   tableColumn: ITableColumn<IDeploymentField>,
   deployment: IDeploymentField
 ): JSX.Element => {
+  if (deployment.deploymentType === DeploymentType.HLD_EDIT) {
+    return (
+      <Simple
+        columnIndex={columnIndex}
+        tableColumn={tableColumn}
+        text={"Manual HLD Edit"}
+        className={"italic-text"}
+      />
+    );
+  }
   return (
     <Build
       columnIndex={columnIndex}
