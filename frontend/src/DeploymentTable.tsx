@@ -3,13 +3,13 @@ import {
   ObservableValue,
 } from "azure-devops-ui/Core/Observable";
 import {
-  ColumnFill,
   ColumnSorting,
   ITableColumn,
   SimpleTableCell,
   sortItems,
   SortOrder,
   Table as AzureTable,
+  TableColumnLayout,
 } from "azure-devops-ui/Table";
 import * as React from "react";
 import { Build } from "./cells/build";
@@ -75,84 +75,103 @@ export const DeploymentTable: React.FC<ITableProps> = (props: ITableProps) => {
   initSortFunctions(props.clusterSyncAvailable);
   columns = [
     {
+      columnLayout: TableColumnLayout.singleLine,
       id: "status",
       name: "State",
       renderCell: renderDeploymentStatus,
-      width: new ObservableValue(70),
+      width: new ObservableValue(60),
     },
     {
+      columnLayout: TableColumnLayout.singleLine,
       id: "service",
+      minWidth: 150,
       name: "Service",
       renderCell: renderSimpleText,
       sortProps: {
         ariaLabelAscending: "Sorted A to Z",
         ariaLabelDescending: "Sorted Z to A",
       },
-      width: new ObservableValue(180),
+      width: -8,
     },
     {
+      columnLayout: TableColumnLayout.singleLine,
       id: "environment",
+      minWidth: 150,
       name: "Ring",
       renderCell: renderSimpleText,
       sortProps: {
         ariaLabelAscending: "Sorted A to Z",
         ariaLabelDescending: "Sorted Z to A",
       },
-      width: new ObservableValue(220),
+      width: -8,
     },
     {
+      columnLayout: TableColumnLayout.singleLine,
       id: "authorName",
+      minWidth: 150,
       name: "Author",
       renderCell: renderAuthor,
       sortProps: {
         ariaLabelAscending: "Sorted A to Z",
         ariaLabelDescending: "Sorted Z to A",
       },
-      width: new ObservableValue(200),
+      width: -10,
     },
     {
+      columnLayout: TableColumnLayout.twoLine,
       id: "srcPipelineId",
+      minWidth: 150,
       name: "Image Creation",
       renderCell: renderSrcBuild,
-      width: new ObservableValue(200),
+      width: -10,
     },
     {
+      columnLayout: TableColumnLayout.twoLine,
       id: "dockerPipelineId",
+      minWidth: 150,
       name: "Metadata Update",
       renderCell: renderDockerRelease,
-      width: new ObservableValue(250),
+      width: -15,
     },
     {
+      columnLayout: TableColumnLayout.twoLine,
       id: "pr",
+      minWidth: 150,
       name: "Approval Pull Request",
       renderCell: renderPR,
-      width: new ObservableValue(250),
+      width: -15,
     },
     {
+      columnLayout: TableColumnLayout.singleLine,
       id: "mergedByName",
+      minWidth: 150,
       name: "Merged By",
       renderCell: renderMergedBy,
       sortProps: {
         ariaLabelAscending: "Sorted A to Z",
         ariaLabelDescending: "Sorted Z to A",
       },
-      width: new ObservableValue(200),
+      width: -10,
     },
     {
+      columnLayout: TableColumnLayout.twoLine,
       id: "hldPipelineId",
+      minWidth: 150,
       name: "Ready to Deploy",
       renderCell: renderHldBuild,
-      width: new ObservableValue(200),
+      width: -10,
     },
     {
+      columnLayout: TableColumnLayout.twoLine,
       id: "deployedAt",
+      minWidth: 150,
       name: "Last Updated",
       renderCell: renderTime,
       sortProps: {
         ariaLabelAscending: "Sorted low to high",
         ariaLabelDescending: "Sorted high to low",
       },
-      width: new ObservableValue(120),
+      width: -10,
     },
   ];
   if (props.releasesUrl) {
@@ -163,12 +182,12 @@ export const DeploymentTable: React.FC<ITableProps> = (props: ITableProps) => {
   if (props.clusterSyncAvailable) {
     columns.push({
       id: "clusterName",
+      minWidth: 150,
       name: "Synced Cluster",
       renderCell: renderClusters,
-      width: new ObservableValue(200),
+      width: -10,
     });
   }
-  columns.push(ColumnFill);
   return (
     <div className="PrototypeTable">
       <AzureTable
@@ -178,6 +197,7 @@ export const DeploymentTable: React.FC<ITableProps> = (props: ITableProps) => {
         role="table"
         itemProvider={tableItems}
         showLines={true}
+        selectableText={true}
       />
     </div>
   );

@@ -72,3 +72,12 @@ body {
 .italic-text {
   font-style: italic;
 }
+
+.overflow-text {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  width: 100%;
+  display: block;
+  overflow: hidden;
+  align-items: center;
+}

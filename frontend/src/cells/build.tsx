@@ -6,6 +6,7 @@ import {
 } from "azure-devops-ui/Table";
 import { Tooltip } from "azure-devops-ui/TooltipEx";
 import * as React from "react";
+import "../css/dashboard.css";
 import { IDeploymentField } from "../Dashboard.types";
 import { getIcon, WithIcon } from "./icons";
 
@@ -35,8 +36,8 @@ export const Build: React.FC<IBuildProps> = (props: IBuildProps) => {
     );
   }
   const commitCell = WithIcon({
-    children: <div>{props.commitId}</div>,
-    className: "",
+    children: props.commitId,
+    className: "overflow-text",
     iconProps: { iconName: props.iconName },
   });
   return (

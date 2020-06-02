@@ -1,6 +1,7 @@
 import { Icon, IIconProps } from "azure-devops-ui/Icon";
 import { Statuses } from "azure-devops-ui/Status";
 import * as React from "react";
+import "../css/dashboard.css";
 import { IStatusIndicatorData } from "../Dashboard.types";
 
 /**
@@ -25,7 +26,7 @@ export const WithIcon = (props: {
   children?: React.ReactNode;
 }): React.ReactNode => {
   return (
-    <div className="flex-row flex-center">
+    <div className={props.className}>
       {Icon({ ...props.iconProps, className: "icon-margin" })}
       {props.children}
     </div>

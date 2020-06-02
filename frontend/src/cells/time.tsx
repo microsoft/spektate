@@ -33,7 +33,7 @@ export const Time: React.FC<ITimeProps> = (props: ITimeProps) => {
       tableColumn={props.tableColumn}
       line1={WithIcon({
         children: <Ago date={new Date(props.deployment.endTime!)} />,
-        className: "fontSize font-size",
+        className: "fontSizeM",
         iconProps: { iconName: "Calendar" },
       })}
       line2={WithIcon({
@@ -43,7 +43,7 @@ export const Time: React.FC<ITimeProps> = (props: ITimeProps) => {
             endDate={new Date(props.deployment.endTime!)}
           />
         ),
-        className: "fontSize font-size bolt-table-two-line-cell-item",
+        className: "fontSizeM bolt-table-two-line-cell-item",
         iconProps: { iconName: "Clock" },
       })}
     />
