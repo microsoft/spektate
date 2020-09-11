@@ -1,5 +1,10 @@
+// import { Button } from "azure-devops-ui/Button";
 import { Card } from "azure-devops-ui/Card";
+import { Checkbox } from "azure-devops-ui/Checkbox";
 import { ObservableValue } from "azure-devops-ui/Core/Observable";
+import { Dialog } from "azure-devops-ui/Dialog";
+import { Icon } from "azure-devops-ui/Icon";
+import { Observer } from "azure-devops-ui/Observer";
 import { Filter } from "azure-devops-ui/Utilities/Filter";
 import * as React from "react";
 import { HttpHelper } from "spektate/lib/HttpHelper";
@@ -45,6 +50,8 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
    */
   private releasesUrl?: string;
 
+  private isSettingsOpen = new ObservableValue<boolean>(false);
+
   public constructor(props: Props) {
     super(props);
     const searchParams = new URLSearchParams(location.search);
@@ -86,6 +93,9 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     return (
       <div className="App">
         <header className="App-header">
+          <div className="settings-button" onClick={this.launchSettings}>
+            <Icon ariaLabel="Settings" iconName="Settings" />
+          </div>
           <h1 className="App-title">Spektate</h1>
           <div className="App-last-update">
             <div>Last updated at {new Date().toLocaleTimeString()}</div>
@@ -103,6 +113,8 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         ) : (
           this.renderTable()
         )}
+
+        {this.renderSettingsDialog()}
       </div>
     );
   }
@@ -437,6 +449,57 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
 
     this.setState({ filteredDeployments });
   }
+
+  private renderSettingsDialog = () => {
+    const onDismiss = () => {
+      this.isSettingsOpen.value = false;
+    };
+    return (
+      <Observer isSettingsOpen={this.isSettingsOpen}>
+        {(props: { isSettingsOpen: boolean }) => {
+          return props.isSettingsOpen ? (
+            <Dialog
+              titleProps={{ text: "Settings" }}
+              footerButtonProps={[
+                {
+                  onClick: onDismiss,
+                  text: "Cancel",
+                },
+                {
+                  onClick: onDismiss,
+                  text: "Discard Changes",
+                },
+                {
+                  onClick: onDismiss,
+                  primary: true,
+                  text: "Save Changes",
+                },
+              ]}
+              onDismiss={onDismiss}
+            >
+              Columns: <br />
+              <Checkbox checked={true} label="State" />
+              <Checkbox checked={true} label="Service" />
+              <Checkbox checked={true} label="Ring" />
+              <Checkbox checked={true} label="Author" />
+              <Checkbox checked={true} label="Image Creation" />
+              <Checkbox checked={true} label="Metadata Update" />
+              <Checkbox checked={true} label="Approval PR" />
+              <Checkbox checked={true} label="Merged By" />
+              <Checkbox checked={true} label="Ready to Deploy" />
+              <Checkbox checked={true} label="Last Updated" />
+              <Checkbox checked={true} label="Synced Cluster" />
+            </Dialog>
+          ) : null;
+        }}
+      </Observer>
+    );
+  };
+
+  private launchSettings = (event: React.MouseEvent<HTMLElement>) => {
+    // alert("hi");
+    this.isSettingsOpen.value = true;
+  };
 
   /**
    * Processes query parameters and applies it to filters

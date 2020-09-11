@@ -81,3 +81,13 @@ body {
   overflow: hidden;
   align-items: center;
 }
+
+.settings-button {
+  float: left;
+  height: 100%;
+  position: absolute;
+  left: 15px;
+  font-size: 1.5em;
+  top: 17px;
+  cursor: pointer;
+}
