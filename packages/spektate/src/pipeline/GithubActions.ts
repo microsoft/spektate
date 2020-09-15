@@ -3,7 +3,7 @@ import { IBuild } from "./Build";
 import { IBuilds, IPipeline, IReleases } from "./Pipeline";
 import { IPipelineStage, IPipelineStages } from "./PipelineStage";
 
-const jobsUrl = "https://api.github.com/repos/{repository}/actions/runs/{runNumber}/jobs";
+const jobsUrl = "https://api.github.com/repos/{repository}/actions/jobs/{jobId}";
 const shaUrl = "https://github.com/{repository}/commit/{commitId}";
 
 export class GithubActions implements IPipeline {
@@ -26,32 +26,30 @@ export class GithubActions implements IPipeline {
         );
       }
       console.log(JSON.stringify(data));
-      if (data.total_count > 0) {
-        const newBuild = {
-          URL: data.jobs[0].html_url,
-          author: "Unavailable",
-          buildNumber: data.jobs[0].run_id,
-          finishTime: new Date(data.jobs[0].completed_at),
-          id: data.jobs[0].id,
-          lastUpdateTime: new Date(data.jobs[0].started_at),
-          queueTime: new Date(data.jobs[0].started_at),
-          result: data.jobs[0].conclusion,
-          sourceBranch: "sourceBranch",
-          sourceVersion: data.jobs[0].head_sha,
-          sourceVersionURL: shaUrl.replace("{repository}", this.sourceRepo).replace("{commitId}", data.jobs[0].head_sha),
-          startTime: new Date(data.jobs[0].started_at),
-          status: data.jobs[0].status,
-          timelineURL: data.jobs[0].html_url
-        };
-        this.builds[data.jobs[0].run_id] = newBuild;
-        console.log(`Adding ${JSON.stringify(this.builds[data.jobs[0].run_id])} for ${data.jobs[0].run_id}`);
-      }
+      const newBuild = {
+        URL: data.html_url,
+        author: "Unavailable",
+        buildNumber: data.id,
+        finishTime: new Date(data.completed_at),
+        id: data.id,
+        lastUpdateTime: new Date(data.started_at),
+        queueTime: new Date(data.started_at),
+        result: data.conclusion,
+        sourceBranch: "sourceBranch",
+        sourceVersion: data.head_sha,
+        sourceVersionURL: shaUrl.replace("{repository}", this.sourceRepo).replace("{commitId}", data.head_sha),
+        startTime: new Date(data.started_at),
+        status: data.status,
+        timelineURL: data.html_url
+      };
+      this.builds[data.id] = newBuild;
+      console.log(`Adding ${JSON.stringify(this.builds[data.run_id])} for ${data.run_id}`);
     }
     try {
       if (buildIds) {
         buildIds.forEach((buildId: string) => {
           promises.push(HttpHelper.httpGet(
-            jobsUrl.replace("{repository}", this.sourceRepo).replace("{runNumber}", buildId), this.pipelineAccessToken
+            jobsUrl.replace("{repository}", this.sourceRepo).replace("{jobId}", buildId), this.pipelineAccessToken
           ));
         });
       }
