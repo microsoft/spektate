@@ -214,12 +214,12 @@ export const parseDeploymentsFromDB = (
       }
       deployments.sort(compare);
       resolve(deployments);
-      cleanUpDeploymentsFromDB(
-        batch,
-        storageAccount,
-        storageAccountKey,
-        storageTableName
-      );
+      // cleanUpDeploymentsFromDB(
+      //   batch,
+      //   storageAccount,
+      //   storageAccountKey,
+      //   storageTableName
+      // );
     })
     .catch(err => {
       reject(err);

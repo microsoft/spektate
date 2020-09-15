@@ -106,7 +106,7 @@ export const getStatusIndicatorData = (
  * @param statusStr status string, such as succeeded, in progress etc.
  */
 export const getIcon = (statusStr?: string): IIconProps => {
-  if (statusStr === "succeeded") {
+  if (statusStr === "succeeded" || statusStr === "success") {
     return {
       iconName: "SkypeCircleCheck",
       style: { color: iconColors.green },
