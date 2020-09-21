@@ -19,7 +19,7 @@ import { IPullRequest } from "./repository/IPullRequest";
 export interface IDeployment {
   deploymentId: string;
   srcToDockerBuild?: IBuild;
-  dockerToHldRelease?: IRelease;
+  dockerToHldRelease?: IRelease | IBuild;
   dockerToHldReleaseStage?: IBuild;
   hldToManifestBuild?: IBuild;
   commitId: string;
@@ -187,6 +187,7 @@ export const parseDeploymentsFromDB = (
 
   const p1 = srcPipeline.getListOfBuilds(srcBuildIds);
   const p2 = hldPipeline.getListOfReleases(releaseIds);
+  // const p2 = hldPipeline.getListOfBuilds(releaseIds);
   const p3 = manifestPipeline.getListOfBuilds(manifestBuildIds);
 
   // Wait for all three pipelines to load their respective builds before we instantiate deployments
@@ -265,7 +266,7 @@ export const getDeploymentFromDBEntry = async (
     imageTag = entry.imageTag._;
   }
 
-  let p2: IRelease | undefined;
+  let p2: IRelease | IBuild | undefined;
   let p2ReleaseStage: IBuild | undefined;
   let hldCommitId = "";
   let manifestCommitId = "";
@@ -302,6 +303,7 @@ export const getDeploymentFromDBEntry = async (
       }
     } else if (entry.p1 == null || entry.p1 !== entry.p2) {
       p2 = hldPipeline.releases[entry.p2._];
+      // p2 = hldPipeline.builds[entry.p2._];
     }
   }
 
