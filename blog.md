@@ -1,12 +1,16 @@
 # GitOps Observability - Visualizing the journey of a container
 
-When I was getting started with GitOps and Kubernetes, a huge missing piece in the architecture for me was understanding a global view of the system. My team at Microsoft has built a tool called [Bedrock](https://github.com/microsoft/bedrock) which provides a starting point for automating infrastructure management and establishing GitOps pipelines. 
+The last few years have seen an incredible rise in popularity for Kubernetes, containers and Infrastructure as code. Kubernetes is created to help with automation, deployment and agile methodologies for building software applications. 
 
-## GitOps
+My team at Microsoft was starting to build a tool called [Bedrock](https://github.com/microsoft/bedrock) which provides a starting point for automating infrastructure management and establishing GitOps pipelines. Being a developer new to Kubernetes and GitOps, I had a huge learning curve - I first began by trying to understand how a simple web application would run on Kubernetes, without using GitOps. This involves creating the Kubernetes resource configuration from ground up, understand YAML configurations, helm charts and all of that. In this blog, I'm going to talk about how I brought a simple web application to run on Kubernetes utilizing a GitOps architecture, and how it helped me understand the process. We'll also talk about how this led our team to understand the need for visualizing the journey of a container - its creation, its utilization in a K8s resource configuration, its approval to be deployed to a cluster, and so on.
+
+## GitOps 
+
+One of the big shifts with the introduction of Kubernetes to the world has been the move towards expressing infrastruction as YAML configuration, and a declarative model. The declarative-ness of Kubernetes makes it an excellent candidate for introducing the concept of GitOps. 
 
 GitOps is a method that helps with application delivery by using Git as a single source of truth and declarative infrastructure, such as Kubernetes. The idea behind GitOps is that engineers are already well versed in Git and can define the state of their application and infrastructure in a git repository, and the application running on Kubernetes is synced to a repository with the help of a tool such as [Flux](https://www.weave.works/oss/flux/), which enables enables continuous delivery of container images. 
 
-Now you may ask, how is this better than the traditional Ops method we've followed for decades? One way to understand the difference is that GitOps has become increasingly popular with teams running large scale Kubernetes deployments due to its declarative nature, which works perfectly with Git. It allows for easy disaster recovery with the help of reverting commits, and the audit trail it creates comes with it. Everything that comes out of the box with a git repository, such as security, history, branching is an added benefit to the GitOps approach. 
+GitOps has become increasingly popular with teams running large scale Kubernetes deployments due to its declarative nature, which works perfectly with Git. A git repository holds the Kubernetes resource manifests necessary for the cluster, and Flux constantly polls the repository to apply any new changes. This method allows for easy disaster recovery with the help of reverting commits, and the audit trail it creates comes with it. Everything that comes out of the box with a git repository, such as security, history, branching is an added benefit to the GitOps approach. 
 
 ![](./images/gitops.png)
 
@@ -18,7 +22,7 @@ I have a very simple Trivia web application that I would like to host on Kuberne
 
 ![](./images/trivia.png)
 
-Even in a simple app, there's already two microservices since we have a separate dockerfile for the frontend and backend. This would mean that I need to setup CI pipelines for these individually, and one common CD pipeline should be sufficient to deploy the changes to the cluster.
+Even in a simple application such as this one, there's already two microservices since we have a separate dockerfile for the frontend and backend. This would mean that I need to setup CI pipelines for these individually, and one common CD pipeline should be sufficient to deploy the changes to the cluster. 
 
 I'm following the [5 minutes GitOps pipeline with Bedrock](https://github.com/microsoft/bedrock/blob/master/docs/gitops-quickstart.md) guide which creates a skeleton for all my pipelines and a starter HLD. 
 
