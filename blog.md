@@ -1,0 +1,137 @@
+# GitOps Observability - Visualizing the journey of a container
+
+When I was getting started with GitOps and Kubernetes, a huge missing piece in the architecture for me was understanding a global view of the system. My team at Microsoft has built a tool called [Bedrock](https://github.com/microsoft/bedrock) which provides a starting point for automating infrastructure management and establishing GitOps pipelines. 
+
+## GitOps
+
+GitOps is a method that helps with application delivery by using Git as a single source of truth and declarative infrastructure, such as Kubernetes. The idea behind GitOps is that engineers are already well versed in Git and can define the state of their application and infrastructure in a git repository, and the application running on Kubernetes is synced to a repository with the help of a tool such as [Flux](https://www.weave.works/oss/flux/), which enables enables continuous delivery of container images. 
+
+Now you may ask, how is this better than the traditional Ops method we've followed for decades? One way to understand the difference is that GitOps has become increasingly popular with teams running large scale Kubernetes deployments due to its declarative nature, which works perfectly with Git. It allows for easy disaster recovery with the help of reverting commits, and the audit trail it creates comes with it. Everything that comes out of the box with a git repository, such as security, history, branching is an added benefit to the GitOps approach. 
+
+![](./images/gitops.png)
+
+This diagram explains a simplest GitOps scenario - a developer makes a code change to their source repo. The continuous integration pipeline runs to build a container for the application and publishes the new version in their docker registry. A cluster is deployed for this application that has flux installed on it, which is able to pull the latest docker image and apply the change to the cluster. The developer, can now navigate to the URL and see their changes in action. 
+
+## Trivia app
+
+I have a very simple Trivia web application that I would like to host on Kubernetes using the GitOps pattern. It contains a simple React frontend and a nodejs backend that queries existing APIs on the internet for fresh trivia questions. 
+
+![](./images/trivia.png)
+
+Even in a simple app, there's already two microservices since we have a separate dockerfile for the frontend and backend. This would mean that I need to setup CI pipelines for these individually, and one common CD pipeline should be sufficient to deploy the changes to the cluster.
+
+I'm following the [5 minutes GitOps pipeline with Bedrock](https://github.com/microsoft/bedrock/blob/master/docs/gitops-quickstart.md) guide which creates a skeleton for all my pipelines and a starter HLD. 
+
+My current setup is outlined below:
+
+![](./images/trivia-ci-diagram.png)
+
+### High level definition
+
+Kubernetes manifest files define the final configuration of the deployment on the cluster. Being extremely error prone, helm charts are a great tool for templating Kubernetes resource definitions. In any application, there are multiple microservices (n) and that leads to (n) helm chart configurations. Bedrock uses the concept of a High Level Definition (HLD) that allows you to define the components of your application at a higher level. 
+
+For example, in my Trivia application I need to include the frontend and backend microservices. But at an even higher level, I want to include Traefik in the cluster. I'm looking at having my high level definition at the root folder look something like below: 
+
+```
+name: default-component
+type: component
+subcomponents:
+- name: hello-world-full-stack
+  type: component
+  method: local
+  path: ./hello-world-full-stack
+- name: traefik2
+  source: https://github.com/microsoft/fabrikate-definitions.git
+  method: git
+  path: definitions/traefik2
+```
+
+And the definition at the nested level to be: 
+
+```
+name: hello-world-full-stack
+type: component
+subcomponents:
+- name: backend
+  type: component
+  method: local
+  path: ./backend
+- name: frontend
+  type: component
+  method: local
+  path: ./frontend
+```
+
+Who doesn't love recursion!
+
+[Fabrikate](https://github.com/microsoft/fabrikate) is the tool behind HLD that simplifies the GitOps workflow: it takes this high level description of the deployment, a target environment configuration (eg. QA or PROD) and renders the Kubernetes resource manifests for that deployment by utilizing templating tools such as Helm. As you may have already guessed, it runs as part of the CI/CD pipeline that connects the HLD repository to the final manifest configuration repository! 
+
+## Connecting all the pieces together
+
+Using Bedrock CLI, I created a High Level Definition for my Trivia app and hooked up the CI/Cd pipelines for the repositories together.
+
+![](./images/trivia-desired-setup.png)
+
+This setup involves the following components:
+- Three repositories:
+  - Source code: This is where the source code for the microservices lives, currently all in the same mono repo [here](https://dev.azure.com/epicstuff/hellobedrock/_git/hello-world-full-stack).
+  - HLD repo: This is the high level definition repository, located [here](https://dev.azure.com/epicstuff/hellobedrock/_git/hello-world-full-stack-hld). 
+  - Manifest repo: This is where the final Kubernetes manifests are stored and the cluster is synced to. Located [here](https://dev.azure.com/epicstuff/hellobedrock/_git/hello-world-full-stack-manifest)
+- Two pipelines:
+  - Build image: This pipeline builds the docker image using the Dockerfile for the microservice(s) and writes the updated image tag to the HLD repository
+  - Manifest generation: This pipeline uses Fabrikate and helm to generate the manifests for Kubernetes configuration, and pushes them to the manifest repository.
+- `n` Image registries: 
+  - `api`: The images for backend Nodejs app
+  - `client`: The images for frontend Reactjs app
+
+There are too many elements involved this GitOps configuration. In any real world application, it's fair to conclude that we're introducing a lot of complexity into the Ops pattern by going with this pattern. How do we get a high level visual of what is happening in the state of things? How do I know which developer in the team I should contact when something breaks in production?
+
+## Spektate - A Customizable GitOps Observability tool
+
+Spektate is a React based visualization tool that "observes" your entire GitOps process at a high level (and hence the name Spektate). GitOps Observability is currently a loosely defined term that aims to observe the GitOps process, it could include any of the following questions. 
+
+![](./images/observability-split.png)
+
+As we were building Spektate, we drew the line between the before and after - what happens before the desired state is updated and what happens after are two separate concerns. There are several tools for monitoring the "after" piece - [Kubernetes dashboard](https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/), [Prometheus](https://prometheus.io/), [cAdvisor](https://github.com/google/cadvisor) etc. The "after" piece also needs direct access to the cluster(s). We wanted to build a tool that provides a full high level view of the "before" up until the point where Flux has synced with the cluster, which is a green signal for the developer/operator to know that their change is applied. 
+
+![](./images/spektate-dashboard.png)
+
+A quick glance at Spektate tells me that a recent change is being deployed into the dev ring, the dev cluster is currently synced to an older deployment, there are currently three rings (dev, master and securitybugfix) in the cluster running simultaneously, and I can click on any of the links to pipelines/code changes to get more details. If a deployment is pending approval, I can also navigate to that and hit approve. 
+
+![](./images/spektate-in-progress-deployments.png)
+
+### How does Spektate gather this data?
+
+Spektate uses a storage table to capture the details of every deployment attempt in the GitOps process. When the first code change is made to the source code, it's associated with a docker image, which creates a change in the HLD and eventually makes its way to the manifest when approved. All these details are captured in a storage table using bash scripts inserted into the CI/CD pipelines by bedrock-cli. For this Trivia app, when I used bedrock-cli to configure the pipelines, it created the bash scripts automatically along with a storage container in my Azure subscription. 
+
+### How can I use Spektate without Azure?
+
+Spektate can be easily extended to work with any other storage tables, but currently we've only added support for Azure storage table. If you would like to use it with another CI/CD orchestrator other than Azure DevOps, we've support for GitHub Actions coming soon, and we can apply the same idea to any orchestrator as well. 
+
+### How do I deploy Spektate?
+
+Spektate can be deployed within your Kubernetes cluster by using the [helm chart](https://github.com/microsoft/spektate/tree/master/chart) for Spektate. 
+
+### Is Spektate secure? 
+
+Spektate does not access your cluster directly, it only needs access to your pipelines if they are private and your repositories to gather information. The keys are stored securely using Kubernetes secrets. 
+
+# Useful Links
+
+Our presentation at Kubecon 2020 is available on [YouTube](https://www.youtube.com/watch?v=JfQvAtsZP7Y). 
+
+- [Spektate](https://github.com/microsoft/spektate)
+- [Bedrock](https://github.com/Microsoft/bedrock)
+  - [5 Minute GitOps Pipeline with bedrock](https://github.com/microsoft/bedrock/blob/master/docs/gitops-quickstart.md)
+- [Fabrikate](https://github.com/microsoft/fabrikate)
+- [Bedrock-cli](https://github.com/Microsoft/bedrock-cli)
+- Trivia sample repositories: 
+  - [Source code](https://dev.azure.com/epicstuff/hellobedrock/_git/hello-world-full-stack).
+  - [HLD](https://dev.azure.com/epicstuff/hellobedrock/_git/hello-world-full-stack-hld). 
+  - [Manifest](https://dev.azure.com/epicstuff/hellobedrock/_git/hello-world-full-stack-manifest)
+- TODO: Host this somewhere else: [A sample dashboard](http://40.64.74.69:5000/)
+
+
+
+
+
