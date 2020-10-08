@@ -70,9 +70,15 @@ Who doesn't love recursion!
 
 [Fabrikate](https://github.com/microsoft/fabrikate) is the tool behind HLD that simplifies the GitOps workflow: it takes this high level description of the deployment, a target environment configuration (eg. QA or PROD) and renders the Kubernetes resource manifests for that deployment by utilizing templating tools such as Helm. As you may have already guessed, it runs as part of the CI/CD pipeline that connects the HLD repository to the final manifest configuration repository! 
 
+### Deployment Rings
+
+I want to setup two environments let's say dev and prod for my application. But I want to run them on the same cluster to cut cost! I also want to be able to test my new features for the Trivia app in their own separate environments before I merge into dev or prod. 
+
+This scenario calls for the concept of Deployment Rings - an encapsulation of a DevOps strategy to group your users into cohorts based on the features of your application you wish to expose to them, similar to A/B or canary testing but in a more formalized manner. Rings allow multiple environments to live in a single cluster with the help of a service mesh, by setting a header on their ingress routes. Each developer in the team would be able to test their features in their own rings before merging it into production.  
+
 ## Connecting all the pieces together
 
-Using Bedrock CLI, I created a High Level Definition for my Trivia app and hooked up the CI/Cd pipelines for the repositories together.
+Using Bedrock CLI, I created a High Level Definition for my Trivia app and hooked up the CI/Cd pipelines for the repositories together. 
 
 ![](./images/trivia-desired-setup.png)
 
@@ -104,21 +110,27 @@ A quick glance at Spektate tells me that a recent change is being deployed into 
 
 ![](./images/spektate-in-progress-deployments.png)
 
-### How does Spektate gather this data?
+### Capturing Data
 
 Spektate uses a storage table to capture the details of every deployment attempt in the GitOps process. When the first code change is made to the source code, it's associated with a docker image, which creates a change in the HLD and eventually makes its way to the manifest when approved. All these details are captured in a storage table using bash scripts inserted into the CI/CD pipelines by bedrock-cli. For this Trivia app, when I used bedrock-cli to configure the pipelines, it created the bash scripts automatically along with a storage container in my Azure subscription. 
 
-### How can I use Spektate without Azure?
+### Extendible
 
 Spektate can be easily extended to work with any other storage tables, but currently we've only added support for Azure storage table. If you would like to use it with another CI/CD orchestrator other than Azure DevOps, we've support for GitHub Actions coming soon, and we can apply the same idea to any orchestrator as well. 
 
-### How do I deploy Spektate?
+### Deployment
 
-Spektate can be deployed within your Kubernetes cluster by using the [helm chart](https://github.com/microsoft/spektate/tree/master/chart) for Spektate. 
+Spektate can be deployed in a Kubernetes cluster by using the [helm chart](https://github.com/microsoft/spektate/tree/master/chart) for Spektate. 
 
-### Is Spektate secure? 
+### Security
 
 Spektate does not access your cluster directly, it only needs access to your pipelines if they are private and your repositories to gather information. The keys are stored securely using Kubernetes secrets. 
+
+# What next?
+
+We're working to add support for Github Actions into Spektate and make Spektate less dependent on external APIs by capturing all necessary data into the storage table. This will enable us to run Spektate on any ecosystem. We're also looking to make Spektate columns and table more customizable. 
+
+The work in this area is ongoing and there's a long journey ahead - feel free to reach out to us with feedback on [Github](https://github.com/microsoft/spektate) or [Twitter](https://twitter.com/samiyaakhtar). 
 
 # Useful Links
 
