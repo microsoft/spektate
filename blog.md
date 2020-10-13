@@ -1,8 +1,12 @@
 # GitOps Observability - Visualizing the journey of a container
 
-The last few years have seen an incredible rise in popularity for Kubernetes, containers and Infrastructure as code. Kubernetes is created to help with automation, deployment and agile methodologies for building software applications. 
+In this blog, I’m going to talk about how I brought a simple web application to run on Kubernetes utilizing a GitOps architecture, and how it helped me understand the process. We’ll also talk about how this led our team to understand the need for visualizing the journey of a container — its creation, its utilization in a K8s resource configuration, its approval to be deployed to a cluster, and so on.
 
-My team at Microsoft was starting to build a tool called [Bedrock](https://github.com/microsoft/bedrock) which provides a starting point for automating infrastructure management and establishing GitOps pipelines. Being a developer new to Kubernetes and GitOps, I had a huge learning curve - I first began by trying to understand how a simple web application would run on Kubernetes, without using GitOps. This involves creating the Kubernetes resource configuration from ground up, understand YAML configurations, helm charts and all of that. In this blog, I'm going to talk about how I brought a simple web application to run on Kubernetes utilizing a GitOps architecture, and how it helped me understand the process. We'll also talk about how this led our team to understand the need for visualizing the journey of a container - its creation, its utilization in a K8s resource configuration, its approval to be deployed to a cluster, and so on.
+## Project Bedrock
+
+The last few years have seen an incredible rise in popularity for Kubernetes, containers and Infrastructure as code. Kubernetes is created to help with automation, deployment and agile methodologies for building software applications.
+
+My team at Microsoft was starting to build a tool called [Bedrock](https://github.com/microsoft/bedrock) which provides a starting point for automating infrastructure management and establishing GitOps pipelines. Being a developer new to Kubernetes and GitOps, I had a huge learning curve — I first began by trying to understand how a simple web application would run on Kubernetes, without using GitOps. This involves creating the Kubernetes resource configuration from ground up, understand YAML configurations, helm charts and all of that. 
 
 ## GitOps 
 
@@ -83,14 +87,17 @@ Using Bedrock CLI, I created a High Level Definition for my Trivia app and hooke
 ![](./images/trivia-desired-setup.png)
 
 This setup involves the following components:
-- Three repositories:
+
+Three repositories:
   - Source code: This is where the source code for the microservices lives, currently all in the same mono repo [here](https://dev.azure.com/epicstuff/hellobedrock/_git/hello-world-full-stack).
   - HLD repo: This is the high level definition repository, located [here](https://dev.azure.com/epicstuff/hellobedrock/_git/hello-world-full-stack-hld). 
   - Manifest repo: This is where the final Kubernetes manifests are stored and the cluster is synced to. Located [here](https://dev.azure.com/epicstuff/hellobedrock/_git/hello-world-full-stack-manifest)
-- Two pipelines:
+
+Two pipelines:
   - Build image: This pipeline builds the docker image using the Dockerfile for the microservice(s) and writes the updated image tag to the HLD repository
   - Manifest generation: This pipeline uses Fabrikate and helm to generate the manifests for Kubernetes configuration, and pushes them to the manifest repository.
-- `n` Image registries: 
+
+`n` Image registries: 
   - `api`: The images for backend Nodejs app
   - `client`: The images for frontend Reactjs app
 
@@ -136,16 +143,22 @@ The work in this area is ongoing and there's a long journey ahead - feel free to
 
 Our presentation at Kubecon 2020 is available on [YouTube](https://www.youtube.com/watch?v=JfQvAtsZP7Y). 
 
-- [Spektate](https://github.com/microsoft/spektate)
-- [Bedrock](https://github.com/Microsoft/bedrock)
-  - [5 Minute GitOps Pipeline with bedrock](https://github.com/microsoft/bedrock/blob/master/docs/gitops-quickstart.md)
-- [Fabrikate](https://github.com/microsoft/fabrikate)
-- [Bedrock-cli](https://github.com/Microsoft/bedrock-cli)
-- Trivia sample repositories: 
-  - [Source code](https://dev.azure.com/epicstuff/hellobedrock/_git/hello-world-full-stack).
-  - [HLD](https://dev.azure.com/epicstuff/hellobedrock/_git/hello-world-full-stack-hld). 
-  - [Manifest](https://dev.azure.com/epicstuff/hellobedrock/_git/hello-world-full-stack-manifest)
-- TODO: Host this somewhere else: [A sample dashboard](http://40.64.74.69:5000/)
+[Spektate](https://github.com/microsoft/spektate)
+
+[Bedrock](https://github.com/Microsoft/bedrock)
+- [5 Minute GitOps Pipeline with bedrock](https://github.com/microsoft/bedrock/blob/master/docs/gitops-quickstart.md)
+- [Automated Kubernetes deployments with Bedrock](https://docs.microsoft.com/en-us/azure/architecture/example-scenario/bedrock/bedrock-automated-deployments)
+
+[Fabrikate](https://github.com/microsoft/fabrikate)
+
+[Bedrock-cli](https://github.com/Microsoft/bedrock-cli)
+
+Trivia sample repositories: 
+- [Source code](https://dev.azure.com/epicstuff/hellobedrock/_git/hello-world-full-stack).
+- [HLD](https://dev.azure.com/epicstuff/hellobedrock/_git/hello-world-full-stack-hld). 
+- [Manifest](https://dev.azure.com/epicstuff/hellobedrock/_git/hello-world-full-stack-manifest)
+
+TODO: Host this somewhere else: [A sample dashboard](http://40.64.74.69:5000/)
 
 
 
