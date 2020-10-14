@@ -11,6 +11,7 @@ export interface IConfig {
 
   // Github actions
   sourceRepo: string;
+  hldRepo: string;
 
   githubManifestUsername: string;
   manifestRepoName: string;
@@ -42,6 +43,7 @@ export const getConfig = (): IConfig => {
     storagePartitionKey: process.env.REACT_APP_STORAGE_PARTITION_KEY || "",
     storageTableName: process.env.REACT_APP_STORAGE_TABLE_NAME || "",
     sourceRepo: process.env.REACT_APP_SOURCE_REPO || "",
+    hldRepo: process.env.REACT_APP_HLD_REPO || "",
   };
 };
 

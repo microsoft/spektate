@@ -48,9 +48,11 @@ export class GithubActions implements IPipeline {
     try {
       if (buildIds) {
         buildIds.forEach((buildId: string) => {
-          promises.push(HttpHelper.httpGet(
-            jobsUrl.replace("{repository}", this.sourceRepo).replace("{jobId}", buildId), this.pipelineAccessToken
-          ));
+          if (buildId && buildId.trim() !== "") {
+            promises.push(HttpHelper.httpGet(
+              jobsUrl.replace("{repository}", this.sourceRepo).replace("{jobId}", buildId), this.pipelineAccessToken
+            ));
+          }
         });
       }
 

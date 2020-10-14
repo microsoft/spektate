@@ -23,6 +23,17 @@ const createPipeline = () => {
   throw new Error("Configuration is invalid");
 };
 
+const createManifestPipeline = () => {
+  const config = getConfig();
+  if (config.org !== "" && config.project !== "") {
+    return createPipeline();
+  } else if (config.hldRepo !== "") {
+    console.log(`Creating a github actions instance`);
+    return new GithubActions(config.hldRepo, config.pipelineAccessToken);
+  }
+  throw new Error("Configuration is invalid");
+};
+
 /**
  * Fetches deployments
  */
@@ -30,7 +41,7 @@ export const list = async (): Promise<IDeployment[]> => {
   // Create three instances of pipelines
   const srcPipeline = createPipeline();
   const hldPipeline = createPipeline();
-  const clusterPipeline = createPipeline();
+  const clusterPipeline = createManifestPipeline();
   const config = getConfig();
 
   if (!isConfigValid()) {
