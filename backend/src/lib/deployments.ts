@@ -9,14 +9,12 @@ import GithubActions from "spektate/lib/pipeline/GithubActions";
 const createPipeline = () => {
   const config = getConfig();
   if (config.org !== "" && config.project !== "") {
-    console.log(`Creating an Azdo instance`);
     return new AzureDevOpsPipeline(
       config.org,
       config.project,
       config.pipelineAccessToken
     );
   } else if (config.sourceRepo !== "") {
-    console.log(`Creating a github actions instance`);
     return new GithubActions(config.sourceRepo, config.pipelineAccessToken);
   }
 
@@ -28,7 +26,6 @@ const createManifestPipeline = () => {
   if (config.org !== "" && config.project !== "") {
     return createPipeline();
   } else if (config.hldRepo !== "") {
-    console.log(`Creating a github actions instance`);
     return new GithubActions(config.hldRepo, config.pipelineAccessToken);
   }
   throw new Error("Configuration is invalid");
