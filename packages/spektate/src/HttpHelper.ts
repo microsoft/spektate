@@ -6,8 +6,6 @@ export class HttpHelper {
     accessToken?: string,
     body?: string
   ) {
-    console.log(`Making request to ${theUrl} for access token ${accessToken}`);
-
     return axios
       .get<T>(
         theUrl,
@@ -27,7 +25,6 @@ export class HttpHelper {
           }
       )
       .catch(error => {
-        console.error(error);
         throw error;
       });
   }

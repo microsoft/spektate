@@ -25,7 +25,6 @@ export class GithubActions implements IPipeline {
           "Data could not be fetched from Github Actions. Please check the personal access token and repo names."
         );
       }
-      console.log(JSON.stringify(data));
       const newBuild = {
         URL: data.html_url,
         author: "Unavailable",
@@ -43,7 +42,6 @@ export class GithubActions implements IPipeline {
         timelineURL: data.html_url
       };
       this.builds[data.id] = newBuild;
-      console.log(`Adding ${JSON.stringify(this.builds[data.run_id])} for ${data.run_id}`);
     }
     try {
       if (buildIds) {
@@ -65,7 +63,6 @@ export class GithubActions implements IPipeline {
     } catch (ex) {
       console.error(ex);
     }
-    console.log(`Returning ${JSON.stringify(this.builds)}`);
     return this.builds;
   }
   public async getListOfReleases(releaseIds?: Set<string>): Promise<IReleases> {
@@ -78,8 +75,6 @@ export class GithubActions implements IPipeline {
           // tslint:disable-next-line: object-literal-sort-keys
           id,
           imageVersion: "test-image",
-          // registryURL?: string;
-          // registryResourceGroup?: string;
           queueTime: builds[id].queueTime,
           status: builds[id].status,
           result: builds[id].result,

@@ -33,7 +33,9 @@ describe("test isConfigValid function", () => {
           storageTableName: "",
           githubManifestUsername: "",
           manifestRepoName: "",
-          dockerVersion: ""
+          dockerVersion: "",
+          sourceRepo: "",
+          hldRepo: ""
         }
       }
     );

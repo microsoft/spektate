@@ -34,7 +34,9 @@ describe("test get function", () => {
           storageTableName: "",
           githubManifestUsername: "test",
           manifestRepoName: "manifest",
-          dockerVersion: ""
+          dockerVersion: "",
+          sourceRepo: "",
+          hldRepo: ""
         };
       }
     );
@@ -69,7 +71,9 @@ describe("test get function", () => {
           storageTableName: "",
           githubManifestUsername: "",
           manifestRepoName: "",
-          dockerVersion: ""
+          dockerVersion: "",
+          sourceRepo: "",
+          hldRepo: ""
         };
       }
     );
