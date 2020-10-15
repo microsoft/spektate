@@ -63,8 +63,7 @@ export const cacheRefreshInterval = (): number => {
 export const isConfigValid = (res?: Response) => {
   const config = getConfig();
   if (
-    // !!config.org &&
-    // !!config.project &&
+    ((config.org && config.project) || (config.pipelineAccessToken && config.sourceRepo && config.hldRepo)) &&
     !!config.storageAccountName &&
     !!config.storageAccessKey &&
     !!config.storageTableName &&
