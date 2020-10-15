@@ -240,7 +240,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
           ? deployment.environment.toUpperCase()
           : "-",
       dockerPipelineResult: deployment.dockerToHldRelease
-        ? deployment.dockerToHldRelease.status
+        ? deployment.dockerToHldRelease.result
         : deployment.dockerToHldReleaseStage
         ? deployment.dockerToHldReleaseStage.result
         : "",
@@ -374,7 +374,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     setParams(searchParams, "limit", this.state.rowLimit.toString());
     setParams(searchParams, "refresh", this.state.refreshRate.toString());
 
-    if (history.replaceState) {
+    if (window.history.replaceState) {
       const newUrl = window.location.pathname + "?" + searchParams.toString();
       // only update history if a the new path doesn't match the current one
       if (!window.location.href.endsWith(newUrl)) {

@@ -81,7 +81,8 @@ export class GithubActions implements IPipeline {
           // registryURL?: string;
           // registryResourceGroup?: string;
           queueTime: builds[id].queueTime,
-          status: builds[id].result,
+          status: builds[id].status,
+          result: builds[id].result,
           startTime: builds[id].startTime,
           finishTime: builds[id].finishTime,
           URL: builds[id].URL,

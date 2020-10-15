@@ -19,7 +19,7 @@ import { IPullRequest } from "./repository/IPullRequest";
 export interface IDeployment {
   deploymentId: string;
   srcToDockerBuild?: IBuild;
-  dockerToHldRelease?: IRelease | IBuild;
+  dockerToHldRelease?: IRelease;
   dockerToHldReleaseStage?: IBuild;
   hldToManifestBuild?: IBuild;
   commitId: string;
@@ -260,7 +260,7 @@ export const getDeploymentFromDBEntry = async (
     imageTag = entry.imageTag._;
   }
 
-  let p2: IRelease | IBuild | undefined;
+  let p2: IRelease | undefined;
   let p2ReleaseStage: IBuild | undefined;
   let hldCommitId = "";
   let manifestCommitId = "";
