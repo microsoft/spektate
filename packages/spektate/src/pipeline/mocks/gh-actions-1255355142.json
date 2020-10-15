@@ -1,0 +1,105 @@
+{
+  "id": 1255355142,
+  "run_id": 307160224,
+  "run_url": "https://api.github.com/repos/samiyaakhtar/hello-world-full-stack/actions/runs/307160224",
+  "node_id": "MDg6Q2hlY2tSdW4xMjU1MzU1MTQy",
+  "head_sha": "18df2621e7f62b87dbcd6d534deb1ff3cd1b3116",
+  "url": "https://api.github.com/repos/samiyaakhtar/hello-world-full-stack/actions/jobs/1255355142",
+  "html_url": "https://github.com/samiyaakhtar/hello-world-full-stack/runs/1255355142",
+  "status": "completed",
+  "conclusion": "success",
+  "started_at": "2020-10-14T19:20:03Z",
+  "completed_at": "2020-10-14T19:21:43Z",
+  "name": "Build",
+  "steps": [
+    {
+      "name": "Set up job",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 1,
+      "started_at": "2020-10-14T12:20:03.000-07:00",
+      "completed_at": "2020-10-14T12:20:14.000-07:00"
+    },
+    {
+      "name": "Set current date as env variable",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 2,
+      "started_at": "2020-10-14T12:20:14.000-07:00",
+      "completed_at": "2020-10-14T12:20:14.000-07:00"
+    },
+    {
+      "name": "Debug Env Vars",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 3,
+      "started_at": "2020-10-14T12:20:14.000-07:00",
+      "completed_at": "2020-10-14T12:20:15.000-07:00"
+    },
+    {
+      "name": "Set up Go 1.x",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 4,
+      "started_at": "2020-10-14T12:20:15.000-07:00",
+      "completed_at": "2020-10-14T12:20:16.000-07:00"
+    },
+    {
+      "name": "Check out code into the Go module directory",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 5,
+      "started_at": "2020-10-14T12:20:16.000-07:00",
+      "completed_at": "2020-10-14T12:20:16.000-07:00"
+    },
+    {
+      "name": "Azure Login",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 6,
+      "started_at": "2020-10-14T12:20:16.000-07:00",
+      "completed_at": "2020-10-14T12:20:33.000-07:00"
+    },
+    {
+      "name": "Get and Set Job Run Id",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 7,
+      "started_at": "2020-10-14T12:20:33.000-07:00",
+      "completed_at": "2020-10-14T12:20:33.000-07:00"
+    },
+    {
+      "name": "Update Spektate storage",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 8,
+      "started_at": "2020-10-14T12:20:33.000-07:00",
+      "completed_at": "2020-10-14T12:20:49.000-07:00"
+    },
+    {
+      "name": "Azure CLI script",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 9,
+      "started_at": "2020-10-14T12:20:49.000-07:00",
+      "completed_at": "2020-10-14T12:21:43.000-07:00"
+    },
+    {
+      "name": "Post Check out code into the Go module directory",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 18,
+      "started_at": "2020-10-14T12:21:43.000-07:00",
+      "completed_at": "2020-10-14T12:21:43.000-07:00"
+    },
+    {
+      "name": "Complete job",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 19,
+      "started_at": "2020-10-14T12:21:43.000-07:00",
+      "completed_at": "2020-10-14T12:21:43.000-07:00"
+    }
+  ],
+  "check_run_url": "https://api.github.com/repos/samiyaakhtar/hello-world-full-stack/check-runs/1255355142"
+}
