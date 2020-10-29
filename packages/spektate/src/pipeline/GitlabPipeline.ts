@@ -22,6 +22,7 @@ export class GitlabPipeline implements IPipeline {
           "Data could not be fetched from Github Actions. Please check the personal access token and repo names."
         );
       }
+      const sourceVersionUrl = data.web_url ? data.web_url.replace("pipelines", "commit").replace(data.web_url.split("/").pop(), "") + data.sha : "";
       const newBuild: IBuild = {
         URL: data.web_url,
         author: "Unavailable",
@@ -33,7 +34,7 @@ export class GitlabPipeline implements IPipeline {
         result: data.status,
         sourceBranch: data.ref,
         sourceVersion: data.sha,
-        sourceVersionURL: data.web_url.replace("pipelines", "commit") + "/" + data.sha,
+        sourceVersionURL: sourceVersionUrl,
         startTime: new Date(data.started_at),
         status: data.status,
         timelineURL: data.web_url,

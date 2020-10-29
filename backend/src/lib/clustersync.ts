@@ -89,7 +89,6 @@ export const get = (): Promise<IClusterSync | undefined> => {
         config.manifestAccessToken
       )
         .then((syncCommits) => {
-          console.log(syncCommits);
           getGitlabReleasesURL(
             manifestRepo as IGitlabRepo,
             config.manifestAccessToken
