@@ -82,7 +82,7 @@ export const get = (): Promise<IClusterSync | undefined> => {
     manifestRepo = {
       projectId: config.manifestProjectId,
     };
-    releasesURL = getGitlabReleasesURL(manifestRepo);
+
     return new Promise((resolve, reject) => {
       getGitlabClusterSync(
         manifestRepo as IGitlabRepo,
@@ -90,9 +90,15 @@ export const get = (): Promise<IClusterSync | undefined> => {
       )
         .then((syncCommits) => {
           console.log(syncCommits);
-          resolve({
-            releasesURL,
-            tags: syncCommits,
+          getGitlabReleasesURL(
+            manifestRepo as IGitlabRepo,
+            config.manifestAccessToken
+          ).then((releasesUrl) => {
+            console.log(releasesUrl);
+            resolve({
+              releasesURL: releasesUrl,
+              tags: syncCommits,
+            });
           });
         })
         .catch((err) => {

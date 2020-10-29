@@ -6,6 +6,7 @@ import { ITag } from "./Tag";
 const commitsApi = "https://gitlab.com/api/v4/projects/{projectId}/repository/commits/{commitId}";
 const prApi = "https://gitlab.com/api/v4/projects/{projectId}/merge_requests/{merge_request_iid}";
 const manifestSyncTagsURL = "https://gitlab.com/api/v4/projects/{projectId}/repository/tags";
+const releasesURL = "https://gitlab.com/api/v4/projects/{projectId}";
 export interface IGitlabRepo {
   projectId: string;
 }
@@ -24,7 +25,6 @@ export const getManifestSyncState = async (
     throw new Error(allTags.statusText);
   }
 
-  console.log(allTags);
   const tags = allTags.data;
   const fluxTags: ITag[] = [];
   if (tags != null && tags.length > 0) {
@@ -43,11 +43,13 @@ export const getManifestSyncState = async (
 }
 
 
-export const getReleasesURL = (repository: IGitlabRepo): string => {
-  return (
-    "https://gitlab.com/" +
-    "/releases"
+export const getReleasesURL = async (repository: IGitlabRepo, accessToken?: string): Promise<string> => {
+  const projectInfo = await HttpHelper.httpGet<any>(
+    releasesURL
+      .replace("{projectId}", repository.projectId),
+    accessToken
   );
+  return projectInfo.data.web_url + "/-/tags";
 };
 
 
