@@ -13,6 +13,11 @@ export interface IConfig {
   sourceRepo: string;
   hldRepo: string;
 
+  // gitlab
+  sourceRepoProjectId: string;
+  hldRepoProjectId: string;
+  manifestProjectId: string;
+
   githubManifestUsername: string;
   manifestRepoName: string;
   manifestAccessToken: string;
@@ -44,6 +49,9 @@ export const getConfig = (): IConfig => {
     storageTableName: process.env.REACT_APP_STORAGE_TABLE_NAME || "",
     sourceRepo: process.env.REACT_APP_SOURCE_REPO || "",
     hldRepo: process.env.REACT_APP_HLD_REPO || "",
+    sourceRepoProjectId: process.env.REACT_APP_SOURCE_REPO_PROJECT_ID || "",
+    hldRepoProjectId: process.env.REACT_APP_HLD_REPO_PROJECT_ID || "",
+    manifestProjectId: process.env.REACT_APP_MANIFEST_REPO_PROJECT_ID || "",
   };
 };
 
@@ -56,6 +64,32 @@ export const cacheRefreshInterval = (): number => {
   return isNaN(val) ? 30 * 1000 : val * 1000;
 };
 
+export const isAzdo = (): boolean => {
+  const config = getConfig();
+  return (
+    config.org !== undefined &&
+    config.project !== undefined &&
+    config.org !== "" &&
+    config.project !== ""
+  );
+};
+export const isGithubActions = (): boolean => {
+  const config = getConfig();
+  return (
+    config.pipelineAccessToken !== undefined &&
+    config.sourceRepo !== undefined &&
+    config.hldRepo !== undefined
+  );
+};
+export const isGitlab = (): boolean => {
+  const config = getConfig();
+  return (
+    config.pipelineAccessToken !== undefined &&
+    config.sourceRepoProjectId !== undefined &&
+    config.hldRepoProjectId !== undefined
+  );
+};
+
 /**
  * Checks whether config is valid or not
  * @param res Response obj
@@ -63,7 +97,7 @@ export const cacheRefreshInterval = (): number => {
 export const isConfigValid = (res?: Response) => {
   const config = getConfig();
   if (
-    ((config.org && config.project) || (config.pipelineAccessToken && config.sourceRepo && config.hldRepo)) &&
+    (isAzdo() || isGithubActions() || isGitlab()) &&
     !!config.storageAccountName &&
     !!config.storageAccessKey &&
     !!config.storageTableName &&

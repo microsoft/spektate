@@ -2,6 +2,7 @@ import { getDeployments, IDeployment } from "spektate/lib/IDeployment";
 import AzureDevOpsPipeline from "spektate/lib/pipeline/AzureDevOpsPipeline";
 import { getConfig, isConfigValid } from "../config";
 import GithubActions from "spektate/lib/pipeline/GithubActions";
+import GitlabPipeline from "spektate/lib/pipeline/GitlabPipeline";
 
 /**
  * Create instance of AzDO pipeline
@@ -16,6 +17,8 @@ const createPipeline = () => {
     );
   } else if (config.sourceRepo !== "") {
     return new GithubActions(config.sourceRepo, config.pipelineAccessToken);
+  } else if (config.sourceRepoProjectId) {
+    return new GitlabPipeline(config.sourceRepoProjectId);
   }
 
   throw new Error("Configuration is invalid");
@@ -27,6 +30,8 @@ const createManifestPipeline = () => {
     return createPipeline();
   } else if (config.hldRepo !== "") {
     return new GithubActions(config.hldRepo, config.pipelineAccessToken);
+  } else if (config.hldRepoProjectId) {
+    return new GitlabPipeline(config.hldRepoProjectId);
   }
   throw new Error("Configuration is invalid");
 };

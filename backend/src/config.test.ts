@@ -35,8 +35,11 @@ describe("test isConfigValid function", () => {
           manifestRepoName: "",
           dockerVersion: "",
           sourceRepo: "",
-          hldRepo: ""
-        }
+          hldRepo: "",
+          sourceRepoProjectId: "",
+          hldRepoProjectId: "",
+          manifestProjectId: "",
+        };
       }
     );
     expect(isConfigValid()).toBe(false);

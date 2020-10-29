@@ -386,7 +386,7 @@ export const renderAuthor = (
   tableColumn: ITableColumn<IDeploymentField>,
   deployment: IDeploymentField
 ): JSX.Element => {
-  if (deployment.authorName && deployment.authorURL) {
+  if (deployment.authorName) {
     return (
       <Persona
         columnIndex={columnIndex}

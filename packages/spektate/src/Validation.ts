@@ -15,6 +15,7 @@ import {
   getManifestSyncState as getGitHubClusterSync,
   IGitHub
 } from "./repository/IGitHub";
+import { IGitlabRepo } from "./repository/IGitlabRepo";
 
 /**
  * Validation error interface
@@ -298,7 +299,7 @@ export const verifySourceRepoAccess = async (
     if (deployments.length !== 0) {
       // Attempt to get author for the first deployment to verify source repo access
       const deployment = deployments[0];
-      let repo: IAzureDevOpsRepo | IGitHub | undefined =
+      let repo: IAzureDevOpsRepo | IGitHub | IGitlabRepo | undefined =
         deployment.srcToDockerBuild?.repository ||
         (deployment.sourceRepo
           ? getRepositoryFromURL(deployment.sourceRepo)

@@ -14,6 +14,7 @@ import {
   getPullRequest as githubGetPR,
   IGitHub
 } from "./repository/IGitHub";
+import { getAuthor as gitlabGetAuthor, getPullRequest as gitlabGetPR, IGitlabRepo } from "./repository/IGitlabRepo";
 import { IPullRequest } from "./repository/IPullRequest";
 
 export interface IDeployment {
@@ -438,7 +439,7 @@ export const status = (deployment: IDeployment): string => {
 };
 
 export const fetchAuthor = (
-  repository: IGitHub | IAzureDevOpsRepo,
+  repository: IGitHub | IAzureDevOpsRepo | IGitlabRepo,
   commitId: string,
   accessToken?: string
 ): Promise<IAuthor | undefined> => {
@@ -459,6 +460,14 @@ export const fetchAuthor = (
         .catch(error => {
           reject(error);
         });
+    } else if ("projectId" in repository) {
+      gitlabGetAuthor(repository, commitId, accessToken)
+        .then((author: IAuthor | undefined) => {
+          resolve(author);
+        })
+        .catch(error => {
+          reject(error);
+        });
     } else {
       reject(new Error("Repository could not be recognized."));
     }
@@ -466,7 +475,7 @@ export const fetchAuthor = (
 };
 
 export const fetchPR = (
-  repository: IGitHub | IAzureDevOpsRepo,
+  repository: IGitHub | IAzureDevOpsRepo | IGitlabRepo,
   prId: string,
   accessToken?: string
 ): Promise<IPullRequest | undefined> => {
@@ -487,6 +496,14 @@ export const fetchPR = (
         .catch(error => {
           reject(error);
         });
+    } else if ("projectId" in repository) {
+      gitlabGetPR(repository, prId, accessToken)
+        .then((pr: IPullRequest | undefined) => {
+          resolve(pr);
+        })
+        .catch(error => {
+          reject(error);
+        });
     } else {
       reject("Repository could not be recognized.");
     }
@@ -495,13 +512,22 @@ export const fetchPR = (
 
 export const getRepositoryFromURL = (
   repository: string
-): IAzureDevOpsRepo | IGitHub | undefined => {
+): IAzureDevOpsRepo | IGitHub | IGitlabRepo | undefined => {
+  // gitlab repositories contain project ids as numbers
+  if (!isNaN(+repository)) {
+    return {
+      projectId: repository
+    }
+  }
+
   repository = repository
     .replace("https://", "")
     .replace("http://", "")
     .toLowerCase();
   const repoSplit = repository.split("/");
-  if (repository.includes("github")) {
+  if (repository.includes("gitlab")) {
+    throw Error("Gitlab repositories should set project id as a number, not repository URL");
+  } else if (repository.includes("github")) {
     return {
       reponame: repoSplit[repoSplit.length - 1],
       username: repoSplit[repoSplit.length - 2]

@@ -4,6 +4,7 @@ import { IAzureDevOpsRepo } from "spektate/lib/repository/IAzureDevOpsRepo";
 import { IGitHub } from "spektate/lib/repository/IGitHub";
 import { getConfig } from "../config";
 import { IDeploymentData } from "./common";
+import { IGitlabRepo } from "spektate/lib/repository/IGitlabRepo";
 
 /**
  * Fetches author information
@@ -18,7 +19,7 @@ export const get = async (
     deployment.srcToDockerBuild?.sourceVersion ||
     deployment.hldToManifestBuild?.sourceVersion;
 
-  let repo: IAzureDevOpsRepo | IGitHub | undefined =
+  let repo: IAzureDevOpsRepo | IGitHub | IGitlabRepo | undefined =
     deployment.srcToDockerBuild?.repository ||
     deployment.hldToManifestBuild?.repository;
   if (!repo && deployment.sourceRepo) {
@@ -31,27 +32,12 @@ export const get = async (
   }
 
   if (commit && repo) {
-    if ("username" in repo) {
-      return await fetchAuthor(
-        {
-          reponame: repo.reponame,
-          username: repo.username,
-        },
-        commit,
-        config.sourceRepoAccessToken || config.pipelineAccessToken
-      );
-    }
-    if ("org" in repo) {
-      return await fetchAuthor(
-        {
-          org: repo.org,
-          project: repo.project,
-          repo: repo.repo,
-        },
-        commit,
-        config.sourceRepoAccessToken || config.pipelineAccessToken
-      );
-    }
+    return await fetchAuthor(
+      repo,
+      commit,
+      config.sourceRepoAccessToken || config.pipelineAccessToken
+    );
   }
+  console.log("Repository could not be recognized");
   return undefined;
 };
