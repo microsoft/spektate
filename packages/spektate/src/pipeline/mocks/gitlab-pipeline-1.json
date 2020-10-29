@@ -1,0 +1,36 @@
+{
+  "id": 208859532,
+  "sha": "de399bc427cec3e0ddf67c8f59f4f0a7fc36893b",
+  "ref": "master",
+  "status": "success",
+  "created_at": "2020-10-28T17:36:53.885Z",
+  "updated_at": "2020-10-28T17:43:48.925Z",
+  "web_url": "https://gitlab.com/samiyaakhtar/hello-world-full-stack/-/pipelines/208859532",
+  "before_sha": "0000000000000000000000000000000000000000",
+  "tag": false,
+  "yaml_errors": null,
+  "user": {
+    "id": 1384451,
+    "name": "samiya akhtar",
+    "username": "samiyaakhtar",
+    "state": "active",
+    "avatar_url": "https://secure.gravatar.com/avatar/890514c6e4e1d88993e8d6e65383cd57?s=80\u0026d=identicon",
+    "web_url": "https://gitlab.com/samiyaakhtar"
+  },
+  "started_at": "2020-10-28T17:36:55.584Z",
+  "finished_at": "2020-10-28T17:43:48.917Z",
+  "committed_at": null,
+  "duration": 412,
+  "coverage": null,
+  "detailed_status": {
+    "icon": "status_success",
+    "text": "passed",
+    "label": "passed",
+    "group": "success",
+    "tooltip": "passed",
+    "has_details": true,
+    "details_path": "/samiyaakhtar/hello-world-full-stack/-/pipelines/208859532",
+    "illustration": null,
+    "favicon": "https://gitlab.com/assets/ci_favicons/favicon_status_success-8451333011eee8ce9f2ab25dc487fe24a8758c694827a582f17f42b0a90446a2.png"
+  }
+}
