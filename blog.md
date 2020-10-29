@@ -6,7 +6,7 @@ In this blog, I’m going to talk about how I brought a simple web application t
 
 The last few years have seen an incredible rise in popularity for Kubernetes, containers and Infrastructure as code. Kubernetes is created to help with automation, deployment and agile methodologies for building software applications.
 
-My team at Microsoft was starting to build a tool called [Bedrock](https://github.com/microsoft/bedrock) which provides a starting point for automating infrastructure management and establishing GitOps pipelines. Being a developer new to Kubernetes and GitOps, I had a huge learning curve — I first began by trying to understand how a simple web application would run on Kubernetes, without using GitOps. This involves creating the Kubernetes resource configuration from ground up, understand YAML configurations, helm charts and all of that. 
+My team at Microsoft started collecting our Kubernetes deployment experiences in a project called [Bedrock](https://github.com/microsoft/bedrock). The effort provides a starting point for automating infrastructure management and establishing GitOps pipelines. Being a developer new to Kubernetes and GitOps, I had a huge learning curve — I first began by trying to understand how a simple web application would run on Kubernetes, without using GitOps. This involves creating the Kubernetes resource configuration from ground up, understand YAML configurations, helm charts and all of that. 
 
 ## GitOps 
 
@@ -80,9 +80,11 @@ I want to setup two environments let's say dev and prod for my application. But 
 
 This scenario calls for the concept of Deployment Rings - an encapsulation of a DevOps strategy to group your users into cohorts based on the features of your application you wish to expose to them, similar to A/B or canary testing but in a more formalized manner. Rings allow multiple environments to live in a single cluster with the help of a service mesh, by setting a header on their ingress routes. Each developer in the team would be able to test their features in their own rings before merging it into production.  
 
+![](./images/deployment-rings.png)
+
 ## Connecting all the pieces together
 
-Using Bedrock CLI, I created a High Level Definition for my Trivia app and hooked up the CI/Cd pipelines for the repositories together. 
+Using Bedrock CLI, I created a High Level Definition for my Trivia app and hooked up the CI/CD pipelines for the repositories together. 
 
 ![](./images/trivia-desired-setup.png)
 
@@ -121,7 +123,7 @@ A quick glance at Spektate tells me that a recent change is being deployed into 
 
 Spektate uses a storage table to capture the details of every deployment attempt in the GitOps process. When the first code change is made to the source code, it's associated with a docker image, which creates a change in the HLD and eventually makes its way to the manifest when approved. All these details are captured in a storage table using bash scripts inserted into the CI/CD pipelines by bedrock-cli. For this Trivia app, when I used bedrock-cli to configure the pipelines, it created the bash scripts automatically along with a storage container in my Azure subscription. 
 
-### Extendible
+### Extensible
 
 Spektate can be easily extended to work with any other storage tables, but currently we've only added support for Azure storage table. If you would like to use it with another CI/CD orchestrator other than Azure DevOps, we've support for GitHub Actions coming soon, and we can apply the same idea to any orchestrator as well. 
 
@@ -148,6 +150,7 @@ Our presentation at Kubecon 2020 is available on [YouTube](https://www.youtube.c
 [Bedrock](https://github.com/Microsoft/bedrock)
 - [5 Minute GitOps Pipeline with bedrock](https://github.com/microsoft/bedrock/blob/master/docs/gitops-quickstart.md)
 - [Automated Kubernetes deployments with Bedrock](https://docs.microsoft.com/en-us/azure/architecture/example-scenario/bedrock/bedrock-automated-deployments)
+- [Deployment rings](https://github.com/microsoft/bedrock-cli/blob/master/guides/rings-101.md#what-are-deployment-rings)
 
 [Fabrikate](https://github.com/microsoft/fabrikate)
 
@@ -158,9 +161,4 @@ Trivia sample repositories:
 - [HLD](https://dev.azure.com/epicstuff/hellobedrock/_git/hello-world-full-stack-hld). 
 - [Manifest](https://dev.azure.com/epicstuff/hellobedrock/_git/hello-world-full-stack-manifest)
 
-TODO: Host this somewhere else: [A sample dashboard](http://40.64.74.69:5000/)
-
-
-
-
-
+[A sample dashboard](http://40.64.74.69:5000/)
