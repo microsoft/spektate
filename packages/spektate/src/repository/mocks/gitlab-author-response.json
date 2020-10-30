@@ -1,0 +1,33 @@
+{
+  "id": "ad3aa569d1293a1aaafcd8fc4e2607f5d76de81e",
+  "short_id": "ad3aa569",
+  "created_at": "2020-10-28T20:52:59.000+00:00",
+  "parent_ids": [
+    "de399bc427cec3e0ddf67c8f59f4f0a7fc36893b"
+  ],
+  "title": "Update .gitlab-ci.yml",
+  "message": "Update .gitlab-ci.yml",
+  "author_name": "samiya akhtar",
+  "author_email": "samiyaakhtar7@gmail.com",
+  "authored_date": "2020-10-28T20:52:59.000+00:00",
+  "committer_name": "samiya akhtar",
+  "committer_email": "samiyaakhtar7@gmail.com",
+  "committed_date": "2020-10-28T20:52:59.000+00:00",
+  "web_url": "https://gitlab.com/samiyaakhtar/hello-world-full-stack/-/commit/ad3aa569d1293a1aaafcd8fc4e2607f5d76de81e",
+  "stats": {
+    "additions": 4,
+    "deletions": 12,
+    "total": 16
+  },
+  "status": "success",
+  "project_id": 21761957,
+  "last_pipeline": {
+    "id": 208927877,
+    "sha": "ad3aa569d1293a1aaafcd8fc4e2607f5d76de81e",
+    "ref": "master",
+    "status": "success",
+    "created_at": "2020-10-28T20:52:59.913Z",
+    "updated_at": "2020-10-28T20:59:09.000Z",
+    "web_url": "https://gitlab.com/samiyaakhtar/hello-world-full-stack/-/pipelines/208927877"
+  }
+}
