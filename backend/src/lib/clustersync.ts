@@ -93,7 +93,6 @@ export const get = (): Promise<IClusterSync | undefined> => {
             manifestRepo as IGitlabRepo,
             config.manifestAccessToken
           ).then((releasesUrl) => {
-            console.log(releasesUrl);
             resolve({
               releasesURL: releasesUrl,
               tags: syncCommits,
@@ -101,7 +100,6 @@ export const get = (): Promise<IClusterSync | undefined> => {
           });
         })
         .catch((err) => {
-          console.log(err);
           reject(err);
         });
     });
