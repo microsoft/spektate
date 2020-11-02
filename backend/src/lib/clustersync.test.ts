@@ -43,6 +43,7 @@ describe("test get function", () => {
           hldRepo: "",
           sourceRepoProjectId: "",
           hldRepoProjectId: "",
+          manifestProjectId: "",
         };
       }
     );
@@ -84,6 +85,7 @@ describe("test get function", () => {
           hldRepo: "",
           sourceRepoProjectId: "",
           hldRepoProjectId: "",
+          manifestProjectId: "",
         };
       }
     );
