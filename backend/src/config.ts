@@ -4,9 +4,15 @@ import { Response } from "express";
  * Config interface
  */
 export interface IConfig {
+  // AzDO pipeline
   org: string;
   project: string;
   pipelineAccessToken: string;
+
+  // Github actions
+  sourceRepo: string;
+  hldRepo: string;
+
   githubManifestUsername: string;
   manifestRepoName: string;
   manifestAccessToken: string;
@@ -36,6 +42,8 @@ export const getConfig = (): IConfig => {
     storageAccountName: process.env.REACT_APP_STORAGE_ACCOUNT_NAME || "",
     storagePartitionKey: process.env.REACT_APP_STORAGE_PARTITION_KEY || "",
     storageTableName: process.env.REACT_APP_STORAGE_TABLE_NAME || "",
+    sourceRepo: process.env.REACT_APP_SOURCE_REPO || "",
+    hldRepo: process.env.REACT_APP_HLD_REPO || "",
   };
 };
 
@@ -55,8 +63,7 @@ export const cacheRefreshInterval = (): number => {
 export const isConfigValid = (res?: Response) => {
   const config = getConfig();
   if (
-    !!config.org &&
-    !!config.project &&
+    ((config.org && config.project) || (config.pipelineAccessToken && config.sourceRepo && config.hldRepo)) &&
     !!config.storageAccountName &&
     !!config.storageAccessKey &&
     !!config.storageTableName &&

@@ -1,0 +1,129 @@
+{
+  "id": 1115488431,
+  "run_id": 254907244,
+  "run_url": "https://api.github.com/repos/andrebriggs/spartan-app/actions/runs/254907244",
+  "node_id": "MDg6Q2hlY2tSdW4xMTE1NDg4NDMx",
+  "head_sha": "32b0b95f4ca771dee6808a17415d48790f62c6a9",
+  "url": "https://api.github.com/repos/andrebriggs/spartan-app/actions/jobs/1115488431",
+  "html_url": "https://github.com/andrebriggs/spartan-app/runs/1115488431",
+  "status": "completed",
+  "conclusion": "success",
+  "started_at": "2020-09-15T02:29:56Z",
+  "completed_at": "2020-09-15T02:33:38Z",
+  "name": "Build",
+  "steps": [
+    {
+      "name": "Set up job",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 1,
+      "started_at": "2020-09-14T19:29:56.000-07:00",
+      "completed_at": "2020-09-14T19:30:03.000-07:00"
+    },
+    {
+      "name": "Set current date as env variable",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 2,
+      "started_at": "2020-09-14T19:30:03.000-07:00",
+      "completed_at": "2020-09-14T19:30:03.000-07:00"
+    },
+    {
+      "name": "Debug Env Vars",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 3,
+      "started_at": "2020-09-14T19:30:03.000-07:00",
+      "completed_at": "2020-09-14T19:30:04.000-07:00"
+    },
+    {
+      "name": "Set up Go 1.x",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 4,
+      "started_at": "2020-09-14T19:30:04.000-07:00",
+      "completed_at": "2020-09-14T19:30:05.000-07:00"
+    },
+    {
+      "name": "Check out code into the Go module directory",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 5,
+      "started_at": "2020-09-14T19:30:05.000-07:00",
+      "completed_at": "2020-09-14T19:30:06.000-07:00"
+    },
+    {
+      "name": "Get dependencies",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 6,
+      "started_at": "2020-09-14T19:30:06.000-07:00",
+      "completed_at": "2020-09-14T19:30:26.000-07:00"
+    },
+    {
+      "name": "Test",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 7,
+      "started_at": "2020-09-14T19:30:26.000-07:00",
+      "completed_at": "2020-09-14T19:30:39.000-07:00"
+    },
+    {
+      "name": "Run vet & lint",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 8,
+      "started_at": "2020-09-14T19:30:39.000-07:00",
+      "completed_at": "2020-09-14T19:30:41.000-07:00"
+    },
+    {
+      "name": "Azure Login",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 9,
+      "started_at": "2020-09-14T19:30:41.000-07:00",
+      "completed_at": "2020-09-14T19:30:55.000-07:00"
+    },
+    {
+      "name": "Get and Set Job Run Id",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 10,
+      "started_at": "2020-09-14T19:30:55.000-07:00",
+      "completed_at": "2020-09-14T19:30:55.000-07:00"
+    },
+    {
+      "name": "Update Spektate storage",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 11,
+      "started_at": "2020-09-14T19:30:55.000-07:00",
+      "completed_at": "2020-09-14T19:31:13.000-07:00"
+    },
+    {
+      "name": "Azure CLI script",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 12,
+      "started_at": "2020-09-14T19:31:13.000-07:00",
+      "completed_at": "2020-09-14T19:33:38.000-07:00"
+    },
+    {
+      "name": "Post Check out code into the Go module directory",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 24,
+      "started_at": "2020-09-14T19:33:38.000-07:00",
+      "completed_at": "2020-09-14T19:33:38.000-07:00"
+    },
+    {
+      "name": "Complete job",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 25,
+      "started_at": "2020-09-14T19:33:38.000-07:00",
+      "completed_at": "2020-09-14T19:33:38.000-07:00"
+    }
+  ],
+  "check_run_url": "https://api.github.com/repos/andrebriggs/spartan-app/check-runs/1115488431"
+}

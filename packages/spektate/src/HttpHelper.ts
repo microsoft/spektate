@@ -11,18 +11,18 @@ export class HttpHelper {
         theUrl,
         accessToken
           ? {
-              data: body,
-              headers: {
-                Authorization:
-                  "Basic " + Buffer.from(":" + accessToken).toString("base64")
-              }
+            data: body,
+            headers: {
+              Authorization:
+                "Basic " + Buffer.from(":" + accessToken).toString("base64")
             }
+          }
           : {
-              data: body,
-              headers: {
-                "Content-Type": "application/json"
-              }
+            data: body,
+            headers: {
+              "Content-Type": "application/json"
             }
+          }
       )
       .catch(error => {
         throw error;

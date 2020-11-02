@@ -6,6 +6,7 @@ export interface IRelease {
   registryResourceGroup?: string;
   queueTime: Date;
   status: string;
+  result?: string;
   startTime: Date;
   finishTime: Date;
   URL: string;
