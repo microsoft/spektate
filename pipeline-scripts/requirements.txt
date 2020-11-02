@@ -8,7 +8,7 @@ azure-storage-common==1.4.2
 certifi==2019.6.16
 cffi==1.12.3
 chardet==3.0.4
-cryptography==2.7
+cryptography==3.2
 idna==2.8
 pycparser==2.19
 python-dateutil==2.8.0
