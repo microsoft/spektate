@@ -104,7 +104,5 @@ export const get = (): Promise<IClusterSync | undefined> => {
         });
     });
   }
-  return new Promise((resolve, reject) => {
-    reject(`No tags were found`);
-  });
+  return Promise.reject("No tags were found");
 };

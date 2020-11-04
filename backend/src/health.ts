@@ -31,8 +31,8 @@ export const get = async (req: Request, res: Response) => {
       config.storageAccessKey,
       config.storageTableName,
       config.storagePartitionKey,
-      config.org,
-      config.project,
+      config.org ?? "",
+      config.project ?? "",
       config.pipelineAccessToken,
       config.sourceRepoAccessToken,
       config.manifestRepoName,
@@ -42,11 +42,11 @@ export const get = async (req: Request, res: Response) => {
     const health: IHealth = {
       errors: status.errors,
       variables: {
-        AZURE_ORG: config.org,
+        AZURE_ORG: config.org ?? "",
         AZURE_PIPELINE_ACCESS_TOKEN: getKeyToDisplay(
           config.pipelineAccessToken
         ),
-        AZURE_PROJECT: config.project,
+        AZURE_PROJECT: config.project ?? "",
         MANIFEST: config.manifestRepoName,
         MANIFEST_ACCESS_TOKEN: getKeyToDisplay(config.manifestAccessToken),
         SOURCE_REPO_ACCESS_TOKEN: getKeyToDisplay(config.sourceRepoAccessToken),
@@ -57,7 +57,8 @@ export const get = async (req: Request, res: Response) => {
       },
     };
     if (config.githubManifestUsername !== "") {
-      health.variables.GITHUB_MANIFEST_USERNAME = config.githubManifestUsername;
+      health.variables.GITHUB_MANIFEST_USERNAME =
+        config.githubManifestUsername ?? "";
     }
     res.json(health || {});
   } catch (err) {

@@ -434,12 +434,7 @@ export const status = (deployment: IDeployment): string => {
       deployment.hldToManifestBuild.result === "canceled")
   ) {
     return "canceled";
-  } else if ((deployment.srcToDockerBuild &&
-    deployment.srcToDockerBuild.result === "success") ||
-    (deployment.dockerToHldReleaseStage &&
-      deployment.dockerToHldReleaseStage.result === "success") ||
-    (deployment.hldToManifestBuild &&
-      deployment.hldToManifestBuild.result === "success")) {
+  } else if ((deployment.srcToDockerBuild?.result ?? deployment.dockerToHldReleaseStage?.result ?? deployment.hldToManifestBuild?.result) === "success") {
     return "Complete";
   }
   return "Incomplete";

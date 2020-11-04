@@ -32,7 +32,7 @@ export const get = async (
   }
 
   if (commit && repo) {
-    return await fetchAuthor(
+    return fetchAuthor(
       repo,
       commit,
       config.sourceRepoAccessToken || config.pipelineAccessToken
