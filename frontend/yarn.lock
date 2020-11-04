@@ -10138,10 +10138,10 @@ spdy@^3.4.1:
     select-hose "^2.0.0"
     spdy-transport "^2.0.18"
 
-spektate@^1.0.14:
-  version "1.0.14"
-  resolved "https://registry.yarnpkg.com/spektate/-/spektate-1.0.14.tgz#1414e298fbb9684f8a8cf72b024cef6e343784e7"
-  integrity sha512-Z0YDLHT9d0xg/EF5UQMQCEeiaQrDGmSRSqhu+QOFrKpuHjkmd6AELd78Jqh5z5jiuEsHGkbnd6/pyS6UunZJ9A==
+spektate@^1.0.15:
+  version "1.0.15"
+  resolved "https://registry.yarnpkg.com/spektate/-/spektate-1.0.15.tgz#9f9af8c712eb967ed8886f4cc5e7aaf80ba166ff"
+  integrity sha512-qbPE2YXdbuUYxU7X4rnoHxNXnCcmGFgcsW+IC2FRixi32pij4SeZZaPsk7GxxaylxPPIkuvhE3OAOcaOo1URkg==
   dependencies:
     axios "^0.20.0"
     azure-storage "^2.10.3"

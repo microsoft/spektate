@@ -11,8 +11,9 @@ export class GitlabPipeline implements IPipeline {
   public repoProjectId: string = "";
   public pipelineAccessToken?: string;
 
-  constructor(repoProjectId: string) {
+  constructor(repoProjectId: string, accessToken?: string) {
     this.repoProjectId = repoProjectId;
+    this.pipelineAccessToken = accessToken;
   }
   public async getListOfBuilds(buildIds?: Set<string>): Promise<IBuilds> {
     const promises: Array<Promise<any>> = [];

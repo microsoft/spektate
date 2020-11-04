@@ -61,6 +61,7 @@ export const getStatusIndicatorData = (
       indicatorData.label = "Failed";
       indicatorData.classname = "icon-red";
       break;
+    case "running":
     case "in progress":
       indicatorData.statusProps = {
         ...Statuses.Running,
@@ -111,7 +112,7 @@ export const getIcon = (statusStr?: string): IIconProps => {
       iconName: "SkypeCircleCheck",
       style: { color: iconColors.green },
     };
-  } else if (statusStr === undefined || statusStr === "inProgress") {
+  } else if (statusStr === undefined || statusStr === "inProgress" || statusStr === "running") {
     return { iconName: "AwayStatus", style: { color: iconColors.blue } }; // SyncStatusSolid
   } else if (statusStr === "canceled") {
     return {

@@ -18,7 +18,10 @@ const createPipeline = () => {
   } else if (config.sourceRepo !== "") {
     return new GithubActions(config.sourceRepo, config.pipelineAccessToken);
   } else if (config.sourceRepoProjectId) {
-    return new GitlabPipeline(config.sourceRepoProjectId);
+    return new GitlabPipeline(
+      config.sourceRepoProjectId,
+      config.pipelineAccessToken
+    );
   }
 
   throw new Error("Configuration is invalid");
@@ -31,7 +34,10 @@ const createManifestPipeline = () => {
   } else if (config.hldRepo !== "") {
     return new GithubActions(config.hldRepo, config.pipelineAccessToken);
   } else if (config.hldRepoProjectId) {
-    return new GitlabPipeline(config.hldRepoProjectId);
+    return new GitlabPipeline(
+      config.hldRepoProjectId,
+      config.pipelineAccessToken
+    );
   }
   throw new Error("Configuration is invalid");
 };

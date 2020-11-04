@@ -1,6 +1,6 @@
 {
   "name": "spektate",
-  "version": "1.0.14",
+  "version": "1.0.15",
   "description": "Visualization tool backend for microsoft/bedrock",
   "main": "lib/spektate.js",
   "types": "lib/src/index.d.ts",
@@ -29,14 +29,14 @@
     "beachball": "^1.13.1",
     "jest": "^25.1.0",
     "jest-when": "^2.7.0",
+    "lint-staged": "^10.1.6",
     "shx": "^0.3.2",
     "ts-jest": "^25.2.1",
     "ts-loader": "^6.0.4",
     "tslint": "^5.20.0",
     "typescript": "^3.6.2",
     "webpack": "^4.39.3",
-    "webpack-cli": "^3.3.8",
-    "lint-staged": "^10.1.6"
+    "webpack-cli": "^3.3.8"
   },
   "dependencies": {
     "axios": "^0.20.0",
