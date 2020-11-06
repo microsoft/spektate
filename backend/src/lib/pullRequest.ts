@@ -1,6 +1,6 @@
 import { fetchPR, getRepositoryFromURL } from "spektate/lib/IDeployment";
 import { IPullRequest } from "spektate/lib/repository/IPullRequest";
-import { getConfig } from "../config";
+import { getNewConfig } from "../config";
 import { IDeploymentData } from "./common";
 
 /**
@@ -11,7 +11,7 @@ import { IDeploymentData } from "./common";
 export const get = async (
   deployment: IDeploymentData
 ): Promise<IPullRequest | undefined> => {
-  const config = getConfig();
+  const config = getNewConfig();
   if (deployment.hldRepo && deployment.pr) {
     const repo = getRepositoryFromURL(deployment.hldRepo);
 
@@ -19,7 +19,7 @@ export const get = async (
       return await fetchPR(
         repo,
         deployment.pr.toString(),
-        config.sourceRepoAccessToken || config.pipelineAccessToken
+        config.repoConfig.accessToken || config.pipelineConfig.accessToken
       );
     }
   }

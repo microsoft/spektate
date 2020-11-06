@@ -1,26 +1,44 @@
-import { getDeployments, IDeployment } from "spektate/lib/IDeployment";
+import {
+  getDeployments,
+  IDeployment,
+  getRepositoryFromURL,
+} from "spektate/lib/IDeployment";
 import AzureDevOpsPipeline from "spektate/lib/pipeline/AzureDevOpsPipeline";
-import { getConfig, isConfigValid } from "../config";
+import {
+  getNewConfig,
+  isConfigValid,
+  PipelineType,
+  IAzDOPipelineConfig,
+  IGitlabRepoConfig,
+  IGithubRepoConfig,
+} from "../config";
 import GithubActions from "spektate/lib/pipeline/GithubActions";
 import GitlabPipeline from "spektate/lib/pipeline/GitlabPipeline";
+import { IGitHub } from "spektate/lib/repository/IGitHub";
 
 /**
  * Create instance of AzDO pipeline
  */
 const createPipeline = () => {
-  const config = getConfig();
-  if (config.org !== "" && config.project !== "") {
+  const config = getNewConfig();
+  if (config.pipelineType === PipelineType.AZDO) {
     return new AzureDevOpsPipeline(
-      config.org!,
-      config.project!,
-      config.pipelineAccessToken
+      (config.pipelineConfig as IAzDOPipelineConfig).org,
+      (config.pipelineConfig as IAzDOPipelineConfig).project!,
+      (config.pipelineConfig as IAzDOPipelineConfig).accessToken
     );
-  } else if (config.sourceRepo !== "") {
-    return new GithubActions(config.sourceRepo!, config.pipelineAccessToken);
-  } else if (config.sourceRepoProjectId) {
+  } else if (config.pipelineType === PipelineType.GITHUB_ACTIONS) {
+    const sourceRepo = getRepositoryFromURL(
+      (config.repoConfig as IGithubRepoConfig).sourceRepo
+    ) as IGitHub;
+    return new GithubActions(
+      sourceRepo.username + "/" + sourceRepo.reponame,
+      (config.repoConfig as IGithubRepoConfig).accessToken!
+    );
+  } else if (config.pipelineType === PipelineType.GITLAB) {
     return new GitlabPipeline(
-      config.sourceRepoProjectId,
-      config.pipelineAccessToken
+      (config.repoConfig as IGitlabRepoConfig).sourceRepoProjectId,
+      config.pipelineConfig.accessToken
     );
   }
 
@@ -28,15 +46,21 @@ const createPipeline = () => {
 };
 
 const createManifestPipeline = () => {
-  const config = getConfig();
-  if (config.org !== "" && config.project !== "") {
+  const config = getNewConfig();
+  if (config.pipelineType === PipelineType.AZDO) {
     return createPipeline();
-  } else if (config.hldRepo !== "") {
-    return new GithubActions(config.hldRepo!, config.pipelineAccessToken);
-  } else if (config.hldRepoProjectId) {
+  } else if (config.pipelineType === PipelineType.GITHUB_ACTIONS) {
+    const hldRepo = getRepositoryFromURL(
+      (config.repoConfig as IGithubRepoConfig).hldRepo
+    ) as IGitHub;
+    return new GithubActions(
+      hldRepo.username + "/" + hldRepo.reponame,
+      (config.repoConfig as IGithubRepoConfig).accessToken!
+    );
+  } else if (config.pipelineType === PipelineType.GITLAB) {
     return new GitlabPipeline(
-      config.hldRepoProjectId,
-      config.pipelineAccessToken
+      (config.repoConfig as IGitlabRepoConfig).hldRepoProjectId,
+      config.pipelineConfig.accessToken
     );
   }
   throw new Error("Configuration is invalid");
@@ -50,7 +74,7 @@ export const list = async (): Promise<IDeployment[]> => {
   const srcPipeline = createPipeline();
   const hldPipeline = createPipeline();
   const clusterPipeline = createManifestPipeline();
-  const config = getConfig();
+  const config = getNewConfig();
 
   if (!isConfigValid()) {
     throw Error("Invalid configuration");

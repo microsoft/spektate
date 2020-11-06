@@ -2,7 +2,7 @@ import { fetchAuthor, getRepositoryFromURL } from "spektate/lib/IDeployment";
 import { IAuthor } from "spektate/lib/repository/Author";
 import { IAzureDevOpsRepo } from "spektate/lib/repository/IAzureDevOpsRepo";
 import { IGitHub } from "spektate/lib/repository/IGitHub";
-import { getConfig } from "../config";
+import { getNewConfig } from "../config";
 import { IDeploymentData } from "./common";
 import { IGitlabRepo } from "spektate/lib/repository/IGitlabRepo";
 
@@ -14,7 +14,7 @@ import { IGitlabRepo } from "spektate/lib/repository/IGitlabRepo";
 export const get = async (
   deployment: IDeploymentData
 ): Promise<IAuthor | undefined> => {
-  const config = getConfig();
+  const config = getNewConfig();
   let commit =
     deployment.srcToDockerBuild?.sourceVersion ||
     deployment.hldToManifestBuild?.sourceVersion;
@@ -35,9 +35,9 @@ export const get = async (
     return fetchAuthor(
       repo,
       commit,
-      config.sourceRepoAccessToken || config.pipelineAccessToken
+      config.repoConfig.accessToken || config.pipelineConfig.accessToken
     );
   }
-  console.log("Repository could not be recognized");
+
   return undefined;
 };

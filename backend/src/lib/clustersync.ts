@@ -9,12 +9,20 @@ import {
   IGitHub,
 } from "spektate/lib/repository/IGitHub";
 import { IClusterSync } from "spektate/lib/repository/Tag";
-import { getConfig } from "../config";
+import {
+  getNewConfig,
+  RepositoryType,
+  IGitlabRepoConfig,
+  IAzDOPipelineConfig,
+  IGithubRepoConfig,
+  IAzDORepoConfig,
+} from "../config";
 import {
   getManifestSyncState as getGitlabClusterSync,
   getReleasesURL as getGitlabReleasesURL,
   IGitlabRepo,
 } from "spektate/lib/repository/IGitlabRepo";
+import { getRepositoryFromURL } from "spektate/lib/IDeployment";
 
 /**
  * Gets manifest repo sync state to determine cluster sync status
@@ -22,21 +30,19 @@ import {
 export const get = (): Promise<IClusterSync | undefined> => {
   let manifestRepo: IAzureDevOpsRepo | IGitHub | IGitlabRepo | undefined;
   let releasesURL = "";
-  const config = getConfig();
+  const config = getNewConfig();
 
-  if (
-    config.manifestRepoName &&
-    config.githubManifestUsername &&
-    config.githubManifestUsername !== ""
-  ) {
-    manifestRepo = {
-      reponame: config.manifestRepoName,
-      username: config.githubManifestUsername,
-    };
-    releasesURL = getGitHubReleasesURL(manifestRepo);
+  if (config.repoType === RepositoryType.GITHUB) {
+    manifestRepo = getRepositoryFromURL(
+      (config.repoConfig as IGithubRepoConfig).manifestRepo
+    );
+    releasesURL = getGitHubReleasesURL(manifestRepo as IGitHub);
 
     return new Promise((resolve, reject) => {
-      getGitHubClusterSync(manifestRepo as IGitHub, config.manifestAccessToken)
+      getGitHubClusterSync(
+        manifestRepo as IGitHub,
+        config.repoConfig.accessToken
+      )
         .then((syncCommits) => {
           resolve({
             releasesURL,
@@ -47,22 +53,21 @@ export const get = (): Promise<IClusterSync | undefined> => {
           reject(err);
         });
     });
-  } else if (
-    config.manifestRepoName &&
-    config.manifestRepoName !== "" &&
-    config.org &&
-    config.project
-  ) {
+  } else if (config.repoType === RepositoryType.AZDO) {
+    let repoName = (config.repoConfig as IAzDORepoConfig).manifestRepo;
+    if (repoName.includes("/")) {
+      repoName = repoName.split("/").pop() ?? repoName;
+    }
     manifestRepo = {
-      org: config.org,
-      project: config.project,
-      repo: config.manifestRepoName,
+      org: (config.pipelineConfig as IAzDOPipelineConfig).org,
+      project: (config.pipelineConfig as IAzDOPipelineConfig).project,
+      repo: repoName,
     };
     releasesURL = getADOReleasesURL(manifestRepo);
     return new Promise((resolve, reject) => {
       getADOClusterSync(
         manifestRepo as IAzureDevOpsRepo,
-        config.manifestAccessToken
+        config.repoConfig.accessToken
       )
         .then((syncCommits) => {
           resolve({
@@ -74,24 +79,20 @@ export const get = (): Promise<IClusterSync | undefined> => {
           reject(err);
         });
     });
-  } else if (
-    config.sourceRepoProjectId &&
-    config.hldRepoProjectId &&
-    config.manifestProjectId
-  ) {
+  } else if (config.repoType === RepositoryType.GITLAB) {
     manifestRepo = {
-      projectId: config.manifestProjectId,
+      projectId: (config.repoConfig as IGitlabRepoConfig).manifestProjectId,
     };
 
     return new Promise((resolve, reject) => {
       getGitlabClusterSync(
         manifestRepo as IGitlabRepo,
-        config.manifestAccessToken
+        config.repoConfig.accessToken
       )
         .then((syncCommits) => {
           getGitlabReleasesURL(
             manifestRepo as IGitlabRepo,
-            config.manifestAccessToken
+            config.repoConfig.accessToken
           ).then((releasesUrl) => {
             resolve({
               releasesURL: releasesUrl,
