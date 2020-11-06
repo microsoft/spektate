@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import * as validation from "spektate/lib/Validation";
-import { getConfig } from "./config";
+import { getConfig, IAzDOPipelineConfig, IAzDORepoConfig } from "./config";
 
 export interface IHealth extends validation.IErrors {
   variables: ISpektateConfig;
@@ -31,35 +31,35 @@ export const get = async (req: Request, res: Response) => {
       config.storageAccessKey,
       config.storageTableName,
       config.storagePartitionKey,
-      config.org ?? "",
-      config.project ?? "",
-      config.pipelineAccessToken,
-      config.sourceRepoAccessToken,
-      config.manifestRepoName,
-      config.manifestAccessToken,
-      config.githubManifestUsername
+      (config.pipelineConfig as IAzDOPipelineConfig).org ?? "",
+      (config.pipelineConfig as IAzDOPipelineConfig).project ?? "",
+      (config.pipelineConfig as IAzDOPipelineConfig).accessToken ?? "",
+      (config.pipelineConfig as IAzDOPipelineConfig).accessToken ?? "",
+      (config.repoConfig as IAzDORepoConfig).manifestRepo,
+      (config.repoConfig as IAzDORepoConfig).accessToken ?? ""
     );
     const health: IHealth = {
       errors: status.errors,
       variables: {
-        AZURE_ORG: config.org ?? "",
+        AZURE_ORG: (config.pipelineConfig as IAzDOPipelineConfig).org ?? "",
         AZURE_PIPELINE_ACCESS_TOKEN: getKeyToDisplay(
-          config.pipelineAccessToken
+          (config.pipelineConfig as IAzDOPipelineConfig).accessToken ?? ""
         ),
-        AZURE_PROJECT: config.project ?? "",
-        MANIFEST: config.manifestRepoName,
-        MANIFEST_ACCESS_TOKEN: getKeyToDisplay(config.manifestAccessToken),
-        SOURCE_REPO_ACCESS_TOKEN: getKeyToDisplay(config.sourceRepoAccessToken),
+        AZURE_PROJECT:
+          (config.pipelineConfig as IAzDOPipelineConfig).project ?? "",
+        MANIFEST: (config.repoConfig as IAzDORepoConfig).manifestRepo,
+        MANIFEST_ACCESS_TOKEN: getKeyToDisplay(
+          (config.pipelineConfig as IAzDOPipelineConfig).accessToken ?? ""
+        ),
+        SOURCE_REPO_ACCESS_TOKEN: getKeyToDisplay(
+          (config.repoConfig as IAzDORepoConfig).accessToken ?? ""
+        ),
         STORAGE_ACCOUNT_KEY: getKeyToDisplay(config.storageAccessKey),
         STORAGE_ACCOUNT_NAME: config.storageAccountName,
         STORAGE_PARTITION_KEY: config.storagePartitionKey,
         STORAGE_TABLE_NAME: config.storageTableName,
       },
     };
-    if (config.githubManifestUsername !== "") {
-      health.variables.GITHUB_MANIFEST_USERNAME =
-        config.githubManifestUsername ?? "";
-    }
     res.json(health || {});
   } catch (err) {
     console.log(err);

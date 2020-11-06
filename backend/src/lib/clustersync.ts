@@ -10,12 +10,13 @@ import {
 } from "spektate/lib/repository/IGitHub";
 import { IClusterSync } from "spektate/lib/repository/Tag";
 import {
-  getNewConfig,
+  getConfig,
   RepositoryType,
   IGitlabRepoConfig,
   IAzDOPipelineConfig,
   IGithubRepoConfig,
   IAzDORepoConfig,
+  isConfigValid,
 } from "../config";
 import {
   getManifestSyncState as getGitlabClusterSync,
@@ -30,7 +31,11 @@ import { getRepositoryFromURL } from "spektate/lib/IDeployment";
 export const get = (): Promise<IClusterSync | undefined> => {
   let manifestRepo: IAzureDevOpsRepo | IGitHub | IGitlabRepo | undefined;
   let releasesURL = "";
-  const config = getNewConfig();
+  const config = getConfig();
+
+  if (!isConfigValid()) {
+    return Promise.reject("Configuration is invalid");
+  }
 
   if (config.repoType === RepositoryType.GITHUB) {
     manifestRepo = getRepositoryFromURL(

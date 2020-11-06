@@ -1,6 +1,6 @@
 import { fetchPR, getRepositoryFromURL } from "spektate/lib/IDeployment";
 import { IPullRequest } from "spektate/lib/repository/IPullRequest";
-import { getNewConfig } from "../config";
+import { getConfig, isConfigValid } from "../config";
 import { IDeploymentData } from "./common";
 
 /**
@@ -11,7 +11,10 @@ import { IDeploymentData } from "./common";
 export const get = async (
   deployment: IDeploymentData
 ): Promise<IPullRequest | undefined> => {
-  const config = getNewConfig();
+  const config = getConfig();
+  if (!isConfigValid()) {
+    return Promise.reject("Configuration is invalid");
+  }
   if (deployment.hldRepo && deployment.pr) {
     const repo = getRepositoryFromURL(deployment.hldRepo);
 

@@ -1,34 +1,3 @@
-import { Response } from "express";
-
-/**
- * Config interface
- */
-export interface IConfig {
-  // AzDO pipeline
-  org?: string;
-  project?: string;
-
-  // Github actions
-  sourceRepo?: string;
-  hldRepo?: string;
-  githubManifestUsername?: string;
-
-  // gitlab
-  sourceRepoProjectId?: string;
-  hldRepoProjectId?: string;
-  manifestProjectId?: string;
-
-  pipelineAccessToken: string;
-  manifestRepoName: string;
-  manifestAccessToken: string;
-  sourceRepoAccessToken: string;
-  storageAccessKey: string;
-  storageAccountName: string;
-  storageTableName: string;
-  storagePartitionKey: string;
-  dockerVersion: string;
-}
-
 export enum RepositoryType {
   AZDO = 0,
   GITHUB,
@@ -41,7 +10,7 @@ export enum PipelineType {
   GITLAB,
 }
 
-export interface INewConfig {
+export interface IConfig {
   pipelineConfig:
     | IAzDOPipelineConfig
     | IGithubActionsConfig
@@ -174,7 +143,7 @@ export const getReposConfig = () => {
   };
 };
 
-export const getNewConfig = (): INewConfig => {
+export const getConfig = (): IConfig => {
   const { pipelineType, pipelineConfig } = getPipelineConfig();
   const { repoType, reposConfig } = getReposConfig();
   if (pipelineConfig && reposConfig) {
@@ -194,31 +163,6 @@ export const getNewConfig = (): INewConfig => {
 };
 
 /**
- * Gets config
- */
-export const getConfig = (): IConfig => {
-  return {
-    dockerVersion: process.env.REACT_APP_DOCKER_VERSION || "",
-    githubManifestUsername: process.env.REACT_APP_GITHUB_MANIFEST_USERNAME,
-    manifestAccessToken: process.env.REACT_APP_MANIFEST_ACCESS_TOKEN || "",
-    manifestRepoName: process.env.REACT_APP_MANIFEST || "",
-    org: process.env.REACT_APP_PIPELINE_ORG,
-    pipelineAccessToken: process.env.REACT_APP_PIPELINE_ACCESS_TOKEN || "",
-    project: process.env.REACT_APP_PIPELINE_PROJECT,
-    sourceRepoAccessToken: process.env.REACT_APP_SOURCE_REPO_ACCESS_TOKEN || "",
-    storageAccessKey: process.env.REACT_APP_STORAGE_ACCESS_KEY || "",
-    storageAccountName: process.env.REACT_APP_STORAGE_ACCOUNT_NAME || "",
-    storagePartitionKey: process.env.REACT_APP_STORAGE_PARTITION_KEY || "",
-    storageTableName: process.env.REACT_APP_STORAGE_TABLE_NAME || "",
-    sourceRepo: process.env.REACT_APP_SOURCE_REPO,
-    hldRepo: process.env.REACT_APP_HLD_REPO,
-    sourceRepoProjectId: process.env.REACT_APP_SOURCE_REPO_PROJECT_ID,
-    hldRepoProjectId: process.env.REACT_APP_HLD_REPO_PROJECT_ID,
-    manifestProjectId: process.env.REACT_APP_MANIFEST_REPO_PROJECT_ID,
-  };
-};
-
-/**
  * Gets cache refresh interval
  */
 export const cacheRefreshInterval = (): number => {
@@ -228,7 +172,7 @@ export const cacheRefreshInterval = (): number => {
 };
 
 export const isAzdo = (): boolean => {
-  const config = getNewConfig();
+  const config = getConfig();
   return (
     config.pipelineType === PipelineType.AZDO &&
     (config.pipelineConfig as IAzDOPipelineConfig).org !== undefined &&
@@ -237,7 +181,7 @@ export const isAzdo = (): boolean => {
   );
 };
 export const isGithubActions = (): boolean => {
-  const config = getNewConfig();
+  const config = getConfig();
   return (
     config.pipelineType === PipelineType.GITHUB_ACTIONS &&
     (config.repoConfig as IGithubRepoConfig).sourceRepo !== undefined &&
@@ -246,7 +190,7 @@ export const isGithubActions = (): boolean => {
   );
 };
 export const isGitlab = (): boolean => {
-  const config = getNewConfig();
+  const config = getConfig();
   return (
     config.pipelineType === PipelineType.GITLAB &&
     (config.repoConfig as IGitlabRepoConfig).sourceRepoProjectId !==
@@ -258,10 +202,9 @@ export const isGitlab = (): boolean => {
 
 /**
  * Checks whether config is valid or not
- * @param res Response obj
  */
-export const isConfigValid = (res?: Response) => {
-  const config = getNewConfig();
+export const isConfigValid = (): boolean => {
+  const config = getConfig();
   if (
     (isAzdo() || isGithubActions() || isGitlab()) &&
     !!config.storageAccountName &&
@@ -270,14 +213,6 @@ export const isConfigValid = (res?: Response) => {
     !!config.storagePartitionKey
   ) {
     return true;
-  }
-
-  if (res) {
-    res
-      .status(500)
-      .send(
-        "Environment variables need to be exported for Spektate configuration"
-      );
   }
   return false;
 };

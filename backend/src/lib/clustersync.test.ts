@@ -4,6 +4,7 @@ import * as GitHub from "spektate/lib/repository/IGitHub";
 import { ITag } from "spektate/lib/repository/Tag";
 import { getMockedConfig } from "./test-common";
 import * as config from "../config";
+import { RepositoryType, PipelineType } from "../config";
 
 const mockedTag: ITag = {
   name: "tag",
@@ -27,23 +28,22 @@ describe("test get function", () => {
     jest.spyOn(config, "getConfig").mockImplementation(
       (): config.IConfig => {
         return {
-          org: "",
-          project: "",
-          manifestAccessToken: "",
-          pipelineAccessToken: "",
-          sourceRepoAccessToken: "",
-          storageAccessKey: "",
-          storagePartitionKey: "",
-          storageAccountName: "",
-          storageTableName: "",
-          githubManifestUsername: "test",
-          manifestRepoName: "manifest",
-          dockerVersion: "",
-          sourceRepo: "",
-          hldRepo: "",
-          sourceRepoProjectId: "",
-          hldRepoProjectId: "",
-          manifestProjectId: "",
+          dockerVersion: "mockedVersion",
+          pipelineConfig: {
+            accessToken: "test",
+          },
+          repoConfig: {
+            manifestRepo: "https://github.com/test/manifest",
+            sourceRepo: "https://github.com/samiya/test-src",
+            hldRepo: "https://github.com/samiya/test-hld",
+            accessToken: "cf8a78a2abcdsomekey65b0cb9bd8dsomekeyfsomekey",
+          },
+          storageAccessKey: "access-key-seeeeeecret",
+          storageAccountName: "storageaccount",
+          storagePartitionKey: "partition-key",
+          storageTableName: "table-name",
+          repoType: RepositoryType.GITHUB,
+          pipelineType: PipelineType.GITHUB_ACTIONS,
         };
       }
     );
@@ -69,23 +69,21 @@ describe("test get function", () => {
     jest.spyOn(config, "getConfig").mockImplementation(
       (): config.IConfig => {
         return {
-          org: "",
-          project: "",
-          manifestAccessToken: "",
-          pipelineAccessToken: "",
-          sourceRepoAccessToken: "",
-          storageAccessKey: "",
-          storagePartitionKey: "",
-          storageAccountName: "",
-          storageTableName: "",
-          githubManifestUsername: "",
-          manifestRepoName: "",
           dockerVersion: "",
-          sourceRepo: "",
-          hldRepo: "",
-          sourceRepoProjectId: "",
-          hldRepoProjectId: "",
-          manifestProjectId: "",
+          pipelineConfig: {
+            org: "",
+            project: "",
+          },
+          repoConfig: {
+            manifestRepo: "",
+            accessToken: "",
+          },
+          storageAccessKey: "",
+          storageAccountName: "",
+          storagePartitionKey: "",
+          storageTableName: "",
+          repoType: RepositoryType.AZDO,
+          pipelineType: PipelineType.AZDO,
         };
       }
     );

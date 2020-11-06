@@ -5,7 +5,7 @@ import {
 } from "spektate/lib/IDeployment";
 import AzureDevOpsPipeline from "spektate/lib/pipeline/AzureDevOpsPipeline";
 import {
-  getNewConfig,
+  getConfig,
   isConfigValid,
   PipelineType,
   IAzDOPipelineConfig,
@@ -20,7 +20,7 @@ import { IGitHub } from "spektate/lib/repository/IGitHub";
  * Create instance of AzDO pipeline
  */
 const createPipeline = () => {
-  const config = getNewConfig();
+  const config = getConfig();
   if (config.pipelineType === PipelineType.AZDO) {
     return new AzureDevOpsPipeline(
       (config.pipelineConfig as IAzDOPipelineConfig).org,
@@ -46,7 +46,7 @@ const createPipeline = () => {
 };
 
 const createManifestPipeline = () => {
-  const config = getNewConfig();
+  const config = getConfig();
   if (config.pipelineType === PipelineType.AZDO) {
     return createPipeline();
   } else if (config.pipelineType === PipelineType.GITHUB_ACTIONS) {
@@ -74,7 +74,7 @@ export const list = async (): Promise<IDeployment[]> => {
   const srcPipeline = createPipeline();
   const hldPipeline = createPipeline();
   const clusterPipeline = createManifestPipeline();
-  const config = getNewConfig();
+  const config = getConfig();
 
   if (!isConfigValid()) {
     throw Error("Invalid configuration");

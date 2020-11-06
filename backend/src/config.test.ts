@@ -1,4 +1,9 @@
-import { cacheRefreshInterval, isConfigValid } from "./config";
+import {
+  cacheRefreshInterval,
+  isConfigValid,
+  RepositoryType,
+  PipelineType,
+} from "./config";
 import * as config from "./config";
 
 describe("test cacheRefreshInterval function", () => {
@@ -22,39 +27,24 @@ describe("test isConfigValid function", () => {
     jest.spyOn(config, "getConfig").mockImplementationOnce(
       (): config.IConfig => {
         return {
-          org: "",
-          project: "",
-          manifestAccessToken: "",
-          pipelineAccessToken: "",
-          sourceRepoAccessToken: "",
-          storageAccessKey: "",
-          storagePartitionKey: "",
-          storageAccountName: "",
+          dockerVersion: "mockedVersion",
+          pipelineConfig: {
+            org: "",
+            project: "",
+          },
+          repoConfig: {
+            manifestRepo: "",
+            accessToken: "cf8a78a2abcdsomekey65b0cb9bd8dsomekeyfsomekey",
+          },
+          storageAccessKey: "access-key-seeeeeecret",
+          storageAccountName: "storageaccount",
+          storagePartitionKey: "partition-key",
           storageTableName: "",
-          githubManifestUsername: "",
-          manifestRepoName: "",
-          dockerVersion: "",
-          sourceRepo: "",
-          hldRepo: "",
-          sourceRepoProjectId: "",
-          hldRepoProjectId: "",
-          manifestProjectId: "",
+          repoType: RepositoryType.AZDO,
+          pipelineType: PipelineType.AZDO,
         };
       }
     );
     expect(isConfigValid()).toBe(false);
-  });
-  it("negative test with response object", () => {
-    const send = jest.fn();
-    const status = (code: number) => {
-      expect(code).toBe(500);
-      return {
-        send,
-      };
-    };
-
-    isConfigValid({
-      status,
-    } as any);
   });
 });

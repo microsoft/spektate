@@ -3,7 +3,7 @@ import { IAuthor } from "spektate/lib/repository/Author";
 import { IAzureDevOpsRepo } from "spektate/lib/repository/IAzureDevOpsRepo";
 import { IGitHub } from "spektate/lib/repository/IGitHub";
 import { IPullRequest } from "spektate/lib/repository/IPullRequest";
-import { IConfig } from "../config";
+import { IConfig, RepositoryType, PipelineType } from "../config";
 
 /**
  * Mock for author fetch
@@ -83,21 +83,19 @@ export const mockFetchPullRequest = (hasUndefined = false) => {
 export const getMockedConfig = (): IConfig => {
   return {
     dockerVersion: "mockedVersion",
-    githubManifestUsername: "",
-    manifestAccessToken: "cf8a78a2abcdsomekey65b0cb9bd8dsomekeyfsomekey",
-    manifestRepoName: "hello-manifests",
-    org: "epicorg",
-    pipelineAccessToken: "cf8a78a2abcdsomekey65b0cb9bd8dsomekeyfsomekey",
-    project: "hellobedrock",
-    sourceRepoAccessToken: "cf8a78a2abcdsomekey65b0cb9bd8dsomekeyfsomekey",
+    pipelineConfig: {
+      org: "epicorg",
+      project: "hellobedrock",
+    },
+    repoConfig: {
+      manifestRepo: "hello-manifests",
+      accessToken: "cf8a78a2abcdsomekey65b0cb9bd8dsomekeyfsomekey",
+    },
     storageAccessKey: "access-key-seeeeeecret",
     storageAccountName: "storageaccount",
     storagePartitionKey: "partition-key",
     storageTableName: "table-name",
-    sourceRepo: "",
-    hldRepo: "",
-    sourceRepoProjectId: "",
-    hldRepoProjectId: "",
-    manifestProjectId: "",
+    repoType: RepositoryType.AZDO,
+    pipelineType: PipelineType.AZDO,
   };
 };
