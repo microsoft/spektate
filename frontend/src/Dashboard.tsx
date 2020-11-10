@@ -40,10 +40,6 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
    */
   private clusterSyncAvailable: boolean = false;
 
-  /**
-   * Redirect link for cluster sync releases page
-   */
-
   public constructor(props: Props) {
     super(props);
     const searchParams = new URLSearchParams(location.search);
@@ -112,7 +108,6 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
   private updateDeployments = async () => {
     try {
       const deps = await HttpHelper.httpGet<IDeployments>("/api/deployments");
-      console.log("deployments fetched");
       if (!deps.data) {
         console.log(deps.request.response);
         throw new Error(deps.request.response);
