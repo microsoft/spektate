@@ -1,22 +1,26 @@
 import { get } from "./clustersync";
 import * as AzureDevOpsRepo from "spektate/lib/repository/IAzureDevOpsRepo";
 import * as GitHub from "spektate/lib/repository/IGitHub";
-import { ITag } from 'spektate/lib/repository/Tag';
+import { ITag } from "spektate/lib/repository/Tag";
 import { getMockedConfig } from "./test-common";
 import * as config from "../config";
 
 const mockedTag: ITag = {
   name: "tag",
   commit: "aaaaaa",
-  date: new Date()
+  date: new Date(),
 };
 
-jest.spyOn(AzureDevOpsRepo, "getManifestSyncState").mockResolvedValue(new Promise((resolve => {
-  resolve([mockedTag]);
-})));
-jest.spyOn(GitHub, "getManifestSyncState").mockResolvedValue(new Promise((resolve => {
-  resolve([mockedTag]);
-})));
+jest.spyOn(AzureDevOpsRepo, "getManifestSyncState").mockResolvedValue(
+  new Promise((resolve) => {
+    resolve([mockedTag]);
+  })
+);
+jest.spyOn(GitHub, "getManifestSyncState").mockResolvedValue(
+  new Promise((resolve) => {
+    resolve([mockedTag]);
+  })
+);
 
 describe("test get function", () => {
   it("cluster sync github", async () => {
@@ -36,7 +40,10 @@ describe("test get function", () => {
           manifestRepoName: "manifest",
           dockerVersion: "",
           sourceRepo: "",
-          hldRepo: ""
+          hldRepo: "",
+          sourceRepoProjectId: "",
+          hldRepoProjectId: "",
+          manifestProjectId: "",
         };
       }
     );
@@ -52,7 +59,9 @@ describe("test get function", () => {
       }
     );
     const tags = await get();
-    expect(tags?.releasesURL).toBe("https://dev.azure.com/epicorg/hellobedrock/_git/hello-manifests/tags");
+    expect(tags?.releasesURL).toBe(
+      "https://dev.azure.com/epicorg/hellobedrock/_git/hello-manifests/tags"
+    );
     expect(tags?.tags).toHaveLength(1);
     expect(tags?.tags![0]).toStrictEqual(mockedTag);
   });
@@ -73,7 +82,10 @@ describe("test get function", () => {
           manifestRepoName: "",
           dockerVersion: "",
           sourceRepo: "",
-          hldRepo: ""
+          hldRepo: "",
+          sourceRepoProjectId: "",
+          hldRepoProjectId: "",
+          manifestProjectId: "",
         };
       }
     );

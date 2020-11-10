@@ -10,12 +10,17 @@ import {
 } from "spektate/lib/repository/IGitHub";
 import { IClusterSync } from "spektate/lib/repository/Tag";
 import { getConfig } from "../config";
+import {
+  getManifestSyncState as getGitlabClusterSync,
+  getReleasesURL as getGitlabReleasesURL,
+  IGitlabRepo,
+} from "spektate/lib/repository/IGitlabRepo";
 
 /**
  * Gets manifest repo sync state to determine cluster sync status
  */
 export const get = (): Promise<IClusterSync | undefined> => {
-  let manifestRepo: IAzureDevOpsRepo | IGitHub | undefined;
+  let manifestRepo: IAzureDevOpsRepo | IGitHub | IGitlabRepo | undefined;
   let releasesURL = "";
   const config = getConfig();
 
@@ -42,7 +47,12 @@ export const get = (): Promise<IClusterSync | undefined> => {
           reject(err);
         });
     });
-  } else if (config.manifestRepoName && config.manifestRepoName !== "") {
+  } else if (
+    config.manifestRepoName &&
+    config.manifestRepoName !== "" &&
+    config.org &&
+    config.project
+  ) {
     manifestRepo = {
       org: config.org,
       project: config.project,
@@ -64,8 +74,35 @@ export const get = (): Promise<IClusterSync | undefined> => {
           reject(err);
         });
     });
+  } else if (
+    config.sourceRepoProjectId &&
+    config.hldRepoProjectId &&
+    config.manifestProjectId
+  ) {
+    manifestRepo = {
+      projectId: config.manifestProjectId,
+    };
+
+    return new Promise((resolve, reject) => {
+      getGitlabClusterSync(
+        manifestRepo as IGitlabRepo,
+        config.manifestAccessToken
+      )
+        .then((syncCommits) => {
+          getGitlabReleasesURL(
+            manifestRepo as IGitlabRepo,
+            config.manifestAccessToken
+          ).then((releasesUrl) => {
+            resolve({
+              releasesURL: releasesUrl,
+              tags: syncCommits,
+            });
+          });
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    });
   }
-  return new Promise((resolve, reject) => {
-    reject(`No tags were found`);
-  });
+  return Promise.reject("No tags were found");
 };

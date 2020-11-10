@@ -95,6 +95,9 @@ export const getMockedConfig = (): IConfig => {
     storagePartitionKey: "partition-key",
     storageTableName: "table-name",
     sourceRepo: "",
-    hldRepo: ""
+    hldRepo: "",
+    sourceRepoProjectId: "",
+    hldRepoProjectId: "",
+    manifestProjectId: "",
   };
 };

@@ -1,0 +1,26 @@
+[
+  {
+    "name": "flux-east-us",
+    "message": "",
+    "target": "a41c826038ae7052f81510fe02896769abe17427",
+    "commit": {
+      "id": "a41c826038ae7052f81510fe02896769abe17427",
+      "short_id": "a41c8260",
+      "created_at": "2020-10-27T23:19:29.000+00:00",
+      "parent_ids": [
+        "384100b44b8ccd24dbd6b95cee46f586c43fdee8"
+      ],
+      "title": "Updated k8s manifest files post commit:",
+      "message": "Updated k8s manifest files post commit:\n",
+      "author_name": "Automated Account",
+      "author_email": "admin@azuredevops.com",
+      "authored_date": "2020-10-27T23:19:29.000+00:00",
+      "committer_name": "Automated Account",
+      "committer_email": "admin@azuredevops.com",
+      "committed_date": "2020-10-27T23:19:29.000+00:00",
+      "web_url": "https://gitlab.com/samiyaakhtar/hello-world-full-stack-manifest/-/commit/a41c826038ae7052f81510fe02896769abe17427"
+    },
+    "release": null,
+    "protected": false
+  }
+]

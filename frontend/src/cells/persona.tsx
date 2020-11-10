@@ -4,6 +4,7 @@ import { VssPersona } from "azure-devops-ui/VssPersona";
 import * as React from "react";
 import { IDeploymentField } from "../Dashboard.types";
 
+const defaultAvatarUrl = "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y";
 /**
  * Interface for author cell props
  */
@@ -24,6 +25,7 @@ export const Persona: React.FC<IPersonaProps> = (props: IPersonaProps) => {
       />
     );
   }
+
   return (
     <SimpleTableCell
       columnIndex={props.columnIndex}
@@ -31,7 +33,7 @@ export const Persona: React.FC<IPersonaProps> = (props: IPersonaProps) => {
       key={"col-" + props.columnIndex}
       contentClassName="font-size-m text-ellipsis bolt-table-link bolt-table-inline-link"
     >
-      <VssPersona displayName={name} imageUrl={props.imageUrl} />
+      <VssPersona displayName={name} imageUrl={props.imageUrl && props.imageUrl !== "" ? props.imageUrl : defaultAvatarUrl} />
       <div>&nbsp;&nbsp;&nbsp;</div>
       <div className="flex-row scroll-hidden">
         <Tooltip overflowOnly={true}>
