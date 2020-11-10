@@ -43,7 +43,6 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
   /**
    * Redirect link for cluster sync releases page
    */
-  private releasesUrl?: string;
 
   public constructor(props: Props) {
     super(props);
@@ -113,6 +112,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
   private updateDeployments = async () => {
     try {
       const deps = await HttpHelper.httpGet<IDeployments>("/api/deployments");
+      console.log("deployments fetched");
       if (!deps.data) {
         console.log(deps.request.response);
         throw new Error(deps.request.response);
@@ -153,8 +153,10 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       const tags = deps.data.clusterSync;
 
       if (tags && tags.releasesURL) {
-        this.setState({ manifestSyncStatuses: tags.tags as ITag[] });
-        this.releasesUrl = tags.releasesURL;
+        this.setState({
+          manifestSyncStatuses: tags.tags as ITag[],
+          releasesURL: tags.releasesURL,
+        });
       }
     } catch (e) {
       console.log(e);
@@ -184,7 +186,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       <DeploymentTable
         deploymentRows={rows}
         clusterSyncAvailable={this.clusterSyncAvailable}
-        releasesUrl={this.releasesUrl}
+        releasesUrl={this.state.releasesURL}
       />
     );
   };
