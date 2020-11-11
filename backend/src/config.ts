@@ -12,9 +12,9 @@ export enum PipelineType {
 
 export interface IConfig {
   pipelineConfig:
-    | IAzDOPipelineConfig
-    | IGithubActionsConfig
-    | IGitlabPipelineConfig;
+  | IAzDOPipelineConfig
+  | IGithubActionsConfig
+  | IGitlabPipelineConfig;
   repoConfig: IAzDORepoConfig | IGithubRepoConfig | IGitlabRepoConfig;
   storageAccessKey: string;
   storageAccountName: string;
@@ -194,7 +194,7 @@ export const isGitlab = (): boolean => {
   return (
     config.pipelineType === PipelineType.GITLAB &&
     (config.repoConfig as IGitlabRepoConfig).sourceRepoProjectId !==
-      undefined &&
+    undefined &&
     (config.repoConfig as IGitlabRepoConfig).hldRepoProjectId !== undefined &&
     (config.repoConfig as IGitlabRepoConfig).manifestProjectId !== undefined
   );
