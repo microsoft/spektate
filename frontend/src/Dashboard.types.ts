@@ -47,6 +47,7 @@ export interface IDashboardState {
   error?: string;
   rowLimit: number;
   refreshRate: number;
+  releasesURL?: string;
 }
 
 export interface IDeploymentField {
