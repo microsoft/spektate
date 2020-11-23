@@ -10,15 +10,15 @@ My team at Microsoft started collecting our Kubernetes deployment experiences in
 
 ## GitOps 
 
-One of the big shifts with the introduction of Kubernetes to the world has been the move towards expressing infrastruction as YAML configuration, and a declarative model. The declarative-ness of Kubernetes makes it an excellent candidate for introducing the concept of GitOps. 
+One of the big shifts with the introduction of Kubernetes has been the move towards expressing infrastruction as YAML using a declarative model. The declarative-ness of Kubernetes makes it an excellent candidate for introducing the concept of GitOps. 
 
 GitOps is a method that helps with application delivery by using Git as a single source of truth and declarative infrastructure, such as Kubernetes. The idea behind GitOps is that engineers are already well versed in Git and can define the state of their application and infrastructure in a git repository, and the application running on Kubernetes is synced to a repository with the help of a tool such as [Flux](https://www.weave.works/oss/flux/), which enables enables continuous delivery of container images. 
 
-GitOps has become increasingly popular with teams running large scale Kubernetes deployments due to its declarative nature, which works perfectly with Git. A git repository holds the Kubernetes resource manifests necessary for the cluster, and Flux constantly polls the repository to apply any new changes. This method allows for easy disaster recovery with the help of reverting commits, and the audit trail it creates comes with it. Everything that comes out of the box with a git repository, such as security, history, branching is an added benefit to the GitOps approach. 
+GitOps has become increasingly popular with teams running large scale Kubernetes deployments due to its declarative nature, which works perfectly with Git. A git repository holds the Kubernetes resource manifests necessary for the cluster, and Flux constantly polls the repository to apply new changes. This method allows for easy disaster recovery with the help of reverting commits, and the audit trail it creates comes with it. Everything that comes out of the box with a git repository, such as security, history, branching is an added benefit to the GitOps approach. 
 
 ![](./images/gitops.png)
 
-This diagram explains a simplest GitOps scenario - a developer makes a code change to their source repo. The continuous integration pipeline runs to build a container for the application and publishes the new version in their docker registry. A cluster is deployed for this application that has flux installed on it, which is able to pull the latest docker image and apply the change to the cluster. The developer, can now navigate to the URL and see their changes in action. 
+This diagram explains a simple GitOps scenario - a developer makes a code change to their source repo. The continuous integration pipeline runs to build a container for the application and publishes the new version in their docker registry. A cluster is deployed for this application that has flux installed on it, which is able to pull the latest docker image and apply the change to the cluster. The developer can now navigate to the URL and see their changes in action. 
 
 ## Trivia app
 
@@ -26,11 +26,11 @@ I have a very simple Trivia web application that I would like to host on Kuberne
 
 ![](./images/trivia.png)
 
-Even in a simple application such as this one, there's already two microservices since we have a separate dockerfile for the frontend and backend. This would mean that I need to setup CI pipelines for these individually, and one common CD pipeline should be sufficient to deploy the changes to the cluster. 
+Even in a simple application such as this one, there's two microservices since we have a separate dockerfile for the frontend and backend. This would mean that I need to setup CI pipelines for these individually, and one common CD pipeline should be sufficient to deploy the changes to the cluster. 
 
 I'm following the [5 minutes GitOps pipeline with Bedrock](https://github.com/microsoft/bedrock/blob/master/docs/gitops-quickstart.md) guide which creates a skeleton for all my pipelines and a starter HLD. 
 
-My current setup is outlined below:
+My current CI setup looks like this:
 
 ![](./images/trivia-ci-diagram.png)
 
@@ -76,11 +76,13 @@ Who doesn't love recursion!
 
 ### Deployment Rings
 
-I want to setup two environments let's say dev and prod for my application. But I want to run them on the same cluster to cut cost! I also want to be able to test my new features for the Trivia app in their own separate environments before I merge into dev or prod. 
+I want to setup two environments let's say dev and prod for my application. But I want to run them on the same cluster to cut cost! I also want to be able to test my new features for the Trivia app in their own separate environments before I merge into dev or prod. Several customers have expressed interest in being able to test their features within an existing cluster before they make merge it into their next release. 
 
-This scenario calls for the concept of Deployment Rings - an encapsulation of a DevOps strategy to group your users into cohorts based on the features of your application you wish to expose to them, similar to A/B or canary testing but in a more formalized manner. Rings allow multiple environments to live in a single cluster with the help of a service mesh, by setting a header on their ingress routes. Each developer in the team would be able to test their features in their own rings before merging it into production.  
+This scenario calls for the concept of Deployment Rings - an encapsulation of a DevOps strategy to group your users into cohorts based on the features of your application you wish to expose to them, similar to A/B or canary testing but in a more formalized manner. Rings allow multiple environments to live in a single cluster with the help of a service mesh, by setting a header on their ingress routes. Each developer in the team would be able to test their features in their own rings before merging it into the formal production branch.  
 
 ![](./images/deployment-rings.png)
+
+In the diagram above, a single cluster has multiple deployment rings, and each of these rings is running off a branch in the source repository. For example, the production ring is deployed against the `master` branch and the dev ring is deployed against the `develop` branch. When a developer is testing their features before merging into `develop`, they're able to deploy a ring into the cluster, let's say `feature_ring_1` and get feedback from their team before merging it into `develop`. Once the feature gets into `develop`, they can go through the testing process, and make it to `staging`, and then finally into `master` for production. 
 
 ## Connecting all the pieces together
 
@@ -88,7 +90,7 @@ Using Bedrock CLI, I created a High Level Definition for my Trivia app and hooke
 
 ![](./images/trivia-desired-setup.png)
 
-This setup involves the following components:
+In this diagram, there are several components: 
 
 Three repositories:
   - Source code: This is where the source code for the microservices lives, currently all in the same mono repo [here](https://dev.azure.com/epicstuff/hellobedrock/_git/hello-world-full-stack).
@@ -96,14 +98,19 @@ Three repositories:
   - Manifest repo: This is where the final Kubernetes manifests are stored and the cluster is synced to. Located [here](https://dev.azure.com/epicstuff/hellobedrock/_git/hello-world-full-stack-manifest)
 
 Two pipelines:
-  - Build image: This pipeline builds the docker image using the Dockerfile for the microservice(s) and writes the updated image tag to the HLD repository
+  - CI Pipeline: This pipeline builds the docker image using the Dockerfile for the microservice(s) and writes the updated image tag to the HLD repository
   - Manifest generation: This pipeline uses Fabrikate and helm to generate the manifests for Kubernetes configuration, and pushes them to the manifest repository.
 
 `n` Image registries: 
   - `api`: The images for backend Nodejs app
   - `client`: The images for frontend Reactjs app
 
-There are too many elements involved this GitOps configuration. In any real world application, it's fair to conclude that we're introducing a lot of complexity into the Ops pattern by going with this pattern. How do we get a high level visual of what is happening in the state of things? How do I know which developer in the team I should contact when something breaks in production?
+There are too many elements involved this GitOps configuration. In any real world application, it's fair to conclude that we're introducing a lot of complexity into the Ops pattern by going with this solution. Anyone looking at this can ask a lot of high level questions, such as: 
+- How do we get a high level visual of what is happening in the state of things? 
+- How do I know which developer I should contact when something breaks in production?
+- What version of microservice x is running on production? 
+- Did the cluster sync successfully to the latest deployment using flux? 
+- What branch runs against the feature ring and who is the author?
 
 ## Spektate - A Customizable GitOps Observability tool
 
@@ -111,7 +118,7 @@ Spektate is a React based visualization tool that "observes" your entire GitOps 
 
 ![](./images/observability-split.png)
 
-As we were building Spektate, we drew the line between the before and after - what happens before the desired state is updated and what happens after are two separate concerns. There are several tools for monitoring the "after" piece - [Kubernetes dashboard](https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/), [Prometheus](https://prometheus.io/), [cAdvisor](https://github.com/google/cadvisor) etc. The "after" piece also needs direct access to the cluster(s). We wanted to build a tool that provides a full high level view of the "before" up until the point where Flux has synced with the cluster, which is a green signal for the developer/operator to know that their change is applied. 
+As we were building Spektate, we drew the line between the before and after - what happens before the desired state is updated and what happens after are two separate concerns. There are several tools for monitoring the "after" piece - [Kubernetes dashboard](https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/), [Prometheus](https://prometheus.io/), [cAdvisor](https://github.com/google/cadvisor) etc. The "after" piece needs direct access to the cluster(s). We wanted to build a tool that provides a full high level view of the "before" up until the point where Flux has synced with the cluster, which is a green signal for the developer/operator to know that their change is applied. 
 
 ![](./images/spektate-dashboard.png)
 
@@ -125,7 +132,7 @@ Spektate uses a storage table to capture the details of every deployment attempt
 
 ### Extensible
 
-Spektate can be easily extended to work with any other storage tables, but currently we've only added support for Azure storage table. If you would like to use it with another CI/CD orchestrator other than Azure DevOps, we've support for GitHub Actions coming soon, and we can apply the same idea to any orchestrator as well. 
+Spektate can be easily extended to work with any other storage tables, although currently we're supporting Azure storage table. If you would like to use it with another CI/CD orchestrator other than Azure DevOps, we've support for GitHub Actions and Gitlab coming soon, and we can apply the same idea to any orchestrator as well. 
 
 ### Deployment
 
@@ -137,17 +144,18 @@ Spektate does not access your cluster directly, it only needs access to your pip
 
 # What next?
 
-We're working to add support for Github Actions into Spektate and make Spektate less dependent on external APIs by capturing all necessary data into the storage table. This will enable us to run Spektate on any ecosystem. We're also looking to make Spektate columns and table more customizable. 
+We're working to add support for Github Actions and Gitlab into Spektate. We're also trying to make Spektate less dependent on external APIs by capturing all necessary data into the storage table. This will enable us to run Spektate on any ecosystem. We're also looking to make Spektate columns and table more customizable. 
 
-The work in this area is ongoing and there's a long journey ahead - feel free to reach out to us with feedback on [Github](https://github.com/microsoft/spektate) or [Twitter](https://twitter.com/samiyaakhtar). 
+The work in this area is ongoing and there's a long journey ahead - feel free to reach out to us with feedback on [Github](https://github.com/microsoft/spektate) or [email](mailto:saakhta@microsoft.com). 
 
-# Useful Links
+# Related Links
 
 Our presentation at Kubecon 2020 is available on [YouTube](https://www.youtube.com/watch?v=JfQvAtsZP7Y). 
 
 [Spektate](https://github.com/microsoft/spektate)
 
 [Bedrock](https://github.com/Microsoft/bedrock)
+- [Why GitOps?](https://github.com/microsoft/bedrock/blob/master/docs/why-gitops.md)
 - [5 Minute GitOps Pipeline with bedrock](https://github.com/microsoft/bedrock/blob/master/docs/gitops-quickstart.md)
 - [Automated Kubernetes deployments with Bedrock](https://docs.microsoft.com/en-us/azure/architecture/example-scenario/bedrock/bedrock-automated-deployments)
 - [Deployment rings](https://github.com/microsoft/bedrock-cli/blob/master/guides/rings-101.md#what-are-deployment-rings)
