@@ -39,7 +39,7 @@
     "webpack-cli": "^3.3.8"
   },
   "dependencies": {
-    "axios": "^0.20.0",
+    "axios": "^0.21.1",
     "azure-storage": "^2.10.3",
     "tslint-config-prettier": "^1.18.0"
   },
