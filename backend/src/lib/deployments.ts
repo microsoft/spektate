@@ -9,13 +9,13 @@ import GitlabPipeline from "spektate/lib/pipeline/GitlabPipeline";
  */
 const createPipeline = () => {
   const config = getConfig();
-  if (config.org !== "" && config.project !== "") {
+  if (config.org && config.org !== "" && config.project && config.project !== "") {
     return new AzureDevOpsPipeline(
       config.org!,
       config.project!,
       config.pipelineAccessToken
     );
-  } else if (config.sourceRepo !== "") {
+  } else if (config.sourceRepo && config.sourceRepo !== "") {
     return new GithubActions(config.sourceRepo!, config.pipelineAccessToken);
   } else if (config.sourceRepoProjectId) {
     return new GitlabPipeline(
@@ -29,9 +29,9 @@ const createPipeline = () => {
 
 const createManifestPipeline = () => {
   const config = getConfig();
-  if (config.org !== "" && config.project !== "") {
+  if (config.org && config.org !== "" && config.project && config.project !== "") {
     return createPipeline();
-  } else if (config.hldRepo !== "") {
+  } else if (config.hldRepo && config.hldRepo !== "") {
     return new GithubActions(config.hldRepo!, config.pipelineAccessToken);
   } else if (config.hldRepoProjectId) {
     return new GitlabPipeline(
