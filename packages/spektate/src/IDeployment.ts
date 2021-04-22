@@ -193,7 +193,7 @@ export const parseDeploymentsFromDB = (
   // Wait for all three pipelines to load their respective builds before we instantiate deployments
   Promise.all([p1, p2, p3])
     .then(async () => {
-      const batch = new azure.TableBatch();
+
       for (const entry of result.entries) {
         const dep = await getDeploymentFromDBEntry(
           entry,
@@ -208,9 +208,6 @@ export const parseDeploymentsFromDB = (
           dep.dockerToHldReleaseStage
         ) {
           deployments.push(dep);
-        } else {
-          // Remove this deployment from db since its builds/releases have expired
-          batch.deleteEntity(entry);
         }
       }
       deployments.sort(compare);
