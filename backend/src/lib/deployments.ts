@@ -9,15 +9,20 @@ import GitlabPipeline from "spektate/lib/pipeline/GitlabPipeline";
  */
 const createPipeline = () => {
   const config = getConfig();
-  if (config.org && config.org !== "" && config.project && config.project !== "") {
+  if (
+    config.org !== undefined &&
+    config.org !== "" &&
+    config.project !== undefined &&
+    config.project !== ""
+  ) {
     return new AzureDevOpsPipeline(
       config.org!,
       config.project!,
       config.pipelineAccessToken
     );
-  } else if (config.sourceRepo && config.sourceRepo !== "") {
+  } else if (config.sourceRepo !== undefined && config.sourceRepo !== "") {
     return new GithubActions(config.sourceRepo!, config.pipelineAccessToken);
-  } else if (config.sourceRepoProjectId) {
+  } else if (config.sourceRepoProjectId !== undefined) {
     return new GitlabPipeline(
       config.sourceRepoProjectId,
       config.pipelineAccessToken
@@ -29,11 +34,16 @@ const createPipeline = () => {
 
 const createManifestPipeline = () => {
   const config = getConfig();
-  if (config.org && config.org !== "" && config.project && config.project !== "") {
+  if (
+    config.org !== undefined &&
+    config.org !== "" &&
+    config.project !== undefined &&
+    config.project !== ""
+  ) {
     return createPipeline();
-  } else if (config.hldRepo && config.hldRepo !== "") {
+  } else if (config.hldRepo !== undefined && config.hldRepo !== "") {
     return new GithubActions(config.hldRepo!, config.pipelineAccessToken);
-  } else if (config.hldRepoProjectId) {
+  } else if (config.hldRepoProjectId !== undefined) {
     return new GitlabPipeline(
       config.hldRepoProjectId,
       config.pipelineAccessToken

@@ -19,6 +19,7 @@ export interface IPRs {
 export interface IDeploymentData extends IDeployment {
   author?: IAuthor | undefined;
   pullRequest?: IPullRequest | undefined;
+  fluxStatus?: any | undefined;
 }
 
 export enum DeploymentType {
@@ -83,4 +84,5 @@ export interface IDeploymentField {
   mergedByName?: string;
   mergedByImageURL?: string;
   manifestCommitId?: string;
+  fluxStatus?: any;
 }

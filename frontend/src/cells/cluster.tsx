@@ -2,7 +2,7 @@ import { Link } from "azure-devops-ui/Link";
 import {
   ITableColumn,
   SimpleTableCell,
-  TwoLineTableCell,
+  // TwoLineTableCell,
 } from "azure-devops-ui/Table";
 import { Tooltip } from "azure-devops-ui/TooltipEx";
 import * as React from "react";
@@ -18,52 +18,76 @@ interface IClusterProps {
   releasesUrl?: string;
 }
 export const Cluster: React.FC<IClusterProps> = (props: IClusterProps) => {
-  if (!props.deployment.clusters || props.deployment.clusters.length === 0) {
+  console.log(props.deployment.fluxStatus);
+  if (props.deployment.fluxStatus !== undefined) {
+
     return (
       <SimpleTableCell
-        key={"col-" + props.columnIndex}
         columnIndex={props.columnIndex}
+        key={"col-" + props.columnIndex}
       >
-        -
+        {props.deployment.fluxStatus.reason}
       </SimpleTableCell>
     );
   }
-  const strClusters = props.deployment.clusters.join(", ");
 
-  // If there are more than two clusters, don't show their names but show as "and n more..."
-  if (props.deployment.clusters.length > 2) {
-    return (
-      <TwoLineTableCell
-        className="first-row no-cell-top-border bolt-table-cell-content-with-inline-link no-v-padding"
-        key={"col-" + props.columnIndex}
-        columnIndex={props.columnIndex}
-        tableColumn={props.tableColumn}
-        line1={renderCluster(
-          props.deployment.clusters[0] + ", " + props.deployment.clusters[1],
-          props.deployment.clusters!,
-          props.releasesUrl
-        )}
-        line2={renderCluster(
-          "and " + (props.deployment.clusters.length - 2) + " more...",
-          props.deployment.clusters!,
-          props.releasesUrl
-        )}
-      />
-    );
-  }
   return (
     <SimpleTableCell
-      columnIndex={props.columnIndex}
       key={"col-" + props.columnIndex}
+      columnIndex={props.columnIndex}
     >
-      {renderCluster(
-        strClusters,
-        props.deployment.clusters!,
-        props.releasesUrl
-      )}
+      -
     </SimpleTableCell>
   );
 };
+
+// export const Cluster: React.FC<IClusterProps> = (props: IClusterProps) => {
+//   if (!props.deployment.clusters || props.deployment.clusters.length === 0) {
+//     return (
+//       <SimpleTableCell
+//         key={"col-" + props.columnIndex}
+//         columnIndex={props.columnIndex}
+//       >
+//         -
+//       </SimpleTableCell>
+//     );
+//   }
+//   const strClusters = props.deployment.clusters.join(", ");
+
+//   // If there are more than two clusters, don't show their names but show as "and n more..."
+//   if (props.deployment.clusters.length > 2) {
+//     return (
+//       <TwoLineTableCell
+//         className="first-row no-cell-top-border bolt-table-cell-content-with-inline-link no-v-padding"
+//         key={"col-" + props.columnIndex}
+//         columnIndex={props.columnIndex}
+//         tableColumn={props.tableColumn}
+//         line1={renderCluster(
+//           props.deployment.clusters[0] + ", " + props.deployment.clusters[1],
+//           props.deployment.clusters!,
+//           props.releasesUrl
+//         )}
+//         line2={renderCluster(
+//           "and " + (props.deployment.clusters.length - 2) + " more...",
+//           props.deployment.clusters!,
+//           props.releasesUrl
+//         )}
+//       />
+//     );
+//   }
+//   return (
+//     <SimpleTableCell
+//       columnIndex={props.columnIndex}
+//       key={"col-" + props.columnIndex}
+//     >
+//       {renderCluster(
+//         strClusters,
+//         props.deployment.clusters!,
+//         props.releasesUrl
+//       )}
+//     </SimpleTableCell>
+//   );
+// };
 
 /**
  * Renders a single cluster name with tooltip and link

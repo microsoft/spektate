@@ -4,8 +4,17 @@ import { cacheRefreshInterval } from "./config";
 import { get as healthGet } from "./health";
 import { fetch as fetchDeployment, update as updateCache } from "./lib/cache";
 import { get as versionGet } from "./version";
+import { createFluxNotification } from "./lib/flux";
 
 const app = express();
+var bodyParser = require("body-parser");
+app.use(bodyParser.json()); // to support JSON-encoded bodies
+app.use(
+  bodyParser.urlencoded({
+    // to support URL-encoded bodies
+    extended: true,
+  })
+);
 
 // Serve static files from the React app
 app.use(express.static(path.join(__dirname)));
@@ -28,6 +37,14 @@ app.get("/api/version", (req: express.Request, res: express.Response) => {
 // match one above, send back React's index.html file.
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname + "/index.html"));
+});
+
+app.post("/api/flux", (req: express.Request, res: express.Response) => {
+  const body = req.body;
+  res.set("Content-Type", "text/plain");
+  createFluxNotification(req.body);
+  console.log(`Received ${JSON.stringify(body)} from flux post`);
+  res.send(`You sent: ${JSON.stringify(body)} to Express`);
 });
 
 (async () => {

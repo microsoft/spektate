@@ -96,8 +96,8 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
         {this.state.error ? (
           <Card>{this.state.error.toString()}</Card>
         ) : (
-          this.renderTable()
-        )}
+            this.renderTable()
+          )}
       </div>
     );
   }
@@ -225,13 +225,13 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       dockerPipelineId: deployment.dockerToHldRelease
         ? deployment.dockerToHldRelease.releaseName
         : deployment.dockerToHldReleaseStage
-        ? deployment.dockerToHldReleaseStage.buildNumber
-        : "",
+          ? deployment.dockerToHldReleaseStage.buildNumber
+          : "",
       dockerPipelineURL: deployment.dockerToHldRelease
         ? deployment.dockerToHldRelease.URL
         : deployment.dockerToHldReleaseStage
-        ? deployment.dockerToHldReleaseStage.URL
-        : "",
+          ? deployment.dockerToHldReleaseStage.URL
+          : "",
       environment:
         deployment.environment !== ""
           ? deployment.environment.toUpperCase()
@@ -239,8 +239,8 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
       dockerPipelineResult: deployment.dockerToHldRelease
         ? deployment.dockerToHldRelease.result
         : deployment.dockerToHldReleaseStage
-        ? deployment.dockerToHldReleaseStage.result
-        : "",
+          ? deployment.dockerToHldReleaseStage.result
+          : "",
       hldCommitId: deployment.hldCommitId !== "" ? deployment.hldCommitId : "-",
       hldCommitURL: deployment.hldToManifestBuild
         ? deployment.hldToManifestBuild.sourceVersionURL
@@ -279,6 +279,7 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
           ? deployment.pullRequest.mergedBy.imageUrl
           : undefined
         : undefined,
+      fluxStatus: deployment.fluxStatus
     };
   };
 
@@ -524,8 +525,8 @@ class Dashboard<Props> extends React.Component<Props, IDashboardState> {
     return deployment.service !== ""
       ? DeploymentType.DEPLOYMENT
       : !deployment.srcToDockerBuild && deployment.hldToManifestBuild
-      ? DeploymentType.HLD_EDIT
-      : undefined;
+        ? DeploymentType.HLD_EDIT
+        : undefined;
   };
 
   /**

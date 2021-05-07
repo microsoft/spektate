@@ -1,16 +1,18 @@
 import { IDeployment } from "spektate/lib/IDeployment";
 import { IAuthor } from "spektate/lib/repository/Author";
 import { IPullRequest } from "spektate/lib/repository/IPullRequest";
-import { IClusterSync } from 'spektate/lib/repository/Tag';
+import { IClusterSync } from "spektate/lib/repository/Tag";
 
 export interface IDeploymentData extends IDeployment {
   author?: IAuthor | undefined;
   pullRequest?: IPullRequest | undefined;
+  fluxStatus?: any;
 }
 
 export interface IDeployments {
   deployments: IDeploymentData[];
   clusterSync: IClusterSync | undefined;
+  fluxStatuses: any | undefined;
 }
 
 export const deepClone = <T>(o: T): T => {

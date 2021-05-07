@@ -179,15 +179,15 @@ export const DeploymentTable: React.FC<ITableProps> = (props: ITableProps) => {
   }
 
   // Display the cluster column only if there is information to show in the table
-  if (props.clusterSyncAvailable) {
-    columns.push({
-      id: "clusterName",
-      minWidth: 150,
-      name: "Synced Cluster",
-      renderCell: renderClusters,
-      width: -10,
-    });
-  }
+  // if (props.clusterSyncAvailable) {
+  columns.push({
+    id: "clusterName",
+    minWidth: 150,
+    name: "Synced Cluster",
+    renderCell: renderClusters,
+    width: -10,
+  });
+  // }
   return (
     <div className="PrototypeTable">
       <AzureTable

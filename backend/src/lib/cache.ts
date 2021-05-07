@@ -3,11 +3,13 @@ import { deepClone, IDeploymentData, IDeployments } from "./common";
 import { list as listDeployments } from "./deployments";
 import { get as getPullRequest } from "./pullRequest";
 import { get as getManifestRepoSyncState } from "./clustersync";
-import { IClusterSync } from 'spektate/lib/repository/Tag';
+import { IClusterSync } from "spektate/lib/repository/Tag";
+import { loadFluxNotifications } from "./flux";
 
 let cacheData: IDeployments = {
   deployments: [],
-  clusterSync: undefined
+  clusterSync: undefined,
+  fluxStatuses: {},
 };
 
 /**
@@ -21,7 +23,7 @@ export const fetchAuthor = async (
   try {
     deployment.author = await getAuthor(deployment);
   } catch (e) {
-    // If there's an error with author, we want to fail silently since 
+    // If there's an error with author, we want to fail silently since
     // deployments can still be displayed.
     console.error(e);
   }
@@ -39,7 +41,7 @@ export const fetchPullRequest = async (
   try {
     deployment.pullRequest = await getPullRequest(deployment);
   } catch (e) {
-    // If there's an error with PRs, we want to fail silently since 
+    // If there's an error with PRs, we want to fail silently since
     // deployments can still be displayed.
     console.error(e);
   }
@@ -53,12 +55,22 @@ export const fetchClusterSync = async (): Promise<IClusterSync | undefined> => {
   try {
     return await getManifestRepoSyncState();
   } catch (e) {
-    // If there's an error with cluster sync, we want to fail silently since 
+    // If there's an error with cluster sync, we want to fail silently since
     // deployments can still be displayed.
     console.error(e);
   }
   return undefined;
-}
+};
+
+export const getFluxSync = (deployment: IDeploymentData) => {
+  // console.log(cacheData.fluxStatuses);
+  if (
+    deployment.manifestCommitId &&
+    deployment.manifestCommitId in cacheData.fluxStatuses
+  ) {
+    deployment.fluxStatus = cacheData.fluxStatuses[deployment.manifestCommitId];
+  }
+};
 
 /**
  * Updates cache where there are new instances.
@@ -83,6 +95,7 @@ export const updateNewDeployment = async (
     // For new deployments, always need to fetch author, pull request and cluster sync
     await Promise.all(newDeployments.map((d) => fetchAuthor(d)));
     await Promise.all(newDeployments.map((d) => fetchPullRequest(d)));
+    newDeployments.map((d) => getFluxSync(d));
   }
   return newDeployments.length > 0;
 };
@@ -147,6 +160,7 @@ export const updateChangedDeployment = async (
       const idx = cacheIds.indexOf(ch.deploymentId);
       cache.deployments.splice(idx, 1, ch);
     });
+    changed.forEach((d) => getFluxSync(d));
 
     // For changed deployments, fetch author only if it was empty, and PR only if
     // it wasn't closed (to pull merge updates)
@@ -179,14 +193,19 @@ export const update = async () => {
   try {
     const latest: IDeployments = {
       deployments: deepClone(await listDeployments()),
-      clusterSync: cacheData.clusterSync
+      clusterSync: cacheData.clusterSync,
+      fluxStatuses: deepClone(await loadFluxNotifications()),
     };
 
     // clone the current cache data and do an atomic replace later.
     const clone = deepClone(cacheData);
+    cacheData.fluxStatuses = latest.fluxStatuses;
     const areDeploymentsChanged = await updateChangedDeployment(clone, latest);
     const areDeploymentsAdded = await updateNewDeployment(clone, latest);
-    cacheData.deployments = updateOldDeployment(clone.deployments, latest.deployments);
+    cacheData.deployments = updateOldDeployment(
+      clone.deployments,
+      latest.deployments
+    );
     if (areDeploymentsChanged || areDeploymentsAdded) {
       cacheData.clusterSync = await fetchClusterSync();
     }
@@ -201,7 +220,8 @@ export const update = async () => {
 export const purge = () => {
   cacheData = {
     deployments: [],
-    clusterSync: undefined
+    clusterSync: undefined,
+    fluxStatuses: undefined,
   };
 };
 
