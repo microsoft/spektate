@@ -2,7 +2,13 @@ import * as azure from "azure-storage";
 import { getConfig } from "../config";
 import * as uuid from "uuid/v4";
 
-// const fluxStatuses: { [commitId: string]: any } = {};
+export interface IFluxNotification {
+  commitId: string;
+  status: string;
+  message: string;
+  genre: string;
+  time: Date;
+}
 
 export const createFluxNotification = (notification: any) => {
   const config = getConfig();
@@ -39,7 +45,7 @@ export const loadFluxNotifications = (): Promise<any> => {
     config.storageAccountName,
     config.storageAccessKey
   );
-  const fluxStatuses: { [commitId: string]: any } = {};
+  const fluxStatuses: { [commitId: string]: IFluxNotification[] } = {};
   const query = new azure.TableQuery().where(
     "PartitionKey eq '" + config.storagePartitionKey + "'"
   );
@@ -85,18 +91,48 @@ export const loadFluxNotifications = (): Promise<any> => {
               ) {
                 const revision = notification.metadata.revision.split("/");
                 const commitId = revision[revision.length - 1].substring(0, 7);
+                const newnotification: IFluxNotification = {
+                  commitId: commitId,
+                  status: notification.reason,
+                  genre: notification.involvedObject.kind,
+                  message: notification.message,
+                  time: entry.Timestamp._,
+                };
 
-                if (
-                  !(commitId in fluxStatuses) ||
-                  fluxStatuses[commitId].timestamp <= notification.timestamp
-                ) {
-                  fluxStatuses[commitId] = notification;
+                if (!(commitId in fluxStatuses)) {
+                  fluxStatuses[commitId] = [];
                 }
+                if (fluxStatuses[commitId].length < 100) {
+                  fluxStatuses[commitId].push(newnotification);
+                }
+              } else if (notification.commit_id !== undefined) {
+                const commitId = notification.commit_id.substring(0, 7);
+                // console.log(JSON.stringify(entry));
+                const newnotification: IFluxNotification = {
+                  commitId: commitId,
+                  status: notification.status_name,
+                  genre: notification.genre,
+                  message: notification.message,
+                  time: entry.Timestamp._,
+                };
+
+                if (!(commitId in fluxStatuses)) {
+                  fluxStatuses[commitId] = [];
+                }
+                fluxStatuses[commitId].push(newnotification);
               }
             }
           }
 
-          console.log(JSON.stringify(fluxStatuses));
+          for (const notification in fluxStatuses) {
+            fluxStatuses[notification].sort(
+              (a: IFluxNotification, b: IFluxNotification): number => {
+                return a.time > b.time ? 1 : -1;
+              }
+            );
+          }
+
+          // console.log(JSON.stringify(fluxStatuses));
           resolve(fluxStatuses);
         }
       }

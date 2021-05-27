@@ -1,8 +1,17 @@
+
+import { Button } from "azure-devops-ui/Button";
+import { ObservableArray, ObservableValue } from "azure-devops-ui/Core/Observable";
 import { Link } from "azure-devops-ui/Link";
+import { Panel } from "azure-devops-ui/Panel";
 import {
   ITableColumn,
+  renderSimpleCell,
   SimpleTableCell,
+
+  Table,
+  TableColumnLayout,
   // TwoLineTableCell,
+
 } from "azure-devops-ui/Table";
 import { Tooltip } from "azure-devops-ui/TooltipEx";
 import * as React from "react";
@@ -19,14 +28,40 @@ interface IClusterProps {
 }
 export const Cluster: React.FC<IClusterProps> = (props: IClusterProps) => {
   console.log(props.deployment.fluxStatus);
-  if (props.deployment.fluxStatus !== undefined) {
+  const [expanded, setExpanded] = React.useState(false);
+
+  if (props.deployment.fluxStatus !== undefined && props.deployment.fluxStatus.length > 0) {
 
     return (
       <SimpleTableCell
         columnIndex={props.columnIndex}
         key={"col-" + props.columnIndex}
       >
-        {props.deployment.fluxStatus.reason}
+        <div>
+          <Button
+            // tslint:disable-next-line: jsx-no-lambda
+            onClick={() => setExpanded(true)}>{props.deployment.fluxStatus[0].commitId}</Button>
+          {expanded && (
+            <Panel
+
+              // tslint:disable-next-line: jsx-no-lambda
+              onDismiss={() => setExpanded(false)}
+              titleProps={{ text: "Cluster Status" }}
+              // description={
+              //   "A description of the header. It can expand to multiple lines. Consumers should try to limit this to a maximum of three lines."
+              // }
+              footerButtonProps={[
+                // tslint:disable-next-line: jsx-no-lambda
+                { text: "OK", onClick: () => setExpanded(false), primary: true }
+              ]}
+            >
+              {/* <div>{props.deployment.fluxStatus.message}</div> */}
+              <FluxTable deployment={props.deployment}
+                columnIndex={props.columnIndex}
+                tableColumn={props.tableColumn} />
+            </Panel>
+          )}
+        </div>
       </SimpleTableCell>
     );
   }
@@ -40,6 +75,32 @@ export const Cluster: React.FC<IClusterProps> = (props: IClusterProps) => {
     </SimpleTableCell>
   );
 };
+
+const FluxTable: React.FC<IClusterProps> = (props: IClusterProps) => {
+  const tableItems = new ObservableArray<any>(props.deployment.fluxStatus);
+
+  const fixedColumns = [
+    {
+      columnLayout: TableColumnLayout.singleLinePrefix,
+      id: "message",
+      name: "Message",
+      readonly: true,
+      renderCell: renderSimpleCell,
+      width: new ObservableValue(200)
+    },
+    {
+      columnLayout: TableColumnLayout.singleLinePrefix,
+      id: "time",
+      name: "Time",
+      readonly: true,
+      renderCell: renderSimpleCell,
+      width: new ObservableValue(200)
+    }
+  ];
+  return (
+    <Table columns={fixedColumns} itemProvider={tableItems} />
+  );
+}
 
 // export const Cluster: React.FC<IClusterProps> = (props: IClusterProps) => {
 //   if (!props.deployment.clusters || props.deployment.clusters.length === 0) {
