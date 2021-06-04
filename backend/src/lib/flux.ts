@@ -35,10 +35,6 @@ export const getRowKey = (): string => {
   return uuid().replace("-", "").substring(0, 12);
 };
 
-// export const getFluxNotificationForCommit = (commitId: string): any => {
-//   return fluxStatuses[commitId];
-// }
-
 export const loadFluxNotifications = (): Promise<any> => {
   const config = getConfig();
   const tableService: azure.TableService = azure.createTableService(
@@ -56,7 +52,7 @@ export const loadFluxNotifications = (): Promise<any> => {
     azure.TableUtilities.QueryComparisons.GREATER_THAN,
     lastTwoDays
   );
-  // console.log("lastTwoDays = " + lastTwoDays.toString());
+
   query.and(filter);
 
   // tslint:disable-next-line
@@ -80,8 +76,6 @@ export const loadFluxNotifications = (): Promise<any> => {
           reject(error);
         } else {
           for (const entry of result.entries) {
-            // console.log(JSON.stringify(entry));
-
             if (entry.Notification !== undefined) {
               const notification = JSON.parse(entry.Notification._);
 
@@ -107,7 +101,6 @@ export const loadFluxNotifications = (): Promise<any> => {
                 }
               } else if (notification.commit_id !== undefined) {
                 const commitId = notification.commit_id.substring(0, 7);
-                // console.log(JSON.stringify(entry));
                 const newnotification: IFluxNotification = {
                   commitId: commitId,
                   status: notification.status_name,
@@ -132,7 +125,6 @@ export const loadFluxNotifications = (): Promise<any> => {
             );
           }
 
-          // console.log(JSON.stringify(fluxStatuses));
           resolve(fluxStatuses);
         }
       }

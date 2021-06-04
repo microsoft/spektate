@@ -19,20 +19,23 @@ import { data as deploymentData } from "./mocks/deploymentsData";
 import { data as deploymentDataExtra } from "./mocks/deploymentsDataExtra";
 import * as testCommon from "./test-common";
 import * as clusterSync from "./clustersync";
-import { IPullRequest } from 'spektate/lib/repository/IPullRequest';
-import { IClusterSync } from 'spektate/lib/repository/Tag';
+import { IPullRequest } from "spektate/lib/repository/IPullRequest";
+import { IClusterSync } from "spektate/lib/repository/Tag";
 
 const emptyDeployments: IDeployments = {
   deployments: [],
-  clusterSync: undefined
+  clusterSync: undefined,
+  fluxStatuses: undefined,
 };
 const mockedDeployment: IDeployments = {
   deployments: deploymentData as any,
-  clusterSync: undefined
+  clusterSync: undefined,
+  fluxStatuses: undefined,
 };
 const mockedDeploymentExtra: IDeployments = {
   deployments: deploymentDataExtra as any,
-  clusterSync: undefined
+  clusterSync: undefined,
+  fluxStatuses: undefined,
 };
 jest.spyOn(clusterSync, "get").mockResolvedValue(Promise.resolve(undefined));
 
@@ -95,13 +98,13 @@ describe("test fetchAuthor function", () => {
     expect(deployment.srcToDockerBuild.author).toBeUndefined();
   });
   it("exception test for author", async () => {
-    jest.spyOn(author, "get").mockImplementation((
-      _: IDeploymentData
-    ): Promise<IAuthor | undefined> => {
-      return new Promise((resolve, reject) => {
-        reject("Author not found");
-      });
-    });
+    jest.spyOn(author, "get").mockImplementation(
+      (_: IDeploymentData): Promise<IAuthor | undefined> => {
+        return new Promise((resolve, reject) => {
+          reject("Author not found");
+        });
+      }
+    );
     const deployment = {
       commitId: "be3c7f6",
       deploymentId: "c3e4a8937af9",
@@ -118,13 +121,13 @@ describe("test fetchAuthor function", () => {
     }).not.toThrow();
   });
   it("exception test for PR", async () => {
-    jest.spyOn(pr, "get").mockImplementation((
-      _: IDeploymentData
-    ): Promise<IPullRequest | undefined> => {
-      return new Promise((resolve, reject) => {
-        reject("PR not found");
-      });
-    });
+    jest.spyOn(pr, "get").mockImplementation(
+      (_: IDeploymentData): Promise<IPullRequest | undefined> => {
+        return new Promise((resolve, reject) => {
+          reject("PR not found");
+        });
+      }
+    );
     const deployment = {
       commitId: "be3c7f6",
       deploymentId: "c3e4a8937af9",
@@ -134,7 +137,7 @@ describe("test fetchAuthor function", () => {
         author: undefined,
         sourceVersion: "be3c7f65b7c9eb792a7af3ff1f7d3d187cd47773",
       },
-      pullRequest: undefined
+      pullRequest: undefined,
     };
     expect(async () => {
       await fetchPullRequest(deployment as any);
@@ -142,11 +145,13 @@ describe("test fetchAuthor function", () => {
     }).not.toThrow();
   });
   it("exception test for cluster sync", async () => {
-    jest.spyOn(clusterSync, "get").mockImplementation((): Promise<IClusterSync | undefined> => {
-      return new Promise((resolve, reject) => {
-        reject("Not found");
-      });
-    });
+    jest.spyOn(clusterSync, "get").mockImplementation(
+      (): Promise<IClusterSync | undefined> => {
+        return new Promise((resolve, reject) => {
+          reject("Not found");
+        });
+      }
+    );
     expect(async () => {
       const clustersync = await fetchClusterSync();
       expect(clustersync).toBeUndefined();
@@ -197,7 +202,11 @@ describe("test fetchAuthor function", () => {
 
 describe("test updateChangedDeployment function", () => {
   it("cache is empty and no data", async () => {
-    const cached: IDeployments = { deployments: [], clusterSync: undefined };
+    const cached: IDeployments = {
+      deployments: [],
+      clusterSync: undefined,
+      fluxStatuses: undefined,
+    };
     await updateChangedDeployment(cached, deepClone(emptyDeployments));
     expect(cached.deployments).toStrictEqual([]);
   });
@@ -268,8 +277,9 @@ describe("test updateChangedDeployment function", () => {
 
     const changedDeps: IDeployments = {
       deployments: changed as any,
-      clusterSync: undefined
-    }
+      clusterSync: undefined,
+      fluxStatuses: undefined,
+    };
 
     await updateChangedDeployment(cacheObj, changedDeps);
 
@@ -333,10 +343,7 @@ describe("test updateNewDeployment function", () => {
     fnFetchPullRequest.mockReset();
     fnFetchPullRequest.mockResolvedValueOnce();
 
-    await updateNewDeployment(
-      mockedDeployment,
-      mockedDeploymentExtra
-    );
+    await updateNewDeployment(mockedDeployment, mockedDeploymentExtra);
     expect(fnFetchAuthor).toBeCalledTimes(1);
     expect(fnFetchPullRequest).toBeCalledTimes(1);
   });
