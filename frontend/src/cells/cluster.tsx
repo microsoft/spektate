@@ -1,4 +1,5 @@
 
+import { Ago } from "azure-devops-ui/Ago";
 import { Button } from "azure-devops-ui/Button";
 import { ObservableArray, ObservableValue } from "azure-devops-ui/Core/Observable";
 import { Link } from "azure-devops-ui/Link";
@@ -14,6 +15,7 @@ import {
 
 } from "azure-devops-ui/Table";
 import { Tooltip } from "azure-devops-ui/TooltipEx";
+import { AgoFormat } from "azure-devops-ui/Utilities/Date";
 import * as React from "react";
 import { IDeploymentField } from "../Dashboard.types";
 
@@ -93,12 +95,44 @@ const FluxTable: React.FC<IClusterProps> = (props: IClusterProps) => {
       id: "time",
       name: "Time",
       readonly: true,
-      renderCell: renderSimpleCell,
+      renderCell: renderTime,
       width: new ObservableValue(200)
     }
   ];
   return (
     <Table columns={fixedColumns} itemProvider={tableItems} />
+  );
+}
+
+export const renderTime = (
+  rowIndex: number,
+  columnIndex: number,
+  tableColumn: ITableColumn<any>,
+  fluxStatus: any
+): JSX.Element => {
+  console.log(JSON.stringify(fluxStatus));
+  const timestamp = Date.parse(fluxStatus.time);
+
+  if (isNaN(timestamp) === false) {
+    const date = new Date(fluxStatus.time);
+    return (
+      <SimpleTableCell
+        key={"col-" + columnIndex}
+        columnIndex={columnIndex}
+      >
+        <Ago date={date} format={AgoFormat.Extended}
+        />
+      </SimpleTableCell>
+    );
+  }
+
+  return (
+    <SimpleTableCell
+      key={"col-" + columnIndex}
+      columnIndex={columnIndex}
+    >
+      -
+    </SimpleTableCell>
   );
 }
 
